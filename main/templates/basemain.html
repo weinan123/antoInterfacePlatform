@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="/static/css/myCss.css" rel="stylesheet">
+    <!--<script src="/static/js/jquery.min.js"></script>-->
+    <!--<script src="/static/js/bootstrap.min.js"></script>-->
+    <link href="https://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="/static/js/bootstrap-select.min.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/csrf.js"></script>
+    <script src="/static/js/axios.js"></script>
+    <script src="/static/js/vue-router.js"></script>
+    <script src="/static/myJs.js"></script>
+    {% block title %}
+    <title> My First Title</title>
+    {% endblock %}
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="This is my page">
+</head>
+<body>
+    <div style="margin-top: 100px;margin-left: 120px;margin-right: 120px;" id ="app" ref="app">
+        <div class="navbar-fixed-top" style="background-color: #428bca;text-align: center" >
+            <div class="col-md-4"></div>
+            <div class="col-md-4"><h3 style="color: white">测试用例系统</h3></div>
+            <div class="col-md-4">
+                {% if user.is_authenticated %}
+                <a href="/"><span style="color: white;line-height: 60px;" >当前用户：{{  user.username }}</span></a>&nbsp&nbsp&nbsp
+                <a href="/logout/"><span style="color: white;line-height: 60px;" >退出</span></a>
+                {% else %}
+                <a href="/login/"><span style="color: white;line-height: 60px;" >登录</span></a> &nbsp&nbsp&nbsp
+                <a href="/register/"><span style="color: white;line-height: 60px;">注册</span></a>
+                {% endif %}
+            </div>
+            </div>
+        <div class=" row ">
+            {% block content %}
+
+            {% endblock %}
+        </div>
+    </div>
+{% block vuejs %}
+<script type="text/javascript">
+</script>
+{% endblock %}
+</body>
+</html>
