@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from main import views  as main
+
 urlpatterns = [
     url(r'^$', main.index),
     url(r'^login/$', main.login),
-    url(r'^logout/$', main.logout,),
+    url(r'^logout/$', main.logout, ),
     url(r'^register/$', main.register),
+    url(r'^projectList/$', main.projectList),
 ]
