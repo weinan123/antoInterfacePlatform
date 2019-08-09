@@ -1,0 +1,96 @@
+{% extends 'basemain.html' %}
+{% block title %} 项目信息 {% endblock %}
+{% block navbar %}
+{% endblock %}
+{% block content %}
+    <div class="col-md-4  panel panel-default" style="width: 100%;height: 100%;">
+        {{ ret }}
+        <div class="panel-body">
+            <div class="btn-group">
+                <!-- 新建按钮触发模态框 -->
+                <button class="btn btn-primary" data-toggle="modal" data-target="#newProject">新建</button>
+                <!-- 新建模态框（Modal） -->
+                <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="margin: 150px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/projectList/" method="post" style="text-align: center">
+                                    {{ form }}
+                                    <input type="submit" class="btn btn-primary" value="新建"/>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                                </form>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+                <!-- 导入按钮触发模态框 -->
+                <button class="btn btn-primary" data-toggle="modal" data-target="#importProject">导入</button>
+                <!-- 导入模态框（Modal） -->
+                <div class="modal fade" id="importProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" style="margin: 150px;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+                            </div>
+                            <div class="modal-body">在这里添加一些文本</div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button type="button" class="btn btn-primary">提交更改</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#batchOperation">批量操作</button>
+            </div>
+
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>项目名称</th>
+                    <th>模块名称</th>
+                    <th>更新时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Tanmay</td>
+                    <td>Bangalore</td>
+                    <td>Bangalore</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">删除</button>
+                            <button type="button" class="btn btn-default">查看</button>
+                            <button type="button" class="btn btn-default">编辑</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sachin</td>
+                    <td>Sachin</td>
+                    <td>Mumbai</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">删除</button>
+                            <button type="button" class="btn btn-default">查看</button>
+                            <button type="button" class="btn btn-default">编辑</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+</div>
+</div>
+<div class="col-md-4"></div>
