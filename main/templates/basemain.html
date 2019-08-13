@@ -15,7 +15,6 @@
     <script src="/static/js/csrf.js"></script>
     <script src="/static/js/axios.js"></script>
     <script src="/static/js/vue-router.js"></script>
-    <script src="/static/myJs.js"></script>
     {% block title %}
     <title> My First Title</title>
     {% endblock %}
@@ -29,25 +28,60 @@
     <div style="margin-top: 100px;margin-left: 120px;margin-right: 120px;" id ="app" ref="app">
         <div class="navbar-fixed-top" style="background-color: #428bca;text-align: center" >
             <div class="col-md-4"></div>
-            <div class="col-md-4"><h3 style="color: white">测试用例系统</h3></div>
-            <div class="col-md-4">
-                {% if user.is_authenticated %}
-                <a href="/"><span style="color: white;line-height: 60px;" >当前用户：{{  user.username }}</span></a>&nbsp&nbsp&nbsp
+            <div class="col-md-4"><h3 style="color: white">自动化接口系统</h3></div>
+            <div v-if="status === 'success'" class="col-md-4" >
+                <a href="/"><span  style="color: white;line-height: 60px;">当前用户：{! login_user !}</span></a>&nbsp&nbsp&nbsp
                 <a href="/logout/"><span style="color: white;line-height: 60px;" >退出</span></a>
-                {% else %}
+            </div>
+            <div v-else class="col-md-4" >
                 <a href="/login/"><span style="color: white;line-height: 60px;" >登录</span></a> &nbsp&nbsp&nbsp
                 <a href="/register/"><span style="color: white;line-height: 60px;">注册</span></a>
-                {% endif %}
             </div>
             </div>
-        <div class=" row ">
+        <div class="row">
             {% block content %}
-
             {% endblock %}
         </div>
     </div>
 {% block vuejs %}
 <script type="text/javascript">
+var vm = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#app',
+    data:{
+        login_user:"",
+        status:""
+    },
+    created(){
+        var usename = this.getCookie("usename");
+        console.log(usename);
+         if (usename===""){
+                this.status = ""
+            }else{
+                this.status="success";
+                this.login_user = usename;
+            }
+            console.log(this.status);
+    },
+    methods:{
+          //获取cookie
+        getCookie(cname){
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            console.log(ca);
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                console.log(c);
+                var key = c.split("=")[0];
+                if(cname===key){
+                    let cookie_value = c.split("=")[1];
+                    return cookie_value
+                }
+            }
+        return "";
+      },
+    }
+})
 </script>
 {% endblock %}
 </body>

@@ -44,12 +44,10 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-
 ]
 
 ROOT_URLCONF = 'auto_interface.urls'
@@ -80,10 +78,10 @@ WSGI_APPLICATION = 'auto_interface.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'my_web',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
+        'NAME': 'monitor',
+        'USER': 'monitor',
+        'PASSWORD': 'monitor123',
+        'HOST': '10.9.8.20',
         'PORT': '3306',
     }
 }
