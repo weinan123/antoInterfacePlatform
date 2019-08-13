@@ -7,10 +7,15 @@ import requests
 from forms import UserForm
 from django.contrib import auth
 from django.contrib.auth.models import User
+
 from until import my_login
 @my_login
 def index(request):
     return render(request,'index.html')
+def index(request):
+    return render(request, 'index.html')
+
+
 
 def login(request):
     username = request.COOKIES.get('username')
@@ -58,12 +63,12 @@ def login(request):
             except:
                 print Exception
         return render(request,'login.html')
-
+        #return redirect('/', {'username': username})
 def logout(request):
     auth.logout(request)
     response = HttpResponse('/login/')
     response.delete_cookie('username')
-    return render(request,"login.html")
+    return render(request, "login.html")
 def register(request):
     if request.method == 'POST':
         uf = UserForm(request.POST)
@@ -71,18 +76,19 @@ def register(request):
             username = uf.cleaned_data['username']
             password = uf.cleaned_data['password']
             password2 = uf.cleaned_data['password2']
-            print password,password2
+            print password, password2
             if password == password2:
-                User.objects.create_user(username = username,password=password)
+                User.objects.create_user(username=username, password=password)
                 re = auth.authenticate(username=username, password=password)
                 auth.login(request, re)
                 response = redirect('/', {'username': username})
                 request.session['username'] = username
                 response.set_cookie('username', username, 3600)
                 return redirect('/', {'username': username})
-                #return render(request,'index.html',{'username':username })
+                # return render(request,'index.html',{'username':username })
             else:
                 return render(request, 'register.html', {'register_error': '两次输入密码不一致'})
     else:
         uf = UserForm()
-    return render(request,'register.html',{'uf':uf })
+    return render(request, 'register.html', {'uf': uf})
+
