@@ -26,9 +26,33 @@ def addProjectList(request):
 
 def projectListInfo(request):
     resp = interfaceList.objects.values("id", "projectName", "moduleName", "updateTime")
-    return JsonResponse(list(resp), safe=False)
+    respList = list(resp)
+    for i in range(len(respList)):
+        respList[i]['updateTime'] = str(respList[i]['updateTime'])
+    return JsonResponse(respList, safe=False)
 
 
 def projectList(request):
     form = projectForm()
     return render(request, 'projectList.html', {'form': form})
+
+
+def projectView(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        print id
+    return HttpResponseRedirect('/projectList/')
+
+
+def projectDelete(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        print id
+    return HttpResponseRedirect('/projectList/')
+
+
+def projectEdit(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        print id
+    return HttpResponseRedirect('/projectList/')
