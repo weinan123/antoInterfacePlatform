@@ -1,0 +1,77 @@
+.mytextarea{
+    border: hidden;
+    width: 100%;
+    height: 100%;
+    overflow:auto;
+}
+.logincss{
+   color: white;
+    line-height: 60px;
+}
+/*自制弹窗样式*/
+.mark {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  height: 0.88rem;
+  line-height: 0.88rem;
+  width: 80%;
+  text-align: center;
+  font-size: 0.28rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0.1rem;
+}
+#msg{
+    width:375px;
+    height: 220px;
+    position: fixed;
+    z-index:999;
+    top: 49%;
+    margin-top:-80px;
+    left:50%;
+    margin-left:-133px;
+    background:#fff;
+    box-shadow:5px 5px 8px #999;
+    font-size:17px;
+    color:#666;
+    border:1px solid #f8f8f8;
+    text-align: center;
+    line-height: 2rem;
+    display:inline-block;
+    padding-bottom:20px;
+    border-radius:5px;
+}
+#msg_top{
+    background:#30a2eb;
+    padding:5px 15px 5px 20px;
+    text-align: center;
+    color: #fff;
+    border-radius: 5px;
+}
+#msg_top span{
+    font-size:22px;
+    float:right;
+    cursor:pointer;
+}
+#msg_cont{
+    padding:45px 20px 50px;
+    color: #676767;
+    font-size: 20px;
+}
+#msg_clear{
+    width: 110px;
+    height: 35px;
+    display:inline-block;
+    color:#fff;
+    padding:1px 15px;
+    background:#30a2eb;
+    border-radius:2px;
+    margin-right:15px;
+    line-height: 35px;
+    cursor:pointer;
+}
