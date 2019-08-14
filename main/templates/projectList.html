@@ -68,9 +68,17 @@
                     <td class="col-xs-4">{! item.updateTime !}</td>
                     <td>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default">删除</button>
-                            <button type="button" class="btn btn-default">查看</button>
-                            <button type="button" class="btn btn-default">编辑</button>
+                            <a v-bind:href="['/projectDelete?id='+item.id]">
+                                <button type="button" class="btn btn-default">
+                                    删除
+                                </button>
+                            </a>
+                            <a v-bind:href="['/projectView?id='+item.id]">
+                                <button type="button" class="btn btn-default">查看</button>
+                            </a>
+                            <a v-bind:href="['/projectEdit?id='+item.id]">
+                                <button type="button" class="btn btn-default">编辑</button>
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -93,16 +101,15 @@
                     list: []
                 };
             },
-            methods: {
-                execteLog() {
-                    axios.get('/projectListInfo/')
-                        .then(resp => {
-                            this.list = resp;
-                            console.log(this.list);
-                        }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
-                }
+            mounted() {
+                axios
+                    .get('/projectListInfo/')
+                    .then(resp => {
+                        this.list = resp.data;
+                        console.log(this.list);
+                    }).catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                })
             }
         })
     </script>
