@@ -18,6 +18,7 @@ from main import views  as main
 from main import projectList
 
 urlpatterns = [
+    url(r'^$', main.index),
     url(r'^index/$', main.index),
     url(r'^login/$', main.login),
     url(r'^logout/$', main.logout, ),
