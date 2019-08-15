@@ -3,10 +3,11 @@
 {% block navbar %}
 {% endblock %}
 {% block content %}
-    <div class="col-md-4  panel panel-default" style="width: 100%;height: 100%;" id="projectList">
-        <div class="panel-body">
+    <div class="container-fluid" style="width: 100%;height: 100%;" id="projectList">
+        <div class="panel-body" style="margin: auto;width: 60%;">
             <div class="btn-group">
                 <!-- 新建按钮触发模态框 -->
+
                 <button class="btn btn-primary" data-toggle="modal" data-target="#newProject">新建</button>
                 <!-- 新建模态框（Modal） -->
                 <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -28,10 +29,12 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal -->
                 </div>
+
                 <!-- 导入按钮触发模态框 -->
                 <button class="btn btn-primary" data-toggle="modal" data-target="#importProject">导入</button>
                 <!-- 导入模态框（Modal） -->
-                <div class="modal fade" id="importProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content" style="margin: 150px;">
@@ -48,9 +51,10 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal -->
                 </div>
-                <button class="btn btn-primary" data-toggle="modal" data-target="#batchOperation">批量操作</button>
-            </div>
 
+                <button class="btn btn-primary" data-toggle="modal" data-target="#batchOperation">批量操作</button>
+
+            </div>
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -62,23 +66,24 @@
                 </thead>
                 <tbody>
                 <tr v-for="item in list">
-                    <td class="col-xs-4">{! item.projectName !}</td>
-                    <td class="col-xs-4">{! item.moduleName !}</td>
-                    <td class="col-xs-4">{! item.updateTime !}</td>
-                    <td>
-                        <div class="btn-group">
-                            <a v-bind:href="['/projectDelete?id='+item.id]">
-                                <button type="button" class="btn btn-default" onClick="delcfm()">
-                                    删除
+                    <td>{! item.projectName !}</td>
+                    <td>{! item.moduleName !}</td>
+                    <td>{! item.updateTime !}</td>
+                    <td style="margin: auto">
+                        <div class="btn-group" style="margin: auto">
+                            <a v-bind:href="['/projectView?id='+item.id]">
+                                <button type="button" class="btn btn-primary">
+                                    查看
                                 </button>
                             </a>
-                            <a v-bind:href="['/projectView?id='+item.id]">
-                                <button type="button" class="btn btn-default">查看</button>
+
+                            <a>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        v-bind:data-target="'#editProject'+[item.id]">
+                                    编辑
+                                </button>
                             </a>
 
-                            <button type="button" class="btn btn-default" data-toggle="modal"
-                                    v-bind:data-target="'#editProject'+[item.id]">编辑
-                            </button>
 
                             <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1" role="dialog"
                                  aria-labelledby="myModalLabel"
@@ -106,6 +111,12 @@
                                     </div><!-- /.modal-content -->
                                 </div><!-- /.modal -->
                             </div>
+
+                            <a v-bind:href="['/projectDelete?id='+item.id]">
+                                <button type="button" class="btn btn-primary" onClick="delcfm()">
+                                    删除
+                                </button>
+                            </a>
 
 
                         </div>

@@ -61,3 +61,10 @@ def projectEdit(request):
         edit.moduleName = moduleName
         edit.save()
         return HttpResponseRedirect('/projectList/')
+
+
+def projectSort(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        interfaceList.objects.filter(id=id).delete()
+    return HttpResponseRedirect('/projectList/')
