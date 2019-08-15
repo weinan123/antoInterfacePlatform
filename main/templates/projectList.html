@@ -4,7 +4,6 @@
 {% endblock %}
 {% block content %}
     <div class="col-md-4  panel panel-default" style="width: 100%;height: 100%;" id="projectList">
-        {! list !}
         <div class="panel-body">
             <div class="btn-group">
                 <!-- 新建按钮触发模态框 -->
@@ -52,7 +51,7 @@
                 <button class="btn btn-primary" data-toggle="modal" data-target="#batchOperation">批量操作</button>
             </div>
 
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>项目名称</th>
@@ -76,9 +75,39 @@
                             <a v-bind:href="['/projectView?id='+item.id]">
                                 <button type="button" class="btn btn-default">查看</button>
                             </a>
-                            <a v-bind:href="['/projectEdit?id='+item.id]">
-                                <button type="button" class="btn btn-default">编辑</button>
-                            </a>
+
+                            <button type="button" class="btn btn-default" data-toggle="modal"
+                                    v-bind:data-target="'#editProject'+[item.id]">编辑
+                            </button>
+
+                            <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="margin: 150px;">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                &times;
+                                            </button>
+                                            <h4 class="modal-title" id="myModalLabel">新建项目</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/projectEdit/" method="post" style="text-align: center">
+                                                <input type="hidden" name="id" readonly="readonly"
+                                                       v-bind:value="[item.id]">
+                                                <input type="text" name="projectName" v-bind:value="[item.projectName]">
+                                                <input type="text" name="moduleName" v-bind:value="[item.moduleName]">
+                                                <br>
+                                                <input type="submit" class="btn btn-primary" value="修改"/>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+                            </div>
+
+
                         </div>
                     </td>
                 </tr>

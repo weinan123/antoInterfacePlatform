@@ -47,12 +47,17 @@ def projectView(request):
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
-        interfaceList.objects.filter(id__exact=id).delete()
+        interfaceList.objects.filter(id=id).delete()
     return HttpResponseRedirect('/projectList/')
 
 
 def projectEdit(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        print id
-    return HttpResponseRedirect('/projectList/')
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        projectName = request.POST.get('projectName')
+        moduleName = request.POST.get('moduleName')
+        edit = interfaceList.objects.get(id=id)
+        edit.projectName = projectName
+        edit.moduleName = moduleName
+        edit.save()
+        return HttpResponseRedirect('/projectList/')
