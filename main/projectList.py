@@ -47,7 +47,7 @@ def projectView(request):
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
-        print id
+        interfaceList.objects.filter(id__exact=id).delete()
     return HttpResponseRedirect('/projectList/')
 
 
