@@ -81,7 +81,7 @@
                     <td>
                         <button type="button" class="btn btn-primary">编辑</button>
                         <button type="button" class="btn btn-primary">执行</button>
-                        <button type="button" class="btn btn-primary">删除</button>
+                        <button type="button" class="btn btn-primary" @click="delapi(result.data[index].id)">删除</button>
                     </td>
                     <td>
                         <p v-if="info.lastrunrslt ===  'null'">无</p>
@@ -139,7 +139,8 @@ var apilist = new Vue({
             }
             return param[str];
         },
-        delapi(id){
+          delapi(id){
+            console.log('id=' + id);
             axios.post('/apidelete/',{
                 params:{
                     aid: id
@@ -149,6 +150,7 @@ var apilist = new Vue({
                     this.result = resp.data;
                     console.log(resp.data);
                     let info = resp.data.info;
+                    let code = resp.data.code;
                     if(code === 0){
                         alert("删除成功");
                         window.location.reload(true);

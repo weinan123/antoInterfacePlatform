@@ -104,6 +104,7 @@ def apidel(request):
         if ainfo:
             try:
                 ainfo.delete()
+                print("删除成功")
             except BaseException as e:
                 result = {'code': -1, 'info': 'sql error' + str(e)}
                 return JsonResponse(result)

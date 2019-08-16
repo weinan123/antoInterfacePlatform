@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from main import views  as main
+from main import apiinfo
 
 urlpatterns = [
     url(r'^index/$', main.index),
@@ -23,6 +24,9 @@ urlpatterns = [
     url(r'^register/$', main.register),
     url(r'^singleInterface/$', main.singleInterface),
     url(r'^getRequest/$', main.getRequest),
-
+    url(r'^apiInfo/$', apiinfo.allinfo),
+    url(r'^apiInfopage/$', apiinfo.allinfopage),
+    url(r'^addApi/$', apiinfo.addApi),
+    url(r'^apidelete/$', apiinfo.apidel),
 
 ]
