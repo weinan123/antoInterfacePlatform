@@ -12,11 +12,6 @@ from until import my_login
 @my_login
 def index(request):
     return render(request,'index.html')
-def index(request):
-    return render(request, 'index.html')
-
-
-
 def login(request):
     username = request.COOKIES.get('username')
     print username
@@ -91,4 +86,14 @@ def register(request):
     else:
         uf = UserForm()
     return render(request, 'register.html', {'uf': uf})
+def singleInterface(request):
+    return render(request, 'singleInterface.html')
+def getRequest(request):
+    url = request.GET["url"]
+    print url
+    response = requests.get(url)
+
+    return HttpResponse(response.content)
+
+
 

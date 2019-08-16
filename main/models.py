@@ -26,15 +26,3 @@ class interfaceList(models.Model):
     class Meta:
         verbose_name = '项目'
         verbose_name_plural = '项目'
-
-
-class apiInfoTable(models.Model):
-    """
-        项目下的接口用例表
-    """
-    apiID = models.AutoField(max_length=4,primary_key=True)
-    apiName = models.CharField(max_length=100,null=False,error_messages={'required': '名称不能为空'})
-    lastRunResult = models.NullBooleanField(null=True, blank=True)
-    lastRunTime = models.DateTimeField(null=True, blank=True)
-    creator = models.CharField(max_length=20,null=False)
-    owningListID = models.ForeignKey('interfacelist',on_delete=models.CASCADE)

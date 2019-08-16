@@ -1,0 +1,400 @@
+{% extends 'basemain.html' %}
+{% block title %}<title> 首页</title> {% endblock %}
+{% block content %}
+    <!--<div class="row" style="border: #337ab7">-->
+ <p class="row">
+	<form class="bs-example bs-example-form" role="form">
+		<div class="row" >
+			<div class="col-lg-9">
+				<div class="input-group">
+					<div class="input-group-btn">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+							{! method !}
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a @click="getMethod('GET')">GET</a></li>
+							<li><a @click="getMethod('POST')">POST</a></li>
+						</ul>
+					</div><!-- /btn-group -->
+					<input v-model="url" type="text" class="form-control" placeholder="请求地址">
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+            <div class="col-lg-1"></div>
+            <div class="col-lg-2">
+                <button id="fat-btn" class="btn btn-primary" data-loading-text="Loading..."
+                type="button" @click="sendQuest()">发送
+                </button>
+            </div>
+		</div><!-- /.row -->
+	</form>
+    <ul class="nav nav-tabs" >
+        <li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
+        <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
+        <li v-bind:class="{active:isActive2}"><a v-on:click="makeFrom(2)">GET/URL参数</a></li>
+        <li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>
+        <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">权限校验</a></li>
+        <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">预处理</a></li>
+        <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>
+    </ul>
+    <div class="row" v-if="showState === 1">
+        <div class="col-lg-1 radio ">
+        <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked  @click="showBodyform(0)"> Form-data
+        </label>
+        </div>
+        <div class=" col-lg-1 radio " style="margin-top: 10px">
+        <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option2"  @click="showBodyform(1)"> JSON
+        </label>
+        </div>
+        <div class="col-lg-1 radio " style="margin-top: 10px">
+        <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option3"  @click="showBodyform(2)"> XML
+        </label>
+        </div>
+        <div class="col-lg-1 radio" style="margin-top: 10px">
+        <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option4"  @click="showBodyform(3)"> Raw
+        </label>
+        </div>
+    </div>
+    <table class="table table-bordered" v-if="(showState === 0) " style="width: 70%">
+          <thead>
+            <tr>
+              <th>标签</th>
+              <th>内容</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="headerVal,index in headerVals">
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="headerVals[index]. mol_type">
+                    <option value="" selected>头部标签</option>
+                    <option value="Content-Type" >Content-Type</option>
+                    <option value="Accept" >Accept</option>
+                    <option value="Accept-Charset" >Accept-Charset</option>
+                    <option value="Accept-Encoding" >Accept-Encoding</option>
+                    <option value="Accept-Language" >Accept-Language</option>
+                    <option value="User-Agent" >User-Agent</option>
+                    <option value="Cookie" >Cookie</option>
+                    <option value="Content-Length" >Content-Length</option>
+                    <option value="Connection" >Connection</option>
+                    <option value="Authorization" >Authorization</option>
+                </select></td>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVals[index].mol_val" value="{{  headerVal.value }}"></td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index)">删除</button></td>
+            </tr>
+          </tbody>
+    </table>
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 0)" style="width: 70%">
+          <thead>
+            <tr>
+              <th>参数名</th>
+              <th>类型</th>
+              <th>参数值</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="bodyFVal in bodyFVals">
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyF_name">{{ bodyFVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyF_type">
+                    <option value="Text" selected>Text</option>
+                    <option value="file" >file</option>
+                </select></td>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyF_value">{{ bodyFVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+            </tr>
+          </tbody>
+    </table>
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 1)" style="width: 70%">
+          <thead>
+            <tr>
+              <th>参数名</th>
+              <th>类型</th>
+              <th>参数值</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="bodyJVal in bodyJVals">
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyJ_name">{{ bodyJVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyJ_type">
+                    <option value="String" selected>String</option>
+                    <option value="boolean" >boolean</option>
+                    <option value="array" >array</option>
+                    <option value="number" >number</option>
+                    <option value="object" >object</option>
+                    <option value="null" >null</option>
+                </select></td>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJ_value" >{{ bodyJVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader($index)">增加</button>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+            </tr>
+          </tbody>
+    </table>
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 2)" style="width: 70%">
+          <thead>
+            <tr>
+              <th>参数名</th>
+              <th>类型</th>
+              <th>参数值</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="bodyXVal in bodyXVals">
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyX_name">{{ bodyXVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyX_type" >
+                    <option value="Object" selected>Object</option>
+
+                </select></td>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyX_value">{{ bodyXVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+            </tr>
+          </tbody>
+    </table>
+    <div class="row" style="width:75% " v-if="(showState === 1 && showbodyState === 3) ">
+         <div class="col-lg-12 form-group">
+                <label for="name">ROW数据</label>
+                <textarea class="form-control" rows="15" v-model="raw_value"></textarea>
+         </div>
+     </div>
+    <table class="table table-bordered" v-if="showState === 2">
+          <thead>
+            <tr>
+              <th>666</th>
+              <th>777</th>
+              <th>888</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Tanmay</td>
+              <td>Bangalore</td>
+              <td>560001</td>
+            </tr>
+            <tr>
+              <td>Sachin</td>
+              <td>Mumbai</td>
+              <td>400003</td>
+            </tr>
+            <tr>
+              <td>Uma</td>
+              <td>Pune</td>
+              <td>411027</td>
+            </tr>
+          </tbody>
+    </table>
+    <p v-if="showState === 3">333333</p>
+    <p v-if="showState === 4">444444</p>
+    <p v-if="showState === 5">5555555</p>
+    <p v-if="showState === 6">66666666</p>
+    {% comment %}<component :is="selectName"></component>{% endcomment %}
+     <div class="row" style="width:75% " >
+         <div class="col-lg-6 form-group">
+                <label for="name">请求数据</label>
+                <textarea class="form-control" rows="15"></textarea>
+         </div>
+         <div class="col-lg-6 form-group">
+                <label for="name">请求结果</label>
+                <textarea v-model="result" class="form-control" rows="15"></textarea>
+         </div>
+     </div>
+</div>
+{% endblock %}
+{% block vuejs %}
+<script type="text/javascript">
+var vm = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#app3',
+    data:{
+        //样式选中互斥
+        showState: 0,
+        showbodyState:0,
+        isActive0:true,
+        isActive1:false,
+        isActive2:false,
+        isActive3:false,
+        isActive4:false,
+        isActive5:false,
+        isActive6:false,
+        listcass:[{
+            active:"active",
+            num:0,
+            name:"请求头部"
+        },
+        {
+            active:"",
+            num:1,
+            name:"请求ti"
+        }],
+        //增加删除列表
+        headerVals:[{
+            mol_type:"",
+            mol_val:"",
+            type:"",
+            value:""
+        }],
+        newheaderVals:{
+            mol_type:"",
+            mol_val:"",
+            type:"",
+            value:""
+        },
+        bodyFVals:[{
+            name:"",
+            value:""
+        }],
+        bodyJVals:[{
+            name:"",
+            value:""
+        }],
+        bodyXVals:[{
+            name:"",
+            value:""
+        }],
+        //获取请求方式
+        method:"请求方式",
+        //请求url
+        url:"",
+        result:"",
+        checked:true,
+       {% comment %} //head的值保存
+        header_key:"",
+        header_value:"",
+        bodyF_name:"",
+        bodyF_type:"",
+        bodyF_value:"",
+        bodyJ_name:"",
+        bodyJ_type:"",
+        bodyJ_value:"",
+        bodyX_name:"",
+        bodyX_type:"",
+        bodyX_value:"",
+        raw_value:""{% endcomment %}
+        count:1
+
+    },
+    methods:{
+        changeCss(params){
+            switch (params) {
+                case 0:
+                    this.isActive0=true;
+                    this.isActive1=false;
+                    this.isActive2=false;
+                    this.isActive3=false;
+                    this.isActive4=false;
+                    this.isActive5=false;
+                    this.isActive6=false;
+                    break;
+                case 1:
+                    this.isActive0=false;
+                    this.isActive1=true;
+                    this.isActive2=false;
+                    this.isActive3=false;
+                    this.isActive4=false;
+                    this.isActive5=false;
+                    this.isActive6=false;
+                    break;
+                case 2:
+                    this.isActive0=false;
+                    this.isActive1=false;
+                    this.isActive2=true;
+                    this.isActive3=false;
+                    this.isActive4=false;
+                    this.isActive5=false;
+                    this.isActive6=false;
+                    break;
+                case 3:
+                    this.isActive0=false;
+                    this.isActive1=false;
+                    this.isActive2=false;
+                    this.isActive3=true;
+                    this.isActive4=false;
+                    this.isActive5=false;
+                    this.isActive6=false;
+                    break;
+                case 4:
+                    this.isActive0=false;
+                    this.isActive1=false;
+                    this.isActive2=false;
+                    this.isActive3=false;
+                    this.isActive4=true;
+                    this.isActive5=false;
+                    this.isActive6=false;
+                    break;
+                case 5:
+                    this.isActive0=false;
+                    this.isActive1=false;
+                    this.isActive2=false;
+                    this.isActive3=false;
+                    this.isActive4=false;
+                    this.isActive5=true;
+                    this.isActive6=false;
+                    break;
+                case 6:
+                    this.isActive0=false;
+                    this.isActive1=false;
+                    this.isActive2=false;
+                    this.isActive3=false;
+                    this.isActive4=false;
+                    this.isActive5=false;
+                    this.isActive6=true;
+
+            }
+
+        },
+        makeFrom(params){
+            this.showState = params;
+            this.showbodyState=0;
+            this.changeCss(params);
+        },
+        showBodyform(params){
+            this.showbodyState = params;
+        },
+        insertHeader(){
+            var num=0;
+            num = num+this.count;
+            var str_params=String(this.count);
+            console.log(this.count);
+            this.newheaderVals.mol_type="type"+str_params;
+            this.newheaderVals.mol_val="value"+str_params;
+            this.headerVals.push(this.newheaderVals);
+            this.count=this.count+1
+        },
+        deleteHeader(index){
+            var length = this.headerVals.length;
+            console.log(length);
+            if(length > 2){
+                this.headerVals.splice(index, 1)
+            }
+        },
+        getMethod(params){
+            this.method = params
+        },
+        sendQuest(){
+             var method = this.method;
+             var posturl = this.url;
+             console.log(posturl);
+             if(method==="GET"){
+                 axios.get('/getRequest/',{ params:{
+                     url:posturl
+                     } })
+                .then(resp =>{
+                        console.log(resp.data);
+                        this.result = resp.data
+
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+             }
+        }
+    },
+}).$mount('div')
+</script>
+{% endblock %}

@@ -75,11 +75,3 @@
     line-height: 35px;
     cursor:pointer;
 }
-.modal-open .modal-backdrop {
-    opacity: 0.6 !important;
-}
-
-.modal-open .modal {
-    opacity: 1.0 !important;
-    margin-top: 200px;
-}
