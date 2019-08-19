@@ -59,16 +59,6 @@ var vm1 = new Vue({
             }
             console.log(this.status);
         },
-        //样式绑定
-        changeTab(params){
-            var url = "/"+params+"/";
-            console.log(url);
-            axios.get(url).then(resp =>{
-                        this.result = resp.data
-                    }).catch(err=>{
-                        console.log('请求失败:'+err.status+','+err.statusText);
-                    })
-            }
         }
 })
 </script>
