@@ -47,11 +47,10 @@ var vm0 = new Vue({
     data:{
         username :"",
         password:"",
-        //login_user:vm.$data.login_user,
         login_error:""
     },
     create(){
-        vm.$data.status="fail"
+        //vm.$data.status="fail"
     },
     methods:{
         //赋值username
@@ -107,7 +106,7 @@ var vm0 = new Vue({
                         }else{
                             console.log(resp.data);
                             this.login_error = resp.data.message;
-                            this.status="fail"
+                            vm.$data.status="fail"
                         }
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
