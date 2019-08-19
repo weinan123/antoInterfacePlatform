@@ -98,7 +98,7 @@ var vm0 = new Vue({
             axios.post('/login/',data_to_send)
                 .then(resp =>{
                         if (resp.data.status==="success"){
-                            //this.setCookie("usename",this.username);
+                            this.setCookie("usename",this.username);
                             console.log(resp.data);
                             window.location.href="/index/";
                             vm.$data.status = resp.data.status;
