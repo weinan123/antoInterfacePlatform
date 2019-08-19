@@ -11,7 +11,8 @@ from django.contrib.auth.models import User
 from until import my_login
 @my_login
 def index(request):
-    return render(request,'index.html')
+    if request.method == 'GET':
+        return render(request,'index.html')
 def login(request):
     username = request.COOKIES.get('username')
     print username

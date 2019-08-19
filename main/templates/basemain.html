@@ -27,31 +27,24 @@
 </head>
 <body>
     <div style="margin-top: 100px;margin-left: 120px;margin-right: 120px;">
-        <div id ="app" class="navbar-fixed-top" style="background-color: #428bca;text-align: center" >
+        <div  class="navbar-fixed-top" style="background-color: #428bca;text-align: center" id ="app" >
             <div class="col-md-4"></div>
             <div class="col-md-4"><h3 style="color: white">自动化接口系统</h3></div>
             <div v-if="status === 'success'" class="col-md-4" >
                 <a href="/"><span  style="color: white;line-height: 60px;">当前用户：{! login_user !}</span></a>&nbsp&nbsp&nbsp
                 <a href="/logout/"><span style="color: white;line-height: 60px;" >退出</span></a>
             </div>
-            <div v-else class="col-md-4">
+            <div v-if="status==='fail'" class="col-md-4">
                 <a href="/login/"><span style="color: white;line-height: 60px;" >登录</span></a> &nbsp&nbsp&nbsp
                 <a href="/register/"><span style="color: white;line-height: 60px;">注册</span></a>
             </div>
         </div>
         <div class="row" style="padding-left:100px;padding-right: 100px;" >
-            <div class="col-md-2 " id="app2">
-                <ul class="nav nav-pills nav-stacked">
-                    <li role="presentation" v-bind:class="{active:isActiveIn}" ><a href="/index/">首页</a></li>
-                    <li role="presentation" v-bind:class="{active:isActiveSi}" ><a
-                         href="/singleInterface/" >单接口</a></li>
-                    <li role="presentation" v-bind:class="{active:isActiveAl}"  ><a
-                    href="/yyBroke/wm">接口list</a></li>
-                </ul>
-            </div>
-            <div class="col-md-10 row" id="app3" >
-                {% block content %}
-                {% endblock %}
+
+            {% block content1 %}
+            {% endblock %}
+            {% block content %}
+            {% endblock %}
             </div>
         </div>
     </div>
@@ -60,19 +53,15 @@ var vm = new Vue({
     delimiters: ['{!', '!}'],
     el:'#app',
     data:{
-        login_user:"",
-        status:"",
-        isActiveIn:"",
-        isActiveSi:"",
-        isActiveAl:""
-
-    },
+        status:"fail",
+        success:"",
+        login_user:""
+     },
     created(){
-        this.getUsername();
-        this.isactive()
+        //this.getUsername();
     },
     methods:{
-          //获取cookie
+     {#   //获取cookie
         getCookie(cname){
             var name = cname + "=";
             var ca = document.cookie.split(';');
@@ -93,56 +82,19 @@ var vm = new Vue({
             var usename = this.getCookie("usename");
             console.log(usename);
             if (usename===""){
-                this.status = ""
+                this.status = "";
+                this.login_user = "";
             }else{
                 this.status="success";
                 this.login_user = usename;
+                //window.location.href="/index/";
             }
             console.log(this.status);
         },
         //样式绑定
-        isactive(){
-            var url = window.location.href;
-            console.log(url);
-            if (url.indexOf("index")>=0){
-                this.isActiveIn = true
-            }else if(url.indexOf("singleInterface")){
-                this.isActiveSi=true
-            }else {
-                this.isActiveAl=true
-            }
-        },
-    }
-})
-</script>
-<script type="text/javascript">
-var vm = new Vue({
-    delimiters: ['{!', '!}'],
-    el:'#app2',
-    data:{
-        login_user:"",
-        status:"",
-        isActiveIn:"",
-        isActiveSi:"",
-        isActiveAl:""
-
-    },
-    created(){
-        this.isactive()
-    },
-    methods:{
-        //样式绑定
-        isactive(){
-            var url = window.location.href;
-            console.log(url);
-            if (url.indexOf("index")>=0){
-                this.isActiveIn = true
-            }else if(url.indexOf("singleInterface")){
-                this.isActiveSi=true
-            }else {
-                this.isActiveAl=true
-            }
-        },
+        changeTab(params){
+            window.location.href("/"+params)
+        }#}
     }
 })
 </script>

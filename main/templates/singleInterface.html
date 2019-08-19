@@ -1,8 +1,9 @@
-{% extends 'basemain.html' %}
+{% extends 'index.html' %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
     <!--<div class="row" style="border: #337ab7">-->
- <p class="row">
+<div class="col-md-10 row" id ="app2">
+ <div class="row">
 	<form class="bs-example bs-example-form" role="form">
 		<div class="row" >
 			<div class="col-lg-9">
@@ -206,13 +207,15 @@
          </div>
      </div>
 </div>
+</div>
 {% endblock %}
-{% block vuejs %}
+{% block vuejs1 %}
 <script type="text/javascript">
 var vm = new Vue({
     delimiters: ['{!', '!}'],
-    el:'#app3',
+    el:'#app2',
     data:{
+
         //样式选中互斥
         showState: 0,
         showbodyState:0,
@@ -264,7 +267,6 @@ var vm = new Vue({
         url:"",
         result:"",
         checked:true,
-       {% comment %} //head的值保存
         header_key:"",
         header_value:"",
         bodyF_name:"",
@@ -276,9 +278,14 @@ var vm = new Vue({
         bodyX_name:"",
         bodyX_type:"",
         bodyX_value:"",
-        raw_value:""{% endcomment %}
+        raw_value:"",
         count:1
 
+    },
+    created(){
+       vm1.$data.isActiveSi=true;
+       vm1.$data.isActiveIn=false;
+       vm1.$data.isActiveAl=false
     },
     methods:{
         changeCss(params){

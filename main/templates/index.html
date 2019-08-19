@@ -1,4 +1,79 @@
 {% extends 'basemain.html' %}
 {% block title %}<title> 首页</title> {% endblock %}
+{% block content1 %}
+    <div class="col-md-2" id ="app1">
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" v-bind:class="{active:isActiveIn}" ><a @click="changeTab('index')">首页</a></li>
+        <li role="presentation" v-bind:class="{active:isActiveSi}" ><a href="/singleInterface/"
+              >单接口</a></li>
+        <li role="presentation" v-bind:class="{active:isActiveAl}" ><a @click="changeTab('allInterface')"
+        href="/yyBroke/wm">接口list</a></li>
+    </ul>
+    </div>
+{% endblock %}
+
 {% block content %}
 {% endblock %}
+{% block vuejs %}
+<script type="text/javascript">
+var vm1 = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#app1',
+    data:{
+        isActiveIn:true,
+        isActiveSi:false,
+        isActiveAl:false
+    },
+    created(){
+
+        this.getUsername();
+    },
+    methods:{
+        //获取cookie
+        getCookie(cname){
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            console.log(ca);
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                console.log(c);
+                var key = c.split("=")[0];
+                if(cname===key){
+                    let cookie_value = c.split("=")[1];
+                    return cookie_value
+                }
+            }
+        return "";
+      },
+        //赋值username
+        getUsername(){
+            var usename = this.getCookie("usename");
+            console.log(usename);
+            if (usename===""){
+                vm.$data.status = "";
+                vm.$data.login_user = "";
+            }else{
+                vm.$data.status="success";
+                vm.$data.login_user = usename;
+                //window.location.href="/index/";
+            }
+            console.log(this.status);
+        },
+        //样式绑定
+        changeTab(params){
+            var url = "/"+params+"/";
+            console.log(url);
+            axios.get(url).then(resp =>{
+                        this.result = resp.data
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                    })
+            }
+        }
+})
+</script>
+{% block vuejs1 %}
+{% endblock %}
+{% endblock %}
+
+

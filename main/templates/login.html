@@ -3,6 +3,7 @@
 {% block navbar %}
 {% endblock %}
 {% block content %}
+<div id="app2">
 <div class="col-md-4"></div>
 <div class=" col-md-4  panel panel-default" style="margin-top: 150px;" >
     <div class="panel-body">
@@ -12,7 +13,7 @@
                <h3 style="text-align: center">登录</h3>
                <div class="col-sm-1"></div>
               <label  class="col-sm-4 control-label">登录名</label>
-              <div class="col-sm-4">
+              <div class="col-sm-7">
                  <input type="text" class="form-control" name="username" v-model="username"
                     placeholder="请输入用户名">
               </div>
@@ -20,7 +21,7 @@
            <div class="form-group">
                <div class="col-sm-1"></div>
               <label  class="col-sm-4 control-label">密码</label>
-              <div class="col-sm-4">
+              <div class="col-sm-7">
                  <input type="password" class="form-control" name="password" v-model="password"
                     placeholder="请输入密码">
               </div>
@@ -36,26 +37,54 @@
     </div>
 </div>
 <div class="col-md-4"></div>
+</div>
 {% endblock %}
 {% block vuejs %}
 <script type="text/javascript">
-var vm = new Vue({
+var vm0 = new Vue({
     delimiters: ['{!', '!}'],
-    el:'#app',
+    el:'#app2',
     data:{
         username :"",
         password:"",
-        status:"",
-        login_user:"",
+        //login_user:vm.$data.login_user,
         login_error:""
     },
     create(){
-        this.setCookie("usename",this.username);
-        localStorage.setItem("usename",this.username)
+        //this.getUsername()
     },
     methods:{
+        //赋值username
+        getUsername(){
+            var usename = this.getCookie("usename");
+            console.log(usename);
+            if (usename===""){
+                this.status = "";
+                this.login_user = "";
+            }else{
+                this.status="success";
+                this.login_user = usename;
+                //window.location.href="/index/";
+            }
+            console.log(this.status);
+        },
         //设置cookie
-            setCookie(cname, cvalue) {
+        getCookie(cname){
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            console.log(ca);
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                console.log(c);
+                var key = c.split("=")[0];
+                if(cname===key){
+                    let cookie_value = c.split("=")[1];
+                    return cookie_value
+                }
+            }
+        return "";
+      },
+        setCookie(cname, cvalue) {
                 let path = '/';
                 console.info(cname + "=" + cvalue );
                 document.cookie = cname + "=" + cvalue+';path='+path;
@@ -69,16 +98,17 @@ var vm = new Vue({
             axios.post('/login/',data_to_send)
                 .then(resp =>{
                         if (resp.data.status==="success"){
-                            this.setCookie("usename",this.username);
+                            //this.setCookie("usename",this.username);
                             console.log(resp.data);
-                            this.status = resp.data.status;
-                            this.login_user = resp.data.username;
                             window.location.href="/index/";
+                            vm.$data.status = resp.data.status;
+                            vm.$data.login_user = resp.data.username;
+                            console.log(vm.$data.status,vm.$data.login_user)
                         }else{
                             console.log(resp.data);
-                            this.login_error = resp.data.message
+                            this.login_error = resp.data.message;
+                            this.status="fail"
                         }
-
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
