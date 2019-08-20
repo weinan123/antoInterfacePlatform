@@ -1,0 +1,284 @@
+{% extends 'index.html' %}
+{% block title %}<title> 接口场景用例</title> {% endblock %}
+
+{% block content %}
+    <div class="col-md-10 row" id="apiinfopage">
+        <ul class="breadcrumb">
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/projectList/">接口列表</a></li>
+            <li class="active" id="path">{! pid !}：</li>
+        </ul>
+        <div class="col-md-4" style="width:100%;">
+            <div style="display:inline-block;float: left;">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newapi">新建用例</button>
+                <!-- 模态框（Modal） -->
+                <div class="modal fade" id="newapi" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content" id="newinfo">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="newapiLabel">
+                                    新建接口用例
+                                </h4>
+                            </div>
+
+                            <div class="modal-body">
+                                <label for="apiName">接口名称：</label>
+                                <input type="text" class="form-control" id="apiName" v-model="newname"
+                                    placeholder="请输入...">
+                                <p>newname: {! newname !}</p>
+                                <label for="apiListName">所属接口列表：</label>
+                                <input v-model="pid" class="form-control" id="apiListID" disabled="disabled">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                </button>
+                                <input type="submit" class="btn btn-primary" @click="addapi()" data-dismiss="modal"/>
+                            </div>
+
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+                <div id="batch" style="display:inline-block;">
+                    <button type="button" class="btn btn-primary" id="batchsel" @click="batchrun()" v-if="changeseen">批量选择</button>
+                    <button type="button" class="btn btn-primary" id="batchexe" v-if="!changeseen">批量执行</button>
+                    <button type="button" class="btn btn-primary" id="batchdel" v-if="!changeseen">批量删除</button>
+                </div>
+            </div>
+
+            <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="search" v-model="searchinfo"
+                        placeholder="请输入搜索文本">
+                </div>
+                <button type="submit" class="btn btn-default" @click="search()">搜索</button>
+            </div>
+            <div style="display:inline-block;float: right;">
+                <div class="container-fluid" id="envrionment">
+                    <select v-model="selected" name="envrionment">
+                        <option value="">选择环境</option>
+                        <option value="qa">QA</option>
+                        <option value="stage">Stage</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="start">
+            <p>{! proname !}：</p>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>接口说明</th>
+                    <th>操作</th>
+                    <th>上一次执行结果</th>
+                    <th>上一次执行时间</th>
+                    <th>创建者</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(info,index) in result.data">
+                        <td><label class="form-check-label" v-if="seen">
+                            <input type="checkbox" class="selBtn" id="selBtn">
+                            </label>
+                            {! index+1 !}
+                        </td>
+                        <td>{! info.name !}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary">查看编辑</button>
+                            <button type="button" class="btn btn-primary">执行</button>
+                            <button type="button" class="btn btn-primary" @click="delapi(result.data[index].id)">删除</button>
+                        </td>
+                        <td>
+                            <p v-if="info.lastrunrslt ===  'null'">无</p>
+                            <p v-else-if="info.lastrunrslt === true">Pass</p>
+                            <p v-else>Fail</p>
+                        </td>
+                        <td>
+                            <p v-if="info.lastruntime ===  'null'">无</p>
+                            <p v-else>{! info.lastruntime !}</p>
+                        </td>
+                        <td>{! info.owing !}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-if="seen">
+                <label class="form-check-label" v-if="seen">
+                    <input type="checkbox" id="selAllBtn" class="selAllBtn">
+                </label><span>&nbsp;全选</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block vuejs1 %}
+<script type="text/javascript">
+var proid = "";
+var apilist = new Vue({
+    delimiters: ['{!', '!}'],
+    el:"#start",
+    data:{
+        result:'',
+        proname:'',
+        seen:false,
+    },
+    created(){
+        var id=this.getparam('pid');
+        proid = id;
+        this.getlist(id);
+        vm1.$data.isActiveSi = false;
+        vm1.$data.isActiveIn = false;
+        vm1.$data.isActiveAl = true;
+    },
+    methods:{
+        getlist(id){
+            axios.get('/apiInfo/',{
+                params: {
+                    pid:id
+                }
+            })
+                .then(resp =>{
+                    console.log(resp.data);
+                    this.result = resp.data;
+                    this.proname = resp.data['data'][0].listname;
+                }).catch(err=> {
+                console.log('请求失败:' + err.status + ',' + err.statusText);
+            })
+        },
+        getparam(str){
+            var argsstr = location.search.substr(1);
+            var param={};
+            console.log(argsstr);
+            if(argsstr !== ""){
+                var strs = argsstr.split("&");
+                for(var i = 0; i < strs.length; i++) {
+                     param[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+                }
+            }
+            return param[str];
+        },
+        delapi(id){
+            if (!confirm("确认要删除？")) {
+                window.event.returnValue = false;
+            }else {
+                console.log('id=' + id);
+                axios.post('/apidelete/', {
+                    params: {
+                        aid: id
+                    }
+                })
+                    .then(resp => {
+                        this.result = resp.data;
+                        console.log(resp.data);
+                        let info = resp.data.info;
+                        let code = resp.data.code;
+                        if (code === 0) {
+                            alert("删除成功");
+                            window.location.reload(true);
+                        } else {
+                            alert("删除失败:" + info);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
+            }
+        },
+    }
+});
+
+var env = new Vue({
+    el:'#envrionment',
+    data:{
+        selected:''
+    }
+});
+
+var path = new Vue({
+    delimiters: ['{!', '!}'],
+    el:"#path",
+    data:{
+        pid: proid,
+        pname:apilist.proname,
+    }
+
+});
+let ninfo = new Vue({
+    delimiters: ['{!', '!}'],
+    el:"#newinfo",
+    data:{
+        pid:proid,
+        newname:"",
+        username:'alina',
+        result:"",
+        pname: apilist.result,
+    },
+    methods: {
+        addapi() {
+            axios.post('/addApi/', {
+                params: {
+                    listid: this.pid,
+                    apiname: this.newname,
+                    user:this.username
+                }
+            })
+                .then(resp => {
+                    console.log(resp.data);
+                    this.result = resp.data;
+                    let code = resp.data.code;
+                    let info = resp.data.info;
+                    if(code === 0){
+                        alert("提交成功");
+                        window.location.reload(true);
+                    }else{
+                        alert("提交失败:" + info);
+                    }
+                }).catch(err => {
+                console.log('请求失败:' + err.status + ',' + err.statusText);
+            })
+        }
+    }
+});
+let batchrun = new Vue({
+    delimiters: ['{!', '!}'],
+    el:"#batch",
+    data:{
+        changeseen:true,
+    },
+    methods: {
+        batchrun(){
+            apilist.seen = this.changeseen;
+            this.changeseen = false;
+        }
+    }
+});
+let search = new Vue({
+    delimiters: ['{!', '!}'],
+    el:"#search",
+     data:{
+         searchinfo : '',
+         listid:proid,
+    },
+    methods: {
+        search(){
+            // if(this.searchinfo !== ""){
+                axios.get('/searchinfo/', {
+                params: {
+                    listid: this.listid,
+                    searinfo:this.searchinfo,
+                },
+                })
+                .then(resp => {
+                    console.log(resp.data);
+                    apilist.$data.result = resp.data;
+                }).catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                })
+            // }
+        }
+    }
+});
+</script>
+{% endblock %}
