@@ -36,5 +36,6 @@ urlpatterns = [
     url(r'^apiInfopage/$', apiinfo.allinfopage),
     url(r'^addApi/$', apiinfo.addApi),
     url(r'^apidelete/$', apiinfo.apidel),
-
+    url(r'^searchinfo/$', apiinfo.searchapi),
+    url(r'^getlistpath/$', apiinfo.getlistpath),
 ]
