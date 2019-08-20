@@ -3,7 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 from django.shortcuts import render
-from apimodel.models import apiInfoTable, interfaceList
+from models import apiInfoTable, interfaceList
 import time
 import json
 from django.http.response import JsonResponse
