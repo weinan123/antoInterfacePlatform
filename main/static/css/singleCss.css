@@ -1,8 +1,6 @@
 .active{
     color: blue;
     cursor: default;
-    background-color: #fff;
-    border: 1px solid #ddd;
     border-bottom-color: transparent;
 }
 .display{
