@@ -29,6 +29,7 @@
             </div>
 		</div><!-- /.row -->
 	</form>
+
     <ul class="nav nav-tabs" >
         <li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
         <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
@@ -60,7 +61,7 @@
         </label>
         </div>
     </div>
-    <table class="table table-bordered" v-if="(showState === 0) " style="width: 70%">
+    <table class="table table-bordered" v-if="(showState === 0) " style="width: 70%" >
           <thead>
             <tr>
               <th>标签</th>
@@ -70,7 +71,7 @@
           </thead>
           <tbody>
             <tr v-for="headerVal,index in headerVals">
-                <td col-xs-4><select class="form-control" name="selectPrior" v-model="headerVals[index]. mol_type">
+                <td col-xs-4><select class="form-control" name="selectPrio" v-model="headerVal.type" >
                     <option value="" selected>头部标签</option>
                     <option value="Content-Type" >Content-Type</option>
                     <option value="Accept" >Accept</option>
@@ -83,8 +84,8 @@
                     <option value="Connection" >Connection</option>
                     <option value="Authorization" >Authorization</option>
                 </select></td>
-                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVals[index].mol_val" value="{{  headerVal.value }}"></td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState=false)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader(index)">删除</button></td>
             </tr>
           </tbody>
@@ -100,13 +101,13 @@
           </thead>
           <tbody>
             <tr v-for="bodyFVal in bodyFVals">
-                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyF_name">{{ bodyFVal.name }}</td>
-                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyF_type">
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyFVal.name">{{ bodyFVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyFVal.type">
                     <option value="Text" selected>Text</option>
                     <option value="file" >file</option>
                 </select></td>
-                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyF_value">{{ bodyFVal.value }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">{{ bodyFVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
             </tr>
           </tbody>
@@ -122,8 +123,8 @@
           </thead>
           <tbody>
             <tr v-for="bodyJVal in bodyJVals">
-                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyJ_name">{{ bodyJVal.name }}</td>
-                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyJ_type">
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyJVal.name">{{ bodyJVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyJVal.type">
                     <option value="String" selected>String</option>
                     <option value="boolean" >boolean</option>
                     <option value="array" >array</option>
@@ -131,8 +132,8 @@
                     <option value="object" >object</option>
                     <option value="null" >null</option>
                 </select></td>
-                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJ_value" >{{ bodyJVal.value }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader($index)">增加</button>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJVal.value" >{{ bodyJVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
             </tr>
           </tbody>
@@ -148,13 +149,13 @@
           </thead>
           <tbody>
             <tr v-for="bodyXVal in bodyXVals">
-                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyX_name">{{ bodyXVal.name }}</td>
-                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyX_type" >
+                <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyXVal.name">{{ bodyXVal.name }}</td>
+                <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyXVal.type" >
                     <option value="Object" selected>Object</option>
 
                 </select></td>
-                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyX_value">{{ bodyXVal.value }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertHeader()">增加</button>
+                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyXVal.value">{{ bodyXVal.value }}</td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
             </tr>
           </tbody>
@@ -195,11 +196,10 @@
     <p v-if="showState === 4">444444</p>
     <p v-if="showState === 5">5555555</p>
     <p v-if="showState === 6">66666666</p>
-    {% comment %}<component :is="selectName"></component>{% endcomment %}
-     <div class="row" style="width:75% " >
+    <div class="row" style="width:75% " >
          <div class="col-lg-6 form-group">
                 <label for="name">请求数据</label>
-                <textarea class="form-control" rows="15"></textarea>
+                <textarea v-model="request_infor" class="form-control" rows="15"></textarea>
          </div>
          <div class="col-lg-6 form-group">
                 <label for="name">请求结果</label>
@@ -215,7 +215,6 @@ var vm = new Vue({
     delimiters: ['{!', '!}'],
     el:'#app2',
     data:{
-
         //样式选中互斥
         showState: 0,
         showbodyState:0,
@@ -226,6 +225,8 @@ var vm = new Vue({
         isActive4:false,
         isActive5:false,
         isActive6:false,
+        header:"",
+
         listcass:[{
             active:"active",
             num:0,
@@ -238,17 +239,9 @@ var vm = new Vue({
         }],
         //增加删除列表
         headerVals:[{
-            mol_type:"",
-            mol_val:"",
             type:"",
             value:""
         }],
-        newheaderVals:{
-            mol_type:"",
-            mol_val:"",
-            type:"",
-            value:""
-        },
         bodyFVals:[{
             name:"",
             value:""
@@ -266,6 +259,7 @@ var vm = new Vue({
         //请求url
         url:"",
         result:"",
+        request_infor:"",
         checked:true,
         header_key:"",
         header_value:"",
@@ -364,20 +358,32 @@ var vm = new Vue({
         showBodyform(params){
             this.showbodyState = params;
         },
-        insertHeader(){
-            var num=0;
-            num = num+this.count;
-            var str_params=String(this.count);
-            console.log(this.count);
-            this.newheaderVals.mol_type="type"+str_params;
-            this.newheaderVals.mol_val="value"+str_params;
-            this.headerVals.push(this.newheaderVals);
-            this.count=this.count+1
+        insertTable(params,params1){
+            console.log(params);
+            var newheaderVals={
+                type:"",
+                value:""
+            };
+            var newheaderVals1={
+                type:"",
+                name:"",
+                value:""
+            };
+            if(params===0){
+                this.headerVals.push(newheaderVals);
+            }else if(params===1&&params1===0){
+                this.bodyFVals.push(newheaderVals1)
+            }else if(params===1&&params1===1){
+                this.bodyJVals.push(newheaderVals1)
+            }else if(params===1&&params1===2){
+                this.bodyXVals.push(newheaderVals1)
+            }
+
         },
         deleteHeader(index){
             var length = this.headerVals.length;
             console.log(length);
-            if(length > 2){
+            if(length > 1){
                 this.headerVals.splice(index, 1)
             }
         },
@@ -385,22 +391,39 @@ var vm = new Vue({
             this.method = params
         },
         sendQuest(){
-             var method = this.method;
+             var methods = this.method;
              var posturl = this.url;
-             console.log(posturl);
-             if(method==="GET"){
-                 axios.get('/getRequest/',{ params:{
-                     url:posturl
-                     } })
-                .then(resp =>{
-                        console.log(resp.data);
-                        this.result = resp.data
-
-                    }).catch(err=>{
-                        console.log('请求失败:'+err.status+','+err.statusText);
-                })
+             var headerinfor="";
+             for (var i=0;i<this.headerVals.length;i++){
+                 var Htype = this.headerVals[i].type;
+                 var Hvalue=this.headerVals[i].value;
+                 var headerinfor={
+                     Htype:Htype,
+                     Hvalue:Hvalue
+                 };
+                 headerinforA.push(headerinfor)
              }
-        }
+
+             console.log(content);
+             var hreader_str=JSON.stringify(headerinforA);
+             var request_str = "请求方式："+ methods +"\n" +"请求地址："+ posturl+"\n"+"请求头部："+hreader_str;
+             this.request_infor = request_str
+             }
+
+
+             {#if(method==="GET"){#}
+             {#    axios.get('/getRequest/',{ params:{#}
+             {#        url:posturl#}
+             {#        } })#}
+             {#   .then(resp =>{#}
+             {#           console.log(resp.data);#}
+             {#           this.result = resp.data#}
+             {##}
+             {#       }).catch(err=>{#}
+             {#           console.log('请求失败:'+err.status+','+err.statusText);#}
+             {#   })#}
+
+
     },
 }).$mount('div')
 </script>
