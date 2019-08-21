@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from main import views  as main
+from main import views as main
 from main import apiinfo
 from main import projectList
 
@@ -38,4 +38,6 @@ urlpatterns = [
     url(r'^apidelete/$', apiinfo.apidel),
     url(r'^searchinfo/$', apiinfo.searchapi),
     url(r'^getlistpath/$', apiinfo.getlistpath),
+    url(r'^batchdel/$', apiinfo.batchdel),
+
 ]
