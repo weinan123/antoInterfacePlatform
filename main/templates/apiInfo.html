@@ -43,8 +43,8 @@
             </div>
             <div id="batch" style="display:inline-block;">
                 <button type="button" class="btn btn-primary" id="batchsel" @click="batchrun()">批量操作</button>
-                <button type="button" class="btn btn-primary" id="batchexe" v-if="!changeseen">批量执行</button>
-                <button type="button" class="btn btn-primary" id="batchdel" v-if="!changeseen">批量删除</button>
+                <!-- <button type="button" class="btn btn-primary" id="batchexe" v-if="!changeseen">批量执行</button> -->
+                <!-- <button type="button" class="btn btn-primary" id="batchdel" v-if="!changeseen" @click="batchdel()">批量删除</button> -->
             </div>
         </div>
         <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
@@ -81,7 +81,7 @@
             <tbody ref="tables">
                 <tr v-for="(info,index) in result.data">
                     <td><label class="form-check-label" v-if="seen">
-                        <input type="checkbox" class="selBtn" id="selBtn" @click="changeSel()">
+                        <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
                         </label>
                         {! index+1 !}
                     </td>
@@ -89,7 +89,7 @@
                     <td>
                         <button type="button" class="btn btn-primary">查看编辑</button>
                         <button type="button" class="btn btn-primary">执行</button>
-                        <button type="button" class="btn btn-primary" @click="delapi(result.data[index].id)">删除</button>
+                        <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
                     </td>
                     <td>
                         <p v-if="info.lastrunrslt ===  'null'">无</p>
@@ -108,7 +108,11 @@
         <div v-if="seen" ref="selall">
             <label class="form-check-label" v-if="seen">
                 <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
-            </label><span>&nbsp;全选</span>
+            </label><span>&nbsp;全选&nbsp;</span>
+            <button type="button" class="btn btn-default btn-sm" id="batchexe" v-if="seen" style="padding: 2px 6px;">批量执行</button>
+            <button type="button" class="btn btn-default btn-sm" id="batchdel" v-if="seen" @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+            <p>{! dlist !}</p>
+
         </div>
     </div>
     </div>
@@ -124,7 +128,7 @@
             result:'',
             proname:'',
             seen:false,
-            checkValues:[],
+            dlist:[],
         },
         created(){
             let id=this.getparam('pid');
@@ -193,34 +197,89 @@
                 console.log(checked);
                 let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
                 console.log(checkDom);
-                let idArray = [];
                 if(checked){
                     for(var i=0;i<checkDom.length;i++){
                         checkDom[i].checked=true;
+                        let checkvalue = parseInt(checkDom[i].value);
+                        console.log(this.dlist.indexOf(checkvalue));
+                        if(this.dlist.indexOf(checkvalue) === -1){
+                            this.dlist.push(checkvalue);
+                        }
                     }
                 }else{
                     for(i=0;i<checkDom.length;i++){
                         checkDom[i].checked=false;
+                        let index = this.dlist.indexOf(parseInt(checkDom[i].value));
+                        if (index > -1) {
+                            this.dlist.splice(index, 1);
+                        }
                     }
                 }
             },
-            changeSel(){
+            changeSel(id, e){
+                console.log("-------------");
+                console.log(id);
+                let chev = e.target.checked;
+                console.log(chev);
+                if(chev === true) {
+                    if(this.dlist.indexOf(id) === -1) {
+                        this.dlist.push(id);
+                    }
+                }
+                else {
+                    let index = this.dlist.indexOf(id);
+                        if (index > -1) {
+                            this.dlist.splice(index, 1);
+                        }
+                }
                 let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
+                console.log(checkDom);
                 let vlist = [];
                 let sums=0;
                 console.log(checkDom.length);
                 for(let i=0;i<checkDom.length;i++){
                     vlist[i] = checkDom[i].checked;
-                    if(checkDom[i].checked){
+                    if(vlist[i]){
                         sums += 1;
                     }
                 }
                 console.log(vlist);
                 console.log(sums);
-                if(sums === 3){
+                if(sums === checkDom.length){
                     return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=true;
                 }else{
                     return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=false;
+                }
+            },
+            batchdel(){
+                let dellist = this.dlist;
+                console.log("********************");
+                console.log(dellist);
+                console.log(dellist.length);
+                if (dellist.length !== 0) {
+                    if (!confirm("删除之后无法恢复，确认要删除？")) {
+                        window.event.returnValue = false;
+                    }else {
+                        axios.post('/batchdel/', {
+                            params: {
+                                idList: dellist,
+                            },
+                        })
+                            .then(resp => {
+                                console.log(resp.data);
+                                let code = resp.data.code;
+                                let info = resp.data.info;
+                                if (code === 0) {
+                                    alert("测试环境做的假删除，结果：" + info);
+                                    window.location.reload(true);
+                                }else{
+                                    alert("删除失败");
+                                }
+                            })
+                            .catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                            })
+                    }
                 }
             }
         }
@@ -265,33 +324,54 @@
         data:{
             pid:proid,
             newname:"",
-            username:'alina',
+            username:'',
             result:"",
             pname: "",
         },
         methods: {
-            addapi() {
-                axios.post('/addApi/', {
-                    params: {
-                        listid: this.pid,
-                        apiname: this.newname,
-                        user:this.username
+            getCookie(cname){
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                console.log(ca);
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    var key = c.split("=")[0];
+                    if(cname===key){
+                        let cookie_value = c.split("=")[1];
+                        return cookie_value
                     }
-                })
-                    .then(resp => {
-                        console.log(resp.data);
-                        this.result = resp.data;
-                        let code = resp.data.code;
-                        let info = resp.data.info;
-                        if(code === 0){
-                            alert("提交成功");
-                            window.location.reload(true);
-                        }else{
-                            alert("提交失败:" + info);
+                }
+                return "";
+            },
+            addapi() {
+                var username = this.getCookie("usename");
+                console.log(username);
+                console.log("username:");
+                if((username !== "") && (username !== null)){
+                    axios.post('/addApi/', {
+                        params: {
+                            listid: this.pid,
+                            apiname: this.newname,
+                            user: username,
                         }
-                    }).catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
+                    })
+                        .then(resp => {
+                            console.log(resp.data);
+                            this.result = resp.data;
+                            let code = resp.data.code;
+                            let info = resp.data.info;
+                            if (code === 0) {
+                                alert("提交成功");
+                                window.location.reload(true);
+                            } else {
+                                alert("提交失败:" + info);
+                            }
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
+                }else{
+                    alert("请先登录")
+                }
             }
         }
     });
@@ -304,9 +384,9 @@
         methods: {
             batchrun(){
                 apilist.seen = this.changeseen;
-                //this.changeseen = false;
                 this.changeseen = !this.changeseen
-            }
+            },
+
         }
     });
     let search = new Vue({
