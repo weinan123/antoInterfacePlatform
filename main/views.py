@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
-import json,time
-from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
-from .models import *
+import json
+from django.http import HttpResponse, JsonResponse
 import requests
 from forms import UserForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 
-from until import my_login
+from .untils.until import my_login,mul_bodyData
 @my_login
 def index(request):
     if request.method == 'GET':
@@ -89,12 +88,27 @@ def register(request):
     return render(request, 'register.html', {'uf': uf})
 def singleInterface(request):
     return render(request, 'singleInterface.html')
-def getRequest(request):
-    url = request.GET["url"]
-    print url
-    response = requests.get(url)
+def sendRequest(request):
+    data = json.loads(request.body)
+    methods = data["methods"]
+    url = data["url"]
+    headers = data["headers"]
+    bodyinfor = data["bodyinfor"]
+    #处理数据类型的方法
+    send_body = mul_bodyData(bodyinfor)
+    if(methods=="GET"):
+        response = requests.get(url,headers =headers,params=send_body,verify=False)
+    elif(methods=="POST"):
+        response = requests.post(url, headers=headers, data=json.dumps(send_body), verify=False)
+    return_data = {
+        "status_code": response.status_code,
+        "result_content": response.text.decode("utf-8"),
+        "times": str(response.elapsed.total_seconds())
+    }
+    return JsonResponse(return_data,safe=False)
 
-    return HttpResponse(response.content)
+
+
 
 
 
