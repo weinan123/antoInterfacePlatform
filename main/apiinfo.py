@@ -3,7 +3,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList
+from apimodel.models import apiInfoTable, interfaceList
 import time
 import json
 from django.http.response import JsonResponse
@@ -159,4 +159,30 @@ def getlistpath(request):
             json_list.append(json_dict)
             print json_list
             result = {'code':0,'data':json_list,'info':'success'}
+    return JsonResponse(result)
+
+def batchdel(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        idlist = req['idList']
+        print idlist
+        slist = []
+        flist = []
+        for id in idlist:
+            # id = ids[0]
+            ainfo = apiInfoTable.objects.get(apiID=id)
+            if ainfo:
+                try:
+                    # ainfo.delete()
+                    print("删除%d成功" % id)
+                    slist.append(id)
+                except BaseException as e:
+                    flist.append(id)
+                    print("删除%d失败:%s" % (id, str(e)))
+            else:
+                flist.append(id)
+                print("删除%d失败:不存在" % id)
+        infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
+        result = {'code': 0, 'info': infos}
     return JsonResponse(result)
