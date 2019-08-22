@@ -14,10 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from main import views  as main
+from main import views as main
 from main import apiinfo
 from main import projectList
-
 urlpatterns = [
     url(r'^$', main.index),
     url(r'^index/$', main.index),
@@ -32,11 +31,13 @@ urlpatterns = [
     url(r'^projectBatchDelete/$', projectList.projectBatchDelete),
     url(r'^projectEdit/$', projectList.projectEdit),
     url(r'^singleInterface/$', main.singleInterface),
-    url(r'^getRequest/$', main.getRequest),
+    url(r'^sendRequest/$', main.sendRequest),
     url(r'^apiInfo/$', apiinfo.allinfo),
     url(r'^apiInfopage/$', apiinfo.allinfopage),
     url(r'^addApi/$', apiinfo.addApi),
     url(r'^apidelete/$', apiinfo.apidel),
     url(r'^searchinfo/$', apiinfo.searchapi),
     url(r'^getlistpath/$', apiinfo.getlistpath),
+    url(r'^batchdel/$', apiinfo.batchdel),
+
 ]

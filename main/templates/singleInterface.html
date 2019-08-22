@@ -21,10 +21,12 @@
 					<input v-model="url" type="text" class="form-control" placeholder="请求地址">
 				</div><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
-            <div class="col-lg-1"></div>
             <div class="col-lg-2">
+                <button id="fat-btn" class="btn btn-success" data-loading-text="Loading..."
+                type="button" @click="sendQuest()">测试
+                </button>
                 <button id="fat-btn" class="btn btn-primary" data-loading-text="Loading..."
-                type="button" @click="sendQuest()">发送
+                type="button" @click="saveQuest()">保存
                 </button>
             </div>
 		</div><!-- /.row -->
@@ -86,7 +88,7 @@
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState=false)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader(index)">删除</button></td>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState=false)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -100,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bodyFVal in bodyFVals">
+            <tr v-for="bodyFVal,index in bodyFVals">
                 <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyFVal.name">{{ bodyFVal.name }}</td>
                 <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyFVal.type">
                     <option value="Text" selected>Text</option>
@@ -108,7 +110,7 @@
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">{{ bodyFVal.value }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -122,7 +124,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bodyJVal in bodyJVals">
+            <tr v-for="bodyJVal,index in bodyJVals">
                 <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyJVal.name">{{ bodyJVal.name }}</td>
                 <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyJVal.type">
                     <option value="String" selected>String</option>
@@ -134,7 +136,7 @@
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJVal.value" >{{ bodyJVal.value }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -148,7 +150,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="bodyXVal in bodyXVals">
+            <tr v-for="bodyXVal,index in bodyXVals">
                 <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="bodyXVal.name">{{ bodyXVal.name }}</td>
                 <td col-xs-4><select class="form-control" name="selectPrior" v-model="bodyXVal.type" >
                     <option value="Object" selected>Object</option>
@@ -156,14 +158,14 @@
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyXVal.value">{{ bodyXVal.value }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader($index)">删除</button></td>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
     <div class="row" style="width:75% " v-if="(showState === 1 && showbodyState === 3) ">
          <div class="col-lg-12 form-group">
                 <label for="name">ROW数据</label>
-                <textarea class="form-control" rows="15" v-model="raw_value"></textarea>
+                <textarea class="form-control" rows="15" v-model="rawValue"></textarea>
          </div>
      </div>
     <table class="table table-bordered" v-if="showState === 2">
@@ -201,9 +203,11 @@
                 <label for="name">请求数据</label>
                 <textarea v-model="request_infor" class="form-control" rows="15"></textarea>
          </div>
-         <div class="col-lg-6 form-group">
+         <div class="col-lg-6 form-group" >
                 <label for="name">请求结果</label>
-                <textarea v-model="result" class="form-control" rows="15"></textarea>
+                <div id="jsoneditor">
+                {% comment %}<textarea id="jsoneditor" v-model="result" class="json-editor" rows="15"></textarea>{% endcomment %}
+                </div>
          </div>
      </div>
 </div>
@@ -226,7 +230,7 @@ var vm = new Vue({
         isActive5:false,
         isActive6:false,
         header:"",
-
+        resultData:{},
         listcass:[{
             active:"active",
             num:0,
@@ -243,14 +247,17 @@ var vm = new Vue({
             value:""
         }],
         bodyFVals:[{
+            type:"",
             name:"",
             value:""
         }],
         bodyJVals:[{
+            type:"",
             name:"",
             value:""
         }],
         bodyXVals:[{
+            type:"",
             name:"",
             value:""
         }],
@@ -261,27 +268,24 @@ var vm = new Vue({
         result:"",
         request_infor:"",
         checked:true,
-        header_key:"",
-        header_value:"",
-        bodyF_name:"",
-        bodyF_type:"",
-        bodyF_value:"",
-        bodyJ_name:"",
-        bodyJ_type:"",
-        bodyJ_value:"",
-        bodyX_name:"",
-        bodyX_type:"",
-        bodyX_value:"",
-        raw_value:"",
+        rawValue:"",
         count:1
 
     },
     created(){
        vm1.$data.isActiveSi=true;
        vm1.$data.isActiveIn=false;
-       vm1.$data.isActiveAl=false
+       vm1.$data.isActiveAl=false;
+       this.getEdit(this.resultData)
     },
     methods:{
+        getEdit(json){
+            var container = document.getElementById('jsoneditor');
+            var options = {
+                mode: 'view'
+              };
+            var editor = new JSONEditor(container, options, json);
+        },
         changeCss(params){
             switch (params) {
                 case 0:
@@ -357,6 +361,61 @@ var vm = new Vue({
         },
         showBodyform(params){
             this.showbodyState = params;
+            if(params===0&&this.showState===1){
+                this.bodyJVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.bodyXVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.rawValue=""
+            }else if(params===1&&this.showState===1){
+                this.bodyFVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.bodyXVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.rawValue=""
+            }else if(params===2&&this.showState===1){
+                console.log(this.rawValue);
+                this.bodyFVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.bodyJVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.rawValue=""
+            }else if(params===3&&this.showState===1){
+                this.bodyFVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.bodyJVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+                this.bodyXVals=[{
+                    type:"",
+                    name:"",
+                    value:""
+                }];
+
+            }
         },
         insertTable(params,params1){
             console.log(params);
@@ -380,50 +439,96 @@ var vm = new Vue({
             }
 
         },
-        deleteHeader(index){
-            var length = this.headerVals.length;
-            console.log(length);
-            if(length > 1){
-                this.headerVals.splice(index, 1)
+        deleteHeader(index,params,params1){
+            var lengthHeader = this.headerVals.length;
+            var lengthBodyF = this.bodyFVals.length;
+            var lengthBodyX = this.bodyXVals.length;
+            var lengthBodyJ = this.bodyJVals.length;
+            if(params===0&&lengthHeader>1){
+                this.headerVals.splice(index, 1);
+            }else if(params===1&&params1===0&& lengthBodyF>1){
+                this.bodyFVals.splice(index, 1);
+            }else if(params===1&&params1===1&& lengthBodyJ>1){
+                this.bodyJVals.splice(index, 1);
+            }else if(params===1&&params1===2&& lengthBodyX>1){
+                this.bodyXVals.splice(index, 1);
             }
         },
         getMethod(params){
             this.method = params
         },
-        sendQuest(){
-             var methods = this.method;
-             var posturl = this.url;
-             var headerinfor="";
-             for (var i=0;i<this.headerVals.length;i++){
-                 var Htype = this.headerVals[i].type;
-                 var Hvalue=this.headerVals[i].value;
-                 var headerinfor={
-                     Htype:Htype,
-                     Hvalue:Hvalue
-                 };
-                 headerinforA.push(headerinfor)
-             }
-
-             console.log(content);
-             var hreader_str=JSON.stringify(headerinforA);
-             var request_str = "请求方式："+ methods +"\n" +"请求地址："+ posturl+"\n"+"请求头部："+hreader_str;
-             this.request_infor = request_str
-             }
-
-
-             {#if(method==="GET"){#}
-             {#    axios.get('/getRequest/',{ params:{#}
-             {#        url:posturl#}
-             {#        } })#}
-             {#   .then(resp =>{#}
-             {#           console.log(resp.data);#}
-             {#           this.result = resp.data#}
-             {##}
-             {#       }).catch(err=>{#}
-             {#           console.log('请求失败:'+err.status+','+err.statusText);#}
-             {#   })#}
-
-
+        sendQuest() {
+            var methods = this.method;
+            var posturl = this.url;
+            var headerinfor = {};
+            for (var i = 0; i < this.headerVals.length; i++) {
+                var Htype = this.headerVals[i].type;
+                var Hvalue = this.headerVals[i].value;
+                if(Htype!==""&&Hvalue!==""){
+                     headerinfor[Htype] = Hvalue
+                }
+            }
+            var bodyArr = [];
+            var bodyinfor = {};
+            //console.log(this.showState,this.showbodyState);
+            if (this.showState === 1 && this.showbodyState === 0) {
+                headerinfor["Content-Type"] = "multipart/form-data";
+                for (var j = 0; j < this.bodyFVals.length; j++) {
+                    bodyinfor = {};
+                    bodyinfor["参数类型"] = this.bodyFVals[j].type;
+                    bodyinfor["参数值"] = this.bodyFVals[j].value;
+                    bodyinfor["参数名"] = this.bodyFVals[j].name;
+                    bodyArr.push(bodyinfor)
+                }
+            }
+            else if (this.showState === 1 && this.showbodyState === 1) {
+                headerinfor["Content-Type"] = "application/json";
+                for (var k = 0; k < this.bodyJVals.length; k++) {
+                    bodyinfor = {};
+                    bodyinfor["参数类型"] = this.bodyJVals[k].type;
+                    bodyinfor["参数值"] = this.bodyJVals[k].value;
+                    bodyinfor["参数名"] = this.bodyJVals[k].name;
+                    bodyArr.push(bodyinfor)
+                }
+            }
+            else if (this.showState === 1 && this.showbodyState === 2) {
+                headerinfor["Content-Type"] = "application/xml";
+                for (var l = 0; l < this.bodyXVals.length; l++) {
+                    bodyinfor = {};
+                    bodyinfor["参数类型"] = this.bodyXVals[l].type;
+                    bodyinfor["参数值"] = this.bodyXVals[l].value;
+                    bodyinfor["参数名"] = this.bodyXVals[l].name;
+                    bodyArr.push(bodyinfor)
+                }
+            }
+            else if (this.showState === 1 && this.showbodyState === 3) {
+                bodyinfor = {};
+                headerinfor["Content-Type"] = "text/plain";
+                bodyinfor["参数值"] = this.rawValue;
+                bodyArr.push(bodyinfor)
+            }
+            var hreader_str = JSON.stringify(headerinfor);
+            var body_str = "";
+            for(var c=0;c<bodyArr.length;c++){
+                body_str =body_str+JSON.stringify(bodyArr[c]);
+            }
+            console.log(bodyArr);
+            var request_str = "请求方式："+ methods +"\n" +"请求地址："+ posturl+"\n"+"请求头部："+hreader_str+
+                                "\n"+"请求参数："+body_str;
+            this.request_infor = request_str;
+            data_to_send = {
+                methods:methods,
+                url:posturl,
+                headers:headerinfor,
+                bodyinfor:bodyArr
+            };
+            axios.post('/sendRequest/',data_to_send)
+             .then(resp =>{
+                        this.getEdit(resp.data)
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+        }
     },
 }).$mount('div')
 </script>

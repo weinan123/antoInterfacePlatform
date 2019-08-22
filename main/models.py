@@ -35,3 +35,8 @@ class apiInfoTable(models.Model):
     lastRunTime = models.DateTimeField(null=True, blank=True)
     creator = models.CharField(max_length=20,null=False)
     owningListID = models.ForeignKey('interfaceList',on_delete=models.CASCADE)
+    method = models.CharField(max_length=10)
+    url = models.URLField(blank=True)
+    headers = models.TextField(blank=True)
+    body = models.TextField(blank=True)
+    assertinfo = models.CharField(max_length=200, blank=True)
