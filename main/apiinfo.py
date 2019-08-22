@@ -222,7 +222,7 @@ def runrequest(sqlquery, id):
     bodys = sqlquery.body
     assertinfo = sqlquery.assertinfo
     if method == "" or url == "":
-        result = {"code": -1, "info": "参数不能为空"}
+        result = {"code": -1, "datas": "参数不能为空"}
         return result
     else:
         if header == "" or header is None:
