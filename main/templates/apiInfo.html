@@ -29,7 +29,7 @@
                             <input type="text" class="form-control" id="apiName" v-model="newname"
                                 placeholder="请输入...">
                             <label for="apiListName">所属接口列表：</label>
-                            <input v-model="pname" class="form-control" id="apiListID" disabled="disabled">
+                            <input v-model="pname" class="form-control" id="apiListName" disabled="disabled">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭
@@ -320,53 +320,55 @@
             },
             batchrun(){
                 let runlist = this.dlist;
-                let datas = this.result.data;
-                let method = "";
-                let url = "";
-                let flag = true;
-                for(let i=0;i<runlist.length;i++){
-                    let rid = runlist[i];
-                    for(let d=0;d<datas.length;d++) {
-                        let did = datas[d].id;
-                        console.log("-----------------");
-                        console.log(did);
-                        if (rid === did) {
-                            method = datas[d].method;
-                            url = datas[d].url;
-                            console.log(method, url);
+                if (runlist.length !== 0) {
+                    let datas = this.result.data;
+                    let method = "";
+                    let url = "";
+                    let flag = true;
+                    for (let i = 0; i < runlist.length; i++) {
+                        let rid = runlist[i];
+                        for (let d = 0; d < datas.length; d++) {
+                            let did = datas[d].id;
+                            console.log("-----------------");
+                            console.log(did);
+                            if (rid === did) {
+                                method = datas[d].method;
+                                url = datas[d].url;
+                                console.log(method, url);
+                                break;
+                            }
+                        }
+                        if (method === "" || url === "") {
+                            flag = false;
                             break;
                         }
                     }
-                    if(method === "" || url === ""){
-                         flag = false;
-                         break;
-                    }
-                }
-                if (flag) {
-                    if (!confirm("是否开始执行？")) {
-                        window.event.returnValue = false;
-                    }else {
-                        axios.post('/batchrun/', {
-                            params: {
-                                idList: runlist,
-                            },
-                        })
-                            .then(resp => {
-                                console.log(resp.data);
-                                let code = resp.data.code;
-                                if (code === 0) {
-                                    alert("执行结束");
-                                    window.location.reload(true);
-                                }else{
-                                    alert("执行失败");
-                                }
+                    if (flag) {
+                        if (!confirm("是否开始执行？")) {
+                            window.event.returnValue = false;
+                        } else {
+                            axios.post('/batchrun/', {
+                                params: {
+                                    idList: runlist,
+                                },
                             })
-                            .catch(err => {
-                                console.log('请求失败:' + err.status + ',' + err.statusText);
-                            })
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    let code = resp.data.code;
+                                    if (code === 0) {
+                                        alert("执行结束");
+                                        window.location.reload(true);
+                                    } else {
+                                        alert("执行失败");
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                })
+                        }
+                    } else {
+                        alert("要执行的接口用例有参数不存在的情况。");
                     }
-                }else{
-                    alert("要执行的接口用例有参数不存在的情况。");
                 }
             },
         }
