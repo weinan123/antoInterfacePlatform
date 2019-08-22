@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^projectView/$', projectList.projectView),
     url(r'^projectDelete/$', projectList.projectDelete),
+    url(r'^projectBatchDelete/$', projectList.projectBatchDelete),
     url(r'^projectEdit/$', projectList.projectEdit),
     url(r'^singleInterface/$', main.singleInterface),
     url(r'^getRequest/$', main.getRequest),
