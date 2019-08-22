@@ -42,18 +42,25 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                                 </button>
-                                <h4 class="modal-title" id="myModalLabel">模态框（Modal）标题</h4>
+                                <h4 class="modal-title" id="myModalLabel">导入</h4>
                             </div>
-                            <div class="modal-body">在这里添加一些文本</div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <div class="modal-body">选择需要导入的文件</div>
+                            <div class="modal-footer" style="text-align: center">
                                 <button type="button" class="btn btn-primary">提交更改</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal -->
                 </div>
 
-                <button class="btn btn-primary" data-toggle="modal" data-target="#batchOperation">批量删除</button>
+                {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
+                {#                checkedDelete为数组，记录着选中的项目的ID#}
+                <button class="btn btn-primary" @click="selectAll()">全选</button>
+                <button class="btn btn-primary" @click="selectInvert()">反选</button>
+
+                <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
+                    <button class="btn btn-primary" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
+                </template>
 
             </div>
             <table class="table table-hover">
@@ -63,7 +70,7 @@
                     <th>模块名称</th>
                     <th>更新时间</th>
                     <th>操作</th>
-                    <th>复选</th>
+                    <th>批量删除</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -165,6 +172,38 @@
                     }).catch(err => {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
+            },
+            methods: {
+                projectBatchDelete() {
+                    axios.post('/projectBatchDelete/', {
+                        params: {
+                            idDelete: this.checkedDelete
+                        }
+                    }).then(() => {
+                        axios
+                            .get('/projectListInfo/')
+                            .then(resp => {
+                                this.list = resp.data;
+                                console.log(resp.data);
+                            }).catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        });
+                        this.checkedDelete = '[]';
+                    });
+                },
+
+                selectAll() {
+                    axios
+                        .get('/projectListInfo/');
+
+                },
+
+                selectInvert() {
+                    axios
+                        .get('/projectListInfo/');
+
+                },
+
             }
         })
     </script>

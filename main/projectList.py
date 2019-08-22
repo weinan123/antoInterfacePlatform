@@ -51,6 +51,17 @@ def projectDelete(request):
     return HttpResponseRedirect('/projectList/')
 
 
+def projectBatchDelete(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        idDelete = req['idDelete']
+        for x in idDelete:
+            a = interfaceList.objects.filter(id=x[0]).delete()
+            print a
+    return JsonResponse(result)
+
+
 def projectEdit(request):
     if request.method == 'POST':
         id = request.POST.get('id')
