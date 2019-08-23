@@ -4,9 +4,10 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 from django.shortcuts import render
 from models import apiInfoTable, interfaceList
-import time
+import datetime
 import json
 from django.http.response import JsonResponse
+import requests
 
 
 def allinfo(request):
@@ -186,3 +187,76 @@ def batchdel(request):
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
         result = {'code': 0, 'info': infos}
     return JsonResponse(result)
+
+def runsingle(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        id = req["id"]
+        query = apiInfoTable.objects.get(apiID=id)
+        print query
+        result = runrequest(query,id)
+        print result
+    return JsonResponse(result)
+
+def batchrun(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        idlist = req['idList']
+        slist = {}
+        print idlist
+        for id in idlist:
+            query = apiInfoTable.objects.get(apiID=id)
+            sresult = runrequest(query, id)
+            print sresult
+            slist[id] = sresult
+        result = {"code": 0, "info": "执行结束", "results": slist}
+    return JsonResponse(result)
+
+
+def runrequest(sqlquery, id):
+    method = sqlquery.method
+    url = sqlquery.url
+    header = sqlquery.headers
+    bodys = sqlquery.body
+    assertinfo = sqlquery.assertinfo
+    if method == "" or url == "":
+        result = {"code": -1, "datas": "参数不能为空"}
+        return result
+    else:
+        if header == "" or header is None:
+            headers = {}
+        else:
+            headers = json.loads(header)
+        print headers
+        if bodys == "" or bodys is None:
+            bodys = {}
+        else:
+            bodys = json.loads(bodys)
+        a = requests.request(method=method, url=url, headers=headers, data=bodys)
+        print a
+        print a.status_code
+        print a.text
+        text = a.text
+        dtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print dtime
+        datas = {}
+        if assertinfo == "":
+            datas = {"status_code": a.status_code}
+            if a.status_code == 200:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=True)
+                result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=False)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
+        else:
+            datas = {"status_code": a.status_code, "responseText": text, "assert": assertinfo}
+            print assertinfo in text
+            if a.status_code == 200 and assertinfo in text:
+                    apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=True)
+                    result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=False)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
+        return result

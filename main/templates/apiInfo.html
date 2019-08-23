@@ -6,7 +6,7 @@
     <ul class="breadcrumb">
         <li><a href="/index/">首页</a></li>
         <li><a href="/projectList/">接口列表</a></li>
-        <li class="active" id="path">{! pname !} > {! mname !}</li>
+        <li class="active" id="path">{! pname !}_{! mname !}</li>
     </ul>
     <div class="col-md-4" style="width:100%;">
         <div style="display:inline-block;float: left;">
@@ -28,9 +28,8 @@
                             <label for="apiName">接口名称：</label>
                             <input type="text" class="form-control" id="apiName" v-model="newname"
                                 placeholder="请输入...">
-                            <p>newname: {! newname !}</p>
                             <label for="apiListName">所属接口列表：</label>
-                            <input v-model="pname" class="form-control" id="apiListID" disabled="disabled">
+                            <input v-model="pname" class="form-control" id="apiListName" disabled="disabled">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭
@@ -43,8 +42,6 @@
             </div>
             <div id="batch" style="display:inline-block;">
                 <button type="button" class="btn btn-primary" id="batchsel" @click="batchrun()">批量操作</button>
-                <!-- <button type="button" class="btn btn-primary" id="batchexe" v-if="!changeseen">批量执行</button> -->
-                <!-- <button type="button" class="btn btn-primary" id="batchdel" v-if="!changeseen" @click="batchdel()">批量删除</button> -->
             </div>
         </div>
         <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
@@ -71,7 +68,7 @@
             <thead>
             <tr>
                 <th>序号</th>
-                <th>接口说明</th>
+                <th>接口名称</th>
                 <th>操作</th>
                 <th>上一次执行结果</th>
                 <th>上一次执行时间</th>
@@ -88,7 +85,7 @@
                     <td>{! info.name !}</td>
                     <td>
                         <button type="button" class="btn btn-primary">查看编辑</button>
-                        <button type="button" class="btn btn-primary">执行</button>
+                        <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
                         <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
                     </td>
                     <td>
@@ -109,10 +106,8 @@
             <label class="form-check-label" v-if="seen">
                 <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
             </label><span>&nbsp;全选&nbsp;</span>
-            <button type="button" class="btn btn-default btn-sm" id="batchexe" v-if="seen" style="padding: 2px 6px;">批量执行</button>
+            <button type="button" class="btn btn-default btn-sm" id="batchexe" v-if="seen" @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
             <button type="button" class="btn btn-default btn-sm" id="batchdel" v-if="seen" @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
-            <p>{! dlist !}</p>
-
         </div>
     </div>
     </div>
@@ -126,7 +121,6 @@
         el:"#start",
         data:{
             result:'',
-            proname:'',
             seen:false,
             dlist:[],
         },
@@ -148,7 +142,6 @@
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
-                        this.proname = resp.data['data'][0].listname;
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
@@ -281,7 +274,101 @@
                             })
                     }
                 }
-            }
+            },
+            runsingle(id){
+                console.log(id);
+                let datas = this.result.data;
+                console.log(datas);
+                let method = "";
+                let url = "";
+                for(let d=0;d<datas.length;d++) {
+                    let did = datas[d].id;
+                    console.log("-----------------");
+                    console.log(did);
+                    if (id === did) {
+                        method = datas[d].method;
+                        url = datas[d].url;
+                        console.log(method, url);
+                        break;
+                    }
+                }
+                if (method !== "" && url !== "" && method !== undefined && url !== undefined) {
+                    axios.post('/runsingle/', {
+                        params: {
+                            id: id,
+                        },
+                    })
+                        .then(resp => {
+                            console.log(resp.data);
+                            let code = resp.data.code;
+                            let datas = resp.data.datas;
+                            if (code === 0) {
+                                alert("执行成功:" + datas);
+                                window.location.reload(true);
+                            } else {
+                                alert("执行失败: " + datas);
+                            }
+                        })
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
+                } else {
+                    alert("请先编辑接口相关参数。");
+                }
+            },
+            batchrun(){
+                let runlist = this.dlist;
+                if (runlist.length !== 0) {
+                    let datas = this.result.data;
+                    let method = "";
+                    let url = "";
+                    let flag = true;
+                    for (let i = 0; i < runlist.length; i++) {
+                        let rid = runlist[i];
+                        for (let d = 0; d < datas.length; d++) {
+                            let did = datas[d].id;
+                            console.log("-----------------");
+                            console.log(did);
+                            if (rid === did) {
+                                method = datas[d].method;
+                                url = datas[d].url;
+                                console.log(method, url);
+                                break;
+                            }
+                        }
+                        if (method === "" || url === "" || method === undefined || url === undefined) {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        if (!confirm("是否开始执行？")) {
+                            window.event.returnValue = false;
+                        } else {
+                            axios.post('/batchrun/', {
+                                params: {
+                                    idList: runlist,
+                                },
+                            })
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    let code = resp.data.code;
+                                    if (code === 0) {
+                                        alert("执行结束");
+                                        window.location.reload(true);
+                                    } else {
+                                        alert("执行失败");
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                })
+                        }
+                    } else {
+                        alert("要执行的接口用例有参数不存在的情况。");
+                    }
+                }
+            },
         }
     });
 
@@ -398,7 +485,6 @@
         },
         methods: {
             search(){
-                // if(this.searchinfo !== ""){
                     axios.get('/searchinfo/', {
                     params: {
                         listid: this.listid,
@@ -411,7 +497,6 @@
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
-                // }
             }
         }
     });

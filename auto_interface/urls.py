@@ -39,5 +39,6 @@ urlpatterns = [
     url(r'^searchinfo/$', apiinfo.searchapi),
     url(r'^getlistpath/$', apiinfo.getlistpath),
     url(r'^batchdel/$', apiinfo.batchdel),
-
+    url(r'^runsingle/$', apiinfo.runsingle),
+    url(r'^batchrun/$', apiinfo.batchrun),
 ]
