@@ -83,13 +83,14 @@ var vm0 = new Vue({
             }
         return "";
       },
-        setCookie(cname, cvalue) {
+        setCookie(cname, cvalue,exdays) {
                 let path = '/';
                 console.info(cname + "=" + cvalue );
                 var d = new Date();
                 d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
                 var expires = "expires=" + d.toUTCString();
                 document.cookie = cname + "=" + cvalue+";"+ expires+"; path="+path;
+                //document.cookie = cname + "=" + cvalue+"; path="+path;
                 console.info(document.cookie);
             },
         login(){
@@ -100,17 +101,13 @@ var vm0 = new Vue({
             axios.post('/login/',data_to_send)
                 .then(resp =>{
                         if (resp.data.status==="success"){
-                            this.setCookie("usename","");
-                            this.setCookie("usename",this.username);
+                            this.setCookie("usename","",0);
+                            this.setCookie("usename",this.username,0.1);
                             console.log(resp.data);
                             window.location.href="/index/";
-                            vm.$data.status = resp.data.status;
-                            vm.$data.login_user = resp.data.username;
-                            console.log(vm.$data.status,vm.$data.login_user)
                         }else{
                             console.log(resp.data);
                             this.login_error = resp.data.message;
-                            vm.$data.status="fail"
                         }
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
