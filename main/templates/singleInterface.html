@@ -214,7 +214,7 @@
      </div>
     <!--模态窗口-->
     <div class="modal fade" id="newcase" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
-            <div class="modal-dialog" style="width: 450px;margin: 175px auto">
+            <div class="modal-dialog" style="width: 450px;margin: 75px auto">
                     <div class="modal-content" id="newinfo">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -263,6 +263,7 @@
                 </div><!-- /.modal -->
             </div>
 </div>
+     <!--提示框-->
 </div>
 </div>
 {% endblock %}
@@ -670,15 +671,35 @@ var vm = new Vue({
              this.data_to_send["projectName"] = projectName;
              this.data_to_send["moduleName"] = moduleName;
              this.data_to_send["caseName"] = caseName;
-             this.data_to_send["creator"] = this.login_user;
+             this.data_to_send["creator"] = vm.$data.login_user;
              console.log(this.data_to_send);
              axios.post('/newCase/',this.data_to_send)
              .then(resp =>{
+                 toastr.options = {
+                    closeButton: false,
+                    debug: false,
+                    progressBar: false,
+                    positionClass: "toast-top-center",
+                    onclick: null,
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "2000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut"};
                  console.log(resp.data);
+                 if(resp.data.code===0){
+                     toastr.success(resp.data.msg);
+                 }else{
+                     toastr.error(resp.data.msg)
+                 }
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
-        }
+        },
+
     },
 }).$mount('div')
 </script>
