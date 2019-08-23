@@ -131,7 +131,8 @@ def newCase(request):
         projectName = data["projectName"]
         moduleName = data["moduleName"]
         caseName = data["caseName"]
-        creator = data["creator"]
+        creator = request.session.get('username')
+        print creator
         send_body = mul_bodyData(bodyinfor)
         try:
             id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
