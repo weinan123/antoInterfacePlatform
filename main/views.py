@@ -6,8 +6,9 @@ import requests
 from forms import UserForm
 from django.contrib import auth
 from django.contrib.auth.models import User
-
+from .models import *
 from .untils.until import my_login,mul_bodyData
+from django.core import serializers
 @my_login
 def index(request):
     if request.method == 'GET':
@@ -102,10 +103,56 @@ def sendRequest(request):
         response = requests.post(url, headers=headers, data=json.dumps(send_body), verify=False)
     return_data = {
         "status_code": response.status_code,
-        "result_content": response.text.decode("utf-8"),
+        "result_content": json.loads(response.text),
         "times": str(response.elapsed.total_seconds())
     }
     return JsonResponse(return_data,safe=False)
+def getProjectList(request):
+    project_list = interfaceList.objects.filter().values("projectName").distinct()
+    model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
+    print project_list,model_list
+    returnData = {
+        "project_list":[],
+        "model_list":[]
+    }
+    for i in range(0,len(project_list)):
+        returnData["project_list"].append(project_list[i])
+    for j in range(0,len(model_list)):
+        returnData["model_list"].append(model_list[j])
+    print returnData
+    return JsonResponse(returnData,safe=False)
+def newCase(request):
+    if request.method=="POST":
+        data = json.loads(request.body)
+        methods = data["methods"]
+        url = data["url"]
+        headers = data["headers"]
+        bodyinfor = data["bodyinfor"]
+        projectName = data["projectName"]
+        moduleName = data["moduleName"]
+        caseName = data["caseName"]
+        creator = data["creator"]
+        send_body = mul_bodyData(bodyinfor)
+        try:
+            id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
+            owningListID = id[0]["id"]
+            print owningListID
+            apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
+                                               apiName=caseName,owningListID_id=int(owningListID),creator=creator)
+            data = {
+                "code":0,
+                "msg":"保存成功"
+            }
+        except Exception as e:
+                data={
+                    "code":-1,
+                    "msg": "保存失败"
+                }
+        return JsonResponse(data,safe=False)
+
+
+
+
 
 
 
