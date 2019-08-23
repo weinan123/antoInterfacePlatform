@@ -47,7 +47,8 @@ def projectView(request):
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
-        interfaceList.objects.filter(id=id).delete()
+        if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
+            interfaceList.objects.filter(id=id).delete()
     return HttpResponseRedirect('/projectList/')
 
 
@@ -57,8 +58,8 @@ def projectBatchDelete(request):
         req = json.loads(request.body)["params"]
         idDelete = req['idDelete']
         for x in idDelete:
-            a = interfaceList.objects.filter(id=x[0]).delete()
-            print a
+            if (apiInfoTable.objects.filter(owningListID=x[0]).count() == 0):
+                interfaceList.objects.filter(id=x[0]).delete()
     return JsonResponse(result)
 
 

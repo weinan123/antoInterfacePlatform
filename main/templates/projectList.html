@@ -153,6 +153,7 @@
             delimiters: ['{!', '!}'],
             el: '#projectList',
             data() {
+                projectBatchDelete = true;
                 return {
                     list: [],
                     checkedDelete: []
@@ -175,27 +176,28 @@
             },
             methods: {
                 projectBatchDelete() {
-                    axios.post('/projectBatchDelete/', {
-                        params: {
-                            idDelete: this.checkedDelete
-                        }
-                    }).then(() => {
-                        axios
-                            .get('/projectListInfo/')
-                            .then(resp => {
-                                this.list = resp.data;
-                                console.log(resp.data);
-                            }).catch(err => {
-                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                    console.log(projectBatchDelete);
+                    if (projectBatchDelete) {
+                        axios.post('/projectBatchDelete/', {
+                            params: {
+                                idDelete: this.checkedDelete
+                            }
+                        }).then(() => {
+                            axios
+                                .get('/projectListInfo/')
+                                .then(resp => {
+                                    this.list = resp.data;
+                                    console.log(resp.data);
+                                }).catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                            });
+                            this.checkedDelete = '[]';
                         });
-                        this.checkedDelete = '[]';
-                    });
+                    }
                 },
 
                 selectAll() {
-                    axios
-                        .get('/projectListInfo/');
-
+                    this.checkedDelete = true;
                 },
 
                 selectInvert() {
@@ -211,7 +213,11 @@
     <script language="javascript">
         function delcfm() {
             if (!confirm("确认要删除？")) {
+                projectBatchDelete = false;
                 window.event.returnValue = false;
+            } else {
+                projectBatchDelete = true;
+                window.event.returnValue = true;
             }
         }
     </script>
