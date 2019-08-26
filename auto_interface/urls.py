@@ -41,4 +41,6 @@ urlpatterns = [
     url(r'^batchdel/$', apiinfo.batchdel),
     url(r'^runsingle/$', apiinfo.runsingle),
     url(r'^batchrun/$', apiinfo.batchrun),
+    url(r'^newCase/$', main.newCase),
+    url(r'^getProjectList/$', main.getProjectList),
 ]
