@@ -1,0 +1,6 @@
+北京
+性能测试
+jmeter
+
+
+mklink /d "C:\Program Files (x86)\Google" "G:\Google"

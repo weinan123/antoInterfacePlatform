@@ -81,8 +81,11 @@ def projectSort(request):
         interfaceList.objects.filter(id=id).delete()
     return HttpResponseRedirect('/projectList/')
 
+
 def projectImport(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        interfaceList.objects.filter(id=id).delete()
+    if request.method == 'POST':
+        f = request.FILES['file']
+        with open('main/upload/file.txt', 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
     return HttpResponseRedirect('/projectList/')
