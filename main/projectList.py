@@ -80,3 +80,9 @@ def projectSort(request):
         id = request.GET.get('id')
         interfaceList.objects.filter(id=id).delete()
     return HttpResponseRedirect('/projectList/')
+
+def projectImport(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        interfaceList.objects.filter(id=id).delete()
+    return HttpResponseRedirect('/projectList/')

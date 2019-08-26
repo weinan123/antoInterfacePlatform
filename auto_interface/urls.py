@@ -17,6 +17,7 @@ from django.conf.urls import url
 from main import views as main
 from main import apiinfo
 from main import projectList
+
 urlpatterns = [
     url(r'^$', main.index),
     url(r'^index/$', main.index),
@@ -28,6 +29,7 @@ urlpatterns = [
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^projectView/$', projectList.projectView),
     url(r'^projectDelete/$', projectList.projectDelete),
+    url(r'^projectImport/$', projectList.projectImport),
     url(r'^projectBatchDelete/$', projectList.projectBatchDelete),
     url(r'^projectEdit/$', projectList.projectEdit),
     url(r'^singleInterface/$', main.singleInterface),
