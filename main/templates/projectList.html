@@ -56,7 +56,7 @@
                 {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                 {#                checkedDelete为数组，记录着选中的项目的ID#}
                 <button class="btn btn-primary" @click="selectAll()">全选</button>
-                <button class="btn btn-primary" @click="selectInvert()">反选</button>
+                <button class="btn btn-primary" @click="selectNone()">全不选</button>
 
                 <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
                     <button class="btn btn-primary" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
@@ -134,7 +134,8 @@
 
                         </div>
                     </td>
-                    <td><input type="checkbox" v-bind:value="[item.id]" v-model="checkedDelete"></td>
+                    <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]" v-model="checkedDelete">
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -197,15 +198,34 @@
                 },
 
                 selectAll() {
-                    this.checkedDelete = true;
-                },
-
-                selectInvert() {
                     axios
-                        .get('/projectListInfo/');
-
+                        .get('/projectListInfo/')
+                        .then(resp => {
+                            this.list = resp.data;
+                            console.log(resp.data);
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    });
+                    this.checkedDelete = [];
+                    temp = [];
+                    for (x in this.list) {
+                        temp.push(this.list[x].id);
+                        this.checkedDelete.push(temp);
+                        temp = [];
+                    }
                 },
 
+                selectNone() {
+                    axios
+                        .get('/projectListInfo/')
+                        .then(resp => {
+                            this.list = resp.data;
+                            console.log(resp.data);
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    });
+                    this.checkedDelete = [];
+                },
             }
         })
     </script>
