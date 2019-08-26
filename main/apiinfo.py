@@ -293,7 +293,7 @@ def getapiInfos(request):
                 json_dict["header"] = header_list
             print header_list
             if query.body:
-                json_dict["body"] = json.loads(query.body.decode('utf-8').replace("'", "\""))
+                json_dict["body"] = json.loads(query.body)
             else:
                 json_dict["body"] = query.body
             json_dict["url"] = query.url

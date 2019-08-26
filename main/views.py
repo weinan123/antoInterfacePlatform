@@ -136,7 +136,7 @@ def newCase(request):
         print creator
         send_body = mul_bodyData(bodyinfor)
         send_body = json.dumps(send_body)
-        flag = data["flag"]
+        flag = reqdata["flag"]
         if(flag == False):
             try:
                 id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
