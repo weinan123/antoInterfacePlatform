@@ -275,6 +275,8 @@ var vm = new Vue({
     data() {
         return {
             //样式选中互斥
+            aid:"",
+            initflag:false,
             showState: 0,
             showbodyState: 0,
             isActive0: true,
@@ -329,7 +331,7 @@ var vm = new Vue({
             modelList:[],
             projectSelect: "",
             allmodels:"",
-            modelSelect:[],
+            modelSelect:"",
             data_to_send :{},
             caseName:""
         }
@@ -342,8 +344,47 @@ var vm = new Vue({
     },
     mounted:function(){
         //this.getProjectList();
+        let args = location.search.substr(1);
+        if(args){
+            this.initflag=true;
+            this.initInfos(args);
+        }
     },
     methods:{
+        initInfos(args){
+            let param={};
+            if(args !== ""){
+                let strs = args.split("&");
+                for(let i = 0; i < strs.length; i++) {
+                     param[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+                }
+            }
+            let id = param["id"];
+            this.aid = id;
+            console.log(id);
+            axios.get('/getapiInfos/',{
+                    params: {
+                        apiid:id,
+                    }
+                })
+                .then(resp =>{
+                    console.log(resp.data);
+                    let result = resp.data;
+                    this.url = result.datas.url;
+                    this.method = result.datas.method;
+                    this.projectSelect = result.datas.projectName;
+                    this.modelList = result.module_list;
+                    this.modelSelect = result.datas.moduleName;
+                    console.log(this.modelSelect);
+                    this.caseName = result.datas.name;
+                    this.headerVals = result.datas.header;
+                    console.log("***",this.headerVals);
+                    console.log("---",result.datas.body);
+                    this.rawValue = result.datas.body[0]["参数值"];
+                }).catch(err=> {
+                console.log('请求失败:' + err.status + ',' + err.statusText);
+            })
+        },
         //获取所有项目列表
          getProjectList(){
             axios.get("/getProjectList/",params={}).then(response => {
@@ -481,9 +522,15 @@ var vm = new Vue({
 
         },
         makeFrom(params){
-            this.showState = params;
-            this.showbodyState=0;
-            this.changeCss(params);
+            if(this.initflag === false){
+                this.showState = params;
+                this.showbodyState=0;
+                this.changeCss(params);
+            }else{
+                this.showState = params;
+                this.showbodyState=3;
+                this.changeCss(params);
+            }
         },
         showBodyform(params){
             this.showbodyState = params;
@@ -673,31 +720,58 @@ var vm = new Vue({
              this.data_to_send["caseName"] = caseName;
              this.data_to_send["creator"] = vm.$data.login_user;
              console.log(this.data_to_send);
-             axios.post('/newCase/',this.data_to_send)
-             .then(resp =>{
-                 toastr.options = {
-                    closeButton: false,
-                    debug: false,
-                    progressBar: false,
-                    positionClass: "toast-top-center",
-                    onclick: null,
-                    showDuration: "300",
-                    hideDuration: "1000",
-                    timeOut: "2000",
-                    extendedTimeOut: "1000",
-                    showEasing: "swing",
-                    hideEasing: "linear",
-                    showMethod: "fadeIn",
-                    hideMethod: "fadeOut"};
-                 console.log(resp.data);
-                 if(resp.data.code===0){
-                     toastr.success(resp.data.msg);
-                 }else{
-                     toastr.error(resp.data.msg)
-                 }
-                    }).catch(err=>{
-                        console.log('请求失败:'+err.status+','+err.statusText);
-                })
+             if(this.initflag === false) {
+                 axios.post('/newCase/', {
+                     params: {
+                         data_to_send:this.data_to_send,
+                         flag:this.initflag,
+                     }
+                     })
+                     .then(resp => {
+                         toastr.options = {
+                             closeButton: false,
+                             debug: false,
+                             progressBar: false,
+                             positionClass: "toast-top-center",
+                             onclick: null,
+                             showDuration: "300",
+                             hideDuration: "1000",
+                             timeOut: "2000",
+                             extendedTimeOut: "1000",
+                             showEasing: "swing",
+                             hideEasing: "linear",
+                             showMethod: "fadeIn",
+                             hideMethod: "fadeOut"
+                         };
+                         console.log(resp.data);
+                         if (resp.data.code === 0) {
+                             toastr.success(resp.data.msg);
+                         } else {
+                             toastr.error(resp.data.msg)
+                         }
+                     }).catch(err => {
+                     console.log('请求失败:' + err.status + ',' + err.statusText);
+                 })
+             }else{
+                 axios.post('/newCase/',{
+                     params: {
+                         apiid:this.aid,
+                         data_to_send:this.data_to_send,
+                         flag:this.initflag,
+                    }
+                 })
+                     .then(resp =>{
+                         console.log(resp.data);
+                         let code = resp.data.code;
+                         console.log(code);
+                         if(code === 0){
+                             alert("更新成功");
+                         }
+                     })
+                     .catch(err=>{
+                         console.log('请求失败:'+err.status+','+err.statusText);
+                    });
+             }
         },
 
     },
