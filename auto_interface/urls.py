@@ -47,4 +47,5 @@ urlpatterns = [
     url(r'^getProjectList/$', main.getProjectList),
     url(r'^getapiInfos/$', apiinfo.getapiInfos),
     url(r'^singleInterface/editor/$', main.singleInterface),
+    url(r'^returnAuthorization/$', main.returnAuthorization),
 ]

@@ -37,8 +37,8 @@
         <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
         <li v-bind:class="{active:isActive2}"><a v-on:click="makeFrom(2)">GET/URL参数</a></li>
         <li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>
-        <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">权限校验</a></li>
-        <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">预处理</a></li>
+        <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">请求加密</a></li>
+        <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">权限校验</a></li>
         <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>
     </ul>
     <div class="row" v-if="showState === 1">
@@ -64,14 +64,19 @@
         </div>
     </div>
     <table class="table table-bordered" v-if="(showState === 0) " style="width: 70%" >
-          <thead>
-            <tr>
+
+           <thead>
+           <tr>
+           <th colspan="3"><a class="btn btn-info btn-sm" data-toggle="modal" data-target="#loadHeader">
+              <span class="glyphicon glyphicon-save"></span> 导入
+           </a></th></tr>
+           <tr>
               <th>标签</th>
               <th>内容</th>
               <th>操作</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody >
             <tr v-for="headerVal,index in headerVals">
                 <td col-xs-4><select class="form-control" name="selectPrio" v-model="headerVal.type" >
                     <option value="" selected>头部标签</option>
@@ -85,6 +90,8 @@
                     <option value="Content-Length" >Content-Length</option>
                     <option value="Connection" >Connection</option>
                     <option value="Authorization" >Authorization</option>
+                    <option value="X-Requested-With" >X-Requested-With</option>
+                    <option value="X-encryptflag" >X-encryptflag</option>
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState=false)">增加</button>
@@ -195,9 +202,63 @@
           </tbody>
     </table>
     <p v-if="showState === 3">333333</p>
-    <p v-if="showState === 4">444444</p>
-    <p v-if="showState === 5">5555555</p>
-    <p v-if="showState === 6">66666666</p>
+    <div v-if="showState === 4"  style="padding-top: 20px" >
+        <form role="form" class="form-horizontal">
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-1">secret_key:</label>
+                               <div class="col-sm-4">
+                               <input  class="form-control"  v-model="secret_key" >
+                               </input>
+                               </div>
+                                <div class="col-sm-7"></div>
+                            </div>
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-1">key_id:</label>
+                               <div class="col-sm-4">
+                                   <input  class="form-control"  v-model="key_id" >
+                               </div>
+                                <div class="col-sm-7"><button  type="button" class="btn btn-primary" @click="returnAuthorization()">生成</button></div>
+                            </div>
+
+                            <div class="form-group">
+                                 <label  for="version" class="col-sm-1">Authorization:</label>
+                               <div class="col-sm-7">
+                                   <textarea  class="form-control"  v-model="Authorization" rows="3" ></textarea>
+                               </div>
+                                <div class="col-sm-4"></div>
+                        </div>
+                        </form>
+    </div>
+    <div v-if="showState === 5">
+        <form role="form" class="form-horizontal">
+        <h4>Authorization</h4><br>
+        <div class="form-group">
+          <label  for="version" class="col-sm-1">用户名:</label>
+          <div class="col-sm-3">
+            <input  class="form-control"  placeholder="请输入用户名">
+       </div>
+        </div>
+        <div class="form-group">
+            <label  for="version" class="col-sm-1">密码:</label>
+            <div class="col-sm-3">
+                <input  class="form-control" placeholder="请输入密码">
+            </div>
+        </div>
+        </form>
+    </div>
+    <div v-if="showState === 6" style="border: 1px solid #ccc;padding-left: 25px;padding-top: 20px;width: 75%">
+        <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label  for="version" >是否跟随重定向:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input  name="status" type="checkbox" data-size="small" checked><br>
+
+        </div>
+        <div class="form-group">
+            <label  for="version" >接口是否加密:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            <input  name="status" type="checkbox" data-size="small"  checked><br>
+        </div>
+        </form>
+    </div>
     <div class="row" style="width:75% " >
          <div class="col-lg-6 form-group">
                 <label for="name">请求数据</label>
@@ -206,7 +267,7 @@
          <div class="col-lg-6 form-group" >
                 <label for="name">请求结果</label>
                 <div class="form-control"  style="height: 314px">
-                <div  id="jsoneditor">
+                <div  id="jsoneditor" style="height: 100%">
                 {% comment %}<textarea  v-model="result" class="form-control" rows="15"></textarea>{% endcomment %}
                 </div>
                 </div>
@@ -258,6 +319,30 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                             </button>
                             <input type="submit" class="btn btn-primary" @click="newCase()" data-dismiss="modal"/>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+</div>
+      <!--模态窗口导入Header-->
+    <div class="modal fade" id="loadHeader" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 500px;margin: 50px auto">
+                    <div class="modal-content" id="newinfo">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="newapiLabel">
+                                导入头部数据
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <textarea class="form-control" rows="8" v-model="headerText" placeholder="请输入形式为json格式字符串数据,
+     例如：{'data':0,'msg':123}"></textarea>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <input type="submit" class="btn btn-primary" @click="loadHeader()" data-dismiss="modal"/>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal -->
@@ -333,24 +418,51 @@ var vm = new Vue({
             allmodels:"",
             modelSelect:"",
             data_to_send :{},
-            caseName:""
+            caseName:"",
+            //交易认证参数
+            secret_key:"",
+            key_id:"",
+            Authorization:"",
+            headerText:"",
         }
     },
     created(){
        vm1.$data.isActiveSi=true;
        vm1.$data.isActiveIn=false;
        vm1.$data.isActiveAl=false;
-
+       this.switch()
     },
     mounted:function(){
-        //this.getProjectList();
         let args = location.search.substr(1);
         if(args){
             this.initflag=true;
             this.initInfos(args);
         }
+
     },
     methods:{
+        //kaiguan
+        switch(){
+            $('[name="status"]').bootstrapSwitch({    //初始化按钮
+               onText:"是",
+               offText:"否",
+               onColor:"success",
+               offColor:"danger",
+               size:"normal",
+               handleWidth:"35",
+               onSwitchChange:function(event,state){
+                  if(state==true){
+                      alert("111");
+                       console.log("开启");
+                     }else{
+                      alert("111");
+                      console.log("关闭");
+                     }
+                 }
+            });
+            $('[name="status"]').bootstrapSwitch(
+            );
+        },
         initInfos(args){
             let param={};
             if(args !== ""){
@@ -386,7 +498,7 @@ var vm = new Vue({
             })
         },
         //获取所有项目列表
-         getProjectList(){
+        getProjectList(){
             axios.get("/getProjectList/",params={}).then(response => {
                     console.log(response.data);
                     var returnlist = [];
@@ -429,28 +541,29 @@ var vm = new Vue({
              }
              console.log(this.modelList);
         },
-
         getEdit(json){
-            var container = document.getElementById('jsoneditor');
+            var editor = new JSONEditor(document.getElementById('jsoneditor'));
+            editor.setText(JSON.parse(json));
+            {% comment %}var container = document.getElementById('jsoneditor');
             //var container2 = document.getElementById('jsoneditor1');
             var options = {
-    mode: 'text',
-    modes: ['text', 'code'],
-    onEditable: function (node) {
-      if (!node.path) {
-        // In modes code and text, node is empty: no path, field, or value
-        // returning false makes the text area read-only
-        return false;
-      }
-    },
-    onError: function (err) {
-      alert(err.toString());
-    },
-    onModeChange: function (newMode, oldMode) {
-      console.log('Mode switched from', oldMode, 'to', newMode);
-    }
-  };
-            var editor1 = new JSONEditor(container, options, json);
+            mode: 'text',
+            modes: ['text', 'code'],
+            onEditable: function (node) {
+              if (!node.path) {
+                // In modes code and text, node is empty: no path, field, or value
+                // returning false makes the text area read-only
+                return false;
+              }
+            },
+            onError: function (err) {
+              alert(err.toString());
+            },
+            onModeChange: function (newMode, oldMode) {
+                  console.log('Mode switched from', oldMode, 'to', newMode);
+                }
+              };
+                var editor1 = new JSONEditor(container, options, json);{% endcomment %}
             //var editor2 = new JSONEditor(container2, options, json);
         },
         changeCss(params){
@@ -632,6 +745,7 @@ var vm = new Vue({
         },
         sendQuest() {
              this.mulData();
+             //this.data_to_send["accountid"]["Authorization"]=this.Authorization;
              console.log(this.data_to_send);
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
@@ -644,7 +758,6 @@ var vm = new Vue({
              this.request_infor = requestStr;
             axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
-                        this.resultData = resp.data;
                         this.getEdit(resp.data)
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
@@ -669,9 +782,9 @@ var vm = new Vue({
                 headerinfor["Content-Type"] = "multipart/form-data";
                 for (var j = 0; j < this.bodyFVals.length; j++) {
                     bodyinfor = {};
-                    bodyinfor["参数类型"] = this.bodyFVals[j].type;
-                    bodyinfor["参数值"] = this.bodyFVals[j].value;
-                    bodyinfor["参数名"] = this.bodyFVals[j].name;
+                    bodyinfor["params_type"] = this.bodyFVals[j].type;
+                    bodyinfor["params_value"] = this.bodyFVals[j].value;
+                    bodyinfor["params_name"] = this.bodyFVals[j].name;
                     bodyArr.push(bodyinfor)
                 }
             }
@@ -679,9 +792,9 @@ var vm = new Vue({
                 headerinfor["Content-Type"] = "application/json";
                 for (var k = 0; k < this.bodyJVals.length; k++) {
                     bodyinfor = {};
-                    bodyinfor["参数类型"] = this.bodyJVals[k].type;
-                    bodyinfor["参数值"] = this.bodyJVals[k].value;
-                    bodyinfor["参数名"] = this.bodyJVals[k].name;
+                    bodyinfor["params_type"] = this.bodyJVals[k].type;
+                    bodyinfor["params_value"] = this.bodyJVals[k].value;
+                    bodyinfor["params_name"] = this.bodyJVals[k].name;
                     bodyArr.push(bodyinfor)
                 }
             }
@@ -689,16 +802,16 @@ var vm = new Vue({
                 headerinfor["Content-Type"] = "application/xml";
                 for (var l = 0; l < this.bodyXVals.length; l++) {
                     bodyinfor = {};
-                    bodyinfor["参数类型"] = this.bodyXVals[l].type;
-                    bodyinfor["参数值"] = this.bodyXVals[l].value;
-                    bodyinfor["参数名"] = this.bodyXVals[l].name;
+                    bodyinfor["params_type"] = this.bodyXVals[l].type;
+                    bodyinfor["params_value"] = this.bodyXVals[l].value;
+                    bodyinfor["params_name"] = this.bodyXVals[l].name;
                     bodyArr.push(bodyinfor)
                 }
             }
             else if (this.showState === 1 && this.showbodyState === 3) {
                 bodyinfor = {};
                 headerinfor["Content-Type"] = "text/plain";
-                bodyinfor["参数值"] = this.rawValue;
+                bodyinfor["params_value"] = this.rawValue;
                 bodyArr.push(bodyinfor)
             }
             this.data_to_send = {
@@ -773,7 +886,34 @@ var vm = new Vue({
                     });
              }
         },
+         //生成交易认证
+        returnAuthorization(){
+             this.mulData();
+             this.data_to_send["secret_key"] = this.secret_key;
+             this.data_to_send["key_id"] = this.key_id;
+             console.log(this.data_to_send);
+               axios.post('/returnAuthorization/',this.data_to_send)
+             .then(resp =>{
+                 console.log(resp.data);
+                 this.Authorization = resp.data.data
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
 
+        },
+        loadHeader(){
+            this.headerVals=[];
+            var headerInfor = this.headerText;
+            var obj = JSON.parse(headerInfor);
+            console.log(obj);
+            for(var key in obj) {
+                var data = {
+                    "type": key,
+                    "value": obj[key]
+                };
+                this.headerVals.push(data)
+            }
+        }
     },
 }).$mount('div')
 </script>

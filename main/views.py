@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
-import json
+import json,time
 from django.http import HttpResponse, JsonResponse
-import requests
+import requests,urllib2
 from forms import UserForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 from .models import *
 from .untils.until import my_login,mul_bodyData
+from common import authService
 from django.core import serializers
 @my_login
 def index(request):
@@ -96,17 +97,41 @@ def sendRequest(request):
     headers = data["headers"]
     bodyinfor = data["bodyinfor"]
     #处理数据类型的方法
-    send_body = mul_bodyData(bodyinfor)
+    #send_body = mul_bodyData(bodyinfor)
+    body = json.dumps(bodyinfor).decode('unicode-escape')
+    print type(body)
+    key_id = "b062f9721f2ed17596eaf599b6899f64"
+    secret_key = "dc5a277173ef42f63de1e9c1134d4f7b"
+    timestamp = int(time.time())
+    credentials = authService.BceCredentials(key_id, secret_key)
+    headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+    headers['X-encryptflag'] = '1'
+    path = "/api/v1/trade/business/query/funddetail"
+    result = authService.simplify_sign(credentials, methods, path, headers, timestamp, 300, headersOpt)
+    print result
+    headers['Authorization'] = result
+    if headers.get('X-encryptflag') == '1' and body:
+        print 'body before encrypted: '
+        print body
+        body = authService.aes_encrypt(body)
     if(methods=="GET"):
-        response = requests.get(url,headers =headers,params=send_body,verify=False)
+        response = requests.get(url,headers =headers,params=body,verify=False)
     elif(methods=="POST"):
-        response = requests.post(url, headers=headers, data=json.dumps(send_body), verify=False)
-    return_data = {
-        "status_code": response.status_code,
-        "result_content": json.loads(response.text),
-        "times": str(response.elapsed.total_seconds())
-    }
-    return JsonResponse(return_data,safe=False)
+        response = requests.post(url, headers=headers, data=body, verify=False)
+        resp = response.text
+        if headers.get('X-encryptflag') != '1':
+            print 'response: '
+        else:
+            print 'response before decrypt: '
+            print resp
+            resp = authService.aes_decrypt(resp)
+            print('response: ')
+        try:
+            respDict = json.loads(resp)
+            print(json.dumps(respDict, ensure_ascii=False, sort_keys=True, indent=4))
+        except:
+            print(resp)
+    return JsonResponse(respDict,safe=False)
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
     model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
@@ -172,6 +197,30 @@ def newCase(request):
                 "msg": "更新成功"
             }
         return JsonResponse(data,safe=False)
+def returnAuthorization(request):
+    if request.method=="POST":
+        data = json.loads(request.body)
+        secret_key = data["secret_key"].encode("utf-8")
+        key_id = data["key_id"]
+        http_method = data["methods"]
+        path = data["url"]
+        #headers = data["headers"]
+        timestamp = int(time.time())
+        credentials = authService.BceCredentials(key_id, secret_key)
+        headers = {
+            'Accept': 'text/html, */*; q=0.01',
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+        }
+        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+        result = authService.simplify_sign(credentials, http_method, path, headers, timestamp, 300, headersOpt)
+        print result
+        returnData = {
+            "code":0,
+            "data":result
+        }
+        return result
+        #return JsonResponse(returnData,safe=False)
 
 
 
