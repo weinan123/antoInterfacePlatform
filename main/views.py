@@ -159,8 +159,7 @@ def newCase(request):
         caseName = data["caseName"]
         creator = request.session.get('username')
         print creator
-        send_body = mul_bodyData(bodyinfor)
-        send_body = json.dumps(send_body)
+        send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
         if(flag == False):
             try:

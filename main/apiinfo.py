@@ -284,8 +284,11 @@ def getapiInfos(request):
             body_list = []
             if query.headers:
                 header_data = json.loads(query.headers)
-                print(str(header_data["Content-Type"]))
-                content = str(header_data["Content-Type"])
+                try:
+                    print(str(header_data["Content-Type"]))
+                    content = str(header_data["Content-Type"])
+                except BaseException as e:
+                    content = ""
                 for k in header_data:
                     header_dict = {}
                     header_dict["type"] = k
@@ -299,7 +302,7 @@ def getapiInfos(request):
             print header_list
             if query.body:
                 bodydata = json.loads(query.body)
-                print("-----------", bodydata)
+                print("-----bodydata------", bodydata)
                 if content == "text/plain":
                     showbodyState = 3
                     for i in bodydata:
@@ -338,6 +341,9 @@ def getapiInfos(request):
                         body_dict["value"] = i["params_value"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
+                else:
+                    showbodyState = 0
+                    json_dict["body"] = []
             else:
                 json_dict["body"] = []
             json_dict["url"] = query.url
