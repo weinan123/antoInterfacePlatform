@@ -44,22 +44,22 @@
     <div class="row" v-if="showState === 1">
         <div class="col-lg-1 radio ">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked  @click="showBodyform(0)"> Form-data
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv"  @click="showBodyform(0)"> Form-data
         </label>
         </div>
         <div class=" col-lg-1 radio " style="margin-top: 10px">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option2"  @click="showBodyform(1)"> JSON
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option2" v-model="checkv" @click="showBodyform(1)"> JSON
         </label>
         </div>
         <div class="col-lg-1 radio " style="margin-top: 10px">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option3"  @click="showBodyform(2)"> XML
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option3" v-model="checkv" @click="showBodyform(2)"> XML
         </label>
         </div>
         <div class="col-lg-1 radio" style="margin-top: 10px">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option4"  @click="showBodyform(3)"> Raw
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option4" v-model="checkv" @click="showBodyform(3)"> Raw
         </label>
         </div>
     </div>
@@ -94,8 +94,8 @@
                     <option value="X-encryptflag" >X-encryptflag</option>
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState=false)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState=false)">删除</button></td>
+                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
+                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -360,6 +360,7 @@ var vm = new Vue({
     data() {
         return {
             //样式选中互斥
+            checkv : "option1",
             aid:"",
             initflag:false,
             showState: 0,
@@ -483,7 +484,9 @@ var vm = new Vue({
                     console.log(resp.data);
                     let result = resp.data;
                     this.url = result.datas.url;
-                    this.method = result.datas.method;
+                    if(result.datas.method !== ""){
+                        this.method = result.datas.method;
+                    }
                     this.projectSelect = result.datas.projectName;
                     this.modelList = result.module_list;
                     this.modelSelect = result.datas.moduleName;
@@ -492,7 +495,30 @@ var vm = new Vue({
                     this.headerVals = result.datas.header;
                     console.log("***",this.headerVals);
                     console.log("---",result.datas.body);
-                    this.rawValue = result.datas.body[0]["参数值"];
+                    console.log(result.datas.body.length);
+                    if(result.datas.body.length !== 0) {
+                        let bodyinfo = result.datas.body;
+                        let showbody = result.showbody;
+                        console.log("showbody:",showbody);
+                        if(showbody === 0){
+                            this.showbodyState = showbody;
+                            this.checkv = "option1";
+                            this.bodyFVals = bodyinfo;
+                        }else if(showbody === 1){
+                            console.log("body:",bodyinfo);
+                            this.showbodyState = showbody;
+                            this.checkv = "option2";
+                            this.bodyJVals = bodyinfo;
+                        }else if(showbody === 2){
+                            this.showbodyState = showbody;
+                            this.checkv = "option3";
+                            this.bodyJVals = bodyinfo;
+                        }else{
+                            this.showbodyState = showbody;
+                            this.checkv = "option4";
+                            this.rawValue = result.datas.body[0].value;
+                        }
+                    }
                 }).catch(err=> {
                 console.log('请求失败:' + err.status + ',' + err.statusText);
             })
@@ -641,7 +667,6 @@ var vm = new Vue({
                 this.changeCss(params);
             }else{
                 this.showState = params;
-                this.showbodyState=3;
                 this.changeCss(params);
             }
         },
@@ -868,7 +893,7 @@ var vm = new Vue({
              }else{
                  axios.post('/newCase/',{
                      params: {
-                         apiid:this.aid,
+                         apiId:this.aid,
                          data_to_send:this.data_to_send,
                          flag:this.initflag,
                     }
