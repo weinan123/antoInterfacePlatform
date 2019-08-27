@@ -180,23 +180,26 @@ def newCase(request):
                     }
         else:
             try:
-                id = int(data["apiid"])
-                pid = apiInfoTable.objects.get(apiID=id).owningListID_id
+                id1 = int(reqdata["apiId"])
+                print("--------------", id1)
+                pid = apiInfoTable.objects.get(apiID=id1).owningListID_id
                 print("pid:", pid)
-                apiInfoTable.objects.filter(apiID=id).update(apiName=caseName, method=methods, url=url, headers=headers,
-                                                             body=send_body)
+                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
+                                                              headers=headers,
+                                                              body=send_body)
                 interfaceList.objects.filter(id=pid).update(projectName=projectName, moduleName=moduleName)
             except Exception as e:
                 data = {
                     "code": -1,
-                    "msg": "更新失败"
+                    "msg": "更新失败" + str(e),
                 }
                 return JsonResponse(data)
             data = {
                 "code": 0,
                 "msg": "更新成功"
             }
-        return JsonResponse(data,safe=False)
+            return JsonResponse(data, safe=False)
+
 def returnAuthorization(request):
     if request.method=="POST":
         data = json.loads(request.body)
