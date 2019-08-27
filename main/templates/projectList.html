@@ -6,144 +6,157 @@
 {% endblock %}
 {% block content %}
     <div class="col-md-10 row" id="projectList">
-        <div class="row">
-            <div class="btn-group" style="margin-top: 10px">
-                <!-- 新建按钮触发模态框 -->
+        <ul class="breadcrumb">
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/projectList/">接口列表</a></li>
+        </ul>
+        <div class="row" style="width:100%;">
+            <div class="col-md-4" style="width:100%;">
+                <div class="btn-group" style="width:100%;">
+                    <!-- 新建按钮触发模态框 -->
 
-                <button class="btn btn-primary" data-toggle="modal" data-target="#newProject">新建</button>
-                <!-- 新建模态框（Modal） -->
-                <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content" style="margin: 150px;">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                                </button>
-                                <h4 class="modal-title" id="myModalLabel">新建项目</h4>
-                            </div>
-                            <div class="modal-body">
-                                <form action="/addProjectList/" method="post" style="text-align: center">
-                                    {{ form }}
-                                    <input type="submit" class="btn btn-primary" value="新建"/>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-                                </form>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal -->
-                </div>
-                <!-- 导入按钮触发模态框 -->
-                <button class="btn btn-primary" data-toggle="modal" data-target="#importProject">导入</button>
-                <!-- 导入模态框（Modal） -->
-                <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
-                     aria-labelledby="myModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content" style="margin: 150px;">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                                </button>
-                                <h4 class="modal-title" id="myModalLabel">导入</h4>
-                            </div>
-                            <div class="modal-body">选择需要导入的文件
-                                <form enctype="multipart/form-data" method="post" action="/projectImport/">
-                                    <input type="file" name="file"/>
-                                    <div class="modal-footer" style="text-align: center">
-                                        <button type="submit" class="btn btn-primary">提交更改</button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#newProject">新建</button>
+                    <!-- 新建模态框（Modal） -->
+                    <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="margin: 150px;">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">新建项目</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/addProjectList/" method="post" style="text-align: center">
+                                        {{ form }}
+                                        <input type="submit" class="btn btn-primary" value="新建"/>
                                         <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal -->
-                </div>
-
-                {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
-                {#                checkedDelete为数组，记录着选中的项目的ID#}
-                <button class="btn btn-primary" @click="selectAll()">全选</button>
-                <button class="btn btn-primary" @click="selectNone()">全不选</button>
-
-                <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
-                    <button class="btn btn-primary" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
-                </template>
-
-            </div>
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>项目名称</th>
-                    <th>模块名称</th>
-                    <th>更新时间</th>
-                    <th>操作</th>
-                    <th>批量删除</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="item in list">
-                    <td>{! item.projectName !}</td>
-                    <td>{! item.moduleName !}</td>
-                    <td>{! item.updateTime !}</td>
-                    <td style="margin: auto">
-                        <div class="btn-group" style="margin: auto">
-                            <a v-bind:href="['/apiInfopage?pid='+item.id]">
-                                <button type="button" class="btn btn-primary">
-                                    查看
-                                </button>
-                            </a>
-
-                            <a>
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        v-bind:data-target="'#editProject'+[item.id]">
-                                    编辑
-                                </button>
-                            </a>
-
-
-                            <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1" role="dialog"
-                                 aria-labelledby="myModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content" style="margin: 150px;">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                                &times;
+                                    </form>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+                    <!-- 导入按钮触发模态框 -->
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#importProject">导入</button>
+                    <!-- 导入模态框（Modal） -->
+                    <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="margin: 150px;">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">导入</h4>
+                                </div>
+                                <div class="modal-body">选择需要导入的文件
+                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">
+                                        <input type="file" name="file"/>
+                                        <div class="modal-footer" style="text-align: center">
+                                            <button type="submit" class="btn btn-primary">提交更改</button>
+                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭
                                             </button>
-                                            <h4 class="modal-title" id="myModalLabel">编辑名称</h4>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="/projectEdit/" method="post" style="text-align: center">
-                                                <input type="hidden" name="id" readonly="readonly"
-                                                       v-bind:value="[item.id]">
-                                                <label for="id_projectName">项目名称:</label>
-                                                <input type="text" name="projectName" v-bind:value="[item.projectName]"
-                                                       required="required" id="id_projectName" maxlength="50">
-                                                <label for="id_moduleName">模块名称:</label>
-                                                <input type="text" name="moduleName" v-bind:value="[item.moduleName]"
-                                                       required="required" id="id_moduleName" maxlength="50">
-                                                <br>
-                                                <input type="submit" class="btn btn-primary" value="修改"/>
-                                                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭
+                                    </form>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+                    {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
+                    {#                checkedDelete为数组，记录着选中的项目的ID#}
+                    <button class="btn btn-primary" @click="selectAll()">全选</button>
+                    <button class="btn btn-primary" @click="selectNone()">全不选</button>
+
+                    <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
+                        <button class="btn btn-danger" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
+                    </template>
+
+                </div>
+            </div>
+            <div style="width:100%;margin-left: 15px;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>模块名称</th>
+                        <th>更新时间</th>
+                        <th>操作</th>
+                        <th>批量删除</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="item in list">
+                        <td>{! item.projectName !}</td>
+                        <td>{! item.moduleName !}</td>
+                        <td>{! item.updateTime !}</td>
+                        <td style="margin: auto">
+                            <div class="btn-group" style="margin: auto">
+                                <a v-bind:href="['/apiInfopage?pid='+item.id]">
+                                    <button type="button" class="btn btn-primary">
+                                        查看
+                                    </button>
+                                </a>
+
+                                <a>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                            v-bind:data-target="'#editProject'+[item.id]">
+                                        编辑
+                                    </button>
+                                </a>
+
+
+                                <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="margin: 150px;">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                        aria-hidden="true">
+                                                    &times;
                                                 </button>
-                                            </form>
-                                        </div>
-                                    </div><!-- /.modal-content -->
-                                </div><!-- /.modal -->
+                                                <h4 class="modal-title" id="myModalLabel">编辑名称</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/projectEdit/" method="post" style="text-align: center">
+                                                    <input type="hidden" name="id" readonly="readonly"
+                                                           v-bind:value="[item.id]">
+                                                    <label for="id_projectName">项目名称:</label>
+                                                    <input type="text" name="projectName"
+                                                           v-bind:value="[item.projectName]"
+                                                           required="required" id="id_projectName" maxlength="50">
+                                                    <label for="id_moduleName">模块名称:</label>
+                                                    <input type="text" name="moduleName"
+                                                           v-bind:value="[item.moduleName]"
+                                                           required="required" id="id_moduleName" maxlength="50">
+                                                    <br>
+                                                    <input type="submit" class="btn btn-primary" value="修改"/>
+                                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                                                        关闭
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal -->
+                                </div>
+
+                                <a v-bind:href="['/projectDelete?id='+item.id]">
+                                    <button type="button" class="btn btn-danger" onClick="delcfm()">
+                                        删除
+                                    </button>
+                                </a>
+
+
                             </div>
-
-                            <a v-bind:href="['/projectDelete?id='+item.id]">
-                                <button type="button" class="btn btn-primary" onClick="delcfm()">
-                                    删除
-                                </button>
-                            </a>
-
-
-                        </div>
-                    </td>
-                    <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]" v-model="checkedDelete">
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            {! checkedDelete !}
+                        </td>
+                        <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]" v-model="checkedDelete">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                {! checkedDelete !}
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -196,7 +209,7 @@
                                 }).catch(err => {
                                 console.log('请求失败:' + err.status + ',' + err.statusText);
                             });
-                            this.checkedDelete = '[]';
+                            this.checkedDelete = [];
                         });
                     }
                 },
