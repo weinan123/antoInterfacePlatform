@@ -123,10 +123,11 @@ def getProjectList(request):
     return JsonResponse(returnData,safe=False)
 def newCase(request):
     if request.method=="POST":
-        data = json.loads(request.body)
+        reqdata = json.loads(request.body)["params"]
+        data = reqdata["data_to_send"]
         methods = data["methods"]
         url = data["url"]
-        headers = data["headers"]
+        headers = json.dumps(data["headers"])
         bodyinfor = data["bodyinfor"]
         projectName = data["projectName"]
         moduleName = data["moduleName"]
@@ -134,21 +135,42 @@ def newCase(request):
         creator = request.session.get('username')
         print creator
         send_body = mul_bodyData(bodyinfor)
-        try:
-            id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
-            owningListID = id[0]["id"]
-            print owningListID
-            apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
-                                               apiName=caseName,owningListID_id=int(owningListID),creator=creator)
-            data = {
-                "code":0,
-                "msg":"保存成功"
-            }
-        except Exception as e:
-                data={
-                    "code":-1,
-                    "msg": "保存失败"
+        send_body = json.dumps(send_body)
+        flag = reqdata["flag"]
+        if(flag == False):
+            try:
+                id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
+                owningListID = id[0]["id"]
+                print owningListID
+                apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
+                                                   apiName=caseName,owningListID_id=int(owningListID),creator=creator)
+                data = {
+                    "code":0,
+                    "msg":"保存成功"
                 }
+            except Exception as e:
+                    data={
+                        "code":-1,
+                        "msg": "保存失败"
+                    }
+        else:
+            try:
+                id = int(data["apiid"])
+                pid = apiInfoTable.objects.get(apiID=id).owningListID_id
+                print("pid:", pid)
+                apiInfoTable.objects.filter(apiID=id).update(apiName=caseName, method=methods, url=url, headers=headers,
+                                                             body=send_body)
+                interfaceList.objects.filter(id=pid).update(projectName=projectName, moduleName=moduleName)
+            except Exception as e:
+                data = {
+                    "code": -1,
+                    "msg": "更新失败"
+                }
+                return JsonResponse(data)
+            data = {
+                "code": 0,
+                "msg": "更新成功"
+            }
         return JsonResponse(data,safe=False)
 
 

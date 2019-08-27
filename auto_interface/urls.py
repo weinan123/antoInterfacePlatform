@@ -45,4 +45,6 @@ urlpatterns = [
     url(r'^batchrun/$', apiinfo.batchrun),
     url(r'^newCase/$', main.newCase),
     url(r'^getProjectList/$', main.getProjectList),
+    url(r'^getapiInfos/$', apiinfo.getapiInfos),
+    url(r'^singleInterface/editor/$', main.singleInterface),
 ]

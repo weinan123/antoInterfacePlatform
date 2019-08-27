@@ -260,3 +260,51 @@ def runrequest(sqlquery, id):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=False)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
+
+def getapiInfos(request):
+    result = {}
+    if request.method == 'GET':
+        id = request.GET['apiid']
+        try:
+            query = apiInfoTable.objects.get(apiID=id)
+        except BaseException as e:
+            print(" SQL Error: %s" % e)
+            result = {'code': -1, 'info': 'sql error!'}
+            return JsonResponse(result)
+        if query != None:
+            json_dict = {}
+            module_list = []
+            header_list = []
+            json_dict["id"] = query.apiID
+            json_dict["name"] = query.apiName
+            json_dict["creator"] = query.creator
+            json_dict["method"] = query.method
+            if query.headers:
+                header_data = json.loads(query.headers)
+                for k in header_data:
+                    header_dict = {}
+                    header_dict["type"] = k
+                    header_dict["value"] = header_data[k]
+                    header_list.append(header_dict)
+                print header_list
+                json_dict["header"] = header_list
+            else:
+                header_list.append({"type": "","value": ""})
+                json_dict["header"] = header_list
+            print header_list
+            if query.body:
+                json_dict["body"] = json.loads(query.body)
+            else:
+                json_dict["body"] = query.body
+            json_dict["url"] = query.url
+            json_dict["assert"] = query.assertinfo
+            json_dict["listid"] = query.owningListID.id
+            json_dict["projectName"] = query.owningListID.projectName
+            json_dict["moduleName"] = query.owningListID.moduleName
+            modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
+            print modulelist
+            for module in modulelist:
+                if module["projectName"] == json_dict["projectName"]:
+                    module_list.append(module["moduleName"])
+            result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list}
+    return JsonResponse(result)

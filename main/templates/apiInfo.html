@@ -84,7 +84,9 @@
                     </td>
                     <td>{! info.name !}</td>
                     <td>
-                        <button type="button" class="btn btn-primary">查看编辑</button>
+                        <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
+                                <button type="button" class="btn btn-primary">查看编辑</button>
+                        </a>
                         <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
                         <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
                     </td>
