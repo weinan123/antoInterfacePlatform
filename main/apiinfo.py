@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 from django.shortcuts import render
 from models import apiInfoTable, interfaceList
-import datetime
+import time
 import json
 from django.http.response import JsonResponse
 import requests
-
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 def allinfo(request):
     proid = request.GET['pid']
@@ -32,14 +31,14 @@ def allinfo(request):
         json_dict["owing"] = i.creator
         json_dict["listid"] = i.owningListID.id
         json_dict["listname"] = i.owningListID.projectName
-        # data = json.dumps(json_dict)       #转化为json字符串
+        json_dict["method"] = i.method
+        json_dict["url"] = i.url
         json_list.append(json_dict)
     result = {
         'data': json_list,
         'code': 0,
         'info': 'success'
     }
-    # return render(request, 'apiInfo.html', {'datas': data})
     return JsonResponse(result)
 
 
@@ -118,7 +117,6 @@ def searchapi(request):
                 json_dict = {}
                 print i['owningListID_id'],pid
                 if str(i['owningListID_id']) == pid:
-                    print "222222222222222222222222222222222"
                     json_dict["id"] = i['apiID']
                     json_dict["name"] = i['apiName']
                     if i['lastRunResult'] is None:
@@ -220,7 +218,9 @@ def runrequest(sqlquery, id):
     url = sqlquery.url
     header = sqlquery.headers
     bodys = sqlquery.body
-    assertinfo = sqlquery.assertinfo
+    assertinfo = str(sqlquery.assertinfo)
+    content = ""
+    bodys_data = {}
     if method == "" or url == "":
         result = {"code": -1, "datas": "参数不能为空"}
         return result
@@ -229,19 +229,25 @@ def runrequest(sqlquery, id):
             headers = {}
         else:
             headers = json.loads(header)
-        print headers
+            try:
+                content = headers["Content-Type"]
+            except BaseException:
+                content = ""
+            print("content:", content)
         if bodys == "" or bodys is None:
-            bodys = {}
+            bodys_data = {}
         else:
             bodys = json.loads(bodys)
-        a = requests.request(method=method, url=url, headers=headers, data=bodys)
-        print a
+            if content == "text/plain":
+                bodys_data = bodys[0]["paramValue"]
+            else:
+                for i in bodys:
+                    bodys_data[i["paramName"]] = i["paramValue"]
+        print("bodys_data:",bodys_data)
+        a = requests.request(method=method, url=url, headers=headers, data=bodys_data, verify=False)
         print a.status_code
-        print a.text
-        text = a.text
-        dtime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print dtime
-        datas = {}
+        text = str(a.text)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if assertinfo == "":
             datas = {"status_code": a.status_code}
             if a.status_code == 200:
@@ -299,10 +305,10 @@ def getapiInfos(request):
             else:
                 header_list.append({"type": "", "value": ""})
                 json_dict["header"] = header_list
-            print header_list
+            print content
             if query.body:
                 bodydata = json.loads(query.body)
-                print("-----bodydata------", bodydata)
+                print("-----bodydata:", bodydata)
                 if content == "text/plain":
                     showbodyState = 3
                     for i in bodydata:
