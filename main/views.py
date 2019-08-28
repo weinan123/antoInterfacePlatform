@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
-import json
+import json,time
 from django.http import HttpResponse, JsonResponse
-import requests
+import requests,urllib2
 from forms import UserForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 from .models import *
 from .untils.until import my_login,mul_bodyData
+from common import authService
 from django.core import serializers
 @my_login
 def index(request):
@@ -95,18 +96,59 @@ def sendRequest(request):
     url = data["url"]
     headers = data["headers"]
     bodyinfor = data["bodyinfor"]
+    isRedirect = data["isRediret"]
+    getinfor = data["isRediret"]
+    Screatinfor = data["Screatinfor"]
     #处理数据类型的方法
     send_body = mul_bodyData(bodyinfor)
-    if(methods=="GET"):
-        response = requests.get(url,headers =headers,params=send_body,verify=False)
-    elif(methods=="POST"):
-        response = requests.post(url, headers=headers, data=json.dumps(send_body), verify=False)
-    return_data = {
-        "status_code": response.status_code,
-        "result_content": json.loads(response.text),
-        "times": str(response.elapsed.total_seconds())
-    }
-    return JsonResponse(return_data,safe=False)
+    #判断是否需要重定向
+    if isRedirect=="":
+        redirect = False
+    else:
+        redirect = True
+    #判断是否需要加密
+    s = requests.Session()
+    if Screatinfor["isScreat"]=="":
+        if (methods == "GET"):
+            response = s.get(url, headers=headers, params=getinfor, verify=False,allow_redirects=redirect)
+            resp = response.text
+        elif (methods == "POST"):
+            response = s.post(url, headers=headers, data=json.dumps(send_body), verify=False,allow_redirects=redirect)
+            resp = response.text
+    else:
+        print headers
+        #key_id = Screatinfor["key_id"]
+        #secret_key = Screatinfor["key_id"]
+        key_id = "b062f9721f2ed17596eaf599b6899f64"
+        secret_key = "dc5a277173ef42f63de1e9c1134d4f7b",
+        timestamp = int(time.time())
+        credentials = authService.BceCredentials(key_id, secret_key)
+        body = json.dumps(send_body).decode('unicode-escape')
+        print body
+        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+        path = "/api/v1/trade/business/query/funddetail"
+        result = authService.simplify_sign(credentials, methods, path, json.dumps(headers), timestamp, 300, headersOpt)
+        print result
+        headers['X-encryptflag'] = '1'
+        headers['Authorization'] = result
+        if headers.get('X-encryptflag') == '1' and body:
+            print 'body before encrypted: '
+            print body
+            body = authService.aes_encrypt(body)
+        if(methods=="GET"):
+            response = requests.get(url,headers =headers,params=body,verify=False)
+        elif(methods=="POST"):
+            response = requests.post(url, headers=headers, data=body, verify=False)
+        resp = response.text
+        if headers.get('X-encryptflag') != '1':
+            print 'response: '
+        else:
+            print 'response before decrypt: '
+            print resp
+            resp = authService.aes_decrypt(resp)
+        print('response: ')
+    print resp
+    return JsonResponse(resp,safe=False)
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
     model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
@@ -133,15 +175,12 @@ def newCase(request):
         moduleName = data["moduleName"]
         caseName = data["caseName"]
         creator = request.session.get('username')
-        print creator
-        send_body = mul_bodyData(bodyinfor)
-        send_body = json.dumps(send_body)
+        send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
         if(flag == False):
             try:
                 id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
-                print owningListID
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
                                                    apiName=caseName,owningListID_id=int(owningListID),creator=creator)
                 data = {
@@ -155,23 +194,50 @@ def newCase(request):
                     }
         else:
             try:
-                id = int(data["apiid"])
-                pid = apiInfoTable.objects.get(apiID=id).owningListID_id
-                print("pid:", pid)
-                apiInfoTable.objects.filter(apiID=id).update(apiName=caseName, method=methods, url=url, headers=headers,
-                                                             body=send_body)
+                id1 = int(reqdata["apiId"])
+                #print("--------------", id1)
+                pid = apiInfoTable.objects.get(apiID=id1).owningListID_id
+                #print("pid:", pid)
+                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
+                                                              headers=headers,
+                                                              body=send_body)
                 interfaceList.objects.filter(id=pid).update(projectName=projectName, moduleName=moduleName)
             except Exception as e:
                 data = {
                     "code": -1,
-                    "msg": "更新失败"
+                    "msg": "更新失败" + str(e),
                 }
                 return JsonResponse(data)
             data = {
                 "code": 0,
                 "msg": "更新成功"
             }
-        return JsonResponse(data,safe=False)
+        return JsonResponse(data, safe=False)
+
+def returnAuthorization(request):
+    if request.method=="POST":
+        data = json.loads(request.body)
+        secret_key = data["secret_key"].encode("utf-8")
+        key_id = data["key_id"]
+        http_method = data["methods"]
+        path = data["url"]
+        #headers = data["headers"]
+        timestamp = int(time.time())
+        credentials = authService.BceCredentials(key_id, secret_key)
+        headers = {
+            'Accept': 'text/html, */*; q=0.01',
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+        }
+        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+        result = authService.simplify_sign(credentials, http_method, path, headers, timestamp, 300, headersOpt)
+        print result
+        returnData = {
+            "code":0,
+            "data":result
+        }
+        return result
+        #return JsonResponse(returnData,safe=False)
 
 
 

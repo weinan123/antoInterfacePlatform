@@ -48,12 +48,12 @@ var vm1 = new Vue({
             var usename = this.getCookie("usename");
             console.log(usename);
             if (usename===""){
-                vm.$data.status = "";
+                vm.$data.status = "fail";
                 vm.$data.login_user = "";
+                window.location.href="/login/"
             }else{
                 vm.$data.status="success";
                 vm.$data.login_user = usename;
-                //window.location.href="/index/";
             }
             console.log(this.status);
         },

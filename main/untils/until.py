@@ -15,9 +15,9 @@ def mul_bodyData(bodyinfor):
     body = {}
     for i in range(0,len(bodyinfor)):
         print bodyinfor[i]
-        params_name = bodyinfor[i][u"参数名"]
-        params_value = bodyinfor[i][u"参数值"]
-        params_type = bodyinfor[i][u"参数类型"]
+        params_name = bodyinfor[i]["params_name"]
+        params_value = bodyinfor[i]["params_value"]
+        params_type = bodyinfor[i]["params_type"]
         print params_name,params_value,params_type
         getvalue = toType(params_type,params_value).toreturnType()
         print getvalue
