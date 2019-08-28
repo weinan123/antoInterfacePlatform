@@ -19,7 +19,8 @@ def addProjectList(request):
             # ...
             # 重定向到一个新的URL
             inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                 moduleName=form.cleaned_data['moduleName'])
+                                                 moduleName=form.cleaned_data['moduleName'],
+                                                 host=form.cleaned_data['host'])
             inter.save()
             return HttpResponseRedirect('/projectList/')
 
