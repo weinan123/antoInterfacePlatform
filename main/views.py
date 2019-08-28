@@ -96,28 +96,49 @@ def sendRequest(request):
     url = data["url"]
     headers = data["headers"]
     bodyinfor = data["bodyinfor"]
+    isRedirect = data["isRediret"]
+    getinfor = data["isRediret"]
+    Screatinfor = data["Screatinfor"]
     #处理数据类型的方法
-    #send_body = mul_bodyData(bodyinfor)
-    body = json.dumps(bodyinfor).decode('unicode-escape')
-    print type(body)
-    key_id = "b062f9721f2ed17596eaf599b6899f64"
-    secret_key = "dc5a277173ef42f63de1e9c1134d4f7b"
-    timestamp = int(time.time())
-    credentials = authService.BceCredentials(key_id, secret_key)
-    headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
-    headers['X-encryptflag'] = '1'
-    path = "/api/v1/trade/business/query/funddetail"
-    result = authService.simplify_sign(credentials, methods, path, headers, timestamp, 300, headersOpt)
-    print result
-    headers['Authorization'] = result
-    if headers.get('X-encryptflag') == '1' and body:
-        print 'body before encrypted: '
+    send_body = mul_bodyData(bodyinfor)
+    #判断是否需要重定向
+    if isRedirect=="":
+        redirect = False
+    else:
+        redirect = True
+    #判断是否需要加密
+    s = requests.Session()
+    if Screatinfor["isScreat"]=="":
+        if (methods == "GET"):
+            response = s.get(url, headers=headers, params=getinfor, verify=False,allow_redirects=redirect)
+            resp = response.text
+        elif (methods == "POST"):
+            response = s.post(url, headers=headers, data=json.dumps(send_body), verify=False,allow_redirects=redirect)
+            resp = response.text
+    else:
+        print headers
+        #key_id = Screatinfor["key_id"]
+        #secret_key = Screatinfor["key_id"]
+        key_id = "b062f9721f2ed17596eaf599b6899f64"
+        secret_key = "dc5a277173ef42f63de1e9c1134d4f7b",
+        timestamp = int(time.time())
+        credentials = authService.BceCredentials(key_id, secret_key)
+        body = json.dumps(send_body).decode('unicode-escape')
         print body
-        body = authService.aes_encrypt(body)
-    if(methods=="GET"):
-        response = requests.get(url,headers =headers,params=body,verify=False)
-    elif(methods=="POST"):
-        response = requests.post(url, headers=headers, data=body, verify=False)
+        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+        path = "/api/v1/trade/business/query/funddetail"
+        result = authService.simplify_sign(credentials, methods, path, json.dumps(headers), timestamp, 300, headersOpt)
+        print result
+        headers['X-encryptflag'] = '1'
+        headers['Authorization'] = result
+        if headers.get('X-encryptflag') == '1' and body:
+            print 'body before encrypted: '
+            print body
+            body = authService.aes_encrypt(body)
+        if(methods=="GET"):
+            response = requests.get(url,headers =headers,params=body,verify=False)
+        elif(methods=="POST"):
+            response = requests.post(url, headers=headers, data=body, verify=False)
         resp = response.text
         if headers.get('X-encryptflag') != '1':
             print 'response: '
@@ -125,13 +146,9 @@ def sendRequest(request):
             print 'response before decrypt: '
             print resp
             resp = authService.aes_decrypt(resp)
-            print('response: ')
-        try:
-            respDict = json.loads(resp)
-            print(json.dumps(respDict, ensure_ascii=False, sort_keys=True, indent=4))
-        except:
-            print(resp)
-    return JsonResponse(respDict,safe=False)
+        print('response: ')
+    print resp
+    return JsonResponse(resp,safe=False)
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
     model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
@@ -158,14 +175,12 @@ def newCase(request):
         moduleName = data["moduleName"]
         caseName = data["caseName"]
         creator = request.session.get('username')
-        print creator
         send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
         if(flag == False):
             try:
                 id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
-                print owningListID
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
                                                    apiName=caseName,owningListID_id=int(owningListID),creator=creator)
                 data = {
@@ -180,9 +195,9 @@ def newCase(request):
         else:
             try:
                 id1 = int(reqdata["apiId"])
-                print("--------------", id1)
+                #print("--------------", id1)
                 pid = apiInfoTable.objects.get(apiID=id1).owningListID_id
-                print("pid:", pid)
+                #print("pid:", pid)
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
                                                               headers=headers,
                                                               body=send_body)
@@ -197,7 +212,7 @@ def newCase(request):
                 "code": 0,
                 "msg": "更新成功"
             }
-            return JsonResponse(data, safe=False)
+        return JsonResponse(data, safe=False)
 
 def returnAuthorization(request):
     if request.method=="POST":

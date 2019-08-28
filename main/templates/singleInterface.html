@@ -36,7 +36,7 @@
         <li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
         <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
         <li v-bind:class="{active:isActive2}"><a v-on:click="makeFrom(2)">GET/URL参数</a></li>
-        <li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>
+        {% comment %}<li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>{% endcomment %}
         <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">请求加密</a></li>
         <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">权限校验</a></li>
         <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>
@@ -44,12 +44,12 @@
     <div class="row" v-if="showState === 1">
         <div class="col-lg-1 radio ">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv"  @click="showBodyform(0)"> Form-data
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv" @click="showBodyform(0)"> Form-data
         </label>
         </div>
         <div class=" col-lg-1 radio " style="margin-top: 10px">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option2" v-model="checkv" @click="showBodyform(1)"> JSON
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option2" v-model="checkv"  @click="showBodyform(1)"> JSON
         </label>
         </div>
         <div class="col-lg-1 radio " style="margin-top: 10px">
@@ -59,7 +59,7 @@
         </div>
         <div class="col-lg-1 radio" style="margin-top: 10px">
         <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option4" v-model="checkv" @click="showBodyform(3)"> Raw
+            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option4" v-model="checkv"  @click="showBodyform(3)"> Raw
         </label>
         </div>
     </div>
@@ -143,7 +143,7 @@
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJVal.value" >{{ bodyJVal.value }}</td>
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
+                    <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -175,33 +175,24 @@
                 <textarea class="form-control" rows="15" v-model="rawValue"></textarea>
          </div>
      </div>
-    <table class="table table-bordered" v-if="showState === 2">
+    <table class="table table-bordered" v-if="showState === 2" style="width: 70%">
           <thead>
             <tr>
-              <th>666</th>
-              <th>777</th>
-              <th>888</th>
+              <th>参数名</th>
+              <th>参数值</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Tanmay</td>
-              <td>Bangalore</td>
-              <td>560001</td>
-            </tr>
-            <tr>
-              <td>Sachin</td>
-              <td>Mumbai</td>
-              <td>400003</td>
-            </tr>
-            <tr>
-              <td>Uma</td>
-              <td>Pune</td>
-              <td>411027</td>
+            <tr v-for="getVal,index in getVals">
+             <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="getVal.name">{{ getVal.name }}</td>
+             <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数值" v-model="getVal.value">{{ getVal.value }}</td>
+             <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
+                    <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
-    <p v-if="showState === 3">333333</p>
+    {% comment %}<p v-if="showState === 3">333333</p>{% endcomment %}
     <div v-if="showState === 4"  style="padding-top: 20px" >
         <form role="form" class="form-horizontal">
                             <div class="form-group">
@@ -246,16 +237,16 @@
         </div>
         </form>
     </div>
-    <div v-if="showState === 6" style="border: 1px solid #ccc;padding-left: 25px;padding-top: 20px;width: 75%">
+    <div v-if="showState === 6" style="border: 1px solid #ccc;padding-left: 25px;padding-top: 20px;width: 70%">
         <form role="form" class="form-horizontal">
         <div class="form-group">
-            <label  for="version" >是否跟随重定向:</label>&nbsp;&nbsp;&nbsp;&nbsp;
-            <input  name="status" type="checkbox" data-size="small" checked><br>
+            <label  for="version" >是否跟随重定向:&nbsp;&nbsp;&nbsp;&nbsp;
+            <input  v-model="isRediret" type="checkbox" data-size="small" value="2" ></label><br>
 
         </div>
         <div class="form-group">
             <label  for="version" >接口是否加密:</label>&nbsp;&nbsp;&nbsp;&nbsp;
-            <input  name="status" type="checkbox" data-size="small"  checked><br>
+            <input v-model="isScreat"  type="checkbox" value="1" id="isTeam" ><br>
         </div>
         </form>
     </div>
@@ -359,8 +350,10 @@ var vm = new Vue({
     el:'#app2',
     data() {
         return {
-            //样式选中互斥
             checkv : "option1",
+            //样式选中互斥
+            isRediret: "",
+            isScreat:"",
             aid:"",
             initflag:false,
             showState: 0,
@@ -404,6 +397,10 @@ var vm = new Vue({
                 name: "",
                 value: ""
             }],
+            getVals:[{
+                 name: "",
+                value: ""
+            }],
             //获取请求方式
             method: "请求方式",
             //请求url
@@ -431,7 +428,6 @@ var vm = new Vue({
        vm1.$data.isActiveSi=true;
        vm1.$data.isActiveIn=false;
        vm1.$data.isActiveAl=false;
-       this.switch()
     },
     mounted:function(){
         let args = location.search.substr(1);
@@ -439,31 +435,8 @@ var vm = new Vue({
             this.initflag=true;
             this.initInfos(args);
         }
-
     },
     methods:{
-        //kaiguan
-        switch(){
-            $('[name="status"]').bootstrapSwitch({    //初始化按钮
-               onText:"是",
-               offText:"否",
-               onColor:"success",
-               offColor:"danger",
-               size:"normal",
-               handleWidth:"35",
-               onSwitchChange:function(event,state){
-                  if(state==true){
-                      alert("111");
-                       console.log("开启");
-                     }else{
-                      alert("111");
-                      console.log("关闭");
-                     }
-                 }
-            });
-            $('[name="status"]').bootstrapSwitch(
-            );
-        },
         initInfos(args){
             let param={};
             if(args !== ""){
@@ -568,9 +541,8 @@ var vm = new Vue({
              console.log(this.modelList);
         },
         getEdit(json){
-            var editor = new JSONEditor(document.getElementById('jsoneditor'));
-            editor.setText(JSON.parse(json));
-            {% comment %}var container = document.getElementById('jsoneditor');
+
+            var container = document.getElementById('jsoneditor');
             //var container2 = document.getElementById('jsoneditor1');
             var options = {
             mode: 'text',
@@ -589,7 +561,7 @@ var vm = new Vue({
                   console.log('Mode switched from', oldMode, 'to', newMode);
                 }
               };
-                var editor1 = new JSONEditor(container, options, json);{% endcomment %}
+                var editor1 = new JSONEditor(container, options, json);
             //var editor2 = new JSONEditor(container2, options, json);
         },
         changeCss(params){
@@ -739,6 +711,10 @@ var vm = new Vue({
                 name:"",
                 value:""
             };
+            var newgetVals={
+                name:"",
+                value:""
+            };
             if(params===0){
                 this.headerVals.push(newheaderVals);
             }else if(params===1&&params1===0){
@@ -747,6 +723,8 @@ var vm = new Vue({
                 this.bodyJVals.push(newheaderVals1)
             }else if(params===1&&params1===2){
                 this.bodyXVals.push(newheaderVals1)
+            }else if(params===2){
+                this.getVals.push(newgetVals)
             }
 
         },
@@ -755,6 +733,7 @@ var vm = new Vue({
             var lengthBodyF = this.bodyFVals.length;
             var lengthBodyX = this.bodyXVals.length;
             var lengthBodyJ = this.bodyJVals.length;
+            var lengthGet = this.getVals.length;
             if(params===0&&lengthHeader>1){
                 this.headerVals.splice(index, 1);
             }else if(params===1&&params1===0&& lengthBodyF>1){
@@ -763,6 +742,8 @@ var vm = new Vue({
                 this.bodyJVals.splice(index, 1);
             }else if(params===1&&params1===2&& lengthBodyX>1){
                 this.bodyXVals.splice(index, 1);
+            }else if(params===2&&lengthGet>1){
+                this.getVals.splice(index, 1);
             }
         },
         getMethod(params){
@@ -770,7 +751,6 @@ var vm = new Vue({
         },
         sendQuest() {
              this.mulData();
-             //this.data_to_send["accountid"]["Authorization"]=this.Authorization;
              console.log(this.data_to_send);
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
@@ -781,9 +761,9 @@ var vm = new Vue({
              var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
                                 "\n"+"请求参数："+body_str;
              this.request_infor = requestStr;
-            axios.post('/sendRequest/',this.data_to_send)
+             axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
-                        this.getEdit(resp.data)
+                        this.getEdit( JSON.parse(resp.data))
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
@@ -804,7 +784,7 @@ var vm = new Vue({
             var bodyinfor = {};
             //console.log(this.showState,this.showbodyState);
             if (this.showState === 1 && this.showbodyState === 0) {
-                headerinfor["Content-Type"] = "multipart/form-data";
+                //headerinfor["Content-Type"] = "multipart/form-data";
                 for (var j = 0; j < this.bodyFVals.length; j++) {
                     bodyinfor = {};
                     bodyinfor["params_type"] = this.bodyFVals[j].type;
@@ -814,7 +794,7 @@ var vm = new Vue({
                 }
             }
             else if (this.showState === 1 && this.showbodyState === 1) {
-                headerinfor["Content-Type"] = "application/json";
+                //headerinfor["Content-Type"] = "application/json";
                 for (var k = 0; k < this.bodyJVals.length; k++) {
                     bodyinfor = {};
                     bodyinfor["params_type"] = this.bodyJVals[k].type;
@@ -824,7 +804,7 @@ var vm = new Vue({
                 }
             }
             else if (this.showState === 1 && this.showbodyState === 2) {
-                headerinfor["Content-Type"] = "application/xml";
+                //headerinfor["Content-Type"] = "application/xml";
                 for (var l = 0; l < this.bodyXVals.length; l++) {
                     bodyinfor = {};
                     bodyinfor["params_type"] = this.bodyXVals[l].type;
@@ -835,17 +815,32 @@ var vm = new Vue({
             }
             else if (this.showState === 1 && this.showbodyState === 3) {
                 bodyinfor = {};
-                headerinfor["Content-Type"] = "text/plain";
+                //headerinfor["Content-Type"] = "text/plain";
                 bodyinfor["params_value"] = this.rawValue;
                 bodyArr.push(bodyinfor)
             }
+            var getinfor = {};
+            console.log(this.getVals);
+            for (var w = 0; w < this.getVals.length; w++) {
+                var Gtype = this.getVals[w].name;
+                var Gvalue = this.getVals[w].value;
+                if(Gtype!==""&&Gvalue!==""){
+                     getinfor[Gtype] = Gvalue
+                }
+            }
+            var Screatinfor={
+                isScreat:this.isScreat,
+                Screatinfor:this.Authorization
+            };
             this.data_to_send = {
                 methods:methods,
                 url:posturl,
                 headers:headerinfor,
-                bodyinfor:bodyArr
+                bodyinfor:bodyArr,
+                getinfor:getinfor,
+                Screatinfor:Screatinfor,
+                isRediret:this.isRediret
             };
-
         },
         //保存用例
         newCase(){
