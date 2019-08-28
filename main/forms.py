@@ -11,4 +11,4 @@ class UserForm(forms.Form):
 class projectForm(forms.Form):
     projectName = forms.CharField(max_length=50, label='项目名称')
     moduleName = forms.CharField(max_length=50, label='模块名称')
-    host = forms.ChoiceField(choices=(('QA', 'QA'), ('Dev', 'Dev'), ('Stage', 'Stage'), ('Live', 'Live')), label='测试环境')
+    host = forms.CharField(max_length=50, label='域名地址')

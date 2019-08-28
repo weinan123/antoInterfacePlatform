@@ -26,10 +26,12 @@ def addProjectList(request):
 
 
 def projectListInfo(request):
-    resp = interfaceList.objects.values("id", "projectName", "moduleName", "updateTime")
+    resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     respList = list(resp)
     for i in range(len(respList)):
         respList[i]['updateTime'] = str(respList[i]['updateTime'])
+    for i in range(len(respList)):
+        respList[i]['createTime'] = str(respList[i]['createTime'])
     return JsonResponse(respList, safe=False)
 
 
