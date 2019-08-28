@@ -19,16 +19,19 @@ def addProjectList(request):
             # ...
             # 重定向到一个新的URL
             inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                 moduleName=form.cleaned_data['moduleName'])
+                                                 moduleName=form.cleaned_data['moduleName'],
+                                                 host=form.cleaned_data['host'])
             inter.save()
             return HttpResponseRedirect('/projectList/')
 
 
 def projectListInfo(request):
-    resp = interfaceList.objects.values("id", "projectName", "moduleName", "updateTime")
+    resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     respList = list(resp)
     for i in range(len(respList)):
         respList[i]['updateTime'] = str(respList[i]['updateTime'])
+    for i in range(len(respList)):
+        respList[i]['createTime'] = str(respList[i]['createTime'])
     return JsonResponse(respList, safe=False)
 
 
