@@ -2,8 +2,16 @@
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
     <!--<div class="row" style="border: #337ab7">-->
-<div class="col-md-10 row" id ="app2">
+<div class="col-md-10 row" id ="app2" style="margin-left: 1px;">
  <div class="row">
+     <div v-if="initflag">
+        <ul class="breadcrumb">
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/projectList/">接口列表</a></li>
+            <li><a v-bind:href="['/apiInfopage?pid='+pid]">{! projectSelect !}_{! modelSelect !}</a></li>
+            <li class="active" id="path">详细数据：</li>
+        </ul>
+    </div>
 	<form class="bs-example bs-example-form" role="form">
 		<div class="row" >
 			<div class="col-lg-9">
@@ -354,7 +362,8 @@ var vm = new Vue({
             //样式选中互斥
             isRediret: "",
             isScreat:"",
-            aid:"",
+            aid:0,
+            pid:0,
             initflag:false,
             showState: 0,
             showbodyState: 0,
@@ -446,7 +455,7 @@ var vm = new Vue({
                 }
             }
             let id = param["id"];
-            this.aid = id;
+            this.aid = parseInt(id);
             console.log(id);
             axios.get('/getapiInfos/',{
                     params: {
@@ -460,6 +469,7 @@ var vm = new Vue({
                     if(result.datas.method !== ""){
                         this.method = result.datas.method;
                     }
+                    this.pid = result.datas.listid;
                     this.projectSelect = result.datas.projectName;
                     this.modelList = result.module_list;
                     this.modelSelect = result.datas.moduleName;
@@ -644,60 +654,62 @@ var vm = new Vue({
         },
         showBodyform(params){
             this.showbodyState = params;
-            if(params===0&&this.showState===1){
-                this.bodyJVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.bodyXVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.rawValue=""
-            }else if(params===1&&this.showState===1){
-                this.bodyFVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.bodyXVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.rawValue=""
-            }else if(params===2&&this.showState===1){
-                console.log(this.rawValue);
-                this.bodyFVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.bodyJVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.rawValue=""
-            }else if(params===3&&this.showState===1){
-                this.bodyFVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.bodyJVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
-                this.bodyXVals=[{
-                    type:"",
-                    name:"",
-                    value:""
-                }];
+            if(this.initflag === false) {
+                if (params === 0 && this.showState === 1) {
+                    this.bodyJVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.bodyXVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.rawValue = ""
+                } else if (params === 1 && this.showState === 1) {
+                    this.bodyFVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.bodyXVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.rawValue = ""
+                } else if (params === 2 && this.showState === 1) {
+                    console.log(this.rawValue);
+                    this.bodyFVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.bodyJVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.rawValue = ""
+                } else if (params === 3 && this.showState === 1) {
+                    this.bodyFVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.bodyJVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
+                    this.bodyXVals = [{
+                        type: "",
+                        name: "",
+                        value: ""
+                    }];
 
+                }
             }
         },
         insertTable(params,params1){
