@@ -33,12 +33,14 @@ def allinfo(request):
         json_dict["listname"] = i.owningListID.projectName
         json_dict["method"] = i.method
         json_dict["url"] = i.url
+        # data = json.dumps(json_dict)       #转化为json字符串
         json_list.append(json_dict)
     result = {
         'data': json_list,
         'code': 0,
         'info': 'success'
     }
+    # return render(request, 'apiInfo.html', {'datas': data})
     return JsonResponse(result)
 
 
@@ -157,7 +159,7 @@ def getlistpath(request):
             json_dict["moduleName"] = query.moduleName
             json_list.append(json_dict)
             print json_list
-            result = {'code':0,'data':json_list,'info':'success'}
+            result = {'code': 0, 'data': json_list, 'info': 'success'}
     return JsonResponse(result)
 
 def batchdel(request):
@@ -219,29 +221,24 @@ def runrequest(sqlquery, id):
     header = sqlquery.headers
     bodys = sqlquery.body
     assertinfo = str(sqlquery.assertinfo)
-    content = ""
     bodys_data = {}
     if method == "" or url == "":
         result = {"code": -1, "datas": "参数不能为空"}
         return result
     else:
-        if header == "" or header is None:
+        if header == {} or header is None:
             headers = {}
         else:
             headers = json.loads(header)
-            try:
-                content = headers["Content-Type"]
-            except BaseException:
-                content = ""
-            print("content:", content)
-        if bodys == "" or bodys is None:
+        if bodys == [] or bodys is None:
             bodys_data = {}
         else:
             bodys = json.loads(bodys)
-            if content == "text/plain":
-                bodys_data = bodys[0]["paramValue"]
+            stateflag = bodys[0]["showflag"]
+            if stateflag == 3:
+                bodys_data = bodys[1]["paramValue"]
             else:
-                for i in bodys:
+                for i in bodys[1:]:
                     bodys_data[i["paramName"]] = i["paramValue"]
         print("bodys_data:",bodys_data)
         a = requests.request(method=method, url=url, headers=headers, data=bodys_data, verify=False)
@@ -267,6 +264,7 @@ def runrequest(sqlquery, id):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
 
+
 def getapiInfos(request):
     result = {}
     if request.method == 'GET':
@@ -285,16 +283,10 @@ def getapiInfos(request):
             json_dict["name"] = query.apiName
             json_dict["creator"] = query.creator
             json_dict["method"] = query.method
-            content = ""
-            showbodyState = 0
+            showbodyState =0
             body_list = []
-            if query.headers:
+            if query.headers != "{}":
                 header_data = json.loads(query.headers)
-                try:
-                    print(str(header_data["Content-Type"]))
-                    content = str(header_data["Content-Type"])
-                except BaseException as e:
-                    content = ""
                 for k in header_data:
                     header_dict = {}
                     header_dict["type"] = k
@@ -303,22 +295,23 @@ def getapiInfos(request):
                 print header_list
                 json_dict["header"] = header_list
             else:
-                header_list.append({"type": "", "value": ""})
-                json_dict["header"] = header_list
-            print content
-            if query.body:
+                json_dict["header"] = []
+            print header_list
+            if query.body != "[]":
                 bodydata = json.loads(query.body)
-                print("-----bodydata:", bodydata)
-                if content == "text/plain":
+                print("bodydata:", bodydata)
+                stateflag = bodydata[0]["showflag"]
+                print("stateflag:",stateflag)
+                if stateflag==3:
                     showbodyState = 3
-                    for i in bodydata:
+                    for i in bodydata[1:]:
                         body_dict = {}
                         print i
                         body_dict["value"] = i["params_value"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
-                elif content == "application/json":
-                    for i in bodydata:
+                elif stateflag==1:
+                    for i in bodydata[1:]:
                         body_dict = {}
                         print i
                         body_dict["name"] = i["params_name"]
@@ -327,24 +320,25 @@ def getapiInfos(request):
                         body_list.append(body_dict)
                     showbodyState = 1
                     json_dict["body"] = body_list
-                elif content == "application/xml":
+                elif stateflag == 2:
                     showbodyState = 2
-                    for i in bodydata:
+                    for i in bodydata[1:]:
                         body_dict = {}
                         print i
-                        body_dict["name"] = i["params_name"]
-                        body_dict["type"] = i["params_type"]
-                        body_dict["value"] = i["params_value"]
+                        body_dict["name"] = i["paramName"]
+                        body_dict["type"] = i["paramType"]
+                        body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
-                elif content == "multipart/form-data":
+                    print("body:****", json_dict["body"])
+                elif stateflag == 0:
                     showbodyState = 0
-                    for i in bodydata:
+                    for i in bodydata[1:]:
                         body_dict = {}
                         print i
-                        body_dict["name"] = i["params_name"]
-                        body_dict["type"] = i["params_type"]
-                        body_dict["value"] = i["params_value"]
+                        body_dict["name"] = i["paramName"]
+                        body_dict["type"] = i["paramType"]
+                        body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
                 else:
@@ -362,6 +356,5 @@ def getapiInfos(request):
             for module in modulelist:
                 if module["projectName"] == json_dict["projectName"]:
                     module_list.append(module["moduleName"])
-            result = {'code': 0, 'datas': json_dict, 'info': 'success', "module_list": module_list,
-                      "showbody": showbodyState}
+            result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list,"showbody":showbodyState}
     return JsonResponse(result)
