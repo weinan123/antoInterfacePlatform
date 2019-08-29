@@ -20,17 +20,49 @@
                     <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                          aria-hidden="true">
                         <div class="modal-dialog">
-                            <div class="modal-content" style="margin: 150px;">
+                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                                     </button>
-                                    <h4 class="modal-title" id="myModalLabel">新建项目</h4>
+                                    <label class="modal-title" id="myModalLabel">新建项目</label>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="/addProjectList/" method="post" style="text-align: center">
-                                        {{ form }}
-                                        <input type="submit" class="btn btn-primary" value="新建"/>
-                                        <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                                    <form role="form" action="/addProjectList/" method="post" style="text-align: center"
+                                          class="form-horizontal">
+                                        <div class="form-group">
+                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="projectName"
+                                                       required id="id_projectName" maxlength="50"
+                                                       placeholder="请输入项目名称"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="moduleName"
+                                                       required id="id_moduleName"
+                                                       maxlength="50" placeholder="请输入模块名称"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="host" required
+                                                       id="id_host" maxlength="50" placeholder="请输入域名地址"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <input type="submit" class="btn btn-primary" value="新建"/>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn btn-primary"
+                                                        data-dismiss="modal">
+                                                    关闭
+                                                </button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
                             </div><!-- /.modal-content -->
@@ -43,13 +75,13 @@
                          aria-labelledby="myModalLabel"
                          aria-hidden="true">
                         <div class="modal-dialog">
-                            <div class="modal-content" style="margin: 150px;">
+                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
                                     </button>
-                                    <h4 class="modal-title" id="myModalLabel">导入</h4>
+                                    <label class="modal-title" id="myModalLabel">导入</label>
                                 </div>
-                                <div class="modal-body">选择需要导入的文件
+                                <div class="modal-body">请选择需要导入的文件
                                     <form enctype="multipart/form-data" method="post" action="/projectImport/">
                                         <input type="file" name="file"/>
                                         <div class="modal-footer" style="text-align: center">
@@ -114,31 +146,61 @@
                                      aria-labelledby="myModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <div class="modal-content" style="margin: 150px;">
+                                        <div class="modal-content" style="width: 450px;margin: 75px auto;">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal"
                                                         aria-hidden="true">
                                                     &times;
                                                 </button>
-                                                <h4 class="modal-title" id="myModalLabel">编辑名称</h4>
+                                                <label class="modal-title" id="myModalLabel">编辑</label>
                                             </div>
                                             <div class="modal-body">
-                                                <form action="/projectEdit/" method="post" style="text-align: center">
+                                                <form role="form" action="/projectEdit/" method="post"
+                                                      style="text-align: center"
+                                                      class="form-horizontal">
                                                     <input type="hidden" name="id" readonly="readonly"
                                                            v-bind:value="[item.id]">
-                                                    <label for="id_projectName">项目名称:</label>
-                                                    <input type="text" name="projectName"
-                                                           v-bind:value="[item.projectName]"
-                                                           required="required" id="id_projectName" maxlength="50">
-                                                    <label for="id_moduleName">模块名称:</label>
-                                                    <input type="text" name="moduleName"
-                                                           v-bind:value="[item.moduleName]"
-                                                           required="required" id="id_moduleName" maxlength="50">
-                                                    <br>
-                                                    <input type="submit" class="btn btn-primary" value="修改"/>
-                                                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                                                        关闭
-                                                    </button>
+                                                    <div class="form-group">
+                                                        <label for="id_projectName"
+                                                               class="col-sm-3 control-label">项目名称:</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="projectName" class="form-control"
+                                                                   v-bind:value="[item.projectName]"
+                                                                   required="required" id="id_projectName"
+                                                                   maxlength="50">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="id_moduleName"
+                                                               class="col-sm-3 control-label">模块名称:</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="moduleName" class="form-control"
+                                                                   v-bind:value="[item.moduleName]"
+                                                                   required="required" id="id_moduleName"
+                                                                   maxlength="50">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="id_host"
+                                                               class="col-sm-3 control-label">host:</label>
+                                                        <div class="col-sm-9">
+                                                            <input type="text" name="host" class="form-control"
+                                                                   v-bind:value="[item.host]"
+                                                                   required="required" id="id_host"
+                                                                   maxlength="50">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-6">
+                                                            <input type="submit" class="btn btn-primary" value="修改"/>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <button type="button" class="btn btn-primary"
+                                                                    data-dismiss="modal">
+                                                                关闭
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </form>
                                             </div>
                                         </div><!-- /.modal-content -->

@@ -36,8 +36,9 @@ def projectListInfo(request):
 
 
 def projectList(request):
-    form = projectForm()
-    return render(request, 'projectList.html', {'form': form})
+    # form = projectForm()
+    # return render(request, 'projectList.html', {'form': form})
+    return render(request, 'projectList.html')
 
 
 def projectView(request):
@@ -71,9 +72,11 @@ def projectEdit(request):
         id = request.POST.get('id')
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
+        host = request.POST.get('host')
         edit = interfaceList.objects.get(id=id)
         edit.projectName = projectName
         edit.moduleName = moduleName
+        edit.host = host
         edit.save()
         return HttpResponseRedirect('/projectList/')
 
