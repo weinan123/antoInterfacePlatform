@@ -226,11 +226,11 @@ def runrequest(sqlquery, id):
         result = {"code": -1, "datas": "参数不能为空"}
         return result
     else:
-        if header == {} or header is None:
+        if header == "{}" or header is None:
             headers = {}
         else:
             headers = json.loads(header)
-        if bodys == [] or bodys is None:
+        if bodys == "[]" or bodys is None:
             bodys_data = {}
         else:
             bodys = json.loads(bodys)
@@ -307,16 +307,16 @@ def getapiInfos(request):
                     for i in bodydata[1:]:
                         body_dict = {}
                         print i
-                        body_dict["value"] = i["params_value"]
+                        body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
                 elif stateflag==1:
                     for i in bodydata[1:]:
                         body_dict = {}
                         print i
-                        body_dict["name"] = i["params_name"]
-                        body_dict["type"] = i["params_type"]
-                        body_dict["value"] = i["params_value"]
+                        body_dict["name"] = i["paramName"]
+                        body_dict["type"] = i["paramType"]
+                        body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     showbodyState = 1
                     json_dict["body"] = body_list
