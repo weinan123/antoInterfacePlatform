@@ -195,9 +195,7 @@ def newCase(request):
         else:
             try:
                 id1 = int(reqdata["apiId"])
-                #print("--------------", id1)
                 pid = apiInfoTable.objects.get(apiID=id1).owningListID_id
-                #print("pid:", pid)
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
                                                               headers=headers,
                                                               body=send_body)
