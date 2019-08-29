@@ -2,13 +2,11 @@
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
 <div class="col-md-10 row" id ="myindex" style="margin-left: 1px;">
-    <ul id="myTab"  class="nav nav-tabs">
-			<li v-for="projectName in projectNameList"><a @click="changeChart(projectName)" data-toggle="tab">{! projectName !}</a></li>
+    <ul id="myTab"  class="nav nav-tabs" >
+			<li v-for="projectName in projectNameList"><a @click="changeChart(projectName)" data-toggle="tab">
+                {! projectName !}</a></li>
     </ul>
     <div class="container">
-
-			{% comment %}<li><a href="#tab2" data-toggle="tab">Tab2</a></li>
-			<li><a href="#tab3" data-toggle="tab">Tab3</a></li>{% endcomment %}
 		<div id="myTabContent" style="height: 500px;width: 1000px">
 		</div>
 	</div>
@@ -25,142 +23,22 @@ var vm = new Vue({
     el:'#myindex',
     data:function(){
         return{
+            projectName:"",
             showchart:"",
             projectNameList:[],
             myTabContent:"",
             myTabContent1:"",
-            {% comment %}tab2Option :{
-			title : {
-				text : '项目总执行情况',
-				subtext : '有鱼股票',
-				x : 'center'
-			},
-			tooltip : {
-				trigger : 'item',
-				formatter : "{a} <br/>{b} : {c} ({d}%)"
-			},
-			legend : {
-				orient : 'vertical',
-				left : 'left',
-				data : [ '执行通过', '执行失败', '未执行']
-			},
-			series : [ {
-				name : '有鱼股票',
-				type : 'pie',
-				radius : '55%',
-				center : [ '50%', '60%' ],
-				data : [ {
-					value : 335,
-					name : '执行通过',
-                    itemStyle: {
-				    normal:{
-				        color:"#009900"
-                    }
-                }
-				}, {
-					value : 310,
-					name : '执行失败',
-                    itemStyle: {
-				    normal:{
-				        color:"#CC0000"
-                    }
-                }
-				}, {
-					value : 234,
-					name : '未执行',
-                    itemStyle: {
-				    normal:{
-				        color:"#C0C0C0"
-                    }
-                }
-				},],
-				itemStyle : {
-					emphasis : {
-						shadowBlur : 10,
-						shadowOffsetX : 0,
-						shadowColor : 'rgba(0, 0, 0, 0.5)'
-					}
-				}
-			} ]
-		},
-            options:{
-            //定义一个标题
-            title:{
-                text:"项目各模块执行情况",
-                subtext : '有鱼股票',
-            } ,
-            legend:{
-                data:["总用例","通过","失败","未执行"]
-            },
-            tooltip:{
-                show: true
-            },
-            calculable : true,
-            xAxis : {
-            type : 'category',
-            data : [ '有鱼股票', '有鱼智投', '鱼框量化', '开放平台', 'web网站' ]
-            },
-			yAxis : {
-				type : 'value'
-			},
-			series : [
-			    {
-                name:"总用例",
-				data : [ 10, 11, 12,  6, 8 ],
-				type : 'bar',
-                itemStyle: {
-				    normal:{
-				        color:"#428bca"
-                    }
-                }
-			},
-             {
-
-                name:"通过",
-				data : [ 3, 2, 1,  5, 8 ],
-				type : 'bar',
-                itemStyle: {
-				    normal:{
-				        color:"#009900"
-                    }
-                }
-			},
-             {
-
-                name:"失败",
-				data : [ 8, 5, 3,  7, 8 ],
-				type : 'bar',
-                itemStyle: {
-				    normal:{
-				        color:"#CC0000"
-                    }
-                }
-
-			},
-            {
-                name:"未执行",
-				data : [ 8, 5, 3,  7, 8 ],
-				type : 'bar',
-                itemStyle: {
-				    normal:{
-				        color:"#C0C0C0"
-                    }
-                }
-
-			},]
-
-         },{% endcomment %}
             options:"",
             tab2Option:"",
             returndata:"",
         }
     },
     created(){
-       this.getallData()
+       this.getallData();
+       //this.changeChart(this.projectName)
     },
     mounted:function() {
-        //this.getinitData();
-        //this.getallData()
+
     },
     methods:{
         getinitData(){
@@ -172,16 +50,14 @@ var vm = new Vue({
         getallData(){
             axios.get('/getchartData/',params={})
              .then(resp =>{
-                 console.log(resp.data.data);
-                 for(var i=0;i<resp.data.data.length;i++) {
-                     this.projectNameList.push(resp.data.data[i].projectName)
-                 }
+                 this.projectNameList=resp.data.projectName;
+                 var projectName=this.projectNameList[0];
                  this.returndata = (resp.data.data);
-                 console.log(this.projectNameList);
+                 this.changeChart(projectName);
+                 console.log(resp.data.data);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
-
         },
         mulchartData(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
                         failcasemodelist,nullcasemodelist){
