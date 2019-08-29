@@ -1,4 +1,7 @@
 {% extends 'basemain.html' %}
+{% block script %}
+<script src="/static/js/echarts.min.js"></script>
+{% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content1 %}
     <div class="col-md-2" id ="app1">
@@ -10,7 +13,6 @@
     </ul>
     </div>
 {% endblock %}
-
 {% block content %}
 {% endblock %}
 {% block vuejs %}

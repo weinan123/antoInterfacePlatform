@@ -13,7 +13,7 @@ from django.core import serializers
 @my_login
 def index(request):
     if request.method == 'GET':
-        return render(request,'index.html')
+        return render(request,'myindex.html')
 def login(request):
     username = request.COOKIES.get('username')
     print username
@@ -93,11 +93,13 @@ def singleInterface(request):
 def sendRequest(request):
     data = json.loads(request.body)
     methods = data["methods"]
-    url = data["url"]
+    send_url = data["url"]
     headers = data["headers"]
     bodyinfor = data["bodyinfor"]
     isRedirect = data["isRediret"]
-    getinfor = data["isRediret"]
+    Authorization = data["Screatinfor"]["Screatinfor"]
+    host = data["host"]
+    url = host+send_url
     Screatinfor = data["Screatinfor"]
     #处理数据类型的方法
     send_body = mul_bodyData(bodyinfor)
@@ -110,27 +112,30 @@ def sendRequest(request):
     s = requests.Session()
     if Screatinfor["isScreat"]=="":
         if (methods == "GET"):
-            response = s.get(url, headers=headers, params=getinfor, verify=False,allow_redirects=redirect)
+            response = s.get(url, headers=headers, params=send_body, verify=False,allow_redirects=redirect)
             resp = response.text
         elif (methods == "POST"):
             response = s.post(url, headers=headers, data=json.dumps(send_body), verify=False,allow_redirects=redirect)
             resp = response.text
     else:
         print headers
-        #key_id = Screatinfor["key_id"]
-        #secret_key = Screatinfor["key_id"]
-        key_id = "b062f9721f2ed17596eaf599b6899f64"
-        secret_key = "dc5a277173ef42f63de1e9c1134d4f7b",
+        key_id = Screatinfor["key_id"]
+        secret_key = Screatinfor["secret_key"].encode("utf-8")
+        #key_id = "b062f9721f2ed17596eaf599b6899f64"
+        #secret_key = "dc5a277173ef42f63de1e9c1134d4f7b",
         timestamp = int(time.time())
         credentials = authService.BceCredentials(key_id, secret_key)
         body = json.dumps(send_body).decode('unicode-escape')
         print body
         headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
-        path = "/api/v1/trade/business/query/funddetail"
-        result = authService.simplify_sign(credentials, methods, path, json.dumps(headers), timestamp, 300, headersOpt)
-        print result
-        headers['X-encryptflag'] = '1'
-        headers['Authorization'] = result
+        if Authorization=="":
+            #path = "/api/v1/trade/business/query/funddetail"
+            result = authService.simplify_sign(credentials, methods, send_url, json.dumps(headers), timestamp, 300, headersOpt)
+            print result
+            headers['X-encryptflag'] = '1'
+            headers['Authorization'] = result
+        else:
+            headers['Authorization']=Authorization
         if headers.get('X-encryptflag') == '1' and body:
             print 'body before encrypted: '
             print body
@@ -234,8 +239,39 @@ def returnAuthorization(request):
             "code":0,
             "data":result
         }
-        return result
-        #return JsonResponse(returnData,safe=False)
+        #return result
+        return JsonResponse(returnData,safe=False)
+
+def getchartData(request):
+    dataList=[]
+    projectList = interfaceList.objects.filter().values("projectName").distinct()
+    for i in range(0,len(projectList)):
+        data = {}
+        data["projectName"] = projectList[i]["projectName"]
+        modelList = interfaceList.objects.filter(projectName=projectList[i]["projectName"]).values("moduleName")
+        data["moduleName"] = []
+        for j in modelList:
+            data["moduleName"].append(j)
+            pid = interfaceList.objects.get(projectName=projectList[i]["projectName"],moduleName =j["moduleName"]).id
+            print pid
+            allcase = apiInfoTable.objects.filter(apiID=pid).count()
+            caseSuccess = apiInfoTable.objects.filter(apiID=pid,lastRunResult=True).count()
+            caseFail = apiInfoTable.objects.filter(apiID=pid, lastRunResult=False).count()
+            caseNull = apiInfoTable.objects.filter(apiID=pid, lastRunResult=None).count()
+            j["allcase"] = allcase
+            j["caseSuccess"] = caseSuccess
+            j["caseFail"] = caseFail
+            j["caseNull"] = caseNull
+        dataList.append(data)
+    returndata = {
+        "code":0,
+        "data":dataList
+    }
+    return JsonResponse(returndata, safe=False)
+
+
+
+
 
 
 

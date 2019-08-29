@@ -66,13 +66,21 @@
 		</div><!-- /.row -->
 	</form>
     <ul class="nav nav-tabs" >
-        <li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
+        {% comment %}<li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
         <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
         <li v-bind:class="{active:isActive2}"><a v-on:click="makeFrom(2)">GET/URL参数</a></li>
-        {% comment %}<li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>{% endcomment %}
+        <li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>
         <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">请求加密</a></li>
         <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">权限校验</a></li>
-        <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>
+        <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>{% endcomment %}
+        <li class="active"><a href="#tab1" data-toggle="tab" v-on:click="makeFrom(0)">请求头部</a></li>
+        <li><a href="#tab2" data-toggle="tab" v-on:click="makeFrom(1)">请求体</a></li>
+        <li><a href="#tab3" data-toggle="tab" v-on:click="makeFrom(2)">GET/URL参数</a></li>
+        {% comment %}<li><a href="#tab4" data-toggle="tab" v-on:click="makeFrom(3)">REST参数</a></li>{% endcomment %}
+        <li><a href="#tab5" data-toggle="tab" v-on:click="makeFrom(4)">请求加密</a></li>
+        <li><a href="#tab6" data-toggle="tab" v-on:click="makeFrom(5)">权限校验</a></li>
+        <li><a href="#tab7" data-toggle="tab" v-on:click="makeFrom(6)">高级设置</a></li>
+
     </ul>
     <div class="row" v-if="showState === 1">
         <div class="col-lg-1 radio ">
@@ -392,13 +400,6 @@ var vm = new Vue({
             initflag:false,
             showState: 0,
             showbodyState: 0,
-            isActive0: true,
-            isActive1: false,
-            isActive2: false,
-            isActive3: false,
-            isActive4: false,
-            isActive5: false,
-            isActive6: false,
             header: "",
             resultData: {},
             listcass: [{
@@ -600,82 +601,14 @@ var vm = new Vue({
                 var editor1 = new JSONEditor(container, options, json);
             //var editor2 = new JSONEditor(container2, options, json);
         },
-        changeCss(params){
-            switch (params) {
-                case 0:
-                    this.isActive0=true;
-                    this.isActive1=false;
-                    this.isActive2=false;
-                    this.isActive3=false;
-                    this.isActive4=false;
-                    this.isActive5=false;
-                    this.isActive6=false;
-                    break;
-                case 1:
-                    this.isActive0=false;
-                    this.isActive1=true;
-                    this.isActive2=false;
-                    this.isActive3=false;
-                    this.isActive4=false;
-                    this.isActive5=false;
-                    this.isActive6=false;
-                    break;
-                case 2:
-                    this.isActive0=false;
-                    this.isActive1=false;
-                    this.isActive2=true;
-                    this.isActive3=false;
-                    this.isActive4=false;
-                    this.isActive5=false;
-                    this.isActive6=false;
-                    break;
-                case 3:
-                    this.isActive0=false;
-                    this.isActive1=false;
-                    this.isActive2=false;
-                    this.isActive3=true;
-                    this.isActive4=false;
-                    this.isActive5=false;
-                    this.isActive6=false;
-                    break;
-                case 4:
-                    this.isActive0=false;
-                    this.isActive1=false;
-                    this.isActive2=false;
-                    this.isActive3=false;
-                    this.isActive4=true;
-                    this.isActive5=false;
-                    this.isActive6=false;
-                    break;
-                case 5:
-                    this.isActive0=false;
-                    this.isActive1=false;
-                    this.isActive2=false;
-                    this.isActive3=false;
-                    this.isActive4=false;
-                    this.isActive5=true;
-                    this.isActive6=false;
-                    break;
-                case 6:
-                    this.isActive0=false;
-                    this.isActive1=false;
-                    this.isActive2=false;
-                    this.isActive3=false;
-                    this.isActive4=false;
-                    this.isActive5=false;
-                    this.isActive6=true;
-
-            }
-
-        },
         makeFrom(params){
             if(this.initflag === false){
                 this.showState = params;
                 this.showbodyState=0;
-                this.changeCss(params);
+                //this.changeCss(params);
             }else{
                 this.showState = params;
-                this.changeCss(params);
+                //this.changeCss(params);
             }
         },
         showBodyform(params){
@@ -796,13 +729,29 @@ var vm = new Vue({
                 body_str =body_str+JSON.stringify(this.data_to_send["bodyinfor"][c]);
             }
              console.log(body_str);
-             var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
+             var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+this.data_to_send["host"]+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
                                 "\n"+"请求参数："+body_str;
              this.request_infor = requestStr;
              axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
                         this.getEdit( JSON.parse(resp.data))
                     }).catch(err=>{
+                         toastr.options = {
+                             closeButton: false,
+                             debug: false,
+                             progressBar: false,
+                             positionClass: "toast-top-center",
+                             onclick: null,
+                             showDuration: "300",
+                             hideDuration: "1000",
+                             timeOut: "2000",
+                             extendedTimeOut: "1000",
+                             showEasing: "swing",
+                             hideEasing: "linear",
+                             showMethod: "fadeIn",
+                             hideMethod: "fadeOut"
+                         };
+                         toastr.error("请求失败，请检查请求数据");
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
         },
