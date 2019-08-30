@@ -285,7 +285,7 @@ def getapiInfos(request):
             json_dict["method"] = query.method
             showbodyState =0
             body_list = []
-            if query.headers != "{}":
+            if query.headers != "{}" and query.headers != "":
                 header_data = json.loads(query.headers)
                 for k in header_data:
                     header_dict = {}
@@ -297,7 +297,8 @@ def getapiInfos(request):
             else:
                 json_dict["header"] = []
             print header_list
-            if query.body != "[]":
+            print("query.body:",query.body)
+            if query.body != "[]" and query.body != "":
                 bodydata = json.loads(query.body)
                 print("bodydata:", bodydata)
                 stateflag = bodydata[0]["showflag"]
