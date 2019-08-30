@@ -22,9 +22,10 @@ def addProjectList(request):
                                                  moduleName=form.cleaned_data['moduleName'],
                                                  host=form.cleaned_data['host'])
             inter.save()
+            counttable = countCase.objects.get_or_create(projectName=form.cleaned_data['projectName'],
+                                                  moduleName=form.cleaned_data['moduleName'],)
+            #counttable.save()
             return HttpResponseRedirect('/projectList/')
-
-
 def projectListInfo(request):
     resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     respList = list(resp)

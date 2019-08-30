@@ -1,27 +1,17 @@
-from .models import *
-def getchartData(request):
-    dataList=[]
-    projectList = interfaceList.objects.filter().values("projectName").distinct()
-    for i in range(0,len(projectList)):
-        data = {}
-        data["projectName"] = projectList[i]["projectName"]
-        modelList = interfaceList.objects.filter(projectName=projectList[i]["projectName"]).values("moduleName")
-        data["moduleName"] = []
-        for j in modelList:
-            data["moduleName"].append(j)
-            pid = interfaceList.objects.get(projectName=projectList[i]["projectName"],moduleName =j["moduleName"]).id
-            print pid
-            allcase = apiInfoTable.objects.filter(apiID=pid).count()
-            caseSuccess = apiInfoTable.objects.filter(apiID=pid,lastRunResult=True).count()
-            caseFail = apiInfoTable.objects.filter(apiID=pid, lastRunResult=False).count()
-            caseNull = apiInfoTable.objects.filter(apiID=pid, lastRunResult=None).count()
-            j["allcase"] = allcase
-            j["caseSuccess"] = caseSuccess
-            j["caseFail"] = caseFail
-            j["caseNull"] = caseNull
-        dataList.append(data)
-    returndata = {
-        "code":0,
-        "data":dataList
-    }
-    return JsonResponse(returndata, safe=False)
+# -*- coding: UTF-8 -*-
+import pymysql
+
+
+
+host = "10.9.8.20"  # 数据库服务器名称或IP
+user = "monitor"
+password = "monitor123"
+database = "monitor"
+conn = pymysql.connect(host, user, password, database)
+# 使用cursor()方法获取操作游标
+cursor = conn.cursor()
+
+sql= "select count(*),owningListID_id,lastRunResult from main_apiInfoTable group by owningListID_id having lastRunResult=1 "
+cursor.execute(sql)
+results = cursor.fetchall()
+print results
