@@ -3,7 +3,7 @@
 {% block content %}
 <div class="col-md-10 row" id ="myindex" style="margin-left: 1px;">
     <ul id="myTab"  class="nav nav-tabs" >
-			<li v-for="projectName in projectNameList"><a @click="changeChart(projectName)" data-toggle="tab">
+			<li v-for="projectName,index in projectNameList" v-bind:class="index===0?'active':''"><a @click="changeChart(projectName)" data-toggle="tab">
                 {! projectName !}</a></li>
     </ul>
     <div class="container">
@@ -50,7 +50,8 @@ var vm = new Vue({
         getallData(){
             axios.get('/getchartData/',params={})
              .then(resp =>{
-                 this.projectNameList=resp.data.projectName;
+                 console.log(resp.data);
+                 this.projectNameList=resp.data.projectList;
                  var projectName=this.projectNameList[0];
                  this.returndata = (resp.data.data);
                  this.changeChart(projectName);
@@ -190,38 +191,31 @@ var vm = new Vue({
 
         },
         changeChart(projectName){
+            var modelListName = [];
+            var allcasemodellist = [];
+            var passcasemodelist = [];
+            var failcasemodelist = [];
+            var nullcasemodelist = [];
+            var allcase=0;
+            var allcasepass=0;
+            var allcasefail=0;
+            var allcasenull=0;
             for(var j=0;j<this.returndata.length;j++){
                 var subtext = this.returndata[j].projectName;
                 if(projectName=== subtext) {
-                    var modelListName = [];
-                    var allcasemodellist = [];
-                    var passcasemodelist = [];
-                    var failcasemodelist = [];
-                    var nullcasemodelist = [];
-                    var allcase=0;
-                    var allcasepass=0;
-                    var allcasefail=0;
-                    var allcasenull=0;
-                    for (var s = 0; s < this.returndata[j].moduleName.length; s++) {
-                        var modelListinfor = this.returndata[j].moduleName;
-                        modelListName.push(modelListinfor[s].moduleName);
-                        allcasemodellist.push(modelListinfor[s].allcase);
-                        passcasemodelist.push(modelListinfor[s].caseSuccess);
-                        failcasemodelist.push(modelListinfor[s].caseFail);
-                        nullcasemodelist.push(modelListinfor[s].caseNull);
-                        allcase = allcase+modelListinfor[s].allcase;
-                        allcasepass=allcasepass+modelListinfor[s].caseSuccess;
-                        allcasefail = allcasefail+modelListinfor[s].caseFail;
-                        allcasenull = allcasenull+modelListinfor[s].caseNull
-                    }
-                    this.mulchartData(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
-                        failcasemodelist,nullcasemodelist)
+                    modelListName.push(this.returndata[j].moduleName);
+                    allcasemodellist.push(this.returndata[j].allcaseNum);
+                    passcasemodelist.push(this.returndata[j].passcaseNum);
+                    failcasemodelist.push(this.returndata[j].failcaseNum);
+                    nullcasemodelist.push(this.returndata[j].blockcaseNum);
+                    allcase = allcase+this.returndata[j].allcaseNum;
+                    allcasepass=allcasepass+this.returndata[j].passcaseNum;
+                    allcasefail = allcasefail+this.returndata[j].failcaseNum;
+                    allcasenull = allcasenull+this.returndata[j].blockcaseNum;
                 }
-
-
-
-
             }
+             this.mulchartData(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
+            failcasemodelist,nullcasemodelist)
 
         }
 

@@ -244,31 +244,28 @@ def returnAuthorization(request):
 
 def getchartData(request):
     dataList=[]
-    projectList = interfaceList.objects.filter().values("projectName").distinct()
-    for i in range(0,len(projectList)):
-        data = {}
-        data["projectName"] = projectList[i]["projectName"]
-        modelList = interfaceList.objects.filter(projectName=projectList[i]["projectName"]).values("moduleName")
-        data["moduleName"] = []
-        for j in modelList:
-            data["moduleName"].append(j)
-            pid = interfaceList.objects.get(projectName=projectList[i]["projectName"],moduleName =j["moduleName"]).id
-            print pid
-            allcase = apiInfoTable.objects.filter(apiID=pid).count()
-            caseSuccess = apiInfoTable.objects.filter(apiID=pid,lastRunResult=True).count()
-            caseFail = apiInfoTable.objects.filter(apiID=pid, lastRunResult=False).count()
-            caseNull = apiInfoTable.objects.filter(apiID=pid, lastRunResult=None).count()
-            j["allcase"] = allcase
-            j["caseSuccess"] = caseSuccess
-            j["caseFail"] = caseFail
-            j["caseNull"] = caseNull
+    alldata = countCase.objects.all().values()
+    projectList = []
+    projectName = interfaceList.objects.filter().values("projectName").distinct()
+    for s in projectName:
+        projectList.append(s["projectName"])
+    print alldata
+    for i in alldata:
+        data={}
+        data["projectName"] = i["projectName"]
+        data["moduleName"] = i["moduleName"]
+        data["allcaseNum"] = i["allcaseNum"]
+        data["passcaseNum"] = i["passcaseNum"]
+        data["failcaseNum"] = i["failcaseNum"]
+        data["blockcaseNum"] = i["blockvaseNum"]
         dataList.append(data)
     returndata = {
         "code":0,
-        "data":dataList
+        "data":dataList,
+        "projectList":projectList
     }
+    print returndata
     return JsonResponse(returndata, safe=False)
-
 
 
 

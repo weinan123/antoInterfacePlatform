@@ -83,6 +83,8 @@ DATABASES = {
         'PASSWORD': 'monitor123',
         'HOST': '10.9.8.20',
         'PORT': '3306',
+        'OPTIONS':{'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"},
+        'AUTOCOMMIT':True,
     }
 }
 

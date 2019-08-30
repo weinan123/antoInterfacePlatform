@@ -41,3 +41,14 @@ class apiInfoTable(models.Model):
     headers = models.TextField(blank=True)
     body = models.TextField(blank=True)
     assertinfo = models.CharField(max_length=200, blank=True)
+
+class countCase(models.Model):
+    pmID = models.IntegerField(primary_key=True)
+    allcaseNum = models.IntegerField()
+    passcaseNum = models.IntegerField()
+    failcaseNum = models.IntegerField()
+    blockvaseNum = models.IntegerField()
+    projectName = models.CharField(max_length=50, verbose_name='项目名称')
+    moduleName = models.CharField(max_length=50, verbose_name='模块名称')
+    update = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
+
