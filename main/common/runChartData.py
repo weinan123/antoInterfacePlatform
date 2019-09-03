@@ -18,7 +18,6 @@ class getChartData():
            # 获取所有记录列表
            results = self.cursor.fetchall()
            for data in results:
-               print data[0]
                queryproject = "select projectName,moduleName from main_interfaceList where id= %d" % (data[1])
                self.cursor.execute(queryproject)
                # 获取所有记录列表
@@ -26,12 +25,13 @@ class getChartData():
                casevalue = data[0]
                projectName = projectList[0][0]
                moduleName = projectList[0][1]
+               print projectName,moduleName
                self.updatedb(casetype,casevalue,projectName,moduleName)
            print results
            # 关闭数据库连接
            #self.conn.close()
-        except:
-           print "Error: unable to fecth data"
+        except Exception as e:
+           print e
     def updatedb(self,casetype,casevalue,projectName,moduleName):
         if (casetype=="allcase"):
             updataCount = " update main_countCase set allcaseNum=%d where (projectName='%s' and moduleName='%s')" % (casevalue,projectName,moduleName)
@@ -55,13 +55,13 @@ class getChartData():
 if __name__=='__main__':
     sqlList = [
         {"casetype":"allcase",
-         "sql":"select count(*),owningListID_id from main_apiInfoTable group by owningListID_id"},
+         "sql":"select count(*),owningListID from main_apiInfoTable group by owningListID"},
         {"casetype": "passcase",
-         "sql": "select count(*),owningListID_id,lastRunResult from main_apiInfoTable group by owningListID_id having lastRunResult=0"},
+         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=1 group by owningListID " },
         {"casetype": "failcase",
-         "sql": "select count(*),owningListID_id,lastRunResult from main_apiInfoTable group by owningListID_id having lastRunResult=1"},
+         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=-1 group by owningListID "},
         {"casetype": "nullcase",
-         "sql": "select count(*),owningListID_id,lastRunResult from main_apiInfoTable group by owningListID_id having lastRunResult=''"}
+         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=0 group by owningListID "}
     ]
     getChartData = getChartData()
     for i in range(0,len(sqlList)):

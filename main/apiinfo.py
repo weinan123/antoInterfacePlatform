@@ -29,8 +29,8 @@ def allinfo(request):
         else:
             json_dict["lastruntime"] = i.lastRunTime.strftime('%Y-%m-%d %H:%M:%S')
         json_dict["owing"] = i.creator
-        json_dict["listid"] = i.owningListID.id
-        json_dict["listname"] = i.owningListID.projectName
+        json_dict["listid"] = i.owningListID
+        #json_dict["listname"] = i.owningListID.projectName
         json_dict["method"] = i.method
         json_dict["url"] = i.url
         # data = json.dumps(json_dict)       #转化为json字符串
@@ -67,10 +67,10 @@ def addApi(request):
         user = req['user']
         api_infos = {
             'apiName': apiname,
-            'lastRunResult': None,
+            'lastRunResult': 0,
             'lastRunTime': None,
             'creator': user,
-            'owningListID_id': listid
+            'owningListID': int(listid)
         }
         print(api_infos)
         try:
@@ -248,19 +248,19 @@ def runrequest(sqlquery, id):
         if assertinfo == "":
             datas = {"status_code": a.status_code}
             if a.status_code == 200:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=True)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=False)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": a.status_code, "responseText": text, "assert": assertinfo}
             print assertinfo in text
             if a.status_code == 200 and assertinfo in text:
-                    apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=True)
+                    apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                     result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=False)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
 

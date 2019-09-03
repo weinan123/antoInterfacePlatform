@@ -32,10 +32,10 @@ class interfaceList(models.Model):
 class apiInfoTable(models.Model):
     apiID = models.AutoField(max_length=4, primary_key=True)
     apiName = models.CharField(max_length=100, null=False, error_messages={'required': '名称不能为空'})
-    lastRunResult = models.NullBooleanField(null=True, blank=True)
+    lastRunResult = models.IntegerField(null=True, blank=True,default=0)
     lastRunTime = models.DateTimeField(null=True, blank=True)
     creator = models.CharField(max_length=20, null=False)
-    owningListID = models.ForeignKey('interfaceList', on_delete=models.CASCADE)
+    owningListID = models.IntegerField(blank=True,null=True,)
     method = models.CharField(max_length=10)
     url = models.URLField(blank=True)
     headers = models.TextField(blank=True)
@@ -43,12 +43,12 @@ class apiInfoTable(models.Model):
     assertinfo = models.CharField(max_length=200, blank=True)
 
 class countCase(models.Model):
-    pmID = models.IntegerField(primary_key=True)
-    allcaseNum = models.IntegerField()
-    passcaseNum = models.IntegerField()
-    failcaseNum = models.IntegerField()
-    blockvaseNum = models.IntegerField()
-    projectName = models.CharField(max_length=50, verbose_name='项目名称')
-    moduleName = models.CharField(max_length=50, verbose_name='模块名称')
-    update = models.DateTimeField(auto_now_add=True, verbose_name='更新时间')
+    pmID = models.AutoField(max_length=4,primary_key=True)
+    allcaseNum = models.IntegerField(blank=True,null=True,)
+    passcaseNum = models.IntegerField(blank=True,null=True,)
+    failcaseNum = models.IntegerField(blank=True,null=True,)
+    blockvaseNum = models.IntegerField(blank=True,null=True,)
+    projectName = models.CharField(max_length=50, verbose_name='项目名称',blank=True)
+    moduleName = models.CharField(max_length=50, verbose_name='模块名称',blank=True)
+    update = models.DateTimeField(auto_now_add=True, verbose_name='更新时间',blank=True)
 

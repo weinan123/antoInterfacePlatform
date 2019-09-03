@@ -4,12 +4,11 @@
 {% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content1 %}
-    <div class="col-md-2" id ="app1">
+    <div class="row col-md-2" id ="app1" >
     <ul class="nav nav-pills nav-stacked">
-        <li role="presentation" v-bind:class="{active:isActiveIn}" ><a href="/index/" >首页</a></li>
-        <li role="presentation" v-bind:class="{active:isActiveSi}" ><a href="/singleInterface/"
-              >单接口</a></li>
-        <li role="presentation" v-bind:class="{active:isActiveAl}" ><a href="/projectList/">接口list</a></li>
+        <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
+        <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
+        <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >接口list</a></li>
     </ul>
     </div>
 {% endblock %}

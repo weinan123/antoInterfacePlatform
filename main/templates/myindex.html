@@ -62,8 +62,8 @@ var vm = new Vue({
         },
         mulchartData(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
                         failcasemodelist,nullcasemodelist){
-            console.log(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
-                        failcasemodelist,nullcasemodelist);
+            {% comment %}console.log(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
+                        failcasemodelist,nullcasemodelist);{% endcomment %}
             var tab2Option ={
 			title : {
 				text : '项目总执行情况',
@@ -200,9 +200,9 @@ var vm = new Vue({
             var allcasepass=0;
             var allcasefail=0;
             var allcasenull=0;
+            var subtext = projectName;
             for(var j=0;j<this.returndata.length;j++){
-                var subtext = this.returndata[j].projectName;
-                if(projectName=== subtext) {
+                if(projectName=== this.returndata[j].projectName) {
                     modelListName.push(this.returndata[j].moduleName);
                     allcasemodellist.push(this.returndata[j].allcaseNum);
                     passcasemodelist.push(this.returndata[j].passcaseNum);

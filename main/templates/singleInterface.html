@@ -156,7 +156,12 @@
                     <option value="Text" selected>Text</option>
                     <option value="file" >file</option>
                 </select></td>
-                <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">{{ bodyFVal.value }}</td>
+                <td col-xs-3><input v-if="bodyFVal.type==='Text'||bodyFVal.type===''" type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">
+                    {{ bodyFVal.value }}
+                    <input  v-if="bodyFVal.type==='file'" type="file" id="inputfile">
+                </td>
+
+
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
@@ -460,11 +465,11 @@ var vm = new Vue({
             headerText:"",
         }
     },
-    created(){
-       vm1.$data.isActiveSi=true;
-       vm1.$data.isActiveIn=false;
-       vm1.$data.isActiveAl=false;
-    },
+     created() {
+                vm1.$data.isActiveSi = true;
+                vm1.$data.isActiveIn = false;
+                vm1.$data.isActiveAl = false
+            },
     mounted:function(){
         let args = location.search.substr(1);
         if(args){
@@ -473,6 +478,10 @@ var vm = new Vue({
         }
     },
     methods:{
+        loadFile(e){
+            console.log(e.target.value);
+                var container = document.getElementById('#filename');
+                container.html(file.name);},
         initInfos(args){
             let param={};
             if(args !== ""){
