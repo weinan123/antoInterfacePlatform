@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys
+import sys,os
 sys.path.append(r"D:\project\auto_interface\antoInterfacePlatform\main\toretrunData.py")
 class toType():
     def __init__(self,type,data):
@@ -19,7 +19,7 @@ class toType():
         }
         return data_type.get(self.type)(self.data)
     def toText(self,data):
-        pass
+        return str(data)
     def toFile(self,data):
         pass
     def toString(self,data):

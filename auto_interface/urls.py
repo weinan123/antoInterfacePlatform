@@ -49,5 +49,7 @@ urlpatterns = [
     url(r'^singleInterface/editor/$', main.singleInterface),
     url(r'^returnAuthorization/$', main.returnAuthorization),
     url(r'^getchartData/$', main.getchartData),
+    url(r'^pararmsFiles/$', main.pararmsFiles),
+
 
 ]

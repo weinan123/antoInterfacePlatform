@@ -156,12 +156,16 @@
                     <option value="Text" selected>Text</option>
                     <option value="file" >file</option>
                 </select></td>
-                <td col-xs-3><input v-if="bodyFVal.type==='Text'||bodyFVal.type===''" type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">
+                <td col-xs-3>
+                    <input v-if="bodyFVal.type==='Text'||bodyFVal.type===''" type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyFVal.value">
                     {{ bodyFVal.value }}
-                    <input  v-if="bodyFVal.type==='file'" type="file" id="inputfile">
+                   {% comment %} <input  v-if="bodyFVal.type==='file'" type="file" id="inputfile" ref="file">{% endcomment %}
+                    <form id='mainForm' v-if="bodyFVal.type==='file'"  method="post" name="mainForm" @submit="uploadfile()">
+                        <input type="button" class="btn btn-sm btn-info " value="选择文件" onclick="document.mainForm.excel.click()">
+                        <a id="filename">{! fileName !}</a>
+                        <input type="file" name="excel" id="excel" ref="file" accept="application/vnd.ms-excel" style="display:none" @change="changeText(this)">
+                    </form>
                 </td>
-
-
                 <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
                              <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
@@ -396,6 +400,8 @@ var vm = new Vue({
     el:'#app2',
     data() {
         return {
+            file:"",
+            fileName:"请选择文件",
             checkv : "option1",
             //样式选中互斥
             isRediret: "",
@@ -465,7 +471,7 @@ var vm = new Vue({
             headerText:"",
         }
     },
-     created() {
+    created() {
                 vm1.$data.isActiveSi = true;
                 vm1.$data.isActiveIn = false;
                 vm1.$data.isActiveAl = false
@@ -478,10 +484,30 @@ var vm = new Vue({
         }
     },
     methods:{
-        loadFile(e){
-            console.log(e.target.value);
-                var container = document.getElementById('#filename');
-                container.html(file.name);},
+        //动态显示参数为文件的文件名
+        changeText(e) {
+            let filenames = this.$refs.file[0].files[0].name;
+            this.fileName =filenames
+        },
+        //上传参数为文件的请求
+        uploadfile(){
+            let requestConfig = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                };
+            var filename = this.$refs.file[0].files[0].name;
+            var files = this.$refs.file[0].files[0];
+            let formData = new FormData();
+            formData.append('filename', filename);
+            formData.append('files', files);
+            axios.post("/pararmsFiles/", formData, requestConfig ).then(function (response) {
+                    console.log("res:", response);
+
+                }).catch(err=>{
+                    console.log('请求失败:'+err.status+','+err.statusText);
+                })
+        },
         initInfos(args){
             let param={};
             if(args !== ""){
@@ -744,7 +770,7 @@ var vm = new Vue({
              this.request_infor = requestStr;
              axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
-                        this.getEdit( JSON.parse(resp.data))
+                        this.getEdit(JSON.parse(resp.data))
                     }).catch(err=>{
                          toastr.options = {
                              closeButton: false,
@@ -784,23 +810,29 @@ var vm = new Vue({
             //console.log(this.showState,this.showbodyState);
             console.log(this.showState);
             console.log(this.showbodyState);
-
             if (this.showState === 1 && this.showbodyState === 0) {
                 {#headerinfor["Content-Type"] = "multipart/form-data";#}
                 showflag["showflag"] = 0;
-                bodyArr.push(showflag);
                 for (var j = 0; j < this.bodyFVals.length; j++) {
-                    bodyinfor = {};
-                    bodyinfor["paramType"] = this.bodyFVals[j].type;
-                    bodyinfor["paramValue"] = this.bodyFVals[j].value;
-                    bodyinfor["paramName"] = this.bodyFVals[j].name;
-                    bodyArr.push(bodyinfor)
+                    if(this.bodyFVals[j].type==='file'){
+                        bodyinfor = {};
+                        bodyinfor["paramType"] = this.bodyFVals[j].type;
+                        bodyinfor["paramValue"]=this.$refs.file[0].files[0].name;
+                        bodyinfor["paramName"] = this.bodyFVals[j].name;
+                        this.uploadfile();
+                    }else {
+                        bodyinfor = {};
+                        bodyinfor["paramType"] = this.bodyFVals[j].type;
+                        bodyinfor["paramValue"] = this.bodyFVals[j].value;
+                        bodyinfor["paramName"] = this.bodyFVals[j].name;
+                    }
+                bodyArr.push(bodyinfor)
+
                 }
             }
             else if (this.showState === 1 && this.showbodyState === 1) {
                 {#headerinfor["Content-Type"] = "application/json";#}
                 showflag["showflag"] = 1;
-                bodyArr.push(showflag);
                 for (var k = 0; k < this.bodyJVals.length; k++) {
                     bodyinfor = {};
                     bodyinfor["paramType"] = this.bodyJVals[k].type;
@@ -812,7 +844,6 @@ var vm = new Vue({
             else if (this.showState === 1 && this.showbodyState === 2) {
                 {#headerinfor["Content-Type"] = "application/xml";#}
                 showflag["showflag"] = 2;
-                bodyArr.push(showflag);
                 for (var l = 0; l < this.bodyXVals.length; l++) {
                     bodyinfor = {};
                     bodyinfor["paramType"] = this.bodyXVals[l].type;
@@ -822,7 +853,6 @@ var vm = new Vue({
                 }
             }
             else if (this.showState === 1 && this.showbodyState === 3) {
-                showflag["showflag"] = 3;
                 bodyArr.push(showflag);
                 bodyinfor = {};
                 {#headerinfor["Content-Type"] = "text/plain";#}
@@ -843,7 +873,8 @@ var vm = new Vue({
                 headers:headerinfor,
                 bodyinfor:bodyArr,
                 Screatinfor:Screatinfor,
-                isRediret:this.isRediret
+                isRediret:this.isRediret,
+                showflag:showflag
             };
         },
         //保存用例

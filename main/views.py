@@ -8,6 +8,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from .models import *
 from .untils.until import my_login,mul_bodyData
+from untils import sendRequests
 from common import authService
 from django.core import serializers
 @my_login
@@ -101,58 +102,18 @@ def sendRequest(request):
     host = data["host"]
     url = host+send_url
     Screatinfor = data["Screatinfor"]
+    print bodyinfor
     #处理数据类型的方法
-    send_body = mul_bodyData(bodyinfor)
-    #判断是否需要重定向
-    if isRedirect=="":
-        redirect = False
+    send_body,files = mul_bodyData(bodyinfor)
+    isScreat = Screatinfor["isScreat"]
+    key_id = Screatinfor["key_id"]
+    secret_key = Screatinfor["secret_key"].encode("utf-8")
+    #非加密执行接口
+    if isScreat=="":
+        resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect)
+    #加密执行
     else:
-        redirect = True
-    #判断是否需要加密
-    s = requests.Session()
-    if Screatinfor["isScreat"]=="":
-        if (methods == "GET"):
-            response = s.get(url, headers=headers, params=send_body, verify=False,allow_redirects=redirect)
-            resp = response.text
-        elif (methods == "POST"):
-            response = s.post(url, headers=headers, data=json.dumps(send_body), verify=False,allow_redirects=redirect)
-            resp = response.text
-    else:
-        print headers
-        key_id = Screatinfor["key_id"]
-        secret_key = Screatinfor["secret_key"].encode("utf-8")
-        #key_id = "b062f9721f2ed17596eaf599b6899f64"
-        #secret_key = "dc5a277173ef42f63de1e9c1134d4f7b",
-        timestamp = int(time.time())
-        credentials = authService.BceCredentials(key_id, secret_key)
-        body = json.dumps(send_body).decode('unicode-escape')
-        print body
-        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
-        if Authorization=="":
-            #path = "/api/v1/trade/business/query/funddetail"
-            result = authService.simplify_sign(credentials, methods, send_url, json.dumps(headers), timestamp, 300, headersOpt)
-            print result
-            headers['X-encryptflag'] = '1'
-            headers['Authorization'] = result
-        else:
-            headers['Authorization']=Authorization
-        if headers.get('X-encryptflag') == '1' and body:
-            print 'body before encrypted: '
-            print body
-            body = authService.aes_encrypt(body)
-        if(methods=="GET"):
-            response = requests.get(url,headers =headers,params=body,verify=False)
-        elif(methods=="POST"):
-            response = requests.post(url, headers=headers, data=body, verify=False)
-        resp = response.text
-        if headers.get('X-encryptflag') != '1':
-            print 'response: '
-        else:
-            print 'response before decrypt: '
-            print resp
-            resp = authService.aes_decrypt(resp)
-        print('response: ')
-    print resp
+        resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect)
     return JsonResponse(resp,safe=False)
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
@@ -182,17 +143,20 @@ def newCase(request):
         creator = request.session.get('username')
         send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
+        print flag
         if(flag == False):
             try:
                 id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
+                print id
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
-                                                   apiName=caseName,owningListID_id=int(owningListID),creator=creator)
+                                                   apiName=caseName,owningListID=int(owningListID),creator=creator)
                 data = {
                     "code":0,
                     "msg":"保存成功"
                 }
             except Exception as e:
+                    print e
                     data={
                         "code":-1,
                         "msg": "保存失败"
@@ -216,7 +180,6 @@ def newCase(request):
                 "msg": "更新成功"
             }
         return JsonResponse(data, safe=False)
-
 def returnAuthorization(request):
     if request.method=="POST":
         data = json.loads(request.body)
@@ -241,7 +204,6 @@ def returnAuthorization(request):
         }
         #return result
         return JsonResponse(returnData,safe=False)
-
 def getchartData(request):
     dataList=[]
     alldata = countCase.objects.all().values()
@@ -266,6 +228,34 @@ def getchartData(request):
     }
     print returndata
     return JsonResponse(returndata, safe=False)
+#参数带文件上传
+import os
+def pararmsFiles(request):
+    filename = request.POST.get("filename")
+    files = request.FILES.get("files")
+    print files
+    fpath = r'main/postfiles/%s' % filename
+    if not os.path.exists(os.path.split(fpath)[0]):
+        # 目录不存在创建，makedirs可以创建多级目录
+        os.makedirs(os.path.split(fpath)[0])
+    try:
+        with open(fpath, 'wb') as pic:
+            for c in files.chunks():
+                pic.write(c)
+        data={
+            'code':0,
+            'msg':"upload file success"
+        }
+    except Exception as e:
+        print e
+        data = {
+            'code': 0,
+            'msg': "upload file failed"
+        }
+    return JsonResponse(data, safe=False)
+
+
+
 
 
 
