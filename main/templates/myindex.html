@@ -1,16 +1,16 @@
 {% extends 'index.html' %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
-<div class="col-md-10 row" id ="myindex" style="margin-left: 1px;">
+<div class="col-md-9 row" id ="myindex" style="margin-left: 15%">
     <ul id="myTab"  class="nav nav-tabs" >
 			<li v-for="projectName,index in projectNameList" v-bind:class="index===0?'active':''"><a @click="changeChart(projectName)" data-toggle="tab">
                 {! projectName !}</a></li>
     </ul>
-    <div class="container">
-		<div id="myTabContent" style="height: 500px;width: 1000px">
+    <div class="container" style="margin: 15px">
+		<div id="myTabContent" style="height: 500px;width: 1000px;">
 		</div>
 	</div>
-    <div class="container">
+    <div class="container" style="margin: 15px">
 		<div id="myTabContent1" style="height: 500px;width: 1000px">
 		</div>
 	</div>
@@ -34,10 +34,11 @@ var vm = new Vue({
         }
     },
     created(){
-       this.getallData();
+
        //this.changeChart(this.projectName)
     },
     mounted:function() {
+        this.getallData();
 
     },
     methods:{
