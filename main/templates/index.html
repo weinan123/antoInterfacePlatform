@@ -39,7 +39,7 @@ var vm1 = new Vue({
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
                 console.log(c);
-                var key = c.split("=")[0];
+                var key = c.split("=")[0].replace(/\s*/g,"");
                 if(cname===key){
                     let cookie_value = c.split("=")[1];
                     return cookie_value
@@ -49,6 +49,7 @@ var vm1 = new Vue({
       },
         //赋值username
         getUsername(){
+            console.log(this.getCookie("usename"));
             var usename = this.getCookie("usename");
             console.log(usename);
             if (usename===""){

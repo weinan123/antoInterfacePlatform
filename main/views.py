@@ -21,7 +21,7 @@ def login(request):
     if username is not None:
         returndata = {"status": "success", "message": "login success", "username": username}
         return JsonResponse(returndata, safe=False)
-        #return redirect('/',{'username':username})
+
     else:
         if request.method == 'POST':
             data = json.loads(request.body)
@@ -39,8 +39,7 @@ def login(request):
                     response.set_cookie('username', username, 3600)
                     response.set_cookie('password', password, 3600)
                     returndata = {"status": "success", "message": "login success", "username": username}
-                    return JsonResponse(returndata, safe=False)
-                    #return redirect('/', {'username': username})
+                    return HttpResponse(json.dumps(returndata), content_type="application/json")
                 else:
                     re = auth.authenticate(username = username,password=password)
                     print re
@@ -53,15 +52,15 @@ def login(request):
                         response.set_cookie('password', password, 3600)
                         returndata = {"status": "success", "message": "login success","username":username}
                         return JsonResponse(returndata,safe=False)
-                        #return redirect('/',{'username':username })
+
                     else:
                         returndata = {"status": "fail", "message": "用户名或者密码错误"}
                         return JsonResponse(returndata,safe=False)
-                        #return render(request,'login.html',{'login_error':'用户名或者密码错误'})
+
             except:
                 print Exception
         return render(request,'login.html')
-        #return redirect('/', {'username': username})
+
 def logout(request):
     auth.logout(request)
     response = HttpResponse('/login/')
