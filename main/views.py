@@ -39,7 +39,7 @@ def login(request):
                     response.set_cookie('username', username, 3600)
                     response.set_cookie('password', password, 3600)
                     returndata = {"status": "success", "message": "login success", "username": username}
-                    return HttpResponse(json.dumps(returndata), content_type="application/json")
+                    return HttpResponse(json.dumps(returndata), content_type="'application/javascript")
                 else:
                     re = auth.authenticate(username = username,password=password)
                     print re
