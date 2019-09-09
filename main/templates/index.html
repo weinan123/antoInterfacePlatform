@@ -9,6 +9,7 @@
                 <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >接口list</a></li>
+                <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
             </ul>
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
         </div>
@@ -23,7 +24,8 @@ var vm1 = new Vue({
     data:{
         isActiveIn:true,
         isActiveSi:false,
-        isActiveAl:false
+        isActiveAl:false,
+        isActiveCo:false,
     },
     created(){
         this.getUsername();

@@ -474,7 +474,9 @@ var vm = new Vue({
     created() {
                 vm1.$data.isActiveSi = true;
                 vm1.$data.isActiveIn = false;
-                vm1.$data.isActiveAl = false
+                vm1.$data.isActiveAl = false;
+                vm1.$data.isActiveCo = false
+
             },
     mounted:function(){
         let args = location.search.substr(1);

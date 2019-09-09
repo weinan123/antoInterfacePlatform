@@ -1,0 +1,194 @@
+{% extends 'index.html' %}
+{% block title %}<title> 首页</title> {% endblock %}
+{% block content %}
+<div class="col-md-9 row" id ="configer" style="margin-left: 16%;">
+    <div style="border-bottom: 1px solid gainsboro;width: 100%">
+        <h3>接口配置信息</h3>
+    </div>
+    <div class="form-horizontal" role="form" style="margin:30px">
+        <div class="form-group">
+    <label class="col-sm-1 ">环境切换</label>
+    <div class="col-sm-2">
+       <select class="form-control">
+          <option selected>Qa</option>
+          <option>Dev</option>
+          <option>Stage</option>
+          <option>Online</option>
+    </select>
+    </div>
+  </div>
+        <div class="form-group form-inline">
+            <label for="lastname" class="col-sm-1 ">是否生成报告</label>
+            <div class="col-sm-1 " style="margin-top: -7px">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios1" id="optionsRadios3"  value="reportY" checked>是
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-1 " style="margin-top: -7px">
+                <div class="radio">
+                    <label>
+                    <input type="radio" name="optionsRadios1"  id="optionsRadios4"  value="reportN" >否
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-inline">
+        <label for="lastname" class="col-sm-1 ">是否发送邮件</label>
+        <div class="col-sm-1 " style="margin-top: -7px">
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios2" id="optionsRadios5" v-model="mailY" value="mailY" checked @click="isSendMail('mailY')">是
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-1 " style="margin-top: -7px">
+            <div class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios2" id="optionsRadios6" v-model="mailN"  value="mailN" @click="isSendMail('mailN')">否
+                </label>
+            </div>
+        </div>
+  </div>
+        <div v-if="mailY==='mailY'" class="form-group form-inline">
+      <label class="col-sm-1 " for="name">收件人</label>
+      <div class="col-sm-2">
+          <template v-for="sender in senderList">
+            <input type="text" style="margin-top: 7px" class="form-control" id="name" placeholder="请输入收件人邮箱" v-model="sender.value">
+          </template>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm" @click="addSender()">添加收件人</button>
+  </div>
+        <div class="form-group">
+      <label class="col-sm-1 " for="name">定时执行</label>
+      <div class="col-sm-4 ">
+          <textarea type="text" class="form-control" rows="7" id="name" placeholder="请选择定时执行用例"></textarea>
+      </div>
+       <button type="submit"  class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#getallCase">添加用例</button>
+  </div>
+        <div class="form-group">
+        <label class="col-sm-1 " for="name">定时时间</label>
+        <div class="col-sm-1">
+       <select class="form-control">
+          <option selected>每天</option>
+          <option>每周</option>
+          <option>每月</option>
+        </select>
+        </div>
+        <div class="col-sm-1">
+        <select class="form-control">
+          <option selected>9:00</option>
+          <option>15:00</option>
+          <option>19:00</option>
+        </select>
+    </div>
+    </div>
+        <div class="form-group" style="margin-top: 75px">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-success btn-block">保存设置</button>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="modal fade" id="getallCase" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 500px;margin: 50px auto">
+                    <div class="modal-content" id="newinfo">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="newapiLabel">
+                                选择用例
+                            </h4>
+                        </div>
+                        <div class="modal-body" style="padding: 7px">
+                            <div style="background-color:gainsboro;text-align:center;">
+                            <ul id="myTab" class="nav nav-tabs" style="margin-left: 97px;" >
+			                    <li><a data-toggle="tab">有鱼股票</a></li>
+                                <li><a data-toggle="tab">有鱼智投</a></li>
+                                <li><a data-toggle="tab">开放平台</a></li>
+                            </ul>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
+                                        <li role="presentation"><a href="/index/"  >登录</a></li>
+                                        <li role="presentation"><a href="/singleInterface/" >注册</a></li>
+                                        <li role="presentation"><a href="/projectList/" >交易</a></li>
+                                        <li role="presentation"><a href="/configer/" >我的</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-9">
+                                    <span  for="version" >用例一</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <span  for="version" >用例二都是大大说十多个:</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <span  for="version" >用例三:</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <span  for="version" >用例四:</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <span  for="version" >用例一:</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <label  for="version" >用例二:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <label  for="version" >用例三:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                    <label  for="version" >用例四:</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input   type="checkbox" value="1" id="isTeam" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <input type="submit" class="btn btn-primary" @click="loadHeader()" data-dismiss="modal"/>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+</div>
+{% endblock %}
+{% block vuejs1 %}
+    <script type="text/javascript">
+var vm = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#configer',
+    data:{
+        mailY:"mailY",
+        mailN:"",
+        reportY:"",
+        reportN:"",
+        senderList:[{
+            value:""
+        }]
+     },
+    created(){
+        vm1.$data.isActiveSi = false;
+        vm1.$data.isActiveIn = false;
+        vm1.$data.isActiveAl = false;
+        vm1.$data.isActiveCo = true;
+        console.log(this.mailY)
+    },
+    methods:{
+        isSendMail(params){
+            if(params==='mailY'){
+                this.mailY=params;
+                this.mailN=""
+            }else if(params==='mailN'){
+                this.mailY="";
+                this.mailN="mailN"
+            }
+
+        },
+        addSender(){
+            var data = {value:""};
+            this.senderList.push(data);
+            console.log(this.senderList)
+        }
+
+    }
+})
+</script>
+{% endblock %}

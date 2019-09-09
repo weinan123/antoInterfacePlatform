@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from main import views as main
 from main import apiinfo
-from main import projectList
+from main import projectList,configer
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'^returnAuthorization/$', main.returnAuthorization),
     url(r'^getchartData/$', main.getchartData),
     url(r'^pararmsFiles/$', main.pararmsFiles),
+    url(r'^configer/$', configer.configer),
 
 
 ]
