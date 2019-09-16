@@ -99,6 +99,7 @@
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
                     <button class="btn btn-primary" @click="selectAll()">全选</button>
                     <button class="btn btn-primary" @click="selectNone()">全不选</button>
+                    <button class="btn btn-primary" @click="alert()">警告</button>
 
                     <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
                         <button class="btn btn-danger" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
@@ -253,7 +254,7 @@
                 axios
                     .get('/projectListInfo/')
                     .then(resp => {
-                        this.list = resp.data;
+                        this.list = resp.data.data;
                         console.log(this.list);
                     }).catch(err => {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -271,7 +272,7 @@
                             axios
                                 .get('/projectListInfo/')
                                 .then(resp => {
-                                    this.list = resp.data;
+                                    this.list = resp.data.data;
                                     console.log(resp.data);
                                 }).catch(err => {
                                 console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -285,7 +286,7 @@
                     axios
                         .get('/projectListInfo/')
                         .then(resp => {
-                            this.list = resp.data;
+                            this.list = resp.data.data;
                             console.log(resp.data);
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -303,12 +304,16 @@
                     axios
                         .get('/projectListInfo/')
                         .then(resp => {
-                            this.list = resp.data;
+                            this.list = resp.data.data;
                             console.log(resp.data);
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     });
                     this.checkedDelete = [];
+                },
+
+                alert() {
+                    alert("你好，我是一个警告框！");
                 },
             }
         })

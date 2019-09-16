@@ -34,10 +34,15 @@ def projectListInfo(request):
     resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     respList = list(resp)
     for i in range(len(respList)):
-        respList[i]['updateTime'] = str(respList[i]['updateTime'])
+        respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
     for i in range(len(respList)):
-        respList[i]['createTime'] = str(respList[i]['createTime'])
-    return JsonResponse(respList, safe=False)
+        respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+    result = {
+        'data': respList,
+        'code': 0,
+        'info': 'success'
+    }
+    return JsonResponse(result, safe=False)
 
 
 def projectList(request):
@@ -58,6 +63,8 @@ def projectDelete(request):
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
             interfaceList.objects.filter(id=id).delete()
+        else:
+            error = '项目中还存在用例，请先删除用例，再删除项目！'
     return HttpResponseRedirect('/projectList/')
 
 
@@ -69,6 +76,8 @@ def projectBatchDelete(request):
         for x in idDelete:
             if (apiInfoTable.objects.filter(owningListID=x[0]).count() == 0):
                 interfaceList.objects.filter(id=x[0]).delete()
+            else:
+                error = '项目中还存在用例，请先删除用例，再删除项目！'
     return JsonResponse(result)
 
 
