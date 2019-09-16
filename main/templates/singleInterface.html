@@ -567,7 +567,7 @@ var vm = new Vue({
                         }else if(showbody === 3){
                             this.showbodyState = showbody;
                             this.checkv = "option4";
-                            this.rawValue = result.datas.body[0].value;
+                            this.rawValue = bodyinfo[0].value;
                         }
                     }
                 }).catch(err=> {
@@ -807,13 +807,13 @@ var vm = new Vue({
             }
             var bodyArr = [];
             var bodyinfor = {};
-            let showflag = {"showflag": 0};
+            let bodysData = {};
             //console.log(this.showState,this.showbodyState);
             console.log(this.showState);
             console.log(this.showbodyState);
             if (this.showbodyState === 0) {
                 {#headerinfor["Content-Type"] = "multipart/form-data";#}
-                showflag["showflag"] = 0;
+                bodysData["showflag"] = 0;
                 for (var j = 0; j < this.bodyFVals.length; j++) {
                     if(this.bodyFVals[j].type==='file'){
                         bodyinfor = {};
@@ -830,10 +830,11 @@ var vm = new Vue({
                 bodyArr.push(bodyinfor)
 
                 }
+                bodysData["datas"] = bodyArr;
             }
             else if (this.showbodyState === 1) {
                 {#headerinfor["Content-Type"] = "application/json";#}
-                showflag["showflag"] = 1;
+                bodysData["showflag"] = 1;
                 for (var k = 0; k < this.bodyJVals.length; k++) {
                     bodyinfor = {};
                     bodyinfor["paramType"] = this.bodyJVals[k].type;
@@ -841,10 +842,11 @@ var vm = new Vue({
                     bodyinfor["paramName"] = this.bodyJVals[k].name;
                     bodyArr.push(bodyinfor)
                 }
+                bodysData["datas"] = bodyArr;
             }
             else if (this.showbodyState === 2) {
                 {#headerinfor["Content-Type"] = "application/xml";#}
-                showflag["showflag"] = 2;
+                bodysData["showflag"] = 2;
                 for (var l = 0; l < this.bodyXVals.length; l++) {
                     bodyinfor = {};
                     bodyinfor["paramType"] = this.bodyXVals[l].type;
@@ -852,13 +854,15 @@ var vm = new Vue({
                     bodyinfor["paramName"] = this.bodyXVals[l].name;
                     bodyArr.push(bodyinfor)
                 }
+                bodysData["datas"] = bodyArr;
             }
             else if (this.showbodyState === 3) {
-                bodyArr.push(showflag);
+                bodysData["showflag"] = 3;
                 bodyinfor = {};
                 {#headerinfor["Content-Type"] = "text/plain";#}
                 bodyinfor["paramValue"] = this.rawValue;
-                bodyArr.push(bodyinfor)
+                bodyArr.push(bodyinfor);
+                bodysData["datas"] = bodyArr;
             }
 
             var Screatinfor={
