@@ -128,6 +128,8 @@ def getProjectList(request):
         returnData["model_list"].append(model_list[j])
     print returnData
     return JsonResponse(returnData,safe=False)
+
+
 def newCase(request):
     if request.method=="POST":
         reqdata = json.loads(request.body)["params"]
@@ -163,7 +165,7 @@ def newCase(request):
         else:
             try:
                 id1 = int(reqdata["apiId"])
-                pid = apiInfoTable.objects.get(apiID=id1).owningListID_id
+                pid = apiInfoTable.objects.get(apiID=id1).owningListID
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
                                                               headers=headers,
                                                               body=send_body)

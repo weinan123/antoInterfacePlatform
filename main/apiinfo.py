@@ -20,7 +20,7 @@ def allinfo(request):
         json_dict = {}
         json_dict["id"] = i.apiID
         json_dict["name"] = i.apiName
-        if i.lastRunResult is None:
+        if i.lastRunResult == 0:
             json_dict["lastrunrslt"] = 'null'
         else:
             json_dict["lastrunrslt"] = i.lastRunResult
@@ -298,21 +298,21 @@ def getapiInfos(request):
                 json_dict["header"] = []
             print header_list
             print("query.body:",query.body)
-            if query.body != "[]" and query.body != "":
+            if query.body != "{}" and query.body != "":
                 bodydata = json.loads(query.body)
                 print("bodydata:", bodydata)
-                stateflag = bodydata[0]["showflag"]
+                stateflag = bodydata["showflag"]
                 print("stateflag:",stateflag)
                 if stateflag==3:
                     showbodyState = 3
-                    for i in bodydata[1:]:
+                    for i in bodydata["datas"]:
                         body_dict = {}
                         print i
                         body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
                 elif stateflag==1:
-                    for i in bodydata[1:]:
+                    for i in bodydata["datas"]:
                         body_dict = {}
                         print i
                         body_dict["name"] = i["paramName"]
@@ -323,7 +323,7 @@ def getapiInfos(request):
                     json_dict["body"] = body_list
                 elif stateflag == 2:
                     showbodyState = 2
-                    for i in bodydata[1:]:
+                    for i in bodydata["datas"]:
                         body_dict = {}
                         print i
                         body_dict["name"] = i["paramName"]
@@ -334,7 +334,7 @@ def getapiInfos(request):
                     print("body:****", json_dict["body"])
                 elif stateflag == 0:
                     showbodyState = 0
-                    for i in bodydata[1:]:
+                    for i in bodydata["datas"]:
                         body_dict = {}
                         print i
                         body_dict["name"] = i["paramName"]
@@ -349,9 +349,10 @@ def getapiInfos(request):
                 json_dict["body"] = []
             json_dict["url"] = query.url
             json_dict["assert"] = query.assertinfo
-            json_dict["listid"] = query.owningListID.id
-            json_dict["projectName"] = query.owningListID.projectName
-            json_dict["moduleName"] = query.owningListID.moduleName
+            json_dict["listid"] = query.owningListID
+            listdata = interfaceList.objects.get(id=query.owningListID)
+            json_dict["projectName"] = listdata.projectName
+            json_dict["moduleName"] = listdata.moduleName
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
             print modulelist
             for module in modulelist:
