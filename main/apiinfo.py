@@ -354,6 +354,7 @@ def getapiInfos(request):
             listdata = interfaceList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
+            json_dict["host"] = listdata.host
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
             print modulelist
             for module in modulelist:
