@@ -763,7 +763,7 @@ var vm = new Vue({
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
              for(var c=0;c<this.data_to_send["bodyinfor"].length;c++){
-                body_str =body_str+JSON.stringify(this.data_to_send["bodyinfor"][c]);
+                body_str =body_str+JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
             }
              console.log(body_str);
              var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+this.data_to_send["host"]+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
@@ -811,7 +811,7 @@ var vm = new Vue({
             //console.log(this.showState,this.showbodyState);
             console.log(this.showState);
             console.log(this.showbodyState);
-            if (this.showbodyState === 0) {
+            if (this.showbodyState === 0 && this.bodyFVals[0].name !== "") {
                 {#headerinfor["Content-Type"] = "multipart/form-data";#}
                 bodysData["showflag"] = 0;
                 for (var j = 0; j < this.bodyFVals.length; j++) {
@@ -832,7 +832,7 @@ var vm = new Vue({
                 }
                 bodysData["datas"] = bodyArr;
             }
-            else if (this.showbodyState === 1) {
+            else if (this.showbodyState === 1 && this.bodyJVals[0].name !== "") {
                 {#headerinfor["Content-Type"] = "application/json";#}
                 bodysData["showflag"] = 1;
                 for (var k = 0; k < this.bodyJVals.length; k++) {
@@ -844,7 +844,7 @@ var vm = new Vue({
                 }
                 bodysData["datas"] = bodyArr;
             }
-            else if (this.showbodyState === 2) {
+            else if (this.showbodyState === 2 && this.bodyXVals[0].name !== "") {
                 {#headerinfor["Content-Type"] = "application/xml";#}
                 bodysData["showflag"] = 2;
                 for (var l = 0; l < this.bodyXVals.length; l++) {
@@ -856,13 +856,15 @@ var vm = new Vue({
                 }
                 bodysData["datas"] = bodyArr;
             }
-            else if (this.showbodyState === 3) {
+            else if (this.showbodyState === 3 && this.rawValue !== "") {
                 bodysData["showflag"] = 3;
                 bodyinfor = {};
                 {#headerinfor["Content-Type"] = "text/plain";#}
                 bodyinfor["paramValue"] = this.rawValue;
                 bodyArr.push(bodyinfor);
                 bodysData["datas"] = bodyArr;
+            }else{
+                bodysData = {};
             }
 
             var Screatinfor={
@@ -876,10 +878,9 @@ var vm = new Vue({
                 host:host,
                 url:posturl,
                 headers:headerinfor,
-                bodyinfor:bodyArr,
+                bodyinfor:bodysData,
                 Screatinfor:Screatinfor,
                 isRediret:this.isRediret,
-                showflag:showflag
             };
         },
         //保存用例
