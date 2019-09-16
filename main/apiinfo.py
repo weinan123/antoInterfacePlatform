@@ -230,15 +230,16 @@ def runrequest(sqlquery, id):
             headers = {}
         else:
             headers = json.loads(header)
-        if bodys == "[]" or bodys is None:
+        if bodys == "{}" or bodys is None:
             bodys_data = {}
         else:
             bodys = json.loads(bodys)
-            stateflag = bodys[0]["showflag"]
+            stateflag = bodys["showflag"]
             if stateflag == 3:
-                bodys_data = bodys[1]["paramValue"]
+                values = bodys["datas"][0]
+                bodys_data = values["paramValue"]
             else:
-                for i in bodys[1:]:
+                for i in bodys["datas"]:
                     bodys_data[i["paramName"]] = i["paramValue"]
         print("bodys_data:",bodys_data)
         a = requests.request(method=method, url=url, headers=headers, data=bodys_data, verify=False)
