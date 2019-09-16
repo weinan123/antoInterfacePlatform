@@ -41,21 +41,20 @@
         <div  class="navbar-fixed-top" style="background-color: #428bca;text-align: center" id ="app" >
             <div class="col-md-4"></div>
             <div class="col-md-4"><h3 style="color: white">自动化接口系统</h3></div>
-            <div v-if="status === 'success'" class="col-md-4" >
+            <div v-show="status === 'success'" class="col-md-4" >
                 <a href="/"><span  style="color: white;line-height: 60px;">当前用户：{! login_user !}</span></a>&nbsp&nbsp&nbsp
                 <a href="/logout/"><span style="color: white;line-height: 60px;" >退出</span></a>
             </div>
-            <div v-if="status==='fail'" class="col-md-4">
+            <div v-show="status==='fail'" class="col-md-4">
                 <a href="/login/"><span style="color: white;line-height: 60px;" >登录</span></a> &nbsp&nbsp&nbsp
                 <a href="/register/"><span style="color: white;line-height: 60px;">注册</span></a>
             </div>
         </div>
         <div class="row">
-
-            {% block content1 %}
-            {% endblock %}
-            {% block content %}
-            {% endblock %}
+        {% block content1 %}
+        {% endblock %}
+        {% block content %}
+        {% endblock %}
         </div>
     </div>
 <script type="text/javascript">

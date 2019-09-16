@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% block title %}<title> 首页</title> {% endblock %}
+{% block title %}<title> 单接口</title> {% endblock %}
 {% block content %}
     <!--<div class="row" style="border: #337ab7">-->
 <div class="col-md-8 row" id ="app2" style="margin-left:18%;margin-top: 1%">
@@ -398,8 +398,8 @@
 var vm = new Vue({
     delimiters: ['{!', '!}'],
     el:'#app2',
-    data() {
-        return {
+    data:{
+
             file:"",
             fileName:"请选择文件",
             checkv : "option1",
@@ -421,7 +421,7 @@ var vm = new Vue({
                 {
                     active: "",
                     num: 1,
-                    name: "请求ti"
+                    name: "请求体"
                 }],
             //增加删除列表
             headerVals: [{
@@ -469,17 +469,20 @@ var vm = new Vue({
             key_id:"",
             Authorization:"",
             headerText:"",
-        }
+
     },
+
     created() {
                 vm1.$data.isActiveSi = true;
                 vm1.$data.isActiveIn = false;
                 vm1.$data.isActiveAl = false;
-                vm1.$data.isActiveCo = false
+                vm1.$data.isActiveCo = false;
+
 
             },
     mounted:function(){
         let args = location.search.substr(1);
+        console.log(args);
         if(args){
             this.initflag=true;
             this.initInfos(args);
@@ -616,16 +619,12 @@ var vm = new Vue({
              console.log(this.modelList);
         },
         getEdit(json){
-
             var container = document.getElementById('jsoneditor');
-            //var container2 = document.getElementById('jsoneditor1');
             var options = {
-            mode: 'text',
-            modes: ['text', 'code'],
-            onEditable: function (node) {
+                mode: 'text',
+                modes: ['text', 'code'],
+                onEditable: function (node) {
               if (!node.path) {
-                // In modes code and text, node is empty: no path, field, or value
-                // returning false makes the text area read-only
                 return false;
               }
             },
@@ -636,13 +635,13 @@ var vm = new Vue({
                   console.log('Mode switched from', oldMode, 'to', newMode);
                 }
               };
-                var editor1 = new JSONEditor(container, options, json);
-            //var editor2 = new JSONEditor(container2, options, json);
+            var editor1 = new JSONEditor(container,options,json);
+
         },
         makeFrom(params){
             if(this.initflag === false){
                 this.showState = params;
-                this.showbodyState=0;
+                //this.showbodyState=0;
                 //this.changeCss(params);
             }else{
                 this.showState = params;
@@ -790,7 +789,7 @@ var vm = new Vue({
                              hideMethod: "fadeOut"
                          };
                          toastr.error("请求失败，请检查请求数据");
-                        console.log('请求失败:'+err.status+','+err.statusText);
+                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
         },
         //数据整理
@@ -812,7 +811,7 @@ var vm = new Vue({
             //console.log(this.showState,this.showbodyState);
             console.log(this.showState);
             console.log(this.showbodyState);
-            if (this.showState === 1 && this.showbodyState === 0) {
+            if (this.showbodyState === 0) {
                 {#headerinfor["Content-Type"] = "multipart/form-data";#}
                 showflag["showflag"] = 0;
                 for (var j = 0; j < this.bodyFVals.length; j++) {
@@ -832,7 +831,7 @@ var vm = new Vue({
 
                 }
             }
-            else if (this.showState === 1 && this.showbodyState === 1) {
+            else if (this.showbodyState === 1) {
                 {#headerinfor["Content-Type"] = "application/json";#}
                 showflag["showflag"] = 1;
                 for (var k = 0; k < this.bodyJVals.length; k++) {
@@ -843,7 +842,7 @@ var vm = new Vue({
                     bodyArr.push(bodyinfor)
                 }
             }
-            else if (this.showState === 1 && this.showbodyState === 2) {
+            else if (this.showbodyState === 2) {
                 {#headerinfor["Content-Type"] = "application/xml";#}
                 showflag["showflag"] = 2;
                 for (var l = 0; l < this.bodyXVals.length; l++) {
@@ -854,7 +853,7 @@ var vm = new Vue({
                     bodyArr.push(bodyinfor)
                 }
             }
-            else if (this.showState === 1 && this.showbodyState === 3) {
+            else if (this.showbodyState === 3) {
                 bodyArr.push(showflag);
                 bodyinfor = {};
                 {#headerinfor["Content-Type"] = "text/plain";#}

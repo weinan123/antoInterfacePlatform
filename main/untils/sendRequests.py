@@ -20,14 +20,16 @@ class sendRequest():
             redirect = True
         return redirect
     def sendRequest(self,methods,url,headers,send_body,files,isRedirect):
-        headerType = headers["Content-Type"]
-        postbody = self.mulBody(headerType,send_body)
-        redirect = self.isRedirect(isRedirect)
+        print files
         s = requests.Session()
         if (methods == "GET"):
-            response = s.get(url, headers=headers, params=postbody, verify=False, allow_redirects=redirect)
+            redirect = self.isRedirect(isRedirect)
+            response = s.get(url, headers=headers, params=send_body, verify=False, allow_redirects=redirect)
             resp = response.text
         elif (methods == "POST"):
+            headerType = headers["Content-Type"]
+            postbody = self.mulBody(headerType, send_body)
+            redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect)
             resp = response.text
