@@ -15,14 +15,14 @@ def my_login(func):
 def mul_bodyData(bodyinfor):
     body = {}
     files={}
+    paramsData = bodyinfor["datas"]
     if bodyinfor["showflag"] == 3:
-        body = bodyinfor["datas"][0]["paramValue"]
+        body = paramsData[0]["paramValue"]
     else:
-        for i in range(0,len(bodyinfor["datas"])):
-            bodysval = bodyinfor["datas"]
-            params_name = bodysval[i]["paramName"]
-            params_value = bodysval[i]["paramValue"]
-            params_type = bodysval[i]["paramType"]
+        for i in range(0,len(paramsData)):
+            params_name = paramsData[i]["paramName"]
+            params_value = paramsData[i]["paramValue"]
+            params_type = paramsData[i]["paramType"]
             print params_name,params_value,params_type
             if(params_type=='file'):
                 path = r'main/postfiles/%s' % bodyinfor[i]["paramValue"]
