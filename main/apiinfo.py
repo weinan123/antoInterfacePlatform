@@ -117,8 +117,8 @@ def searchapi(request):
             for i in query:
                 print i
                 json_dict = {}
-                print i['owningListID_id'],pid
-                if str(i['owningListID_id']) == pid:
+                print i['owningListID'],pid
+                if str(i['owningListID']) == pid:
                     json_dict["id"] = i['apiID']
                     json_dict["name"] = i['apiName']
                     if i['lastRunResult'] is None:
@@ -130,7 +130,7 @@ def searchapi(request):
                     else:
                         json_dict["lastruntime"] = i['lastRunTime'].strftime('%Y-%m-%d %H:%M:%S')
                     json_dict["owing"] = i['creator']
-                    json_dict["listid"] = i['owningListID_id']
+                    json_dict["listid"] = i['owningListID']
                     json_list.append(json_dict)
                 print json_list
             result = {
