@@ -63,22 +63,41 @@ def projectDelete(request):
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
             interfaceList.objects.filter(id=id).delete()
+            code = 0
+            info = '删除成功！'
         else:
-            error = '项目中还存在用例，请先删除用例，再删除项目！'
-    return HttpResponseRedirect('/projectList/')
+            code = -1
+            info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
 
 
 def projectBatchDelete(request):
     result = {}
+    flag = True
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idDelete = req['idDelete']
         for x in idDelete:
             if (apiInfoTable.objects.filter(owningListID=x[0]).count() == 0):
-                interfaceList.objects.filter(id=x[0]).delete()
+                continue
             else:
-                error = '项目中还存在用例，请先删除用例，再删除项目！'
-    return JsonResponse(result)
+                flag = False
+                code = -1
+                info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+        for x in idDelete:
+            if (flag):
+                interfaceList.objects.filter(id=x[0]).delete()
+                code = 0
+                info = '删除成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
 
 
 def projectEdit(request):
