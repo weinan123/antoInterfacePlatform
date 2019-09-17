@@ -51,15 +51,7 @@
             </div>
             <button type="submit" class="btn btn-default" @click="search()">搜索</button>
         </div>
-        <div style="display:inline-block;float: right;">
-            <div class="container-fluid" id="envrionment">
-                <select v-model="selected" name="envrionment">
-                    <option value="">选择环境</option>
-                    <option value="qa">QA</option>
-                    <option value="stage">Stage</option>
-                </select>
-            </div>
-        </div>
+
     </div>
 
     <div id="start">
@@ -69,10 +61,10 @@
             <tr>
                 <th>序号</th>
                 <th>接口名称</th>
-                <th>操作</th>
                 <th>上一次执行结果</th>
                 <th>上一次执行时间</th>
                 <th>创建者</th>
+                <th>操作</th>
             </tr>
             </thead>
             <tbody ref="tables">
@@ -84,13 +76,6 @@
                     </td>
                     <td>{! info.name !}</td>
                     <td>
-                        <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                <button type="button" class="btn btn-primary">查看编辑</button>
-                        </a>
-                        <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
-                        <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
-                    </td>
-                    <td>
                         <p v-if="info.lastrunrslt ===  'null'">无</p>
                         <p v-else-if="info.lastrunrslt === 1">Pass</p>
                         <p v-else>Fail</p>
@@ -100,6 +85,14 @@
                         <p v-else>{! info.lastruntime !}</p>
                     </td>
                     <td>{! info.owing !}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary">查看</button>
+                        <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
+                                <button type="button" class="btn btn-primary">编辑</button>
+                        </a>
+                        <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
+                        <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
