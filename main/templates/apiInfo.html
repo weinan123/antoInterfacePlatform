@@ -51,15 +51,7 @@
             </div>
             <button type="submit" class="btn btn-default" @click="search()">搜索</button>
         </div>
-        <div style="display:inline-block;float: right;">
-            <div class="container-fluid" id="envrionment">
-                <select v-model="selected" name="envrionment">
-                    <option value="">选择环境</option>
-                    <option value="qa">QA</option>
-                    <option value="stage">Stage</option>
-                </select>
-            </div>
-        </div>
+
     </div>
 
     <div id="start">
@@ -94,8 +86,9 @@
                     </td>
                     <td>{! info.owing !}</td>
                     <td>
+                        <button type="button" class="btn btn-primary">查看</button>
                         <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                <button type="button" class="btn btn-primary">查看编辑</button>
+                                <button type="button" class="btn btn-primary">编辑</button>
                         </a>
                         <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
                         <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
