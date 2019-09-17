@@ -6,7 +6,7 @@ import json
 from django.http.response import JsonResponse
 import requests
 from untils.until import mul_bodyData
-from untils import sendRequests
+from untils import sendRequests,batchstart
 from common import authService
 import sys
 reload(sys)
@@ -270,14 +270,10 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        slist = {}
-        print idlist
-        for id in idlist:
-            query = apiInfoTable.objects.get(apiID=id)
-            sresult = runrequest(query, id)
-            print sresult
-            slist[id] = sresult
-        result = {"code": 0, "info": "执行结束", "results": slist}
+        batchResult = batchstart.start_main(idlist)
+        print "-----------------------"
+        print batchResult
+        result = {"code": 0, "info": "执行结束", "results": batchResult}
     return JsonResponse(result)
 
 
