@@ -210,6 +210,8 @@ def runsingle(request):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
+        if bodyinfor != "" or bodyinfor != "{}":
+            bodyinfor = json.loads(bodyinfor)
         # Authorization = data["Screatinfor"]["Screatinfor"]
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
