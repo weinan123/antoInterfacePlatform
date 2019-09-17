@@ -61,14 +61,8 @@ def getAbsPath(relativePath):
 查找文件，如果没有，则创建文件
 '''
 def create():
-    t = time.strftime('%Y-%m-%d', time.localtime())  # 将指定格式的当前时间以字符串输出
-    suffix = "result.html"
-    newfile = getAbsPath("report")
-    filepath = getAbsPath("report\\" + t + suffix)
-    if not os.path.exists(newfile):
-        f = open(filepath, 'w')
-        print newfile
-        f.close()
-    else:
-        print filepath + " already existed."
-    return filepath
+    t = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))  # 将指定格式的当前时间以字符串输出
+    suffix = "_result.html"
+    report_path = os.getcwd() + "\\report\\" + t + suffix
+    print report_path
+    return report_path

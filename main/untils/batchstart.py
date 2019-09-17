@@ -1,60 +1,121 @@
 # coding=utf-8
 import unittest
-from until.openinit import get_driver
-from until.autoFormAdv import AutoForm
 from libs import HTMLTestRunner,sendMail
-from until import untils
+import requests
+import batchUntils
+from main.models import apiInfoTable,interfaceList
+import until,sendRequests
+from main.common import authService
+import time
+import json
+
+
 class RunTest(unittest.TestCase):
-    # 类方法，cls为当前的类名
-    @classmethod
-    def setUpClass(cls):
-        cls.bm = get_driver()
-        cls.af = AutoForm(cls.bm)
-        cls.filepath = untils.getAbsPath("testcases\\testcase.xlsx")
-    def actions(self, arg1, arg2):
+
+    def setUp(self):
+        self.s = requests.session()
+    def actions(self, arg1):
         # 获取元素的方式
-        caseName = arg2
-        res = self.af.runCase(self.filepath, caseName)
-        state = True
-        info = ""
-        for i in range(0, res.__len__()):
-            state = state and res.__getitem__(i).get("state")
-            info = info + res.__getitem__(i).get("title") + ":" + \
-                   res.__getitem__(i).get("info")
-        print u"用例:" + arg1 + " " + u"用例方法:" + caseName
-        print info
+        caseID = arg1
+        singleResult = self.singleRun(caseID)
+        print singleResult
+        state = False
+        if singleResult["code"] == 0:
+            state = True
         self.assertEqual(True, state)
     # 闭包函数
     @staticmethod
-    def getTestFunc(arg1,arg2):
+    def getTestFunc(arg1):
         def func(self):
-            self.actions(arg1,arg2)
+            self.actions(arg1)
         return func
-    @classmethod
-    def tearDownClass(cls):
-        cls.bm = get_driver()
-        cls.af = AutoForm(cls.bm)
-        cls.af.quitDriver()
 
-'''
-    获取可执行的用例集并组装test方法
-'''
-def _getTestcase():
-    filepath = untils.getAbsPath("testcases\\testcase.xlsx")
-    print filepath
-    testlist = AutoForm.getTestSuiteFromStdExcel(filepath)
+    def tearDown(self):
+        pass
+
+    def singleRun(self,caseID):
+        try:
+            query = apiInfoTable.objects.get(apiID=caseID)
+        except Exception as e:
+            result = {"code": -2, "datas": "执行用例失败，" + str(e)}
+            return result
+        methods = query.method
+        send_url = query.url
+        if methods == "" or send_url == "":
+            result = {"code": -1, "datas": "methods和url参数不能为空"}
+            return result
+        headers = query.headers
+        if headers != "":
+            headers = json.loads(headers)
+        bodyinfor = query.body
+        if bodyinfor != "" or bodyinfor != "{}":
+            bodyinfor = json.loads(bodyinfor)
+        listid = query.owningListID
+        querylist = interfaceList.objects.get(id=listid)
+        host = querylist.host
+        url = host + send_url
+        # 处理数据类型的方法
+        send_body, files = until.mul_bodyData(bodyinfor)
+        isRedirect = query.isRedirect
+        # isScreat = Screatinfor["isScreat"]
+        isScreat = query.isScreat
+        key_id = query.key_id
+        secret_key = query.secret_key
+        # key_id = Screatinfor["key_id"]
+        # secret_key = Screatinfor["secret_key"].encode("utf-8")
+        timestamp = int(time.time())
+        # 非加密执行接口
+        if isScreat == False or isScreat == "":
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+        # 加密执行
+        else:
+            credentials = authService.BceCredentials(key_id, secret_key)
+            print credentials
+            headers_data = {
+                'Accept': 'text/html, */*; q=0.01',
+                'X-Requested-With': 'XMLHttpRequest',
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+            }
+            headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+            Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
+                                                      headersOpt)
+            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
+                                                                send_url, headers, send_body, files, isRedirect)
+        assertinfo = str(query.assertinfo)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        if assertinfo == "":
+            datas = {"status_code": resp.status_code}
+            if resp.status_code == 200:
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1)
+                result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
+        else:
+            datas = {"status_code": resp.status_code, "responseText": str(resp.text), "assert": assertinfo}
+            if resp.status_code == 200 and assertinfo in str(resp.text):
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1)
+                result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
+        return result
+
+def _getTestcase(list):
+    testlist = list
     for args in testlist:
-        fun = RunTest.getTestFunc(args["caseinfro"], args["casename"])
-        setattr(RunTest, 'test_func_%s' % (args["casename"]), fun)
-_getTestcase()
+        fun = RunTest.getTestFunc(args)
+        setattr(RunTest, 'test_func_%s' % (args), fun)
 
-if __name__ == "__main__":
-    testSuite = untils.getTestSuite(RunTest)
+def start_main(list):
+    _getTestcase(list)
+    testSuite = batchUntils.getTestSuite(RunTest)
     print testSuite
-    reportFile = untils.create()
+    reportFile = batchUntils.create()
     fp = file(reportFile, "wb")
     runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
     runner.run(testSuite)
     #发送邮件报告
     #sendMail.sendemali(reportFile)
+
 
