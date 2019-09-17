@@ -41,6 +41,12 @@ class apiInfoTable(models.Model):
     headers = models.TextField(blank=True)
     body = models.TextField(blank=True)
     assertinfo = models.CharField(max_length=200, blank=True)
+    files = models.TextField(blank=True)
+    secret_key = models.CharField(max_length=200, blank=True)
+    key_id = models.CharField(max_length=200, blank=True)
+    isScreat = models.BooleanField(default=False)
+    isRedirect = models.BooleanField(default=False)
+
 
 class countCase(models.Model):
     pmID = models.AutoField(max_length=4,primary_key=True)
