@@ -13,7 +13,7 @@
           <option selected>Qa</option>
           <option>Dev</option>
           <option>Stage</option>
-          <option>Online</option>
+          <option>Live</option>
     </select>
     </div>
   </div>
@@ -62,11 +62,36 @@
   </div>
         <div class="form-group">
       <label class="col-sm-1 " for="name">定时执行</label>
-      <div class="col-sm-4 ">
-          <textarea type="text" class="form-control" rows="7" id="name" placeholder="请选择定时执行用例"></textarea>
+      <div class="col-sm-5" style="border:1px solid gainsboro">
+                <div class="row">
+                    <div class="col-md-3" style="margin-left: -15px;">
+                        <ul class="list-group" style="text-align: center">
+                            <li v-for="projectName,index in projectList" class="list-group-item " v-bind:class="index===0?'active':''" style="background-color: lightblue">{! projectName !}</li>
+                        </ul>
+                        {% comment %}<ul class="list-group" style="text-align: center">
+                            <li v-for="model in modelList" class="list-group-item " style="background-color: lightblue">{! model !}</li>
+                        </ul>{% endcomment %}
+                    </div>
+                    <div class="col-md-9" style="margin-left: -20px">
+                        <template v-for="item in modelList">
+                        <label for="name">{! item.modelname !}:</label><br>
+                        <template v-for="itemcase in item.allData">
+                            <div style="width: 33%;float: left">
+                            <input  type="checkbox" value="1" id="isTeam" :checked="ischecked"  >
+                            <span >{! itemcase !}</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+                            </div>
+                        </template>
+                            </template>
+                        <div style="width: 35%;float: right">
+                        <input  type="checkbox" value="1" id="isTeam" @click="choseAll($event)" >
+                            <span >全选</span>
+                        <input  type="checkbox" value="1" id="isTeam" >
+                            <span >取消</span>
+                        </div>
+                    </div>
       </div>
-       <button type="submit"  class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#getallCase">添加用例</button>
   </div>
+        </div>
         <div class="form-group">
         <label class="col-sm-1 " for="name">定时时间</label>
         <div class="col-sm-1">
@@ -91,63 +116,7 @@
         </div>
     </div>
     </div>
-</div>
-<div class="modal fade" id="getallCase" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
-            <div class="modal-dialog" style="width: 500px;margin: 50px auto">
-                    <div class="modal-content" id="newinfo">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                &times;
-                            </button>
-                            <h4 class="modal-title" id="newapiLabel">
-                                选择用例
-                            </h4>
-                        </div>
-                        <div class="modal-body" style="padding: 7px">
-                            <div style="background-color:gainsboro;text-align:center;">
-                            <ul id="myTab" class="nav nav-tabs" style="margin-left: 97px;" >
-			                    <li><a data-toggle="tab">有鱼股票</a></li>
-                                <li><a data-toggle="tab">有鱼智投</a></li>
-                                <li><a data-toggle="tab">开放平台</a></li>
-                            </ul>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
-                                        <li role="presentation"><a href="/index/"  >登录</a></li>
-                                        <li role="presentation"><a href="/singleInterface/" >注册</a></li>
-                                        <li role="presentation"><a href="/projectList/" >交易</a></li>
-                                        <li role="presentation"><a href="/configer/" >我的</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-9">
-                                    <span  for="version" >用例一</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <span  for="version" >用例二都是大大说十多个:</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <span  for="version" >用例三:</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <span  for="version" >用例四:</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <span  for="version" >用例一:</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <label  for="version" >用例二:</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <label  for="version" >用例三:</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                    <label  for="version" >用例四:</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input   type="checkbox" value="1" id="isTeam" >
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                            </button>
-                            <input type="submit" class="btn btn-primary" @click="loadHeader()" data-dismiss="modal"/>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
-            </div>
+
 </div>
 {% endblock %}
 {% block vuejs1 %}
@@ -162,14 +131,28 @@ var vm = new Vue({
         reportN:"",
         senderList:[{
             value:""
-        }]
+        }],
+        projectList:["有鱼股票","有鱼智投","鱼框网站"],
+        modelList:[{
+            modelname:"登录",
+            allData:[1,2,3,4,5,6,7,8,9]
+        },{
+            modelname:"注册",
+            allData:[1,2,3,4,5,6]
+        },{
+            modelname:"基金",
+            allData:[1,2,3,4,5,6]
+        }],
+        allData:[],
+        caseList:[],
+        ischecked:false
      },
     created(){
         vm1.$data.isActiveSi = false;
         vm1.$data.isActiveIn = false;
         vm1.$data.isActiveAl = false;
         vm1.$data.isActiveCo = true;
-        console.log(this.mailY)
+        //this.addCase()
     },
     methods:{
         isSendMail(params){
@@ -186,6 +169,37 @@ var vm = new Vue({
             var data = {value:""};
             this.senderList.push(data);
             console.log(this.senderList)
+        },
+        addCase(){
+            axios.post('/getAllcase/')
+                .then(resp =>{
+                    console.log(resp.data);
+                    this.projectList = resp.data.projectList;
+                    console.log(this.projectList);
+                    this.allData=resp.data.data;
+                    console.log(this.allData);
+                    this.changeModel(this.projectList[0])
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+        },
+        changeModel(initProjectName){
+            this.modelList=[];
+            for(var i=0;i<this.allData.length;i++){
+                if(this.allData[i].projectName===initProjectName){
+                    this.modelList.push(this.allData[i].moduleName);
+                    this.caseList= this.caseList.concat(this.allData[i].allcase);
+                }
+            }
+            console.log(this.caseList)
+        },
+        choseAll(e){
+            let checked = e.target.checked;
+            console.log(checked);
+            if(checked){
+                this.ischecked=true
+            }
+
         }
 
     }

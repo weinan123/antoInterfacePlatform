@@ -57,7 +57,11 @@ def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
+            sss = interfaceList.objects.filter(id=id).values_list("projectName","moduleName")
+            print sss[0][0]
+            countCase.objects.filter(projectName=sss[0][0],moduleName=sss[0][1]).delete()
             interfaceList.objects.filter(id=id).delete()
+
     return HttpResponseRedirect('/projectList/')
 
 
