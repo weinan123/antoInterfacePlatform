@@ -34,10 +34,15 @@ def projectListInfo(request):
     resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     respList = list(resp)
     for i in range(len(respList)):
-        respList[i]['updateTime'] = str(respList[i]['updateTime'])
+        respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
     for i in range(len(respList)):
-        respList[i]['createTime'] = str(respList[i]['createTime'])
-    return JsonResponse(respList, safe=False)
+        respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+    result = {
+        'data': respList,
+        'code': 0,
+        'info': 'success'
+    }
+    return JsonResponse(result, safe=False)
 
 
 def projectList(request):
@@ -61,19 +66,41 @@ def projectDelete(request):
             print sss[0][0]
             countCase.objects.filter(projectName=sss[0][0],moduleName=sss[0][1]).delete()
             interfaceList.objects.filter(id=id).delete()
-
-    return HttpResponseRedirect('/projectList/')
+            code = 0
+            info = '删除成功！'
+        else:
+            code = -1
+            info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
 
 
 def projectBatchDelete(request):
     result = {}
+    flag = True
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idDelete = req['idDelete']
         for x in idDelete:
             if (apiInfoTable.objects.filter(owningListID=x[0]).count() == 0):
+                continue
+            else:
+                flag = False
+                code = -1
+                info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+        for x in idDelete:
+            if (flag):
                 interfaceList.objects.filter(id=x[0]).delete()
-    return JsonResponse(result)
+                code = 0
+                info = '删除成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
 
 
 def projectEdit(request):

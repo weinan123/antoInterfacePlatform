@@ -542,6 +542,7 @@ var vm = new Vue({
                     this.modelSelect = result.datas.moduleName;
                     console.log(this.modelSelect);
                     this.caseName = result.datas.name;
+                    this.host = result.datas.host;
                     if(result.datas.header.length !== 0) {
                         this.headerVals = result.datas.header;
                     }
@@ -762,7 +763,7 @@ var vm = new Vue({
              console.log(this.data_to_send);
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
-             for(var c=0;c<this.data_to_send["bodyinfor"].length;c++){
+             for(var c=0;c<this.data_to_send["bodyinfor"]["datas"].length;c++){
                 body_str =body_str+JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
             }
              console.log(body_str);

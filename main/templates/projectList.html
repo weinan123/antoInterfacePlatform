@@ -207,11 +207,7 @@
                                     </div><!-- /.modal -->
                                 </div>
 
-                                <a v-bind:href="['/projectDelete?id='+item.id]">
-                                    <button type="button" class="btn btn-danger" onClick="delcfm()">
-                                        删除
-                                    </button>
-                                </a>
+                                <button type="button" class="btn btn-danger" @click="projectDelete(item.id)">删除</button>
 
 
                             </div>
@@ -221,7 +217,6 @@
                     </tr>
                     </tbody>
                 </table>
-                {! checkedDelete !}
             </div>
         </div>
     </div>
@@ -253,7 +248,7 @@
                 axios
                     .get('/projectListInfo/')
                     .then(resp => {
-                        this.list = resp.data;
+                        this.list = resp.data.data;
                         console.log(this.list);
                     }).catch(err => {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -267,17 +262,44 @@
                             params: {
                                 idDelete: this.checkedDelete
                             }
-                        }).then(() => {
-                            axios
-                                .get('/projectListInfo/')
-                                .then(resp => {
-                                    this.list = resp.data;
-                                    console.log(resp.data);
-                                }).catch(err => {
-                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                        }).then(resp => {
+                                alert(resp.data.info);
+                            }
+                        ).then(
+                            () => {
+                                axios
+                                    .get('/projectListInfo/')
+                                    .then(resp => {
+                                        this.list = resp.data.data;
+                                        console.log(resp.data);
+                                    }).catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                });
+                                this.checkedDelete = [];
                             });
-                            this.checkedDelete = [];
-                        });
+                    }
+                },
+
+                projectDelete(id) {
+                    if (!confirm("确认要删除？")) {
+                        window.event.returnValue = false;
+                    } else {
+                        axios.get('/projectDelete?id=' + id)
+                            .then(resp => {
+                                    alert(resp.data.info);
+                                }
+                            ).then(
+                            () => {
+                                axios
+                                    .get('/projectListInfo/')
+                                    .then(resp => {
+                                        this.list = resp.data.data;
+                                        console.log(resp.data);
+                                    }).catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                });
+                                this.checkedDelete = [];
+                            });
                     }
                 },
 
@@ -285,7 +307,7 @@
                     axios
                         .get('/projectListInfo/')
                         .then(resp => {
-                            this.list = resp.data;
+                            this.list = resp.data.data;
                             console.log(resp.data);
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -303,13 +325,14 @@
                     axios
                         .get('/projectListInfo/')
                         .then(resp => {
-                            this.list = resp.data;
+                            this.list = resp.data.data;
                             console.log(resp.data);
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     });
                     this.checkedDelete = [];
                 },
+
             }
         })
     </script>

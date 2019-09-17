@@ -104,11 +104,7 @@ def sendRequest(request):
     Screatinfor = data["Screatinfor"]
     print("--------------",type(bodyinfor))
     #处理数据类型的方法
-    if bodyinfor == {}:
-        send_body = {}
-        files = {}
-    else:
-        send_body, files = mul_bodyData(bodyinfor)
+    send_body, files = mul_bodyData(bodyinfor)
     isScreat = Screatinfor["isScreat"]
     key_id = Screatinfor["key_id"]
     secret_key = Screatinfor["secret_key"].encode("utf-8")
