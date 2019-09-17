@@ -25,9 +25,7 @@ class getChartData():
                casevalue = data[0]
                projectName = projectList[0][0]
                moduleName = projectList[0][1]
-               print projectName,moduleName
                self.updatedb(casetype,casevalue,projectName,moduleName)
-           print results
            # 关闭数据库连接
            #self.conn.close()
         except Exception as e:

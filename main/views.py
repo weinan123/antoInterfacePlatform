@@ -57,8 +57,8 @@ def login(request):
                         returndata = {"status": "fail", "message": "用户名或者密码错误"}
                         return JsonResponse(returndata,safe=False)
 
-            except:
-                print Exception
+            except Exception as e:
+                print e
         return render(request,'login.html')
 
 def logout(request):
@@ -95,7 +95,8 @@ def sendRequest(request):
     methods = data["methods"]
     send_url = data["url"]
     headers = data["headers"]
-    bodyinfor = data["bodyinfor"]
+    bodyinfor = data["bodyinfor"]["datas"]
+    print bodyinfor
     isRedirect = data["isRediret"]
     Authorization = data["Screatinfor"]["Screatinfor"]
     host = data["host"]
@@ -126,7 +127,6 @@ def getProjectList(request):
         returnData["project_list"].append(project_list[i])
     for j in range(0,len(model_list)):
         returnData["model_list"].append(model_list[j])
-    print returnData
     return JsonResponse(returnData,safe=False)
 
 
@@ -212,7 +212,6 @@ def getchartData(request):
     projectName = interfaceList.objects.filter().values("projectName").distinct()
     for s in projectName:
         projectList.append(s["projectName"])
-    print alldata
     for i in alldata:
         data={}
         data["projectName"] = i["projectName"]
@@ -227,7 +226,6 @@ def getchartData(request):
         "data":dataList,
         "projectList":projectList
     }
-    print returndata
     return JsonResponse(returndata, safe=False)
 #参数带文件上传
 import os
