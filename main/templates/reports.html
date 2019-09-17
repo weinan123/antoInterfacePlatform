@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+{% block title %}<title> 结果报告</title> {% endblock %}
+{% block content %}
+<div class="col-md-9 row" id ="reports" style="margin-left: 16%;">
+
+</div>
+{% endblock %}
+{% block vuejs1 %}
+    <script type="text/javascript">
+var vmRs = new Vue({
+    delimiters: ['{!', '!}'],
+    el: '#reports',
+    data: {},
+    created() {
+        vm1.$data.isActiveSi = false;
+        vm1.$data.isActiveIn = false;
+        vm1.$data.isActiveAl = false;
+        vm1.$data.isActiveCo = false;
+        vm1.$data.isActiveRs = true;
+    }
+})
+    </script>
+{% endblock %}
