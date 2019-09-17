@@ -16,27 +16,25 @@ def my_login(func):
 def mul_bodyData(bodyinfor):
     body = {}
     files={}
-    if bodyinfor != "" or bodyinfor != "{}":
-        bodyinfor = json.loads(bodyinfor)
-        paramsData = bodyinfor["datas"]
-        if bodyinfor["showflag"] == 3:
-            body = paramsData[0]["paramValue"]
-        else:
-            for i in range(0,len(paramsData)):
-                params_name = paramsData[i]["paramName"]
-                params_value = paramsData[i]["paramValue"]
-                params_type = paramsData[i]["paramType"]
-                print params_name,params_value,params_type
-                if(params_type=='file'):
-                    path = r'main/postfiles/%s' % bodyinfor[i]["paramValue"]
-                    if os.path.exists(path):
-                        files = {'file':open(path, 'rb')}
-                    else:
-                        files = {'file':""}
+    paramsData = bodyinfor["datas"]
+    if bodyinfor["showflag"] == 3:
+        body = paramsData[0]["paramValue"]
+    else:
+        for i in range(0,len(paramsData)):
+            params_name = paramsData[i]["paramName"]
+            params_value = paramsData[i]["paramValue"]
+            params_type = paramsData[i]["paramType"]
+            print params_name,params_value,params_type
+            if(params_type=='file'):
+                path = r'main/postfiles/%s' % bodyinfor[i]["paramValue"]
+                if os.path.exists(path):
+                    files = {'file':open(path, 'rb')}
                 else:
-                    getvalue = toType(params_type,params_value).toreturnType()
-                    print getvalue
-                    body[params_name] = getvalue
+                    files = {'file':""}
+            else:
+                getvalue = toType(params_type,params_value).toreturnType()
+                print getvalue
+                body[params_name] = getvalue
     print body,files
     return body,files
 '''
