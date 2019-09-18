@@ -50,3 +50,7 @@ def reportDelete(request):
         else:
             result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
+
+def reportbatchDelete(request):
+    result = {}
+    return JsonResponse(result)
