@@ -115,14 +115,14 @@ def start_main(list):
     _getTestcase(list)
     testSuite = batchUntils.getTestSuite(RunTest)
     print testSuite
-    reportFile = batchUntils.create()
+    reportFile, path = batchUntils.create()
     fp = file(reportFile, "wb")
     runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
     result = runner.run(testSuite)
     #发送邮件报告
     #sendMail.sendemali(reportFile)
     print result.failure_count, result.error_count, result.success_count
-    return {"reportPath": reportFile, "sNum": result.success_count, "fNum": result.failure_count,
+    return {"reportPath": path, "sNum": result.success_count, "fNum": result.failure_count,
             "eNum": result.error_count}
 
 
