@@ -3,108 +3,106 @@
 
 {% block content %}
     <div class="col-md-10 row" id="apiinfopage" style="margin-left: 15%">
-    <ul class="breadcrumb">
-        <li><a href="/index/">首页</a></li>
-        <li><a href="/projectList/">接口列表</a></li>
-        <li class="active" id="path">{! pname !}_{! mname !}</li>
-    </ul>
-    <div class="col-md-4" style="width:100%;">
-        <div style="display:inline-block;float: left;">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newapi">新建用例</button>
-            <!-- 模态框（Modal） -->
-            <div class="modal fade" id="newapi" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                    <div class="modal-content" id="newinfo">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                &times;
-                            </button>
-                            <h4 class="modal-title" id="newapiLabel">
-                                新建接口用例
-                            </h4>
-                        </div>
+        <ul class="breadcrumb">
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/projectList/">接口列表</a></li>
+            <li class="active" id="path">{! pname !}_{! mname !}</li>
+        </ul>
+        <div class="col-md-4" style="width:100%;margin-bottom: 20px;">
+            <div style="display:inline-block;float: left;">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newapi">新建用例</button>
+                <!-- 模态框（Modal） -->
+                <div class="modal fade" id="newapi" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                        <div class="modal-content" id="newinfo">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="newapiLabel">
+                                    新建接口用例
+                                </h4>
+                            </div>
 
-                        <div class="modal-body">
-                            <label for="apiName">接口名称：</label>
-                            <input type="text" class="form-control" id="apiName" v-model="newname"
-                                placeholder="请输入...">
-                            <label for="apiListName">所属接口列表：</label>
-                            <input v-model="pname" class="form-control" id="apiListName" disabled="disabled">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                            </button>
-                            <input type="submit" class="btn btn-primary" @click="addapi()" data-dismiss="modal"/>
-                        </div>
+                            <div class="modal-body">
+                                <label for="apiName">接口名称：</label>
+                                <input type="text" class="form-control" id="apiName" v-model="newname"
+                                    placeholder="请输入...">
+                                <label for="apiListName">所属接口列表：</label>
+                                <input v-model="pname" class="form-control" id="apiListName" disabled="disabled">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                </button>
+                                <input type="submit" class="btn btn-primary" @click="addapi()" data-dismiss="modal"/>
+                            </div>
 
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
+
             </div>
-            <div id="batch" style="display:inline-block;">
-                <button type="button" class="btn btn-primary" id="batchsel" @click="batchrun()">批量操作</button>
+            <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="search" v-model="searchinfo"
+                        placeholder="请输入搜索文本">
+                </div>
+                <button type="submit" class="btn btn-default" @click="search()">搜索</button>
             </div>
         </div>
-        <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
-            <div class="form-group">
-                <input type="text" class="form-control" name="search" v-model="searchinfo"
-                    placeholder="请输入搜索文本">
+
+        <div id="start" style="margin:30px">
+            <div class="form-horizontal" role="form" style="margin-right:80px;margin-top: 20px;">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>接口名称</th>
+                        <th>上一次执行结果</th>
+                        <th>上一次执行时间</th>
+                        <th>创建者</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody ref="tables">
+                        <tr v-for="(info,index) in result.data">
+                            <td><label class="form-check-label">
+                                <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
+                                </label>
+                                {! index+1 !}
+                            </td>
+                            <td>{! info.name !}</td>
+                            <td>
+                                <p v-if="info.lastrunrslt ===  'null'">无</p>
+                                <p v-else-if="info.lastrunrslt === 1">Pass</p>
+                                <p v-else>Fail</p>
+                            </td>
+                            <td>
+                                <p v-if="info.lastruntime ===  'null'">无</p>
+                                <p v-else>{! info.lastruntime !}</p>
+                            </td>
+                            <td>{! info.owing !}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary">查看</button>
+                                <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
+                                        <button type="button" class="btn btn-primary">编辑</button>
+                                </a>
+                                <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
+                                <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div ref="selall">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
+                    </label><span>&nbsp;全选&nbsp;</span>
+                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+                </div>
             </div>
-            <button type="submit" class="btn btn-default" @click="search()">搜索</button>
         </div>
-
-    </div>
-
-    <div id="start">
-        <div>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>序号</th>
-                <th>接口名称</th>
-                <th>上一次执行结果</th>
-                <th>上一次执行时间</th>
-                <th>创建者</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody ref="tables">
-                <tr v-for="(info,index) in result.data">
-                    <td><label class="form-check-label" v-if="seen">
-                        <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
-                        </label>
-                        {! index+1 !}
-                    </td>
-                    <td>{! info.name !}</td>
-                    <td>
-                        <p v-if="info.lastrunrslt ===  'null'">无</p>
-                        <p v-else-if="info.lastrunrslt === 1">Pass</p>
-                        <p v-else>Fail</p>
-                    </td>
-                    <td>
-                        <p v-if="info.lastruntime ===  'null'">无</p>
-                        <p v-else>{! info.lastruntime !}</p>
-                    </td>
-                    <td>{! info.owing !}</td>
-                    <td>
-                        <button type="button" class="btn btn-primary">查看</button>
-                        <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                <button type="button" class="btn btn-primary">编辑</button>
-                        </a>
-                        <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
-                        <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-        <div v-if="seen" ref="selall">
-            <label class="form-check-label" v-if="seen">
-                <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
-            </label><span>&nbsp;全选&nbsp;</span>
-            <button type="button" class="btn btn-default btn-sm" id="batchexe" v-if="seen" @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
-            <button type="button" class="btn btn-default btn-sm" id="batchdel" v-if="seen" @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
-        </div>
-    </div>
     </div>
 {% endblock %}
 
@@ -116,7 +114,6 @@
         el:"#start",
         data:{
             result:'',
-            seen:false,
             dlist:[],
         },
         created(){
@@ -126,6 +123,7 @@
             vm1.$data.isActiveSi = false;
             vm1.$data.isActiveIn = false;
             vm1.$data.isActiveAl = true;
+            vm1.$data.isActiveRs = false;
         },
         methods:{
             getlist(id){
@@ -343,13 +341,14 @@
                             axios.post('/batchrun/', {
                                 params: {
                                     idList: runlist,
+                                    pmName: path.$data.pname + "_" + path.$data.mname,
                                 },
                             })
                                 .then(resp => {
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     if (code === 0) {
-                                        alert("执行结束");
+                                        alert("执行结束,可在结果报告模块中查看报告");
                                         window.location.reload(true);
                                     } else {
                                         alert("执行失败");
@@ -360,17 +359,10 @@
                                 })
                         }
                     } else {
-                        alert("要执行的接口用例有参数不存在的情况。");
+                        alert("要执行的接口用例有参数不存在的情况,请先编辑。");
                     }
                 }
             },
-        }
-    });
-
-    var env = new Vue({
-        el:'#envrionment',
-        data:{
-            selected:''
         }
     });
 
@@ -457,20 +449,7 @@
             }
         }
     });
-    let batchrun = new Vue({
-        delimiters: ['{!', '!}'],
-        el:"#batch",
-        data:{
-            changeseen:true,
-        },
-        methods: {
-            batchrun(){
-                apilist.seen = this.changeseen;
-                this.changeseen = !this.changeseen
-            },
 
-        }
-    });
     let search = new Vue({
         delimiters: ['{!', '!}'],
         el:"#search",

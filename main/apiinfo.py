@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList
+from models import apiInfoTable, interfaceList,reports
 import time
 import json
 from django.http.response import JsonResponse
 import requests
 from untils.until import mul_bodyData
-from untils import sendRequests
+from untils import sendRequests,batchstart
 from common import authService
 import sys
 reload(sys)
@@ -270,14 +270,36 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        slist = {}
-        print idlist
-        for id in idlist:
-            query = apiInfoTable.objects.get(apiID=id)
-            sresult = runrequest(query, id)
-            print sresult
-            slist[id] = sresult
-        result = {"code": 0, "info": "执行结束", "results": slist}
+        exeuser = request.session.get('username')
+        ownMoudle = req["pmName"]
+        totalNum = len(idlist)
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        batchResult = batchstart.start_main(idlist)
+        print batchResult
+        successNum = batchResult["sNum"]
+        faileNum = batchResult["fNum"]
+        errorNum = batchResult["eNum"]
+        reportPath = batchResult["reportPath"]
+        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        result_infos = {
+            "ownMoudle": ownMoudle,
+            "startTime": starttime,
+            "endTime": endtime,
+            "totalNum": totalNum,
+            "successNum": successNum,
+            "failNum": faileNum,
+            "errorNum": errorNum,
+            "executor": exeuser,
+            "reportName": reportPath
+        }
+        try:
+            s = reports.objects.create(**result_infos)
+            s.save()
+        except BaseException as e:
+            print(" SQL Error: %s" % e)
+            result = {'code': -1, 'info': 'sql error'}
+            return JsonResponse(result)
+        result = {"code": 0, "info": "执行结束"}
     return JsonResponse(result)
 
 
