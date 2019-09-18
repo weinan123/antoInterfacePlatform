@@ -12,8 +12,10 @@ import json
 
 class RunTest(unittest.TestCase):
 
-    def setUp(self):
-        self.s = requests.session()
+    @classmethod
+    def setUpClass(cls):
+        print("batch run start....")
+
     def actions(self, arg1):
         # 获取元素的方式
         caseID = arg1
@@ -23,6 +25,7 @@ class RunTest(unittest.TestCase):
         if singleResult["code"] == 0:
             state = True
         self.assertEqual(True, state)
+
     # 闭包函数
     @staticmethod
     def getTestFunc(arg1):
@@ -30,8 +33,9 @@ class RunTest(unittest.TestCase):
             self.actions(arg1)
         return func
 
-    def tearDown(self):
-        pass
+    @classmethod
+    def tearDownClass(cls):
+        print("batch run end....")
 
     def singleRun(self,caseID):
         try:
@@ -114,8 +118,11 @@ def start_main(list):
     reportFile = batchUntils.create()
     fp = file(reportFile, "wb")
     runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
-    runner.run(testSuite)
+    result = runner.run(testSuite)
     #发送邮件报告
     #sendMail.sendemali(reportFile)
+    print result.failure_count, result.error_count, result.success_count
+    return {"reportPath": reportFile, "sNum": result.success_count, "fNum": result.failure_count,
+            "eNum": result.error_count}
 
 
