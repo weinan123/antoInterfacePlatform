@@ -16,10 +16,10 @@ def getReportList(request):
             json_dict = {}
             json_dict["id"] = i.id
             json_dict["ownMoudle"] = i.ownMoudle
-            json_dict["startTime"] = i.startTime
+            json_dict["startTime"] = i.startTime.strftime('%Y-%m-%d %H:%M:%S')
             json_dict["endTime"] = i.endTime.strftime('%Y-%m-%d %H:%M:%S')
             json_dict["totalNum"] = i.totalNum
-            json_dict["successNum"] = i.successNum.strftime('%Y-%m-%d %H:%M:%S')
+            json_dict["successNum"] = i.successNum
             json_dict["failNum"] = i.failNum
             json_dict["errorNum"] = i.errorNum
             json_dict["executor"] = i.executor
