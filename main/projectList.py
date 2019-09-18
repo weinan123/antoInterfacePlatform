@@ -164,8 +164,13 @@ def projectSort(request):
 #         #         destination.write(chunk)
 #     return HttpResponseRedirect('/projectList/')
 
+# 导入Excel表格数据
 def projectImport(request):
     if request.method == 'POST':
+        projectName = request.POST.get('projectName')
+        moduleName = request.POST.get('moduleName')
+        host = request.POST.get('host')
+        print projectName, moduleName, host
         f = request.FILES['file']
         # 将上传的xlsx表格先保存下来
         with open('main/upload/file.xlsx', 'wb+') as destination:
@@ -180,10 +185,13 @@ def projectImport(request):
         # 将table中第一行的数据读取并添加到data_list中
         data_list.extend(table.row_values(0))
         # 打印出第一行的全部数据
-        for item in data_list:
-            print item
+        print data_list[0]
+        code = 0
+        info = '导入成功！'
+        # for item in data_list:
+        #     print item
         result = {
-            'code': 0,
-            'info': 'success'
+            'code': code,
+            'info': info
         }
-        return HttpResponseRedirect('/projectList/')
+        return JsonResponse(result, safe=False)

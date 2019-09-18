@@ -82,14 +82,76 @@
                                     <label class="modal-title" id="myModalLabel">导入</label>
                                 </div>
                                 <div class="modal-body">请选择需要导入的文件
-                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">
-                                        <input type="file" name="file"/>
-                                        <div class="modal-footer" style="text-align: center">
-                                            <button type="submit" class="btn btn-primary">提交更改</button>
-                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭
-                                            </button>
+                                    {#                                    新版本#}
+                                    <form style="text-align: center" class="form-horizontal">
+
+                                        <div class="form-group">
+                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="projectName"
+                                                       v-model="projectName" required id="id_projectName"
+                                                       placeholder="请输入项目名称">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="moduleName"
+                                                       required id="id_moduleName" v-model="moduleName"
+                                                       maxlength="50" placeholder="请输入模块名称"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
+                                            <div class="col-sm-9">
+                                                <input class="form-control" type="text" name="host" required
+                                                       v-model="host" id="id_host" maxlength="50"
+                                                       placeholder="请输入域名地址"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="uploadFile" class="col-sm-3 control-label">选择文件：</label>
+                                            <div class="col-sm-9">
+                                                <input type="file" id="uploadFile" ref="inputFile"
+                                                       @change="getFile($event)" class="form-control" name="uploadFile"
+                                                       required/>
+                                            </div>
+                                        </div>
+
+                                        {#                                        <div class="modal-footer" style="text-align: center">#}
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <button class="btn btn-primary" @click="submitForm($event)">
+                                                    提交
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="btn btn-primary"
+                                                        data-dismiss="modal">
+                                                    关闭
+                                                </button>
+                                            </div>
                                         </div>
                                     </form>
+
+                                    {#                                    <form>#}
+                                    {#                                        <input type="text" value="" v-model="name" placeholder="请输入用户名">#}
+                                    {#                                        <input type="text" value="" v-model="age" placeholder="请输入年龄">#}
+                                    {#                                        <input type="file" @change="getFile($event)">#}
+                                    {#                                        <button @click="submitForm($event)">提交</button>#}
+                                    {#                                    </form>#}
+
+
+                                    {#                                    旧版本#}
+                                    {#                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">#}
+                                    {#                                        <input type="file" name="file"/>#}
+                                    {#                                        <div class="modal-footer" style="text-align: center">#}
+                                    {#                                            <button type="submit" class="btn btn-primary">提交文件</button>#}
+                                    {#                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭#}
+                                    {#                                            </button>#}
+                                    {#                                        </div>#}
+                                    {#                                    </form>#}
                                 </div>
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
@@ -208,7 +270,8 @@
                                 </div>
 
                                 <a>
-                                <button type="button" class="btn btn-danger" @click="projectDelete(item.id)">删除</button>
+                                    <button type="button" class="btn btn-danger" @click="projectDelete(item.id)">删除
+                                    </button>
                                 </a>
 
 
@@ -230,14 +293,19 @@
 {% block vuejs1 %}
 
     <script type="text/javascript">
-        var vm = new Vue({
+        var vm2 = new Vue({
             delimiters: ['{!', '!}'],
             el: '#projectList',
+
             data() {
                 projectBatchDelete = true;
                 return {
+                    projectName: '',
+                    moduleName: '',
+                    host: '',
+                    file: '',
                     list: [],
-                    checkedDelete: []
+                    checkedDelete: [],
                 };
             },
             created() {
@@ -333,6 +401,54 @@
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     });
                     this.checkedDelete = [];
+                },
+
+                getFile(event) {
+                    this.file = event.target.files[0];
+                },
+
+                submitForm(event) {
+                    event.preventDefault();
+                    let formData = new FormData();
+                    formData.append('projectName', this.projectName);
+                    formData.append('moduleName', this.moduleName);
+                    formData.append('host', this.host);
+                    formData.append('file', this.file);
+
+                    let config = {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    };
+
+                    axios
+                        .post('/projectImport/', formData, config)
+                        .then(resp => {
+                                {#设置为当模态框完全隐藏时，激活弹窗的功能#}
+                                if (resp.data.code === 0) {
+                                    alert(resp.data.info);
+                                    {#$('#importProject').hide();#}
+                                    {#$('.modal-backdrop').hide();#}
+                                    $('#importProject').modal('hide');
+                                    Object.assign(this.$data, this.$options.data());
+                                    this.$refs.inputFile.value = '';
+                                } else {
+                                    alert(resp.data.info);
+                                }
+                            }
+                        )
+                        .then(
+                            () => {
+                                axios
+                                    .get('/projectListInfo/')
+                                    .then(resp => {
+                                        this.list = resp.data.data;
+                                        console.log(resp.data);
+                                    }).catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                });
+                                this.checkedDelete = [];
+                            });
                 },
 
             }
