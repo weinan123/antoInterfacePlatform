@@ -54,6 +54,7 @@ urlpatterns = [
     url(r'^batchReports/$', report.batchReports),
     url(r'^reportList/$', report.getReportList),
     url(r'^reportDelete/$', report.reportDelete),
+    url(r'^reportbatchdel/$', report.reportbatchDelete),
 
 
 ]
