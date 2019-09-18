@@ -70,9 +70,32 @@ var vmRs = new Vue({
                 console.log('请求失败:' + err.status + ',' + err.statusText);
             })
         },
-        delreport(){
-            alert("删除成功，假删除")
-        },
+        delreport(id){
+            if (!confirm("确认要删除？")) {
+                    window.event.returnValue = false;
+                }else {
+                    console.log('id=' + id);
+                    axios.post('/reportDelete/', {
+                        params: {
+                            id: id
+                        }
+                    })
+                        .then(resp => {
+                            this.result = resp.data;
+                            let info = resp.data.info;
+                            let code = resp.data.code;
+                            if (code === 0) {
+                                alert("删除成功");
+                                window.location.reload(true);
+                            } else {
+                                alert("删除失败:" + info);
+                            }
+                        })
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
+                }
+            },
     }
 })
     </script>
