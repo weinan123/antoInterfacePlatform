@@ -2,7 +2,47 @@
 {% block title %}<title> 结果报告</title> {% endblock %}
 {% block content %}
 <div class="col-md-9 row" id ="reports" style="margin-left: 16%;">
-
+    <div>
+        <div style="border-bottom: 1px solid gainsboro;width: 100%">
+            <h3>批量执行结果报告</h3>
+        </div>
+        <div class="form-horizontal" role="form" style="margin:30px">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>用例所属模块</th>
+                    <th>批量执行开始时间</th>
+                    <th>批量执行结束时间</th>
+                    <th>执行用例总数</th>
+                    <th>成功用例数</th>
+                    <th>失败用例数</th>
+                    <th>错误用例数</th>
+                    <th>执行者</th>
+                    <th>报告</th>
+                    <th>删除</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(info,index) in reportList">
+                        <td>{! index+1 !}</td>
+                        <td>{! info.ownMoudle !}</td>
+                        <td>{! info.startTime !}</td>
+                        <td>{! info.endTime !}</td>
+                        <td>{! info.totalNum !}</td>
+                        <td>{! info.successNum !}</td>
+                        <td>{! info.failNum !}</td>
+                        <td>{! info.errorNum !}</td>
+                        <td>{! info.executor !}</td>
+                        <td>{! info.reportPath !}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" @click="delreport(info.id)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
 {% block vuejs1 %}
@@ -10,13 +50,29 @@
 var vmRs = new Vue({
     delimiters: ['{!', '!}'],
     el: '#reports',
-    data: {},
+    data: {
+        reportList: ""
+    },
     created() {
         vm1.$data.isActiveSi = false;
         vm1.$data.isActiveIn = false;
         vm1.$data.isActiveAl = false;
         vm1.$data.isActiveCo = false;
         vm1.$data.isActiveRs = true;
+        this.getreportList();
+    },
+    methods: {
+        getreportList() {
+            axios.get('/reportList/')
+                .then(resp => {
+                    this.reportList = resp.data.datas;
+                }).catch(err => {
+                console.log('请求失败:' + err.status + ',' + err.statusText);
+            })
+        },
+        delreport(){
+            alert("删除成功，假删除")
+        },
     }
 })
     </script>

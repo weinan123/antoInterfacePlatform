@@ -344,13 +344,14 @@
                             axios.post('/batchrun/', {
                                 params: {
                                     idList: runlist,
+                                    pmName: path.$data.pname + "_" + path.$data.mname,
                                 },
                             })
                                 .then(resp => {
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     if (code === 0) {
-                                        alert("执行结束");
+                                        alert("执行结束,可在结果报告模块中查看报告");
                                         window.location.reload(true);
                                     } else {
                                         alert("执行失败");
@@ -361,7 +362,7 @@
                                 })
                         }
                     } else {
-                        alert("要执行的接口用例有参数不存在的情况。");
+                        alert("要执行的接口用例有参数不存在的情况,请先编辑。");
                     }
                 }
             },
