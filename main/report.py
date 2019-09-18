@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from models import reports
 from django.http.response import JsonResponse
+import json
 
 
 def batchReports(request):
@@ -30,4 +31,22 @@ def getReportList(request):
             'code': 0,
             'info': 'success'
         }
+    return JsonResponse(result)
+
+def reportDelete(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        id = req['id']
+        ainfo = reports.objects.get(id=id)
+        if ainfo:
+            try:
+                ainfo.delete()
+                print("删除成功")
+            except BaseException as e:
+                result = {'code': -1, 'info': 'sql error' + str(e)}
+                return JsonResponse(result)
+            result = {'code': 0, 'info': 'delete success'}
+        else:
+            result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
