@@ -58,3 +58,13 @@ class countCase(models.Model):
     moduleName = models.CharField(max_length=50, verbose_name='模块名称',blank=True)
     update = models.DateTimeField(auto_now_add=True, verbose_name='更新时间',blank=True)
 
+class reports(models.Model):
+    ownMoudle = models.CharField(max_length=200)
+    startTime = models.DateTimeField(null=True, blank=True)
+    endTime = models.DateTimeField(null=True, blank=True)
+    totalNum = models.IntegerField()
+    successNum = models.IntegerField()
+    failNum = models.IntegerField()
+    errorNum = models.IntegerField()
+    executor = models.CharField(max_length=50)
+    reportName = models.CharField(max_length=200)
