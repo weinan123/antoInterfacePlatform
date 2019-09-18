@@ -96,13 +96,14 @@
                 </tr>
             </tbody>
         </table>
-        </div>
+
         <div v-if="seen" ref="selall">
             <label class="form-check-label" v-if="seen">
                 <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
             </label><span>&nbsp;全选&nbsp;</span>
             <button type="button" class="btn btn-default btn-sm" id="batchexe" v-if="seen" @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
             <button type="button" class="btn btn-default btn-sm" id="batchdel" v-if="seen" @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+        </div>
         </div>
     </div>
     </div>
