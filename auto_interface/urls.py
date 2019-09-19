@@ -51,6 +51,6 @@ urlpatterns = [
     url(r'^getchartData/$', main.getchartData),
     url(r'^pararmsFiles/$', main.pararmsFiles),
     url(r'^configer/$', configer.configer),
-
-
+    url(r'^getAllcase/$', configer.getAllcase),
+    url(r'^saveConfigData/$', configer.saveConfigData),
 ]

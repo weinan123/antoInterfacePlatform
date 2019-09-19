@@ -3,13 +3,14 @@
 {% block content %}
 <div class="col-md-9 row" id ="configer" style="margin-left: 16%;">
     <div style="border-bottom: 1px solid gainsboro;width: 100%">
-        <h3>接口配置信息</h3>
+        <h3 >接口配置信息</h3>
     </div>
     <div class="form-horizontal" role="form" style="margin:30px">
+        <div class="alert alert-success" v-show="msg" v-text="msg"></div>
         <div class="form-group">
     <label class="col-sm-1 ">环境切换</label>
     <div class="col-sm-2">
-       <select class="form-control">
+       <select class="form-control" v-model="eviorment">
           <option selected>Qa</option>
           <option>Dev</option>
           <option>Stage</option>
@@ -55,7 +56,7 @@
       <label class="col-sm-1 " for="name">收件人</label>
       <div class="col-sm-2">
           <template v-for="sender in senderList">
-            <input type="text" style="margin-top: 7px" class="form-control" id="name" placeholder="请输入收件人邮箱" v-model="sender.value">
+            <input type="text" style="margin-bottom: 5px" class="form-control" id="name" placeholder="请输入收件人邮箱" v-model="sender.value">
           </template>
       </div>
       <button type="submit" class="btn btn-primary btn-sm" @click="addSender()">添加收件人</button>
@@ -63,30 +64,32 @@
         <div class="form-group">
       <label class="col-sm-1 " for="name">定时执行</label>
       <div class="col-sm-5" style="border:1px solid gainsboro">
-                <div class="row">
-                    <div class="col-md-3" style="margin-left: -15px;">
-                        <ul class="list-group" style="text-align: center">
-                            <li v-for="projectName,index in projectList" class="list-group-item " v-bind:class="index===0?'active':''" style="background-color: lightblue">{! projectName !}</li>
+                <ul id="myTab"  class="nav nav-tabs" style="margin-left: -16px">
+			                <li v-for="projectName,index in projectList" v-bind:class="index===0?'active':''"><a @click="changeModel(projectName)" data-toggle="tab">
+                        {! projectName !}</a></li>
                         </ul>
+                <div class="row">
+
+                       {% comment %} <ul class="list-group" style="text-align: center">
+                            <li v-for="projectName,index in projectList" class="list-group-item " v-bind:class="index===0?'active':''" style="background-color: lightblue">{! projectName !}</li>
+                        </ul>{% endcomment %}
                         {% comment %}<ul class="list-group" style="text-align: center">
                             <li v-for="model in modelList" class="list-group-item " style="background-color: lightblue">{! model !}</li>
                         </ul>{% endcomment %}
-                    </div>
-                    <div class="col-md-9" style="margin-left: -20px">
+
+                    <div  class="col-md-12" style="margin-bottom: 5px">
                         <template v-for="item in modelList">
-                        <label for="name">{! item.modelname !}:</label><br>
+                        <label for="name" style="width: 100%">{! item.modelname !}:</label>
                         <template v-for="itemcase in item.allData">
-                            <div style="width: 33%;float: left">
-                            <input  type="checkbox" value="1" id="isTeam" :checked="ischecked"  >
-                            <span >{! itemcase !}</span>&nbsp&nbsp&nbsp&nbsp&nbsp
+                            <div style="width: 25%;float: left;">
+                            <input  type="checkbox"   :value="itemcase.caseId" id="isTeam" :checked="ischecked" @click="checkList($event)">
+                            <span >{! itemcase.caseName !}</span>
                             </div>
                         </template>
-                            </template>
-                        <div style="width: 35%;float: right">
+                        </template>
+                     <div style="float: right">
                         <input  type="checkbox" value="1" id="isTeam" @click="choseAll($event)" >
                             <span >全选</span>
-                        <input  type="checkbox" value="1" id="isTeam" >
-                            <span >取消</span>
                         </div>
                     </div>
       </div>
@@ -95,14 +98,14 @@
         <div class="form-group">
         <label class="col-sm-1 " for="name">定时时间</label>
         <div class="col-sm-1">
-       <select class="form-control">
+       <select class="form-control" v-model="timingDay">
           <option selected>每天</option>
           <option>每周</option>
           <option>每月</option>
         </select>
         </div>
         <div class="col-sm-1">
-        <select class="form-control">
+        <select class="form-control" v-model="timingHour">
           <option selected>9:00</option>
           <option>15:00</option>
           <option>19:00</option>
@@ -112,7 +115,10 @@
         <div class="form-group" style="margin-top: 75px">
         <div class="col-sm-1"></div>
         <div class="col-sm-2">
-            <button type="submit" class="btn btn-success btn-block">保存设置</button>
+            <button type="submit" class="btn btn-success btn-block" @click="saveConfig()">保存设置</button>
+        </div>
+        <div class="col-sm-2">
+
         </div>
     </div>
     </div>
@@ -132,27 +138,23 @@ var vm = new Vue({
         senderList:[{
             value:""
         }],
-        projectList:["有鱼股票","有鱼智投","鱼框网站"],
-        modelList:[{
-            modelname:"登录",
-            allData:[1,2,3,4,5,6,7,8,9]
-        },{
-            modelname:"注册",
-            allData:[1,2,3,4,5,6]
-        },{
-            modelname:"基金",
-            allData:[1,2,3,4,5,6]
-        }],
+        projectList:[],
+        modelList:[],
         allData:[],
         caseList:[],
-        ischecked:false
+        ischecked:false,
+        timingDay:"",
+        timingHour:"",
+        eviorment:"",
+        msg:"",
+        projectName:""
      },
     created(){
         vm1.$data.isActiveSi = false;
         vm1.$data.isActiveIn = false;
         vm1.$data.isActiveAl = false;
         vm1.$data.isActiveCo = true;
-        //this.addCase()
+        this.addCase()
     },
     methods:{
         isSendMail(params){
@@ -187,19 +189,81 @@ var vm = new Vue({
             this.modelList=[];
             for(var i=0;i<this.allData.length;i++){
                 if(this.allData[i].projectName===initProjectName){
-                    this.modelList.push(this.allData[i].moduleName);
-                    this.caseList= this.caseList.concat(this.allData[i].allcase);
+                    let data = {
+                       modelname:this.allData[i].moduleName,
+                       allData:this.allData[i].allcase,
+                    };
+                    this.modelList.push(data);
                 }
             }
-            console.log(this.caseList)
         },
         choseAll(e){
             let checked = e.target.checked;
-            console.log(checked);
             if(checked){
                 this.ischecked=true
+            }else{
+                this.ischecked=false
             }
 
+        },
+        checkList(e){
+            let checked = e.target.checked;
+            if(checked){
+                this.ischecked.push(e.target.value)
+            }else{
+                this.caseList.pop(e.target.value)
+            }
+            console.log(this.caseList)
+        },
+        saveConfig(){
+            if(this.mailY===""){
+                isMail ="N"
+            }else{
+                isMail = "Y"
+            }
+            if(this.reportY===""){
+                isReport = "N"
+            }else{
+                isReport = "Y"
+            }
+            var sendinforList = [];
+            for(var s=0;s<this.senderList.length;s++)
+                sendinforList.push(this.senderList[s].value)
+            let data_to_send = {
+                eviorment: this.eviorment,
+                isReport:isMail,
+                isMail:isReport,
+                sendList:sendinforList,
+                runcase:this.caseList,
+                sechdel_time:this.timingHour+"&"+this.timingDay,
+            };
+            console.log(this,data_to_send);
+            axios.post('/saveConfigData/',data_to_send)
+                .then(resp =>{
+                        toastr.options = {
+                             closeButton: false,
+                             debug: false,
+                             progressBar: false,
+                             positionClass: "toast-top-center",
+                             onclick: null,
+                             showDuration: "300",
+                             hideDuration: "1000",
+                             timeOut: "2000",
+                             extendedTimeOut: "1000",
+                             showEasing: "swing",
+                             hideEasing: "linear",
+                             showMethod: "fadeIn",
+                             hideMethod: "fadeOut"
+                         };
+                         console.log(resp.data);
+                         if (resp.data.code === 0) {
+                             toastr.success(resp.data.msg);
+                         } else {
+                             toastr.error(resp.data.msg)
+                         }
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
         }
 
     }
