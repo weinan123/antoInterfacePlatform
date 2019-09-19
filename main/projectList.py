@@ -26,8 +26,8 @@ def addProjectList(request):
 
             counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
                                                   moduleName=form.cleaned_data['moduleName'], )
-            counttable.save(commit=False)
-            inter.save(commit=False)
+            counttable.save()
+            inter.save()
             return HttpResponseRedirect('/projectList/')
 
 
@@ -49,22 +49,34 @@ def projectListInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        allList = interfaceList.objects.all()
-        json_list = []
-        for i in allList:
-            json_dict = {}
-            json_dict["id"] = i.id
-            json_dict["projectName"] = i.projectName
-            json_dict["updateTime"] = i.updateTime.strftime('%Y-%m-%d %H:%M:%S')
-            json_dict["createTime"] = i.createTime.strftime('%Y-%m-%d %H:%M:%S')
-            json_dict["host"] = i.host
-            json_dict["moduleName"] = i.moduleName
-            json_list.append(json_dict)
+        resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
+        respList = list(resp)
+        for i in range(len(respList)):
+            respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
+        for i in range(len(respList)):
+            respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
         result = {
-            'data': json_list,
+            'data': respList,
             'code': 0,
             'info': 'success'
         }
+        #
+        # allList = interfaceList.objects.all()
+        # json_list = []
+        # for i in allList:
+        #     json_dict = {}
+        #     json_dict["id"] = i.id
+        #     json_dict["projectName"] = i.projectName
+        #     json_dict["updateTime"] = i.updateTime.strftime('%Y-%m-%d %H:%M:%S')
+        #     json_dict["createTime"] = i.createTime.strftime('%Y-%m-%d %H:%M:%S')
+        #     json_dict["host"] = i.host
+        #     json_dict["moduleName"] = i.moduleName
+        #     json_list.append(json_dict)
+        # result = {
+        #     'data': json_list,
+        #     'code': 0,
+        #     'info': 'success'
+        # }
     return JsonResponse(result, safe=False)
 
 
@@ -188,11 +200,26 @@ def projectSort(request):
 
 # 导入Excel表格数据
 def projectImport(request):
+    result = {}
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
         host = request.POST.get('host')
-        print projectName, moduleName, host
+        print 'projectName:' + projectName
+        print 'moduleName:' + moduleName
+        print 'host:' + host
+        inter = interfaceList.objects.create(projectName=projectName,
+                                             moduleName=moduleName,
+                                             host=host)
+
+        counttable = countCase.objects.create(projectName=projectName,
+                                              moduleName=moduleName)
+        counttable.save()
+        inter.save()
+
+        listid = \
+            interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values("id")[0][
+                'id']
         f = request.FILES['file']
         # 将上传的xlsx表格先保存下来
         with open('main/upload/file.xlsx', 'wb+') as destination:
@@ -202,16 +229,44 @@ def projectImport(request):
         data = xlrd.open_workbook(r'main/upload/file.xlsx')
         # 获取第一张工作表（通过索引的方式）
         table = data.sheets()[0]
-        # data_list用来存放数据
-        data_list = []
-        # 将table中第一行的数据读取并添加到data_list中
-        data_list.extend(table.row_values(0))
-        # 打印出第一行的全部数据
-        print data_list[0]
+        # 获取第一张工作表有效的行数
+        nrows = table.nrows
+        for i in range(1, nrows):
+            # data_list用来存放数据
+            data_list = []
+            # 将table中第一行的数据读取并添加到data_list中
+            data_list.extend(table.row_values(i))
+            apiname = data_list[0]
+            method = data_list[1]
+            url = data_list[2]
+            headers = data_list[4]
+            body = data_list[5]
+            print 'apiname:' + apiname
+            if (apiname == "") or (apiname is None):
+                code = -2
+                info = '名称不能为空'
+            user = request.session.get('username')
+            api_infos = {
+                'apiName': apiname,
+                'method': method,
+                'url': url,
+                'headers': headers,
+                'body': body,
+                'lastRunResult': 0,
+                'lastRunTime': None,
+                'creator': user,
+                'owningListID': int(listid)
+            }
+            print(api_infos)
+            try:
+                s = apiInfoTable.objects.create(**api_infos)
+                s.save()
+            except BaseException as e:
+                print(" SQL Error: %s" % e)
+                code = -1
+                info = 'sql error！'
         code = 0
         info = '导入成功！'
-        # for item in data_list:
-        #     print item
         result = {
             'code': code,
             'info': info
