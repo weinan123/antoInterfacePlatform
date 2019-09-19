@@ -26,23 +26,45 @@ def addProjectList(request):
 
             counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
                                                   moduleName=form.cleaned_data['moduleName'], )
-            counttable.save()
-            inter.save()
+            counttable.save(commit=False)
+            inter.save(commit=False)
             return HttpResponseRedirect('/projectList/')
 
 
 def projectListInfo(request):
-    resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
-    respList = list(resp)
-    for i in range(len(respList)):
-        respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
-    for i in range(len(respList)):
-        respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+    # resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
+    # respList = list(resp)
+    # for i in range(len(respList)):
+    #     respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
+    # for i in range(len(respList)):
+    #     respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+    # result = {
+    #     'data': respList,
+    #     'code': 0,
+    #     'info': 'success'
+    # }
+    #
     result = {
-        'data': respList,
-        'code': 0,
-        'info': 'success'
+        'code': -1,
+        'info': '调用的方法错误，请使用GET方法查询！'
     }
+    if request.method == 'GET':
+        allList = interfaceList.objects.all()
+        json_list = []
+        for i in allList:
+            json_dict = {}
+            json_dict["id"] = i.id
+            json_dict["projectName"] = i.projectName
+            json_dict["updateTime"] = i.updateTime.strftime('%Y-%m-%d %H:%M:%S')
+            json_dict["createTime"] = i.createTime.strftime('%Y-%m-%d %H:%M:%S')
+            json_dict["host"] = i.host
+            json_dict["moduleName"] = i.moduleName
+            json_list.append(json_dict)
+        result = {
+            'data': json_list,
+            'code': 0,
+            'info': 'success'
+        }
     return JsonResponse(result, safe=False)
 
 
