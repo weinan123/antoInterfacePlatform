@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList
+from models import apiInfoTable, interfaceList,reports
 import time
 import json
 from django.http.response import JsonResponse
 import requests
+from untils.until import mul_bodyData
+from untils import sendRequests,batchstart
+from common import authService
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -193,9 +196,72 @@ def runsingle(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         id = req["id"]
-        query = apiInfoTable.objects.get(apiID=id)
-        print query
-        result = runrequest(query,id)
+        try:
+            query = apiInfoTable.objects.get(apiID=id)
+        except Exception as e:
+            result = {"code": -2, "datas": "执行用例不存在，" + str(e)}
+            return JsonResponse(result)
+        methods = query.method
+        send_url = query.url
+        if methods == "" or send_url == "":
+            result = {"code": -1, "datas": "参数不能为空"}
+            return JsonResponse(result)
+        headers = query.headers
+        if headers != "":
+            headers = json.loads(headers)
+        bodyinfor = query.body
+        if bodyinfor != "" or bodyinfor != "{}":
+            bodyinfor = json.loads(bodyinfor)
+        # Authorization = data["Screatinfor"]["Screatinfor"]
+        listid = query.owningListID
+        querylist = interfaceList.objects.get(id=listid)
+        host = querylist.host
+        url = host + send_url
+        # 处理数据类型的方法
+        send_body, files = mul_bodyData(bodyinfor)
+        print(send_body)
+        isRedirect = query.isRedirect
+        # isScreat = Screatinfor["isScreat"]
+        isScreat = query.isScreat
+        key_id = query.key_id
+        secret_key = query.secret_key
+        # key_id = Screatinfor["key_id"]
+        # secret_key = Screatinfor["secret_key"].encode("utf-8")
+        timestamp = int(time.time())
+        # 非加密执行接口
+        if isScreat == False or isScreat == "":
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+        # 加密执行
+        else:
+            credentials = authService.BceCredentials(key_id, secret_key)
+            print credentials
+            headers_data = {
+                'Accept': 'text/html, */*; q=0.01',
+                'X-Requested-With': 'XMLHttpRequest',
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+            }
+            headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+            Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
+                                                      headersOpt)
+            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+        assertinfo = str(query.assertinfo)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        if assertinfo == "":
+            datas = {"status_code": resp.status_code}
+            if resp.status_code == 200:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
+                result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
+        else:
+            datas = {"status_code": resp.status_code, "responseText": str(resp.text), "assert": assertinfo}
+            if resp.status_code == 200 and assertinfo in str(resp.text):
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
+                result = {"code": 0, "info": "run success", "datas": str(datas)}
+            else:
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": 1, "info": "run fail", "datas": str(datas)}
         print result
     return JsonResponse(result)
 
@@ -204,14 +270,36 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        slist = {}
-        print idlist
-        for id in idlist:
-            query = apiInfoTable.objects.get(apiID=id)
-            sresult = runrequest(query, id)
-            print sresult
-            slist[id] = sresult
-        result = {"code": 0, "info": "执行结束", "results": slist}
+        exeuser = request.session.get('username')
+        ownMoudle = req["pmName"]
+        totalNum = len(idlist)
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        batchResult = batchstart.start_main(idlist)
+        print batchResult
+        successNum = batchResult["sNum"]
+        faileNum = batchResult["fNum"]
+        errorNum = batchResult["eNum"]
+        reportPath = batchResult["reportPath"]
+        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        result_infos = {
+            "ownMoudle": ownMoudle,
+            "startTime": starttime,
+            "endTime": endtime,
+            "totalNum": totalNum,
+            "successNum": successNum,
+            "failNum": faileNum,
+            "errorNum": errorNum,
+            "executor": exeuser,
+            "reportName": reportPath
+        }
+        try:
+            s = reports.objects.create(**result_infos)
+            s.save()
+        except BaseException as e:
+            print(" SQL Error: %s" % e)
+            result = {'code': -1, 'info': 'sql error'}
+            return JsonResponse(result)
+        result = {"code": 0, "info": "执行结束"}
     return JsonResponse(result)
 
 

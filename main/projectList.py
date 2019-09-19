@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import xlrd
 from django.shortcuts import render, redirect
 import json, time
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -62,9 +63,9 @@ def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
-            sss = interfaceList.objects.filter(id=id).values_list("projectName","moduleName")
+            sss = interfaceList.objects.filter(id=id).values_list("projectName", "moduleName")
             print sss[0][0]
-            countCase.objects.filter(projectName=sss[0][0],moduleName=sss[0][1]).delete()
+            countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
             interfaceList.objects.filter(id=id).delete()
             code = 0
             info = '删除成功！'
@@ -124,41 +125,73 @@ def projectSort(request):
     return HttpResponseRedirect('/projectList/')
 
 
-def projectImport(request):
-    Flag = Flag2 = True
-    if request.method == 'POST':
-        f = request.FILES['file']
-        for line in f.readlines():  # 依次读取每行
-            line = line.strip()  # 去掉每行头尾空白
-            if not len(line) or line.startswith('#'):  # 判断是否是空行或注释行
-                continue  # 跳过
-            matchObj = re.match(r'(GET|POST) (https|http)://(.*?)/(.*) ', line, re.M | re.I)
-            if matchObj:
-                if (Flag):
-                    Flag = False
-                    method = matchObj.group(1)
-                    protocol = matchObj.group(2)
-                    host = matchObj.group(2) + r'://' + matchObj.group(3)
-                    url = r'/' + matchObj.group(4)
-                    print "method : ", method
-                    print "protocol : ", protocol
-                    print "host : ", host
-                    print "url : ", url
-            matchObj2 = re.match(r'Content-Type: (.*?);(.*)', line, re.M | re.I)
-            if matchObj2:
-                if (Flag2):
-                    Flag2 = False
-                    header = '{"Content-Type": "' + matchObj2.group(1) + '"}'  # {"Content-Type": "application/json"}
-                    print "header : ", header
-            matchObj3 = re.finditer(r'".+?":".+?"', line, re.M | re.I)
-            if matchObj3:
-                for match in matchObj3:
-                    print (match.group())
-                    json = re.finditer(r'".+?"', match.group())
-                    for jsonMatch in json:
-                        print jsonMatch.group()
+# def projectImport(request):
+#     Flag = Flag2 = True
+#     if request.method == 'POST':
+#         f = request.FILES['file']
+#         for line in f.readlines():  # 依次读取每行
+#             line = line.strip()  # 去掉每行头尾空白
+#             if not len(line) or line.startswith('#'):  # 判断是否是空行或注释行
+#                 continue  # 跳过
+#             matchObj = re.match(r'(GET|POST) (https|http)://(.*?)/(.*) ', line, re.M | re.I)
+#             if matchObj:
+#                 if (Flag):
+#                     Flag = False
+#                     method = matchObj.group(1)
+#                     protocol = matchObj.group(2)
+#                     host = matchObj.group(2) + r'://' + matchObj.group(3)
+#                     url = r'/' + matchObj.group(4)
+#                     print "method : ", method
+#                     print "protocol : ", protocol
+#                     print "host : ", host
+#                     print "url : ", url
+#             matchObj2 = re.match(r'Content-Type: (.*?);(.*)', line, re.M | re.I)
+#             if matchObj2:
+#                 if (Flag2):
+#                     Flag2 = False
+#                     header = '{"Content-Type": "' + matchObj2.group(1) + '"}'  # {"Content-Type": "application/json"}
+#                     print "header : ", header
+#             matchObj3 = re.finditer(r'".+?":".+?"', line, re.M | re.I)
+#             if matchObj3:
+#                 for match in matchObj3:
+#                     print (match.group())
+#                     json = re.finditer(r'".+?"', match.group())
+#                     for jsonMatch in json:
+#                         print jsonMatch.group()
+#
+#         # with open('main/upload/file.txt', 'wb+') as destination:
+#         #     for chunk in f.chunks():
+#         #         destination.write(chunk)
+#     return HttpResponseRedirect('/projectList/')
 
-        # with open('main/upload/file.txt', 'wb+') as destination:
-        #     for chunk in f.chunks():
-        #         destination.write(chunk)
-    return HttpResponseRedirect('/projectList/')
+# 导入Excel表格数据
+def projectImport(request):
+    if request.method == 'POST':
+        projectName = request.POST.get('projectName')
+        moduleName = request.POST.get('moduleName')
+        host = request.POST.get('host')
+        print projectName, moduleName, host
+        f = request.FILES['file']
+        # 将上传的xlsx表格先保存下来
+        with open('main/upload/file.xlsx', 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
+        # 打开excel文件
+        data = xlrd.open_workbook(r'main/upload/file.xlsx')
+        # 获取第一张工作表（通过索引的方式）
+        table = data.sheets()[0]
+        # data_list用来存放数据
+        data_list = []
+        # 将table中第一行的数据读取并添加到data_list中
+        data_list.extend(table.row_values(0))
+        # 打印出第一行的全部数据
+        print data_list[0]
+        code = 0
+        info = '导入成功！'
+        # for item in data_list:
+        #     print item
+        result = {
+            'code': code,
+            'info': info
+        }
+        return JsonResponse(result, safe=False)

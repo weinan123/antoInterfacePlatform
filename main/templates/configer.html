@@ -154,7 +154,9 @@ var vm = new Vue({
         vm1.$data.isActiveIn = false;
         vm1.$data.isActiveAl = false;
         vm1.$data.isActiveCo = true;
-        this.addCase()
+        vm1.$data.isActiveRs = false;
+        this.addCase();
+
     },
     methods:{
         isSendMail(params){

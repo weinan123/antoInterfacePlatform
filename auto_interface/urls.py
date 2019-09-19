@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from main import views as main
-from main import apiinfo
+from main import apiinfo,report
 from main import projectList,configer
 
 urlpatterns = [
@@ -52,5 +52,9 @@ urlpatterns = [
     url(r'^pararmsFiles/$', main.pararmsFiles),
     url(r'^configer/$', configer.configer),
     url(r'^getAllcase/$', configer.getAllcase),
-    url(r'^saveConfigData/$', configer.saveConfigData),
+    url(r'^saveConfigData/$', configer.saveConfigData)
+    url(r'^batchReports/$', report.batchReports),
+    url(r'^reportList/$', report.getReportList),
+    url(r'^reportDelete/$', report.reportDelete),
+    url(r'^reportbatchdel/$', report.reportbatchDelete),
 ]

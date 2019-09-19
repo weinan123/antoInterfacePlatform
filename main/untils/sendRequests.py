@@ -11,6 +11,8 @@ class sendRequest():
         #带文件传输的post请求key=value格式数据
         elif(headerType=="multipart/form-data"):
             postbody=send_body
+        else:
+            postbody = send_body
         return postbody
     def isRedirect(self,isRedirect):
         # 判断是否需要重定向
@@ -22,6 +24,7 @@ class sendRequest():
     def sendRequest(self,methods,url,headers,send_body,files,isRedirect):
         print files
         s = requests.Session()
+        response = ""
         if (methods == "GET"):
             redirect = self.isRedirect(isRedirect)
             response = s.get(url, headers=headers, params=send_body, verify=False, allow_redirects=redirect)
@@ -32,8 +35,8 @@ class sendRequest():
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect)
-            resp = response.text
-        return resp
+            # resp = response.text
+        return response
     def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect):
         headerType = headers["Content-Type"]
         postbody = self.mulBody(headerType, send_body)
