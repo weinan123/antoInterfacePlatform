@@ -222,11 +222,11 @@ def projectImport(request):
                 'id']
         f = request.FILES['file']
         # 将上传的xlsx表格先保存下来
-        with open('main/upload/file.xlsx', 'wb+') as destination:
+        with open('main/postfiles/file.xlsx', 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
         # 打开excel文件
-        data = xlrd.open_workbook(r'main/upload/file.xlsx')
+        data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
         # 获取第一张工作表（通过索引的方式）
         table = data.sheets()[0]
         # 获取第一张工作表有效的行数
