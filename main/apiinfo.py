@@ -51,6 +51,10 @@ def allinfopage(request):
     return render(request, "apiInfo.html")
 
 
+def apiCases(request):
+    return render(request, "apiCases.html")
+
+
 # def list(request):
 #     list = interfaceList.objects.all()
 #     return render(request, 'list.html', {'list': list})
@@ -449,4 +453,36 @@ def getapiInfos(request):
                 if module["projectName"] == json_dict["projectName"]:
                     module_list.append(module["moduleName"])
             result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list,"showbody":showbodyState}
+    return JsonResponse(result)
+
+
+def getAllCases(request):
+    # 使用get方法只获取一条匹配的数据，若有多条会报错,有多条使用filter
+    apilist = apiInfoTable.objects.all()
+    json_list = []
+    for i in apilist:
+        json_dict = {}
+        json_dict["id"] = i.apiID
+        json_dict["name"] = i.apiName
+        if i.lastRunResult == 0:
+            json_dict["lastrunrslt"] = 'null'
+        else:
+            json_dict["lastrunrslt"] = i.lastRunResult
+        if i.lastRunTime is None:
+            json_dict["lastruntime"] = 'null'
+        else:
+            json_dict["lastruntime"] = i.lastRunTime.strftime('%Y-%m-%d %H:%M:%S')
+        json_dict["owing"] = i.creator
+        json_dict["listid"] = i.owningListID
+        #json_dict["listname"] = i.owningListID.projectName
+        json_dict["method"] = i.method
+        json_dict["url"] = i.url
+        # data = json.dumps(json_dict)       #转化为json字符串
+        json_list.append(json_dict)
+    result = {
+        'data': json_list,
+        'code': 0,
+        'info': 'success'
+    }
+    # return render(request, 'apiInfo.html', {'datas': data})
     return JsonResponse(result)

@@ -8,8 +8,9 @@
             <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
                 <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
-                <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >接口list</a></li>
-                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >结果报告</a></li>
+                <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >项目管理</a></li>
+                <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
+                <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
             </ul>
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
@@ -27,6 +28,7 @@ var vm1 = new Vue({
         isActiveSi:false,
         isActiveAl:false,
         isActiveCo:false,
+        isActiveApi:false,
         isActiveRs:false,
     },
     created(){

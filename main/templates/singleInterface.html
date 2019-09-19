@@ -31,7 +31,7 @@
      <div v-if="addflag">
         <ul class="breadcrumb">
             <li><a href="/index/">首页</a></li>
-            <li><a href="/projectList/">接口列表</a></li>
+            <li><a href="/apiCases/">接口用例集</a></li>
             <li class="active" id="path">新建用例：</li>
         </ul>
     </div>
@@ -486,6 +486,7 @@ var vm = new Vue({
                 vm1.$data.isActiveAl = false;
                 vm1.$data.isActiveCo = false;
                 vm1.$data.isActiveRs = false;
+                vm1.$data.isActiveApi = false;
 
             },
     mounted:function(){

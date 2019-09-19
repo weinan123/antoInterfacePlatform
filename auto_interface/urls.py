@@ -58,4 +58,6 @@ urlpatterns = [
     url(r'^reportDelete/$', report.reportDelete),
     url(r'^reportbatchdel/$', report.reportbatchDelete),
     url(r'^singleInterface/addapi/$',main.singleInterface),
+    url(r'^apiCases/$', apiinfo.apiCases),
+    url(r'^apiAllCases/$',apiinfo.getAllCases),
 ]

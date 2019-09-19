@@ -3,46 +3,11 @@
 
 {% block content %}
     <div class="col-md-10 row" id="apiinfopage" style="margin-left: 15%">
-        <ul class="breadcrumb">
-            <li><a href="/index/">首页</a></li>
-            <li><a href="/projectList/">接口列表</a></li>
-            <li class="active" id="path">{! pname !}_{! mname !}</li>
-        </ul>
-        <div class="col-md-4" style="width:100%;margin-bottom: 20px;">
+        <div class="col-md-4" style="width:100%;margin: 20px;">
             <div style="display:inline-block;float: left;">
                 <a href="/singleInterface/addapi/">
                     <button type="button" class="btn btn-primary">新建用例</button>
                 </a>
-                <!-- 模态框（Modal） -->
-                <div class="modal fade" id="newapi" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                        <div class="modal-content" id="newinfo">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                    &times;
-                                </button>
-                                <h4 class="modal-title" id="newapiLabel">
-                                    新建接口用例
-                                </h4>
-                            </div>
-
-                            <div class="modal-body">
-                                <label for="apiName">接口名称：</label>
-                                <input type="text" class="form-control" id="apiName" v-model="newname"
-                                    placeholder="请输入...">
-                                <label for="apiListName">所属接口列表：</label>
-                                <input v-model="pname" class="form-control" id="apiListName" disabled="disabled">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                                </button>
-                                <input type="submit" class="btn btn-primary" @click="addapi()" data-dismiss="modal"/>
-                            </div>
-
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal -->
-                </div>
-
             </div>
             <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
                 <div class="form-group">
@@ -119,40 +84,22 @@
             dlist:[],
         },
         created(){
-            let id=this.getparam('pid');
-            proid = id;
-            this.getlist(id);
+            this.getlist();
             vm1.$data.isActiveSi = false;
             vm1.$data.isActiveIn = false;
-            vm1.$data.isActiveAl = true;
-            vm1.$data.isActiveApi = false;
+            vm1.$data.isActiveAl = false;
+            vm1.$data.isActiveApi = true;
             vm1.$data.isActiveRs = false;
         },
         methods:{
-            getlist(id){
-                axios.get('/apiInfo/',{
-                    params: {
-                        pid:id
-                    }
-                })
+            getlist(){
+                axios.get('/apiAllCases/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
-            },
-            getparam(str){
-                var argsstr = location.search.substr(1);
-                var param={};
-                console.log(argsstr);
-                if(argsstr !== ""){
-                    var strs = argsstr.split("&");
-                    for(var i = 0; i < strs.length; i++) {
-                         param[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
-                    }
-                }
-                return param[str];
             },
             delapi(id){
                 if (!confirm("确认要删除？")) {
@@ -366,90 +313,6 @@
                     }
                 }
             },
-        }
-    });
-
-    var path = new Vue({
-        delimiters: ['{!', '!}'],
-        el:"#path",
-        data:{
-            pid: proid,
-            pname:'',
-            mname:'',
-        },
-        mounted() {
-            axios.get('/getlistpath/',{
-                params:{
-                    id : this.pid,
-                }
-            })
-                .then(resp => {
-                    console.log(resp.data);
-                    let result = resp.data;
-                    this.pname = result.data[0].projectName;
-                    this.mname = result.data[0].moduleName;
-                    ninfo.$data.pname = this.pname+"_"+this.mname;
-                }).catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
-        }
-
-    });
-    let ninfo = new Vue({
-        delimiters: ['{!', '!}'],
-        el:"#newinfo",
-        data:{
-            pid:proid,
-            newname:"",
-            username:'',
-            result:"",
-            pname: "",
-        },
-        methods: {
-            getCookie(cname){
-                var name = cname + "=";
-                var ca = document.cookie.split(';');
-                console.log(ca);
-                for (var i = 0; i < ca.length; i++) {
-                    var c = ca[i];
-                    var key = c.split("=")[0];
-                    if(cname===key){
-                        let cookie_value = c.split("=")[1];
-                        return cookie_value
-                    }
-                }
-                return "";
-            },
-            addapi() {
-                var username = this.getCookie("usename");
-                console.log(username);
-                console.log("username:");
-                if((username !== "") && (username !== null)){
-                    axios.post('/addApi/', {
-                        params: {
-                            listid: this.pid,
-                            apiname: this.newname,
-                            user: username,
-                        }
-                    })
-                        .then(resp => {
-                            console.log(resp.data);
-                            this.result = resp.data;
-                            let code = resp.data.code;
-                            let info = resp.data.info;
-                            if (code === 0) {
-                                alert("提交成功");
-                                window.location.reload(true);
-                            } else {
-                                alert("提交失败:" + info);
-                            }
-                        }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
-                }else{
-                    alert("请先登录")
-                }
-            }
         }
     });
 
