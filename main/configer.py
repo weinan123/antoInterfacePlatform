@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from models import apiInfoTable, interfaceList
-import time
-import json
+import ConfigParser
+import json,os
 from django.http.response import JsonResponse
-import requests
-import sys
 def configer(request):
     return render(request, 'configer.html')
 def getAllcase(request):
@@ -27,10 +25,52 @@ def getAllcase(request):
         cases["moduleName"] = i[1]
         id = interfaceList.objects.filter(projectName=i[0], moduleName=i[1]).values("id")
         owningListID= id[0]["id"]
-        allcase = apiInfoTable.objects.filter(owningListID=int(owningListID)).values("apiName")
+        allcase = apiInfoTable.objects.filter(owningListID=int(owningListID)).values("apiID","apiName")
         print id,allcase
         for s in allcase:
-            cases["allcase"].append(s["apiName"])
+            caseinfor = {}
+            caseinfor["caseName"] = (s["apiName"])
+            caseinfor["caseId"] = s["apiID"]
+            cases["allcase"].append(caseinfor)
         returndata["data"].append(cases)
     return JsonResponse(returndata, safe=False)
+def saveConfigData(request):
+    if request.method == "POST":
+        reqdata = json.loads(request.body)
+        print reqdata
+        eviorment=reqdata["eviorment"]
+        isReport=reqdata["isReport"]
+        isMail=reqdata["isMail"]
+        sendList=reqdata["sendList"]
+        runcase=reqdata["runcase"]
+        sechdel_time=reqdata["sechdel_time"]
+        iniFileUrl = r"main/configerdatas/config_data"
+        conf = ConfigParser.ConfigParser()
+        try:
+            conf.read(iniFileUrl)
+            print(conf.sections())
+            conf.set("configerinfor","eviorment",eviorment)
+            conf.set("configerinfor", "isReport", isReport)
+            conf.set("configerinfor", "isMail", isMail)
+            conf.set("configerinfor", "sendList", sendList)
+            conf.set("configerinfor", "runcase", runcase)
+            conf.set("configerinfor", "sechdel_time", sechdel_time)
+            conf.write(open(iniFileUrl, "w"))
+            data = {
+                "code":0,
+                "msg":"保存成功"
+            }
+        except:
+            data={
+                "code": -1,
+                "msg": "保存失败"
+            }
+        return JsonResponse(data, safe=False)
+
+
+
+
+
+
+
 

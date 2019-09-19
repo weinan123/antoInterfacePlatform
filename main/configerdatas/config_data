@@ -1,0 +1,8 @@
+[configerinfor]
+eviorment = 
+isreport = Y
+ismail = N
+sendlist = [u'']
+runcase = []
+sechdel_time = &
+

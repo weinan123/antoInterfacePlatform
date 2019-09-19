@@ -51,10 +51,11 @@ urlpatterns = [
     url(r'^getchartData/$', main.getchartData),
     url(r'^pararmsFiles/$', main.pararmsFiles),
     url(r'^configer/$', configer.configer),
+    url(r'^getAllcase/$', configer.getAllcase),
+    url(r'^saveConfigData/$', configer.saveConfigData),
     url(r'^batchReports/$', report.batchReports),
     url(r'^reportList/$', report.getReportList),
     url(r'^reportDelete/$', report.reportDelete),
     url(r'^reportbatchdel/$', report.reportbatchDelete),
-
-
+    url(r'^singleInterface/addapi/$',main.singleInterface),
 ]
