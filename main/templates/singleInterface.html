@@ -28,6 +28,13 @@
             <li class="active" id="path">详细数据：</li>
         </ul>
     </div>
+     <div v-if="addflag">
+        <ul class="breadcrumb">
+            <li><a href="/index/">首页</a></li>
+            <li><a href="/projectList/">接口列表</a></li>
+            <li class="active" id="path">新建用例：</li>
+        </ul>
+    </div>
 	<form class="bs-example bs-example-form" role="form">
 		<div class="row" >
             <div class="col-lg-3">
@@ -409,6 +416,7 @@ var vm = new Vue({
             aid:0,
             pid:0,
             initflag:false,
+            addflag:false,
             showState: 0,
             showbodyState: 0,
             header: "",
@@ -482,10 +490,14 @@ var vm = new Vue({
             },
     mounted:function(){
         let args = location.search.substr(1);
-        console.log(args);
+        let args1 = location.pathname.substring();
+        console.log(args1);
         if(args){
             this.initflag=true;
             this.initInfos(args);
+        }
+        if(args1 === "/singleInterface/addapi/"){
+            this.addflag = true;
         }
     },
     methods:{
