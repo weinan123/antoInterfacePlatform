@@ -178,7 +178,7 @@ def batchdel(request):
             ainfo = apiInfoTable.objects.get(apiID=id)
             if ainfo:
                 try:
-                    # ainfo.delete()
+                    ainfo.delete()
                     print("删除%d成功" % id)
                     slist.append(id)
                 except BaseException as e:

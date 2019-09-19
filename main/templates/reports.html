@@ -37,7 +37,10 @@
                         <td>{! info.failNum !}</td>
                         <td>{! info.errorNum !}</td>
                         <td>{! info.executor !}</td>
-                        <td>{! info.reportPath !}</td>
+                        <td>{! info.reportPath !}
+                            <button type="button" class="btn">查看</button>
+                            <button type="button" class="btn">下载</button>
+                        </td>
                         <td>
                             <button type="button" class="btn btn-danger" @click="delreport(info.id)">删除</button>
                         </td>
@@ -169,7 +172,6 @@ var vmRs = new Vue({
                 let dellist = this.delList;
                 console.log("********************");
                 console.log(dellist);
-                console.log(dellist.length);
                 if (dellist.length !== 0) {
                     if (!confirm("删除之后无法恢复，确认要删除？")) {
                         window.event.returnValue = false;
@@ -184,7 +186,7 @@ var vmRs = new Vue({
                                 let code = resp.data.code;
                                 let info = resp.data.info;
                                 if (code === 0) {
-                                    alert("测试环境做的假删除，结果：" + info);
+                                    alert("删除成功，结果：" + info);
                                     window.location.reload(true);
                                 }else{
                                     alert("删除失败");

@@ -11,7 +11,7 @@ def batchReports(request):
 def getReportList(request):
     result = {}
     if request.method == 'GET':
-        allList = reports.objects.all()
+        allList = reports.objects.all().order_by("-startTime")
         json_list = []
         for i in allList:
             json_dict = {}
