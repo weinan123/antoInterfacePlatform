@@ -75,3 +75,10 @@ def reportbatchDelete(request):
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
         result = {'code': 0, 'info': infos}
     return JsonResponse(result)
+
+def viewReport(request):
+    a = request.GET["report"]
+    print a   # \report\2019-09-20-16_09_01_result.html
+    reportName = a.split("\\")[2]
+    print reportName
+    return render(request, reportName)

@@ -275,7 +275,7 @@ def batchrun(request):
         req = json.loads(request.body)["params"]
         idlist = req['idList']
         exeuser = request.session.get('username')
-        ownMoudle = req["pmName"]
+        reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
         totalNum = len(idlist)
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         batchResult = batchstart.start_main(idlist)
@@ -286,7 +286,7 @@ def batchrun(request):
         reportPath = batchResult["reportPath"]
         endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         result_infos = {
-            "ownMoudle": ownMoudle,
+            "ownMoudle": reportName,
             "startTime": starttime,
             "endTime": endtime,
             "totalNum": totalNum,
@@ -305,57 +305,6 @@ def batchrun(request):
             return JsonResponse(result)
         result = {"code": 0, "info": "执行结束"}
     return JsonResponse(result)
-
-
-def runrequest(sqlquery, id):
-    method = sqlquery.method
-    url = sqlquery.url
-    header = sqlquery.headers
-    bodys = sqlquery.body
-    assertinfo = str(sqlquery.assertinfo)
-    bodys_data = {}
-    if method == "" or url == "":
-        result = {"code": -1, "datas": "参数不能为空"}
-        return result
-    else:
-        if header == "{}" or header is None:
-            headers = {}
-        else:
-            headers = json.loads(header)
-        if bodys == "{}" or bodys is None:
-            bodys_data = {}
-        else:
-            bodys = json.loads(bodys)
-            stateflag = bodys["showflag"]
-            if stateflag == 3:
-                values = bodys["datas"][0]
-                bodys_data = values["paramValue"]
-            else:
-                for i in bodys["datas"]:
-                    bodys_data[i["paramName"]] = i["paramValue"]
-        print("bodys_data:",bodys_data)
-        a = requests.request(method=method, url=url, headers=headers, data=bodys_data, verify=False)
-        print a.status_code
-        text = str(a.text)
-        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        if assertinfo == "":
-            datas = {"status_code": a.status_code}
-            if a.status_code == 200:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
-                result = {"code": 0, "info": "run success", "datas": str(datas)}
-            else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
-                result = {"code": 1, "info": "run fail", "datas": str(datas)}
-        else:
-            datas = {"status_code": a.status_code, "responseText": text, "assert": assertinfo}
-            print assertinfo in text
-            if a.status_code == 200 and assertinfo in text:
-                    apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
-                    result = {"code": 0, "info": "run success", "datas": str(datas)}
-            else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
-                result = {"code": 1, "info": "run fail", "datas": str(datas)}
-        return result
 
 
 def getapiInfos(request):
@@ -485,4 +434,122 @@ def getAllCases(request):
         'info': 'success'
     }
     # return render(request, 'apiInfo.html', {'datas': data})
+    return JsonResponse(result)
+
+
+def getProjInfos(request):
+    result = {}
+    if request.method == 'GET':
+        projectLists = []
+        allModuleList = []
+        try:
+            projInfos = interfaceList.objects.filter().values("projectName").distinct()
+            modInfos = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
+        except Exception as e:
+            result = {'code': -1, 'info': 'sql error:' + str(e)}
+            return JsonResponse(result)
+        for pro in projInfos:
+            projectLists.append(pro["projectName"])
+        for mod in modInfos:
+            allModuleList.append(mod)
+        result = {'code': 0, 'info': 'query success', 'data': {"allProjList": projectLists,"allModuList":allModuleList}}
+    return JsonResponse(result)
+
+def searchproj(request):
+    result = {}
+    if request.method == 'GET':
+        proj = request.GET['selproj']
+        pidList = []
+        json_list = []
+        print proj
+        query_projId = interfaceList.objects.filter(projectName__contains=proj).values("id")  #icontains表示忽略大小写
+        for pj in query_projId:
+            pidList.append(pj["id"])
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        if query != None:
+            for i in query:
+                json_dict = {}
+                json_dict["id"] = i['apiID']
+                json_dict["name"] = i['apiName']
+                if i['lastRunResult'] is None:
+                    json_dict["lastrunrslt"] = 'null'
+                else:
+                    json_dict["lastrunrslt"] = i['lastRunResult']
+                if i['lastRunTime'] is None:
+                    json_dict["lastruntime"] = 'null'
+                else:
+                    json_dict["lastruntime"] = i['lastRunTime'].strftime('%Y-%m-%d %H:%M:%S')
+                json_dict["owing"] = i['creator']
+                json_dict["listid"] = i['owningListID']
+                json_list.append(json_dict)
+            print json_list
+            result = {
+                'data': json_list,
+                'code': 0,
+                'info': 'success'
+            }
+    return JsonResponse(result)
+
+def searchModu(request):
+    result = {}
+    if request.method == 'GET':
+        proj = request.GET['selproj']
+        modu = request.GET['selmodu']
+        pidList = []
+        json_list = []
+        query_projId = interfaceList.objects.filter(projectName__contains=proj).filter(moduleName__contains=modu).values("id")  #icontains表示忽略大小写
+        for pj in query_projId:
+            pidList.append(pj["id"])
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        if query != None:
+            for i in query:
+                json_dict = {}
+                json_dict["id"] = i['apiID']
+                json_dict["name"] = i['apiName']
+                if i['lastRunResult'] is None:
+                    json_dict["lastrunrslt"] = 'null'
+                else:
+                    json_dict["lastrunrslt"] = i['lastRunResult']
+                if i['lastRunTime'] is None:
+                    json_dict["lastruntime"] = 'null'
+                else:
+                    json_dict["lastruntime"] = i['lastRunTime'].strftime('%Y-%m-%d %H:%M:%S')
+                json_dict["owing"] = i['creator']
+                json_dict["listid"] = i['owningListID']
+                json_list.append(json_dict)
+            print json_list
+            result = {
+                'data': json_list,
+                'code': 0,
+                'info': 'success'
+            }
+    return JsonResponse(result)
+
+def namesearch(request):
+    result = {}
+    if request.method == 'GET':
+        sear = request.GET['searinfo']
+        query = apiInfoTable.objects.filter(apiName__contains=sear).values()
+        if query != None:
+            json_list = []
+            for i in query:
+                json_dict = {}
+                json_dict["id"] = i['apiID']
+                json_dict["name"] = i['apiName']
+                if i['lastRunResult'] is None:
+                    json_dict["lastrunrslt"] = 'null'
+                else:
+                    json_dict["lastrunrslt"] = i['lastRunResult']
+                if i['lastRunTime'] is None:
+                    json_dict["lastruntime"] = 'null'
+                else:
+                    json_dict["lastruntime"] = i['lastRunTime'].strftime('%Y-%m-%d %H:%M:%S')
+                json_dict["owing"] = i['creator']
+                json_dict["listid"] = i['owningListID']
+                json_list.append(json_dict)
+            result = {
+                'data': json_list,
+                'code': 0,
+                'info': 'success'
+            }
     return JsonResponse(result)

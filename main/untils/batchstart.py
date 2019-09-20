@@ -61,12 +61,9 @@ class RunTest(unittest.TestCase):
         # 处理数据类型的方法
         send_body, files = until.mul_bodyData(bodyinfor)
         isRedirect = query.isRedirect
-        # isScreat = Screatinfor["isScreat"]
         isScreat = query.isScreat
         key_id = query.key_id
         secret_key = query.secret_key
-        # key_id = Screatinfor["key_id"]
-        # secret_key = Screatinfor["secret_key"].encode("utf-8")
         timestamp = int(time.time())
         # 非加密执行接口
         if isScreat == False or isScreat == "":
