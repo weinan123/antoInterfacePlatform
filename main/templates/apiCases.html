@@ -65,12 +65,12 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <button type="button" class="btn btn-primary">查看</button>
+                                <button type="button" class="btn btn-sm btn-primary">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                        <button type="button" class="btn btn-primary">编辑</button>
+                                        <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
-                                <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
-                                <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
+                                <button type="button" class="btn btn-sm btn-success" @click="runsingle(info.id)">执行</button>
+                                <button type="button" class="btn btn-sm btn-danger" @click="delapi(result.data[index].id)">删除</button>
                             </td>
                         </tr>
                     </tbody>

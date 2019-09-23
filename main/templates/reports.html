@@ -37,9 +37,9 @@
                         <td>{! info.errorNum !}</td>
                         <td>{! info.executor !}</td>
                         <td>
-                            <a :href="['/viewreport/?report='+'\\main'+info.reportPath]" target="_blank" ><button type="button" class="btn btn-primary">查看</button></a>
-                            <button type="button" class="btn btn-primary">下载</button>
-                            <button type="button" class="btn btn-danger" @click="delreport(info.id)">删除</button>
+                            <a :href="['/viewreport/?report='+'\\main'+info.reportPath]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
+                            <button type="button" class="btn btn-sm btn-primary">下载</button>
+                            <button type="button" class="btn btn-sm btn-danger" @click="delreport(info.id)">删除</button>
                         </td>
                     </tr>
                 </tbody>
