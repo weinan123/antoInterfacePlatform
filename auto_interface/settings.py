@@ -56,7 +56,7 @@ ROOT_URLCONF = 'auto_interface.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'report')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'main\\report')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
