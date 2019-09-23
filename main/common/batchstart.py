@@ -4,7 +4,7 @@ from libs import HTMLTestRunner,sendMail
 import requests
 import batchUntils
 from main.models import apiInfoTable,interfaceList
-import until,sendRequests
+from main.untils import until,sendRequests
 from main.common import authService
 import time
 import json

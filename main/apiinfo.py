@@ -6,8 +6,8 @@ import json
 from django.http.response import JsonResponse
 import requests
 from untils.until import mul_bodyData
-from untils import sendRequests,batchstart
-from common import authService
+from untils import sendRequests
+from common import authService,batchstart
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
