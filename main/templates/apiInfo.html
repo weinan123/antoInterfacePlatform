@@ -47,9 +47,8 @@
             <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
                 <div class="form-group">
                     <input type="text" class="form-control" name="search" v-model="searchinfo"
-                        placeholder="请输入搜索文本">
+                        placeholder="请输入搜索文本" @change="search()">
                 </div>
-                <button type="submit" class="btn btn-default" @click="search()">搜索</button>
             </div>
         </div>
 
