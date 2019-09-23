@@ -84,12 +84,12 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <button type="button" class="btn btn-primary">查看</button>
+                                <button type="button" class="btn btn-sm btn-primary">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                        <button type="button" class="btn btn-primary">编辑</button>
+                                        <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
-                                <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
-                                <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
+                                <button type="button" class="btn btn-sm btn-success" @click="runsingle(info.id)">执行</button>
+                                <button type="button" class="btn btn-sm btn-danger" @click="delapi(result.data[index].id)">删除</button>
                             </td>
                         </tr>
                     </tbody>
@@ -101,6 +101,11 @@
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+                </div>
+                <div>
+                    <label class="form-check-label">
+                        <input type="checkbox" class="selAllBtn" v-model="reportflag">
+                    </label><span> 批量执行是否生成报告</span>
                 </div>
             </div>
         </div>
@@ -116,6 +121,7 @@
         data:{
             result:'',
             dlist:[],
+            reportflag: true,
         },
         created(){
             let id=this.getparam('pid');
@@ -299,10 +305,10 @@
                             let datas = resp.data.datas;
                             if (code === 0) {
                                 alert("执行成功:" + datas);
-                                window.location.reload(true);
                             } else {
                                 alert("执行失败: " + datas);
                             }
+                            window.location.reload(true);
                         })
                         .catch(err => {
                             console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -343,14 +349,15 @@
                             axios.post('/batchrun/', {
                                 params: {
                                     idList: runlist,
-                                    pmName: path.$data.pname + "_" + path.$data.mname,
+                                    pmName: "批量执行",
+                                    reportflag:this.reportflag,
                                 },
                             })
                                 .then(resp => {
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     if (code === 0) {
-                                        alert("执行结束,可在结果报告模块中查看报告");
+                                        alert("执行结束");
                                         window.location.reload(true);
                                     } else {
                                         alert("执行失败");
