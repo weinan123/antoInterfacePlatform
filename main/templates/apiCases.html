@@ -356,7 +356,9 @@
             search(){
                     axios.get('/namesearch/', {
                     params: {
-                        searinfo:this.searchinfo,
+                        searchinfo:this.searchinfo,
+                        moduleName: this.moduleName,
+                        projectName: this.projectName,
                     },
                     })
                     .then(resp => {
@@ -371,7 +373,7 @@
              let allModules = this.allModules;
              if(this.moduleList.length!==0){
                  this.moduleList = [];
-                 this.moduleName = ""
+                 this.moduleName = "";
              }
              for(let q=0;q<allModules.length;q++){
                  let pname = allModules[q]["projectName"];
@@ -383,6 +385,7 @@
              axios.get('/searchproj/', {
                     params: {
                         selproj: selProj,
+                        searchinfo: this.searchinfo,
                     },
                     })
                     .then(resp => {
@@ -400,6 +403,7 @@
                     params: {
                         selproj: selProj,
                         selmodu:selModu,
+                        searchinfo: this.searchinfo,
                     },
                     })
                     .then(resp => {

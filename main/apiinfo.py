@@ -486,13 +486,15 @@ def searchproj(request):
     result = {}
     if request.method == 'GET':
         proj = request.GET['selproj']
+        print proj
+        searchinfo = request.GET['searchinfo']
         pidList = []
         json_list = []
         print proj
         query_projId = interfaceList.objects.filter(projectName__contains=proj).values("id")  #icontains表示忽略大小写
         for pj in query_projId:
             pidList.append(pj["id"])
-        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=searchinfo).values()
         if query != None:
             for i in query:
                 json_dict = {}
@@ -522,12 +524,13 @@ def searchModu(request):
     if request.method == 'GET':
         proj = request.GET['selproj']
         modu = request.GET['selmodu']
+        searchinfo = request.GET['searchinfo']
         pidList = []
         json_list = []
         query_projId = interfaceList.objects.filter(projectName__contains=proj).filter(moduleName__contains=modu).values("id")  #icontains表示忽略大小写
         for pj in query_projId:
             pidList.append(pj["id"])
-        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=searchinfo).values()
         if query != None:
             for i in query:
                 json_dict = {}
@@ -555,8 +558,20 @@ def searchModu(request):
 def namesearch(request):
     result = {}
     if request.method == 'GET':
-        sear = request.GET['searinfo']
-        query = apiInfoTable.objects.filter(apiName__contains=sear).values()
+        sear = request.GET['searchinfo']
+        projectName = request.GET["projectName"]
+        moduleName = request.GET["moduleName"]
+        print projectName,type(moduleName)
+        pidList = []
+        if projectName != "" or moduleName!="":
+            query_projId = interfaceList.objects.filter(projectName__contains=projectName).filter(
+                moduleName__contains=moduleName).values("id")
+            for pj in query_projId:
+                pidList.append(pj["id"])
+        if len(pidList) == 0:
+            query = apiInfoTable.objects.filter(apiName__contains=sear).values()
+        else:
+            query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=sear).values()
         if query != None:
             json_list = []
             for i in query:
