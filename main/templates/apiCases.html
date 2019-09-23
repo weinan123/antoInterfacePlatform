@@ -280,10 +280,10 @@
                             let datas = resp.data.datas;
                             if (code === 0) {
                                 alert("执行成功:" + datas);
-                                window.location.reload(true);
                             } else {
                                 alert("执行失败: " + datas);
                             }
+                            window.location.reload(true);
                         })
                         .catch(err => {
                             console.log('请求失败:' + err.status + ',' + err.statusText);

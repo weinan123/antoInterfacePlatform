@@ -232,9 +232,17 @@ def runsingle(request):
         # key_id = Screatinfor["key_id"]
         # secret_key = Screatinfor["secret_key"].encode("utf-8")
         timestamp = int(time.time())
+        assertinfo = str(query.assertinfo)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         # 非加密执行接口
         if isScreat == False or isScreat == "":
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            try:
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            except Exception as e:
+                datas = {"status_code": -999, "error": str(e)}
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": -1, "info": "run error", "datas": str(datas)}
+                return JsonResponse(result)
         # 加密执行
         else:
             credentials = authService.BceCredentials(key_id, secret_key)
@@ -247,20 +255,27 @@ def runsingle(request):
             headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
-            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
-        assertinfo = str(query.assertinfo)
-        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            try:
+                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+            except Exception as e:
+                datas = {"status_code": -999, "error": str(e)}
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": -1, "info": "run error", "datas": str(datas)}
+                return JsonResponse(result)
+        statusCode = resp.status_code
+        text = resp.text
+
         if assertinfo == "":
-            datas = {"status_code": resp.status_code}
-            if resp.status_code == 200:
+            datas = {"status_code": statusCode}
+            if statusCode == 200:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
-            datas = {"status_code": resp.status_code, "responseText": str(resp.text), "assert": assertinfo}
-            if resp.status_code == 200 and assertinfo in str(resp.text):
+            datas = {"status_code": statusCode, "responseText": str(text), "assert": assertinfo}
+            if statusCode == 200 and assertinfo in str(text):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
