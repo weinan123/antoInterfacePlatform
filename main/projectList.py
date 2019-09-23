@@ -12,6 +12,10 @@ import re
 
 
 def addProjectList(request):
+    result = {
+        'code': -1,
+        'info': '未知错误！'
+    }
     if request.method == 'POST':
         # 接受request.POST参数构造form类的实例
         form = projectForm(request.POST)
@@ -20,6 +24,8 @@ def addProjectList(request):
             # 处理form.cleaned_data中的数据
             # ...
             # 重定向到一个新的URL
+            # if ():
+            #     return
             inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
                                                  moduleName=form.cleaned_data['moduleName'],
                                                  host=form.cleaned_data['host'])
@@ -28,7 +34,19 @@ def addProjectList(request):
                                                   moduleName=form.cleaned_data['moduleName'], )
             counttable.save()
             inter.save()
-            return HttpResponseRedirect('/projectList/')
+            code = 0
+            info = '新建成功！'
+            result = {
+                'code': code,
+                'info': info
+            }
+        else:
+            result = {
+                'code': -1,
+                'info': '数据格式不正确！'
+            }
+
+    return JsonResponse(result, safe=False)
 
 
 def projectListInfo(request):
