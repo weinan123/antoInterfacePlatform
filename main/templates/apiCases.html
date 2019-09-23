@@ -83,6 +83,11 @@
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
                 </div>
+                <div>
+                    <label class="form-check-label">
+                        <input type="checkbox" v-model="reportflag">
+                    </label><span> 批量执行是否生成报告</span>
+                </div>
             </div>
         </div>
     </div>
@@ -104,6 +109,7 @@
             searchinfo : '',
             listid:proid,
             allModules:"",
+            reportflag: true,
         },
         created(){
             vm1.$data.isActiveSi = false;
@@ -325,13 +331,14 @@
                                 params: {
                                     idList: runlist,
                                     pmName: "批量执行",
+                                    reportflag:this.reportflag,
                                 },
                             })
                                 .then(resp => {
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     if (code === 0) {
-                                        alert("执行结束,可在结果报告模块中查看报告");
+                                        alert("执行结束");
                                         window.location.reload(true);
                                     } else {
                                         alert("执行失败");

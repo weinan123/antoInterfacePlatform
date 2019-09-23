@@ -293,36 +293,44 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        exeuser = request.session.get('username')
-        reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
-        totalNum = len(idlist)
-        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        batchResult = batchstart.start_main(idlist)
+        reportflag = req["reportflag"]
+        if reportflag == True:
+            reflag = "Y"
+        else:
+            reflag = "N"
+        batchResult = batchstart.start_main(idlist,reflag)
         print batchResult
-        successNum = batchResult["sNum"]
-        failNum = batchResult["fNum"]
-        errorNum = batchResult["eNum"]
-        reportPath = batchResult["reportPath"]
-        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        result_infos = {
-            "ownMoudle": reportName,
-            "startTime": starttime,
-            "endTime": endtime,
-            "totalNum": totalNum,
-            "successNum": successNum,
-            "failNum": failNum,
-            "errorNum": errorNum,
-            "executor": exeuser,
-            "reportName": reportPath
-        }
-        try:
-            s = reports.objects.create(**result_infos)
-            s.save()
-        except BaseException as e:
-            print(" SQL Error: %s" % e)
-            result = {'code': -1, 'info': 'sql error'}
-            return JsonResponse(result)
-        result = {"code": 0, "info": "执行结束"}
+        if reportflag == True:
+            exeuser = request.session.get('username')
+            reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+            totalNum = len(idlist)
+            starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            successNum = batchResult["sNum"]
+            failNum = batchResult["fNum"]
+            errorNum = batchResult["eNum"]
+            reportPath = batchResult["reportPath"]
+            endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            result_infos = {
+                "ownMoudle": reportName,
+                "startTime": starttime,
+                "endTime": endtime,
+                "totalNum": totalNum,
+                "successNum": successNum,
+                "failNum": failNum,
+                "errorNum": errorNum,
+                "executor": exeuser,
+                "reportName": reportPath
+            }
+            try:
+                s = reports.objects.create(**result_infos)
+                s.save()
+            except BaseException as e:
+                print(" SQL Error: %s" % e)
+                result = {'code': -1, 'info': 'sql error'}
+                return JsonResponse(result)
+            result = {"code": 0, "info": "执行结束，结果请查看报告"}
+        else:
+            result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
     return JsonResponse(result)
 
 

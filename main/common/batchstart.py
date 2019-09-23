@@ -127,18 +127,21 @@ def _getTestcase(list):
         fun = RunTest.getTestFunc(args)
         setattr(RunTest, 'test_func_%s' % (args), fun)
 
-def start_main(list):
+def start_main(list, reportflag):
     _getTestcase(list)
     testSuite = batchUntils.getTestSuite(RunTest)
-    print testSuite
-    reportFile, path = batchUntils.create()
-    fp = file(reportFile, "wb")
-    runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
-    result = runner.run(testSuite)
-    #发送邮件报告
-    #sendMail.sendemali(reportFile)
-    print result.failure_count, result.error_count, result.success_count
-    return {"reportPath": path, "sNum": result.success_count, "fNum": result.failure_count,
-            "eNum": result.error_count}
+    if reportflag == "Y":
+        reportFile, path = batchUntils.create()
+        fp = file(reportFile, "wb")
+        runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
+        result = runner.run(testSuite)
+        print result.failure_count, result.error_count, result.success_count
+        return {"reportPath": path, "sNum": result.success_count, "fNum": result.failure_count,
+                "eNum": result.error_count}
+    else:
+        runner = unittest.TextTestRunner()
+        result = runner.run(testSuite)
+        print result
+        return result
 
 
