@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
 from toretrunData import toType
+from main import models
+import configerData
+import re
 import time,os,sched,subprocess
 import json
 def my_login(func):
@@ -37,23 +40,7 @@ def mul_bodyData(bodyinfor):
                 body[params_name] = getvalue
     print body,files
     return body,files
-'''
-#定制任务
-schedule = sched.scheduler(time.time,time.sleep)
-def perform_command(cmd,inc):
-    schedule.enter(inc, 0, perform_command, (cmd, inc))
-    os.system(cmd)
-    print ('task')
-def timming_exe(cmd,inc=60):
-    schedule.enter(inc, 0, perform_command, (cmd, inc))
-    schedule.run()
-def runSched():
-    cmd1 = "cd ../"
-    cmd2 = "python runChartData.py "
-    cmd = cmd1+ " && " + cmd2
-    subprocess.Popen(cmd, shell=True)
-    subprocess.call(cmd,shell=True)
-'''
+
 import time,os
 def re_exe(cmd,inc = 60):
   while True:
@@ -70,4 +57,5 @@ def run():
     cmd4 = "python runChartData.py "
     cmd = cmd1 + " && " + cmd2+ " && " + cmd3+ " && " + cmd4
     re_exe(cmd,5)
+
 

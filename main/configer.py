@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from models import apiInfoTable, interfaceList
-import ConfigParser
+from untils import configerData
 import json,os
+import re
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
 from django.http.response import JsonResponse
 def configer(request):
     return render(request, 'configer.html')
@@ -31,6 +35,7 @@ def getAllcase(request):
             caseinfor = {}
             caseinfor["caseName"] = (s["apiName"])
             caseinfor["caseId"] = s["apiID"]
+            caseinfor["checked"] = False
             cases["allcase"].append(caseinfor)
         returndata["data"].append(cases)
     return JsonResponse(returndata, safe=False)
@@ -38,24 +43,14 @@ def saveConfigData(request):
     if request.method == "POST":
         reqdata = json.loads(request.body)
         print reqdata
-        eviorment=reqdata["eviorment"]
-        isReport=reqdata["isReport"]
-        isMail=reqdata["isMail"]
-        sendList=reqdata["sendList"]
-        runcase=reqdata["runcase"]
-        sechdel_time=reqdata["sechdel_time"]
-        iniFileUrl = r"main/configerdatas/config_data"
-        conf = ConfigParser.ConfigParser()
+        print reqdata.items
+        reqdata["senderList"] = ", ".join(reqdata["senderList"])
+        reqdata["runcase"] =list(set(reqdata["runcase"]))
+        reqdata["runcase"]= ", ".join(reqdata["runcase"])
+        conf = configerData.configerData()
         try:
-            conf.read(iniFileUrl)
-            print(conf.sections())
-            conf.set("configerinfor","eviorment",eviorment)
-            conf.set("configerinfor", "isReport", isReport)
-            conf.set("configerinfor", "isMail", isMail)
-            conf.set("configerinfor", "sendList", sendList)
-            conf.set("configerinfor", "runcase", runcase)
-            conf.set("configerinfor", "sechdel_time", sechdel_time)
-            conf.write(open(iniFileUrl, "w"))
+            conf.saveData(reqdata)
+            updateHost()
             data = {
                 "code":0,
                 "msg":"保存成功"
@@ -65,7 +60,55 @@ def saveConfigData(request):
                 "code": -1,
                 "msg": "保存失败"
             }
+
         return JsonResponse(data, safe=False)
+#更新host环境
+def updateHost():
+    conf = configerData.configerData()
+    evirment = conf.getItemData("eviorment").lower()
+    if(evirment=="live"):
+        evirment = ""
+    print evirment
+    allHost = interfaceList.objects.all().values_list("id","host")
+    for i in allHost:
+        print i
+        id = i[0]
+        host = i[1]
+        match1 = re.search('qa',host )
+        match2 = re.search('dev',host )
+        match4 = re.search('.youyu',host )
+        match3 = re.search('stage',host )
+        print match1
+        if(match1!=None):
+            host =host.replace('qa',evirment)
+            interfaceList.objects.filter(id=id).update(host=host)
+            continue
+        if (match2 != None):
+            host = host.replace('dev', evirment)
+            interfaceList.objects.filter(id=id).update(host=host)
+            continue
+        if (match3 != None):
+            host = host.replace('stage', evirment)
+            interfaceList.objects.filter(id=id).update(host=host)
+            continue
+        if (match4 != None):
+            host = host.replace('.youyu', evirment+".youyu")
+            interfaceList.objects.filter(id=id).update(host=host)
+            continue
+
+def getConfiginitData(request):
+    conf = configerData.configerData()
+    confData = conf.getData()
+    print confData
+    data={}
+    for i in confData:
+        data[i[0]] = i[1]
+    print data
+    return JsonResponse(data, safe=False)
+
+
+
+
 
 
 
