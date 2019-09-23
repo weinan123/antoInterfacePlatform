@@ -262,8 +262,12 @@ def runsingle(request):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return JsonResponse(result)
-        statusCode = resp.status_code
-        text = resp.text
+        try:
+            statusCode = resp.status_code
+            text = resp.text
+        except AttributeError as e:
+            statusCode = -999
+            text = "error!"
 
         if assertinfo == "":
             datas = {"status_code": statusCode}
@@ -296,7 +300,7 @@ def batchrun(request):
         batchResult = batchstart.start_main(idlist)
         print batchResult
         successNum = batchResult["sNum"]
-        faileNum = batchResult["fNum"]
+        failNum = batchResult["fNum"]
         errorNum = batchResult["eNum"]
         reportPath = batchResult["reportPath"]
         endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
@@ -306,7 +310,7 @@ def batchrun(request):
             "endTime": endtime,
             "totalNum": totalNum,
             "successNum": successNum,
-            "failNum": faileNum,
+            "failNum": failNum,
             "errorNum": errorNum,
             "executor": exeuser,
             "reportName": reportPath

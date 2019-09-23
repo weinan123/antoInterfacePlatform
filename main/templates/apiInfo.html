@@ -343,7 +343,7 @@
                             axios.post('/batchrun/', {
                                 params: {
                                     idList: runlist,
-                                    pmName: path.$data.pname + "_" + path.$data.mname,
+                                    pmName: "批量执行",
                                 },
                             })
                                 .then(resp => {

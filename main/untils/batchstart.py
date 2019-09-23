@@ -97,9 +97,12 @@ class RunTest(unittest.TestCase):
                 apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return result
-
-        statusCode = resp.status_code
-        text = resp.text
+        try:
+            statusCode = resp.status_code
+            text = resp.text
+        except AttributeError as e:
+            statusCode = -999
+            text = "error!"
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
