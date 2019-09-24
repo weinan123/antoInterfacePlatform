@@ -65,7 +65,7 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-primary">查看</button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
                                         <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
@@ -90,6 +90,35 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 500px;margin: 75px auto">
+                <div class="modal-content" id="infos">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="viewinfosLabel">
+                            用例详细信息
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                         <div class="form-group form-inline">
+                             <p><label style="width: 15%;text-align: right;">host:</label><span style="margin: 8px;">{! viewapiInfos.host !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">url:</label><span style="margin: 8px;">{! viewapiInfos.url !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">method:</label><span style="margin: 8px;">{! viewapiInfos.method !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! viewapiInfos.header !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! viewapiInfos.body !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+
     </div>
 {% endblock %}
 
@@ -110,6 +139,7 @@
             listid:proid,
             allModules:"",
             reportflag: true,
+            viewapiInfos: "",
         },
         created(){
             vm1.$data.isActiveSi = false;
@@ -409,6 +439,19 @@
                     .then(resp => {
                         console.log(resp.data);
                         this.result = resp.data;
+                    }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
+            },
+            viewapi(id){
+                axios.get('/viewapiInfos/', {
+                    params: {
+                        apiid: id,
+                    },
+                    })
+                    .then(resp => {
+                        console.log(resp.data.datas);
+                        this.viewapiInfos = resp.data.datas;
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
