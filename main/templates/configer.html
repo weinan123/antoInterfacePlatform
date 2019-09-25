@@ -69,7 +69,7 @@
 			                <li v-for="projectName,index in projectList" v-bind:class="index===0?'active':''"><a @click="changeModel(projectName)" data-toggle="tab">
                         {! projectName !}</a></li>
                         </ul>
-                <div class="row" style="border:1px solid gainsboro">
+                <div class="row" style="border:1px solid gainsboro" id="allmodelcase"  >
 
                        {% comment %} <ul class="list-group" style="text-align: center">
                             <li v-for="projectName,index in projectList" class="list-group-item " v-bind:class="index===0?'active':''" style="background-color: lightblue">{! projectName !}</li>
@@ -211,19 +211,45 @@ var vm = new Vue({
             }
         },
         addCase(){
-            axios.post('/getAllcase/')
+            axios.get('/getAllcase/')
                 .then(resp =>{
                     console.log(resp.data);
                     this.projectList = resp.data.projectList;
                     console.log(this.projectList);
-                    this.allData=resp.data.data;
-                    console.log(this.allData);
+                    //this.allData=resp.data.data;
+                    //console.log(this.allData);
                     this.changeModel(this.projectList[0])
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
         },
         changeModel(initProjectName){
+            this.selectAll=false;
+            var target = document.getElementById("allmodelcase");
+            var spinner = Spinner().spin(target);
+            console.log(initProjectName);
+            axios.get('/getprojectCase/',{params: {
+                        initProjectName:initProjectName,
+                    }})
+                .then(resp =>{
+                    spinner.spin();
+                    console.log(resp.data);
+                    this.modelList=[];
+                    for(var i=0;i<resp.data.data.length;i++){
+                            let data = {
+                               modelname:resp.data.data[i].moduleName,
+                               allData:resp.data.data[i].allcase,
+                            };
+                            this.modelList.push(data);
+                            }
+                    this.getchecked()
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+        },
+
+        {% comment %}changeModel(initProjectName){
+
             this.modelList=[];
             for(var i=0;i<this.allData.length;i++){
                 if(this.allData[i].projectName===initProjectName){
@@ -235,13 +261,13 @@ var vm = new Vue({
                 }
             }
             this.getchecked()
-        },
+        },{% endcomment %}
         choseAll(e){
             let checked = e.target.checked;
             this.selectAll = checked;
             if(checked){
-                for(var q=0;q<this.allData.length;q++){
-                allcase = this.allData[q].allcase;
+                for(var q=0;q<this.modelList.length;q++){
+                allcase = this.modelList[q].allData;
                 for(var a = 0;a<allcase.length;a++){
                     allcase[a].checked=true;
                     this.caseList.push(allcase[a].caseId.toString())
@@ -249,8 +275,8 @@ var vm = new Vue({
                 }
             }else{
                 this.caseList=[];
-                for(var q=0;q<this.allData.length;q++){
-                allcase = this.allData[q].allcase;
+                for(var q=0;q<this.modelList.length;q++){
+                allcase = this.modelList[q].allData;
                 for(var a = 0;a<allcase.length;a++){
                     allcase[a].checked=false;
                     }
@@ -276,7 +302,7 @@ var vm = new Vue({
                     eviorment: this.eviorment,
                     isReport: this.isReport,
                     isMail: this.isMail,
-                    selectAll: this.selectAll,
+                    //selectAll: this.selectAll,
                     senderList: this.senderList,
                     runcase: this.caseList,
                     sechdel_time: this.timingDay + "&" + this.timingHour,
@@ -356,7 +382,7 @@ var vm = new Vue({
             this.timingDay=sechdelList[0];
             this.timingHour=sechdelList[1];
             this.caseList = runcase;
-            this.selectAll = eval(initdatas.selectall.toLowerCase());
+            //this.selectAll = eval(initdatas.selectall.toLowerCase());
         }
 
     }

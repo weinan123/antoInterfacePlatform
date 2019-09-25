@@ -14,20 +14,17 @@ class configerData():
             self.conf.read(self.iniFileUrl)
         except Exception as e:
             print e
-    def saveData(self,reqdata):
-        print reqdata
-        print reqdata.items
-        print self.conf.sections()
+    def saveData(self,section,reqdata):
         for key,value in reqdata.items():
             print key,value
-            self.conf.set("configerinfor",key,(value))
+            self.conf.set(section,key,(value))
         self.conf.write(open(self.iniFileUrl, "w"))
 
-    def getData(self):
-        alldata = self.conf.items("configerinfor")
+    def getData(self,section):
+        alldata = self.conf.items(section)
         return alldata
-    def getItemData(self,option):
-        itemData = self.conf.get("configerinfor",option)
+    def getItemData(self,section,option):
+        itemData = self.conf.get(section,option)
         return itemData
 if __name__ == "__main__":
     datas = {

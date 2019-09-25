@@ -38,6 +38,7 @@ def login(request):
                     request.session['password'] = password
                     response.set_cookie('username', username, 3600)
                     response.set_cookie('password', password, 3600)
+                    users.objects.get_or_create(username=username)
                     returndata = {"status": "success", "message": "login success", "username": username}
                     return HttpResponse(json.dumps(returndata), content_type="'application/javascript")
                 else:

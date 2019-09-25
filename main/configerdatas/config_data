@@ -3,15 +3,16 @@ eviorment = Dev
 isreport = Y
 ismail = Y
 senderlist = , weinan@qq.com
-runcase = , 10, 13, 12, 15, 14, 1, 3, 2, 4, 9
+runcase = , 10, 13, 12, 15, 14, 17, 16, 1, 3, 2, 4, 9
 sechdel_time = 每周&15:00
 sendlist = ['weinann', 'hahhaha', 'shihshis']
 selectall = True
+
 [email]
-isSend:Y
-smtp_host:smtp.qq.com
-smtp_port:465
-sendAddr:
-password:
-recipientAddrs:
+issend = Y
+smtp_host = smtp.qq.com
+smtp_port = 465
+sendaddr = 
+password = 
+recipientaddrs = 
 

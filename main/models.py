@@ -68,3 +68,20 @@ class reports(models.Model):
     errorNum = models.IntegerField()
     executor = models.CharField(max_length=50)
     reportName = models.CharField(max_length=200)
+
+class users(models.Model):
+    username = models.CharField(max_length=200,null=True)
+    department = models.CharField(max_length=50,null=True)
+    depart_lever = models.IntegerField(default=3)
+    group = models.CharField(max_length=50,null=True)
+    batch_check = models.BooleanField(default=True)
+    batch_run = models.BooleanField(default=False)
+    batch_del = models.BooleanField(default=False)
+    configer_permit = models.BooleanField(default=False)
+
+class department(models.Model):
+    depart_lever = models.IntegerField()
+    depart_name = models.CharField(max_length=50)
+
+
+

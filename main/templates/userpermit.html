@@ -1,0 +1,117 @@
+{% extends 'index.html' %}
+{% block script %}
+
+{% endblock %}
+{% block title %}<title> 首页</title> {% endblock %}
+{% block content %}
+    <div class="col-md-9 row" id ="userpermit" style="margin-left: 16%">
+    <div style="border-bottom: 1px solid gainsboro;width: 100%;height: 100%">
+        <h3 class="col-xs-10"  >用户权限管理</h3>
+        <div class="col-xs-2" style="padding-top: 10px"  >
+        <button type="submit" class="btn btn-primary " style="width: 40%" >新增用户</button>
+          <button type="submit" class="btn btn-success "  style="width: 40%">保存</button>
+        </div>
+    </div>
+        <div style="border-bottom: 1px solid gainsboro;width: 100%"></div>
+        <div style="margin-left: 10px;margin-top: 20px;" >
+    <table class="table table-bordered" >
+  <thead>
+    <tr>
+      <th class="col-xs-1" >编号</th>
+      <th class="col-xs-1" >姓名</th>
+      <th class="col-xs-1">职位</th>
+      <th class="col-xs-1">职位等级</th>
+      <th class="col-xs-1">所属小组</th>
+      <th class="col-xs-3">批量操作权限</th>
+      <th class="col-xs-2">全局配置权限</th>
+      <th class="col-xs-2">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="user in userList">
+      <td>1</td>
+      <td>{! user.username !}</td>
+      <td>{! user.username !}</td>
+      <td>{! user.username !}</td>
+        <td>{! user.username !}</td>
+        <td>
+             <div style="width: 33%;float: left;">
+            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+             <span >查看</span>
+             </div>
+            <div style="width: 33%;float: left;">
+            <input  type="checkbox" value="1" id="isTeam"  checked="user.">
+             <span >批量删除</span>
+            </div>
+            <div style="width: 33%;float: left;">
+            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+             <span >批量执行</span>
+             </div>
+        </td>
+      <td><div style="width: 50%;float: left;">
+            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+             <span >有</span>
+             </div>
+            <div style="width: 50%;float: left;">
+            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+             <span >无</span>
+            </div>
+      </td>
+        <td>
+            <button type="submit" class="btn btn-primary btn-sm" >编辑</button>
+          <button type="submit" class="btn btn-danger btn-sm" >删除</button>
+
+        </td>
+    </tr>
+
+  </tbody>
+</table>
+        </div>
+    </div>
+{% endblock %}
+{% block vuejs1 %}
+<script type="text/javascript">
+var vm = new Vue({
+delimiters: ['{!', '!}'],
+el:'#userpermit',
+data:function(){
+    return{
+        userList:[]
+
+    }
+},
+created(){
+    this.getUserData()
+
+
+   //this.changeChart(this.projectName)
+},
+mounted:function() {
+
+
+},
+methods:{
+     getUserData(){
+         axios.get('/getUserData/',{params:{ username:vm.$data.login_user}})
+             .then(resp =>{
+                 console.log(resp.data);
+                 this.userList=resp.data.datas;
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+
+    }
+
+
+}
+}).$mount('div');
+</script>
+
+
+
+
+
+{% endblock %}
+
+
+

@@ -50,6 +50,7 @@ class getChartData():
             casevalue, projectName, moduleName)
             self.cursor.execute(updataCount)
             self.conn.commit()
+
 if __name__=='__main__':
     sqlList = [
         {"casetype":"allcase",

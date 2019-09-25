@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from main import views as main
 from main import apiinfo,report
-from main import projectList,configer
+from main import projectList,configer,usepermit
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -66,5 +66,12 @@ urlpatterns = [
     url(r'^searchModu/$', apiinfo.searchModu),
     url(r'^namesearch/$', apiinfo.namesearch),
     url(r'^viewreport/$', report.viewReport),
+    url(r'^getprojectCase/$', configer.getprojectCase),
+    url(r'^userPermit/$', usepermit.userpermit),
+    url(r'^getUserData/$', usepermit.getUserData),
+    url(r'^getUserLevel/$', usepermit.getUserLevel),
+
+
+
 
 ]

@@ -11,7 +11,11 @@
                 <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >项目管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
+                <template v-if="user_level!==3">
+                <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/userPermit/" >权限管理</a></li>
+                </template>
                 <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
+
             </ul>
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
         </div>
@@ -30,19 +34,19 @@ var vm1 = new Vue({
         isActiveCo:false,
         isActiveApi:false,
         isActiveRs:false,
+        user_level:3
     },
     created(){
         this.getUsername();
+        this.getUserLevel();
     },
     methods:{
         //获取cookie
         getCookie(cname){
             var name = cname + "=";
             var ca = document.cookie.split(';');
-            console.log(ca);
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
-                console.log(c);
                 var key = c.split("=")[0].replace(/\s*/g,"");
                 if(cname===key){
                     let cookie_value = c.split("=")[1];
@@ -66,6 +70,17 @@ var vm1 = new Vue({
             }
             console.log(this.status);
         },
+        //获取登录等级，显示左侧列表
+        getUserLevel(){
+         axios.get('/getUserLevel/',{params:{ username:this.getCookie("usename")}})
+             .then(resp =>{
+                 console.log(resp.data);
+                 this.user_level = resp.data.user_level
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+
+    }
         }
 })
 </script>
