@@ -6,12 +6,12 @@
         <div style="border-bottom: 1px solid gainsboro;width: 100%">
             <h3>批量执行结果报告</h3>
         </div>
-        <div class="form-horizontal" role="form" style="margin:30px">
+        <div class="form-horizontal" role="form" style="margin:25px">
             <table class="table table-bordered" ref="tables">
                 <thead>
                 <tr>
                     <th>序号</th>
-                    <th>用例所属模块</th>
+                    <th>报告名称</th>
                     <th>批量执行开始时间</th>
                     <th>批量执行结束时间</th>
                     <th>执行用例总数</th>
@@ -19,8 +19,7 @@
                     <th>失败用例数</th>
                     <th>错误用例数</th>
                     <th>执行者</th>
-                    <th>报告</th>
-                    <th>删除</th>
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -37,12 +36,10 @@
                         <td>{! info.failNum !}</td>
                         <td>{! info.errorNum !}</td>
                         <td>{! info.executor !}</td>
-                        <td>{! info.reportPath !}
-                            <button type="button" class="btn">查看</button>
-                            <button type="button" class="btn">下载</button>
-                        </td>
                         <td>
-                            <button type="button" class="btn btn-danger" @click="delreport(info.id)">删除</button>
+                            <a :href="['/viewreport/?report='+'\\main'+info.reportPath]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
+                            <button type="button" class="btn btn-sm btn-primary" @click="loadreport(info.reportPath)">下载</button>
+                            <button type="button" class="btn btn-sm btn-danger" @click="delreport(info.id)">删除</button>
                         </td>
                     </tr>
                 </tbody>
@@ -199,6 +196,10 @@ var vmRs = new Vue({
                     }
                 }
             },
+        loadreport(path){
+            window.open("\\main"+path);
+        },
+
     }
 })
     </script>

@@ -47,9 +47,8 @@
             <div class="navbar-form navbar-left" style="margin-top: 0px;" id="search">
                 <div class="form-group">
                     <input type="text" class="form-control" name="search" v-model="searchinfo"
-                        placeholder="请输入搜索文本">
+                        placeholder="请输入搜索文本" @change="search()">
                 </div>
-                <button type="submit" class="btn btn-default" @click="search()">搜索</button>
             </div>
         </div>
 
@@ -85,12 +84,12 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <button type="button" class="btn btn-primary">查看</button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                        <button type="button" class="btn btn-primary">编辑</button>
+                                        <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
-                                <button type="button" class="btn btn-primary" @click="runsingle(info.id)">执行</button>
-                                <button type="button" class="btn btn-danger" @click="delapi(result.data[index].id)">删除</button>
+                                <button type="button" class="btn btn-sm btn-success" @click="runsingle(info.id)">执行</button>
+                                <button type="button" class="btn btn-sm btn-danger" @click="delapi(result.data[index].id)">删除</button>
                             </td>
                         </tr>
                     </tbody>
@@ -103,7 +102,40 @@
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
                 </div>
+                <div>
+                    <label class="form-check-label">
+                        <input type="checkbox" class="selAllBtn" v-model="reportflag">
+                    </label><span> 批量执行是否生成报告</span>
+                </div>
             </div>
+            <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 500px;margin: 75px auto">
+                <div class="modal-content" id="infos">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="viewinfosLabel">
+                            用例详细信息
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                         <div class="form-group form-inline">
+                             <p><label style="width: 15%;text-align: right;">host:</label><span style="margin: 8px;">{! viewapiInfos.host !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">url:</label><span style="margin: 8px;">{! viewapiInfos.url !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">method:</label><span style="margin: 8px;">{! viewapiInfos.method !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! viewapiInfos.header !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! viewapiInfos.body !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
         </div>
     </div>
 {% endblock %}
@@ -117,6 +149,8 @@
         data:{
             result:'',
             dlist:[],
+            reportflag: true,
+            viewapiInfos: "",
         },
         created(){
             let id=this.getparam('pid');
@@ -300,10 +334,10 @@
                             let datas = resp.data.datas;
                             if (code === 0) {
                                 alert("执行成功:" + datas);
-                                window.location.reload(true);
                             } else {
                                 alert("执行失败: " + datas);
                             }
+                            window.location.reload(true);
                         })
                         .catch(err => {
                             console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -344,14 +378,15 @@
                             axios.post('/batchrun/', {
                                 params: {
                                     idList: runlist,
-                                    pmName: path.$data.pname + "_" + path.$data.mname,
+                                    pmName: "批量执行",
+                                    reportflag:this.reportflag,
                                 },
                             })
                                 .then(resp => {
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     if (code === 0) {
-                                        alert("执行结束,可在结果报告模块中查看报告");
+                                        alert("执行结束");
                                         window.location.reload(true);
                                     } else {
                                         alert("执行失败");
@@ -365,6 +400,19 @@
                         alert("要执行的接口用例有参数不存在的情况,请先编辑。");
                     }
                 }
+            },
+            viewapi(id){
+                axios.get('/viewapiInfos/', {
+                    params: {
+                        apiid: id,
+                    },
+                    })
+                    .then(resp => {
+                        console.log(resp.data.datas);
+                        this.viewapiInfos = resp.data.datas;
+                    }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
             },
         }
     });

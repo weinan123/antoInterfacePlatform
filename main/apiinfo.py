@@ -6,8 +6,8 @@ import json
 from django.http.response import JsonResponse
 import requests
 from untils.until import mul_bodyData
-from untils import sendRequests,batchstart
-from common import authService
+from untils import sendRequests
+from common import authService,batchstart
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -232,9 +232,17 @@ def runsingle(request):
         # key_id = Screatinfor["key_id"]
         # secret_key = Screatinfor["secret_key"].encode("utf-8")
         timestamp = int(time.time())
+        assertinfo = str(query.assertinfo)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         # 非加密执行接口
         if isScreat == False or isScreat == "":
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            try:
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            except Exception as e:
+                datas = {"status_code": -999, "error": str(e)}
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": -1, "info": "run error", "datas": str(datas)}
+                return JsonResponse(result)
         # 加密执行
         else:
             credentials = authService.BceCredentials(key_id, secret_key)
@@ -247,20 +255,31 @@ def runsingle(request):
             headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
-            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
-        assertinfo = str(query.assertinfo)
-        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            try:
+                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+            except Exception as e:
+                datas = {"status_code": -999, "error": str(e)}
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                result = {"code": -1, "info": "run error", "datas": str(datas)}
+                return JsonResponse(result)
+        try:
+            statusCode = resp.status_code
+            text = resp.text
+        except AttributeError as e:
+            statusCode = -999
+            text = "error!"
+
         if assertinfo == "":
-            datas = {"status_code": resp.status_code}
-            if resp.status_code == 200:
+            datas = {"status_code": statusCode}
+            if statusCode == 200:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
-            datas = {"status_code": resp.status_code, "responseText": str(resp.text), "assert": assertinfo}
-            if resp.status_code == 200 and assertinfo in str(resp.text):
+            datas = {"status_code": statusCode, "responseText": str(text), "assert": assertinfo}
+            if statusCode == 200 and assertinfo in str(text):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
@@ -274,36 +293,45 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        exeuser = request.session.get('username')
-        reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
-        totalNum = len(idlist)
-        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        batchResult = batchstart.start_main(idlist)
+        reportflag = req["reportflag"]
+        if reportflag == True:
+            reflag = "Y"
+        else:
+            reflag = "N"
+        batchResult = batchstart.start_main(idlist,reflag)
         print batchResult
-        successNum = batchResult["sNum"]
-        faileNum = batchResult["fNum"]
-        errorNum = batchResult["eNum"]
-        reportPath = batchResult["reportPath"]
-        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        result_infos = {
-            "ownMoudle": reportName,
-            "startTime": starttime,
-            "endTime": endtime,
-            "totalNum": totalNum,
-            "successNum": successNum,
-            "failNum": faileNum,
-            "errorNum": errorNum,
-            "executor": exeuser,
-            "reportName": reportPath
-        }
-        try:
-            s = reports.objects.create(**result_infos)
-            s.save()
-        except BaseException as e:
-            print(" SQL Error: %s" % e)
-            result = {'code': -1, 'info': 'sql error'}
-            return JsonResponse(result)
-        result = {"code": 0, "info": "执行结束"}
+        if reportflag == True:
+            exeuser = request.session.get('username')
+            reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+            totalNum = len(idlist)
+            starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            successNum = batchResult["sNum"]
+            failNum = batchResult["fNum"]
+            errorNum = batchResult["eNum"]
+            reportPath = batchResult["reportPath"]
+            print reportPath
+            endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            result_infos = {
+                "ownMoudle": reportName,
+                "startTime": starttime,
+                "endTime": endtime,
+                "totalNum": totalNum,
+                "successNum": successNum,
+                "failNum": failNum,
+                "errorNum": errorNum,
+                "executor": exeuser,
+                "reportName": reportPath,
+            }
+            try:
+                s = reports.objects.create(**result_infos)
+                s.save()
+            except BaseException as e:
+                print(" SQL Error: %s" % e)
+                result = {'code': -1, 'info': 'sql error'}
+                return JsonResponse(result)
+            result = {"code": 0, "info": "执行结束，结果请查看报告"}
+        else:
+            result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
     return JsonResponse(result)
 
 
@@ -459,13 +487,15 @@ def searchproj(request):
     result = {}
     if request.method == 'GET':
         proj = request.GET['selproj']
+        print proj
+        searchinfo = request.GET['searchinfo']
         pidList = []
         json_list = []
         print proj
         query_projId = interfaceList.objects.filter(projectName__contains=proj).values("id")  #icontains表示忽略大小写
         for pj in query_projId:
             pidList.append(pj["id"])
-        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=searchinfo).values()
         if query != None:
             for i in query:
                 json_dict = {}
@@ -495,12 +525,13 @@ def searchModu(request):
     if request.method == 'GET':
         proj = request.GET['selproj']
         modu = request.GET['selmodu']
+        searchinfo = request.GET['searchinfo']
         pidList = []
         json_list = []
         query_projId = interfaceList.objects.filter(projectName__contains=proj).filter(moduleName__contains=modu).values("id")  #icontains表示忽略大小写
         for pj in query_projId:
             pidList.append(pj["id"])
-        query = apiInfoTable.objects.filter(owningListID__in=pidList).values()
+        query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=searchinfo).values()
         if query != None:
             for i in query:
                 json_dict = {}
@@ -528,8 +559,20 @@ def searchModu(request):
 def namesearch(request):
     result = {}
     if request.method == 'GET':
-        sear = request.GET['searinfo']
-        query = apiInfoTable.objects.filter(apiName__contains=sear).values()
+        sear = request.GET['searchinfo']
+        projectName = request.GET["projectName"]
+        moduleName = request.GET["moduleName"]
+        print projectName,type(moduleName)
+        pidList = []
+        if projectName != "" or moduleName!="":
+            query_projId = interfaceList.objects.filter(projectName__contains=projectName).filter(
+                moduleName__contains=moduleName).values("id")
+            for pj in query_projId:
+                pidList.append(pj["id"])
+        if len(pidList) == 0:
+            query = apiInfoTable.objects.filter(apiName__contains=sear).values()
+        else:
+            query = apiInfoTable.objects.filter(owningListID__in=pidList).filter(apiName__contains=sear).values()
         if query != None:
             json_list = []
             for i in query:

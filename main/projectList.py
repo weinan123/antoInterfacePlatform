@@ -26,20 +26,33 @@ def addProjectList(request):
             # 重定向到一个新的URL
             # if ():
             #     return
-            inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                 moduleName=form.cleaned_data['moduleName'],
-                                                 host=form.cleaned_data['host'])
+            dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            if (interfaceList.objects.filter(projectName=form.cleaned_data['projectName'],
+                                             moduleName=form.cleaned_data['moduleName']).count() == 0):
+                inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
+                                                     moduleName=form.cleaned_data['moduleName'],
+                                                     host=form.cleaned_data['host'])
 
-            counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
-                                                  moduleName=form.cleaned_data['moduleName'], )
-            counttable.save()
-            inter.save()
-            code = 0
-            info = '新建成功！'
-            result = {
-                'code': code,
-                'info': info
-            }
+                counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
+                                                      moduleName=form.cleaned_data['moduleName'], )
+                counttable.save()
+                inter.save()
+                interfaceList.objects.filter(projectName=form.cleaned_data['projectName'],
+                                             moduleName=form.cleaned_data['moduleName']).update(updateTime=dtime,
+                                                                                                createTime=dtime)
+                code = 0
+                info = '新建成功！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
+            else:
+                code = -1
+                info = '同一项目下不可包含相同名称的模块！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
         else:
             result = {
                 'code': -1,
@@ -170,11 +183,11 @@ def projectEdit(request):
         return HttpResponseRedirect('/projectList/')
 
 
-def projectSort(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        interfaceList.objects.filter(id=id).delete()
-    return HttpResponseRedirect('/projectList/')
+# def projectSort(request):
+#     if request.method == 'GET':
+#         id = request.GET.get('id')
+#         interfaceList.objects.filter(id=id).delete()
+#     return HttpResponseRedirect('/projectList/')
 
 
 # def projectImport(request):
@@ -218,75 +231,130 @@ def projectSort(request):
 
 # 导入Excel表格数据
 def projectImport(request):
-    result = {}
+    code = -100
+    info = '未知错误！'
+    result = {'code': code,
+              'info': info}
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
         host = request.POST.get('host')
-        print 'projectName:' + projectName
-        print 'moduleName:' + moduleName
-        print 'host:' + host
-        inter = interfaceList.objects.create(projectName=projectName,
-                                             moduleName=moduleName,
-                                             host=host)
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        if (interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
+            f = request.FILES['file']
+            # 将上传的xlsx表格先保存下来
+            with open('main/postfiles/file.xlsx', 'wb+') as destination:
+                for chunk in f.chunks():
+                    destination.write(chunk)
+            # 打开excel文件
+            data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
+            # 获取第一张工作表（通过索引的方式）
+            table = data.sheets()[0]
+            # 获取第一张工作表有效的行数
+            nrows = table.nrows
+            # 数据校验
+            verification = True
+            for i in range(1, nrows):
+                # data_list用来存放数据
+                data_list = []
+                # 将table中第一行的数据读取并添加到data_list中
+                data_list.extend(table.row_values(i))
+                apiname = data_list[0]
+                method = data_list[1]
+                url = data_list[2]
+                headers = data_list[4]
+                body = data_list[5]
+                if (apiname == "") or (apiname is None):
+                    code = -2
+                    info = '名称不能为空！'
+                    verification = False
+                    break
+                if (interfaceList.objects.filter(projectName=projectName,
+                                                 moduleName=moduleName).count() != 0):
+                    code = -3
+                    info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
+                    verification = False
+                    break
+                seen = set()
+                if apiname not in seen:
+                    seen.add(apiname)
+                else:
+                    code = -4
+                    info = '当前批量导入文件的模块名称中存在重复！'
+                    verification = False
+                    break
+                try:
+                    json.loads(headers)
+                except ValueError:
+                    code = -6
+                    info = '当前批量导入文件的header列存在数据不符合json规范！'
+                    verification = False
+                    break
+                try:
+                    json.loads(body)
+                except ValueError:
+                    code = -7
+                    info = '当前批量导入文件的body列存在数据不符合json规范！'
+                    verification = False
+                    break
 
-        counttable = countCase.objects.create(projectName=projectName,
-                                              moduleName=moduleName)
-        counttable.save()
-        inter.save()
+            # 通过数据校验，导入数据
+            if (verification):
+                inter = interfaceList.objects.create(projectName=projectName, host=host,
+                                                     moduleName=moduleName)
 
-        listid = \
-            interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values("id")[0][
-                'id']
-        f = request.FILES['file']
-        # 将上传的xlsx表格先保存下来
-        with open('main/postfiles/file.xlsx', 'wb+') as destination:
-            for chunk in f.chunks():
-                destination.write(chunk)
-        # 打开excel文件
-        data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
-        # 获取第一张工作表（通过索引的方式）
-        table = data.sheets()[0]
-        # 获取第一张工作表有效的行数
-        nrows = table.nrows
-        for i in range(1, nrows):
-            # data_list用来存放数据
-            data_list = []
-            # 将table中第一行的数据读取并添加到data_list中
-            data_list.extend(table.row_values(i))
-            apiname = data_list[0]
-            method = data_list[1]
-            url = data_list[2]
-            headers = data_list[4]
-            body = data_list[5]
-            print 'apiname:' + apiname
-            if (apiname == "") or (apiname is None):
-                code = -2
-                info = '名称不能为空'
-            user = request.session.get('username')
-            api_infos = {
-                'apiName': apiname,
-                'method': method,
-                'url': url,
-                'headers': headers,
-                'body': body,
-                'lastRunResult': 0,
-                'lastRunTime': None,
-                'creator': user,
-                'owningListID': int(listid)
+                counttable = countCase.objects.create(projectName=projectName,
+                                                      moduleName=moduleName)
+                counttable.save()
+                inter.save()
+                interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
+                                                                                                    createTime=dtime)
+
+                listid = \
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
+                        "id")[0][
+                        'id']
+                for i in range(1, nrows):
+                    # data_list用来存放数据
+                    data_list = []
+                    # 将table中第一行的数据读取并添加到data_list中
+                    data_list.extend(table.row_values(i))
+                    apiname = data_list[0]
+                    method = data_list[1]
+                    url = data_list[2]
+                    headers = data_list[4]
+                    body = data_list[5]
+                    user = request.session.get('username')
+                    api_infos = {
+                        'apiName': apiname,
+                        'method': method,
+                        'url': url,
+                        'headers': headers,
+                        'body': body,
+                        'lastRunResult': 0,
+                        'lastRunTime': None,
+                        'creator': user,
+                        'owningListID': int(listid)
+                    }
+                    try:
+                        s = apiInfoTable.objects.create(**api_infos)
+                        s.save()
+                    except BaseException as e:
+                        print(" SQL Error: %s" % e)
+                        code = -1
+                        info = 'sql error！'
+                code = 0
+                info = '导入成功！'
+        else:
+            code = -5
+            info = '同一项目下不可包含相同名称的模块！'
+            result = {
+                'code': code,
+                'info': info
             }
-            print(api_infos)
-            try:
-                s = apiInfoTable.objects.create(**api_infos)
-                s.save()
-            except BaseException as e:
-                print(" SQL Error: %s" % e)
-                code = -1
-                info = 'sql error！'
-        code = 0
-        info = '导入成功！'
-        result = {
-            'code': code,
-            'info': info
-        }
-        return JsonResponse(result, safe=False)
+    result = {
+        'code': code,
+        'info': info
+    }
+
+    return JsonResponse(result, safe=False)

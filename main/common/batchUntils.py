@@ -29,7 +29,7 @@ def create():
     t = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))  # 将指定格式的当前时间以字符串输出
     suffix = "_result.html"
     relpath = "\\report\\" + t + suffix
-    report_path =  os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + relpath
+    report_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + relpath
     print os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     print report_path
     return report_path, relpath

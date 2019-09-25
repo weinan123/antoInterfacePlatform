@@ -79,6 +79,6 @@ def reportbatchDelete(request):
 def viewReport(request):
     a = request.GET["report"]
     print a   # \report\2019-09-20-16_09_01_result.html
-    reportName = a.split("\\")[2]
+    reportName = a.split("\\")[3]
     print reportName
     return render(request, reportName)
