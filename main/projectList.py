@@ -231,26 +231,16 @@ def projectEdit(request):
 
 # 导入Excel表格数据
 def projectImport(request):
-    result = {}
+    code = -100
+    info = '未知错误！'
+    result = {'code': code,
+              'info': info}
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
         host = request.POST.get('host')
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if (interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
-            inter = interfaceList.objects.create(projectName=projectName,
-                                                 moduleName=moduleName)
-
-            counttable = countCase.objects.create(projectName=projectName,
-                                                  moduleName=moduleName)
-            counttable.save()
-            inter.save()
-            interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
-                                                                                                createTime=dtime)
-
-            listid = \
-                interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values("id")[0][
-                    'id']
             f = request.FILES['file']
             # 将上传的xlsx表格先保存下来
             with open('main/postfiles/file.xlsx', 'wb+') as destination:
@@ -280,7 +270,7 @@ def projectImport(request):
                     verification = False
                     break
                 if (interfaceList.objects.filter(projectName=projectName,
-                                                 moduleName=moduleName).count() == 0):
+                                                 moduleName=moduleName).count() != 0):
                     code = -3
                     info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
                     verification = False
@@ -293,8 +283,37 @@ def projectImport(request):
                     info = '当前批量导入文件的模块名称中存在重复！'
                     verification = False
                     break
+                try:
+                    json.loads(headers)
+                except ValueError:
+                    code = -6
+                    info = '当前批量导入文件的header列存在数据不符合json规范！'
+                    verification = False
+                    break
+                try:
+                    json.loads(body)
+                except ValueError:
+                    code = -7
+                    info = '当前批量导入文件的body列存在数据不符合json规范！'
+                    verification = False
+                    break
+
             # 通过数据校验，导入数据
             if (verification):
+                inter = interfaceList.objects.create(projectName=projectName, host=host,
+                                                     moduleName=moduleName)
+
+                counttable = countCase.objects.create(projectName=projectName,
+                                                      moduleName=moduleName)
+                counttable.save()
+                inter.save()
+                interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
+                                                                                                    createTime=dtime)
+
+                listid = \
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
+                        "id")[0][
+                        'id']
                 for i in range(1, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -326,16 +345,16 @@ def projectImport(request):
                         info = 'sql error！'
                 code = 0
                 info = '导入成功！'
-                result = {
-                    'code': code,
-                    'info': info
-                }
-            else:
-                code = -5
-                info = '同一项目下不可包含相同名称的模块！'
-                result = {
-                    'code': code,
-                    'info': info
-                }
+        else:
+            code = -5
+            info = '同一项目下不可包含相同名称的模块！'
+            result = {
+                'code': code,
+                'info': info
+            }
+    result = {
+        'code': code,
+        'info': info
+    }
 
-        return JsonResponse(result, safe=False)
+    return JsonResponse(result, safe=False)
