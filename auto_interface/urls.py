@@ -66,5 +66,6 @@ urlpatterns = [
     url(r'^searchModu/$', apiinfo.searchModu),
     url(r'^namesearch/$', apiinfo.namesearch),
     url(r'^viewreport/$', report.viewReport),
+    url(r'^viewapiInfos/$', apiinfo.getapiInfos),
 
 ]

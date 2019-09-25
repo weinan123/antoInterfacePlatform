@@ -132,6 +132,7 @@ def start_main(list, reportflag):
     testSuite = batchUntils.getTestSuite(RunTest)
     if reportflag == "Y":
         reportFile, path = batchUntils.create()
+        print path
         fp = file(reportFile, "wb")
         runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
         result = runner.run(testSuite)

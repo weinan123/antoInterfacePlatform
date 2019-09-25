@@ -309,6 +309,7 @@ def batchrun(request):
             failNum = batchResult["fNum"]
             errorNum = batchResult["eNum"]
             reportPath = batchResult["reportPath"]
+            print reportPath
             endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             result_infos = {
                 "ownMoudle": reportName,
@@ -319,7 +320,7 @@ def batchrun(request):
                 "failNum": failNum,
                 "errorNum": errorNum,
                 "executor": exeuser,
-                "reportName": reportPath
+                "reportName": reportPath,
             }
             try:
                 s = reports.objects.create(**result_infos)
