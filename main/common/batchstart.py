@@ -1,7 +1,6 @@
 # coding=utf-8
 import unittest
 from libs import HTMLTestRunner,sendMail
-import requests
 import batchUntils
 from main.models import apiInfoTable,interfaceList
 from main.untils import until,sendRequests
@@ -19,6 +18,8 @@ class RunTest(unittest.TestCase):
     def actions(self, arg1):
         # 获取元素的方式
         caseID = arg1
+        caseName = apiInfoTable.objects.get(apiID=caseID).apiName
+        print("caseName:%s." % caseName)           #报告输出中使用，请勿删除
         singleResult = self.singleRun(caseID)
         print singleResult
         state = False
@@ -80,7 +81,6 @@ class RunTest(unittest.TestCase):
         # 加密执行
         else:
             credentials = authService.BceCredentials(key_id, secret_key)
-            print credentials
             headers_data = {
                 'Accept': 'text/html, */*; q=0.01',
                 'X-Requested-With': 'XMLHttpRequest',
@@ -131,13 +131,13 @@ def start_main(list, reportflag):
     _getTestcase(list)
     testSuite = batchUntils.getTestSuite(RunTest)
     if reportflag == "Y":
-        reportFile, path = batchUntils.create()
-        print path
+        reportFile, pathName = batchUntils.create()
+        print pathName
         fp = file(reportFile, "wb")
         runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
         result = runner.run(testSuite)
         print result.failure_count, result.error_count, result.success_count
-        return {"reportPath": path, "sNum": result.success_count, "fNum": result.failure_count,
+        return {"reportPath": pathName, "sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}
     else:
         runner = unittest.TextTestRunner()

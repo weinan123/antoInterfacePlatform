@@ -106,8 +106,8 @@
                              <p><label style="width: 15%;text-align: right;">host:</label><span style="margin: 8px;">{! viewapiInfos.host !}</span></p>
                              <p><label style="width: 15%;text-align: right;">url:</label><span style="margin: 8px;">{! viewapiInfos.url !}</span></p>
                              <p><label style="width: 15%;text-align: right;">method:</label><span style="margin: 8px;">{! viewapiInfos.method !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! viewapiInfos.header !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! viewapiInfos.body !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! headers !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! bodys !}</span></p>
                              <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
                          </div>
                     </div>
@@ -140,6 +140,8 @@
             allModules:"",
             reportflag: true,
             viewapiInfos: "",
+            headers: {},
+            bodys: {},
         },
         created(){
             vm1.$data.isActiveSi = false;
@@ -452,6 +454,26 @@
                     .then(resp => {
                         console.log(resp.data.datas);
                         this.viewapiInfos = resp.data.datas;
+                        let viewHeaders = resp.data.datas.header;
+                        let viewBodys = resp.data.datas.body;
+                        if(viewHeaders.length === 0){
+                            this.headers = {};
+                        }else{
+                            for(let i=0;i<viewHeaders.length;i++){
+                                console.log("view_header:", viewHeaders[i]["type"]);
+                                this.headers[viewHeaders[i]["type"]] = viewHeaders[i]["value"];
+                            }
+                        }
+                        if(viewBodys.length === 0){
+                            this.bodys = {};
+                        }else{
+                            for(let i=0;i<viewBodys.length;i++){
+                                this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                            }
+                        }
+                        console.log("header:", this.headers);
+                        console.log("body:", this.bodys);
+
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
