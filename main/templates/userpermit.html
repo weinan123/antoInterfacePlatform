@@ -69,7 +69,7 @@
           </template>{% endcomment %}
       </td>
         <td >
-            <button type="submit" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(user)" >编辑</button>
+            <button type="submit" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
           <button type="submit" class="btn btn-danger btn-sm" @click="delUser(user.id)" >删除</button>
 
         </td>
@@ -78,7 +78,7 @@
   </tbody>
 </table>
         </div>
-    </div>
+
    <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 450px;margin: 75px auto">
                     <div class="modal-content" id="newinfo">
@@ -95,7 +95,7 @@
                             <div class="form-group">
                                <label  for="version" class="col-sm-3">用户名</label>
                                <div class="col-sm-7">
-                               <span  class="form-control" v-model="editusername" >23123131313
+                               <span  class="form-control" >{!editusername!}
                                </span>
                                </div>
                                 <div class="col-sm-2"></div>
@@ -105,7 +105,7 @@
                                <label  for="version" class="col-sm-3">职位:</label>
                                <div class="col-sm-7">
                                <select  class="form-control" name="selectPrior" v-model="department" >
-                                   <option value="" >请选择</option>
+                                   <option value=null selected >请选择</option>
                                    <option value="测试工程师" >测试工程师</option>
                                    <option value="开发工程师">开发工程师</option>
 
@@ -117,10 +117,10 @@
                                <label  for="version" class="col-sm-3">职位等级:</label>
                                <div class="col-sm-7">
                                <select class="form-control" name="selectPrior" v-model="depart_level">
-                                   <option >请选择</option>
-                                 <option >超级管理员</option>
-                                 <option >组长</option>
-                                 <option >组员</option>
+                                   <option value=null >请选择</option>
+                                 <option value="超级管理员" >超级管理员</option>
+                                 <option value="组长" >组长</option>
+                                 <option value="组员">组员</option>
 
                                </select>
                                <div class="col-sm-2"></div>
@@ -130,10 +130,10 @@
                                <label  for="version" class="col-sm-3">所属小组:</label>
                                <div class="col-sm-7">
                                <select class="form-control" name="selectPrior" v-model="group">
-                                 <option >请选择</option>
-                                 <option >有鱼股票</option>
-                                 <option >有鱼智投</option>
-                                 <option >产品网站</option>
+                                 <option value=null selected>请选择</option>
+                                 <option value="有鱼股票" >有鱼股票</option>
+                                 <option value="有鱼智投" >有鱼智投</option>
+                                 <option value="产品网站" >产品网站</option>
                                </select>
                                </div>
                                <div class="col-sm-2"></div>
@@ -142,12 +142,13 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                             </button>
-                            <input type="submit" class="btn btn-primary" @click="newCase()" data-dismiss="modal"/>
+                            <button type="submit" class="btn btn-primary" @click="userchange(userid)" data-dismiss="modal">确定</button>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal -->
             </div>
 </div>
+    </div>
 {% endblock %}
 {% block vuejs1 %}
 <script type="text/javascript">
@@ -158,9 +159,10 @@ data:function(){
     return{
         userList:[],
         editusername: "wrwerwrwre",
-        department:"",
-        depart_level:"",
-        group:""
+        department:"请选择",
+        depart_level:"请选择",
+        group:"请选择",
+        userid:""
     }
 },
 created(){
@@ -203,13 +205,35 @@ methods:{
      },
      saveData(){
          console.log(this.userList);
-         {% comment %}axios.post('/delUserData/',{params:{ id:params}})
+         data_to_send = {
+             userdatas:this.userList
+         };
+         axios.post('/saveUserData/',data_to_send)
              .then(resp =>{
-                 console.log(resp.data);
-                  window.location.reload(true);
+                 //console.log(resp.data);
+                 toastr.options = {
+                             closeButton: false,
+                             debug: false,
+                             progressBar: false,
+                             positionClass: "toast-top-center",
+                             onclick: null,
+                             showDuration: "300",
+                             hideDuration: "1000",
+                             timeOut: "2000",
+                             extendedTimeOut: "1000",
+                             showEasing: "swing",
+                             hideEasing: "linear",
+                             showMethod: "fadeIn",
+                             hideMethod: "fadeOut"
+                         };
+                 if(resp.data.code==0) {
+                     toastr.success(resp.data.info);
+                 }else{
+                    toastr.error(resp.data.info);
+                 }
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
-                }){% endcomment %}
+                })
 
      },
      changePetmit(params,e,type){
@@ -229,12 +253,18 @@ methods:{
          }
          console.log(this.userList);
     },
-     editUser(params){
+     editUser(index,params){
          console.log(params);
          this.editusername=params.username;
          this.department = params.department;
          this.depart_level= params.depart_name;
-         this.group = params.group
+         this.group = params.group;
+         this.userid = index
+    },
+    userchange(userid){
+         this.userList[userid].department = this.department;
+         this.userList[userid].depart_name = this.depart_level;
+         this.userList[userid].group = this.group;
     }
 
 }

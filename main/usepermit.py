@@ -112,6 +112,29 @@ def delUserData(request):
         else:
             result = {'code':-2,'info':'no exist'}
     return JsonResponse(result)
+def saveUserData(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)
+        datas = req["userdatas"]
+        try:
+            for i in datas:
+                id = i["id"]
+                obj = users.objects.get(id=int(id))
+                obj.department = i["department"]
+                obj.depart_lever = department.objects.get(depart_name=i["depart_name"]).depart_lever
+                obj.group = i["group"]
+                obj.batch_check = i["batch_check"]
+                obj.batch_run = i["batch_run"]
+                obj.batch_del = i["batch_del"]
+                obj.configer_permit = i["configer_permit"]
+                obj.save()
+            result = {'code': 0, 'info': '保存成功'}
+        except:
+            result = {'code': -1, 'info': '保存失败'}
+        return JsonResponse(result)
+
+
 
 
 

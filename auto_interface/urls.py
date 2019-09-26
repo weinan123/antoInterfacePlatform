@@ -72,5 +72,6 @@ urlpatterns = [
     url(r'^getUserLevel/$', usepermit.getUserLevel),
     url(r'^viewapiInfos/$', apiinfo.getapiInfos),
     url(r'^delUserData/$', usepermit.delUserData),
+    url(r'^saveUserData/$', usepermit.saveUserData),
 
 ]
