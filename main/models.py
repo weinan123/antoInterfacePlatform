@@ -46,6 +46,9 @@ class apiInfoTable(models.Model):
     key_id = models.CharField(max_length=200, blank=True)
     isScreat = models.BooleanField(default=False)
     isRedirect = models.BooleanField(default=False)
+    t_id = models.CharField(max_length=200, blank=True, unique=True)
+    depend_caseId = models.CharField(max_length=200, blank=True)
+    depend_casedata = models.CharField(max_length=200, blank=True)
 
 
 class countCase(models.Model):
@@ -59,7 +62,7 @@ class countCase(models.Model):
     update = models.DateTimeField(auto_now_add=True, verbose_name='更新时间',blank=True)
 
 class reports(models.Model):
-    ownMoudle = models.CharField(max_length=200)
+    report_runName = models.CharField(max_length=200)
     startTime = models.DateTimeField(null=True, blank=True)
     endTime = models.DateTimeField(null=True, blank=True)
     totalNum = models.IntegerField()
@@ -67,7 +70,7 @@ class reports(models.Model):
     failNum = models.IntegerField()
     errorNum = models.IntegerField()
     executor = models.CharField(max_length=50)
-    reportName = models.CharField(max_length=200)
+    report_localName = models.CharField(max_length=200)
 
 class users(models.Model):
     username = models.CharField(max_length=200,null=True)
