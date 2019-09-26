@@ -175,12 +175,28 @@ def projectEdit(request):
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
         host = request.POST.get('host')
-        edit = interfaceList.objects.get(id=id)
-        edit.projectName = projectName
-        edit.moduleName = moduleName
-        edit.host = host
-        edit.save()
-        return HttpResponseRedirect('/projectList/')
+        resp = interfaceList.objects.filter(id=id).values("projectName", "host", "moduleName")
+        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName and resp[0]['host'] == host):
+            code = -1
+            info = '未做任何修改！'
+            result = {
+                'code': code,
+                'info': info
+            }
+            return JsonResponse(result, safe=False)
+        else:
+            edit = interfaceList.objects.get(id=id)
+            edit.projectName = projectName
+            edit.moduleName = moduleName
+            edit.host = host
+            edit.save()
+            code = 0
+            info = '修改成功！'
+            result = {
+                'code': code,
+                'info': info
+            }
+            return JsonResponse(result, safe=False)
 
 
 # def projectSort(request):
