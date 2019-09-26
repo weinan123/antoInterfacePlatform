@@ -24,7 +24,7 @@ def allinfo(request):
         json_dict["id"] = i.apiID
         json_dict["name"] = i.apiName
         if i.lastRunResult == 0:
-            json_dict["lastrunrslt"] = 'null'
+            json_dict["lastrunrslt"] = 0
         else:
             json_dict["lastrunrslt"] = i.lastRunResult
         if i.lastRunTime is None:
@@ -302,17 +302,17 @@ def batchrun(request):
         print batchResult
         if reportflag == True:
             exeuser = request.session.get('username')
-            reportName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+            report_runName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
             totalNum = len(idlist)
             starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             successNum = batchResult["sNum"]
             failNum = batchResult["fNum"]
             errorNum = batchResult["eNum"]
-            reportPath = batchResult["reportPath"]
-            print reportPath
+            report_localName = batchResult["reportPath"]
+            print report_localName
             endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             result_infos = {
-                "ownMoudle": reportName,
+                "report_runName": report_runName,
                 "startTime": starttime,
                 "endTime": endtime,
                 "totalNum": totalNum,
@@ -320,7 +320,7 @@ def batchrun(request):
                 "failNum": failNum,
                 "errorNum": errorNum,
                 "executor": exeuser,
-                "reportName": reportPath,
+                "report_localName": report_localName,
             }
             try:
                 s = reports.objects.create(**result_infos)
@@ -442,7 +442,7 @@ def getAllCases(request):
         json_dict["id"] = i.apiID
         json_dict["name"] = i.apiName
         if i.lastRunResult == 0:
-            json_dict["lastrunrslt"] = 'null'
+            json_dict["lastrunrslt"] = 0
         else:
             json_dict["lastrunrslt"] = i.lastRunResult
         if i.lastRunTime is None:
