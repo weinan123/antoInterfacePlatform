@@ -71,7 +71,7 @@ class reports(models.Model):
 
 class users(models.Model):
     username = models.CharField(max_length=200,null=True)
-    department = models.CharField(max_length=50,null=True)
+    department = models.CharField(max_length=100,null=True,default='测试工程师')
     depart_lever = models.IntegerField(default=3)
     group = models.CharField(max_length=50,null=True)
     batch_check = models.BooleanField(default=True)

@@ -5,15 +5,13 @@
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
     <div class="col-md-9 row" id ="userpermit" style="margin-left: 16%">
-    <div style="border-bottom: 1px solid gainsboro;width: 100%;height: 100%">
+    <div style="width: 100%;height: 100%">
         <h3 class="col-xs-10"  >用户权限管理</h3>
         <div class="col-xs-2" style="padding-top: 10px"  >
-        <button type="submit" class="btn btn-primary " style="width: 40%" >新增用户</button>
-          <button type="submit" class="btn btn-success "  style="width: 40%">保存</button>
+          <button type="submit" class="btn btn-success "  style="width: 40%" @click="saveData()">保存</button>
         </div>
     </div>
-        <div style="border-bottom: 1px solid gainsboro;width: 100%"></div>
-        <div style="margin-left: 10px;margin-top: 20px;" >
+        <div style="margin-left: 10px;margin-top: 20px;width: 90%" >
     <table class="table table-bordered" >
   <thead>
     <tr>
@@ -24,42 +22,55 @@
       <th class="col-xs-1">所属小组</th>
       <th class="col-xs-3">批量操作权限</th>
       <th class="col-xs-2">全局配置权限</th>
-      <th class="col-xs-2">操作</th>
+      <th class="col-xs-1">操作</th>
     </tr>
   </thead>
   <tbody>
-    <tr v-for="user in userList">
-      <td>1</td>
-      <td>{! user.username !}</td>
-      <td>{! user.username !}</td>
-      <td>{! user.username !}</td>
-        <td>{! user.username !}</td>
+    <tr v-for="user,index in userList">
+      <td >{!index+1!}</td>
+      <td >{! user.username !}</td>
+      <td>{! user.department !}</td>
+      <td>{! user.depart_name !}</td>
+        <td>{! user.group !}</td>
         <td>
              <div style="width: 33%;float: left;">
-            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+            <input  type="checkbox" :value="user.batch_check" id="isTeam" :checked="user.batch_check" @click="changePetmit(index,$event,'check')" >
              <span >查看</span>
              </div>
             <div style="width: 33%;float: left;">
-            <input  type="checkbox" value="1" id="isTeam"  checked="user.">
+            <input  type="checkbox" value="1" id="isTeam"  :checked="user.batch_del" @click="changePetmit(index,$event,'del')" >
              <span >批量删除</span>
             </div>
             <div style="width: 33%;float: left;">
-            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+            <input  type="checkbox" value="1" id="isTeam" :checked="user.batch_run" @click="changePetmit(index,$event,'run')" >
              <span >批量执行</span>
              </div>
         </td>
-      <td><div style="width: 50%;float: left;">
-            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+      <td>
+          {% comment %}<template v-if="user.configer_permit==false">{% endcomment %}
+          <div style="width: 50%;float: left;">
+            <input  type="checkbox" value="true" id="isTeam" :checked=user.config_true @click="changePetmit(index,$event,'configtrue')" >
              <span >有</span>
              </div>
             <div style="width: 50%;float: left;">
-            <input  type="checkbox" value="1" id="isTeam" checked="user.">
+            <input  type="checkbox" value="false" id="isTeam" :checked=user.config_false @click="changePetmit(index,$event,'configfalse')" >
              <span >无</span>
             </div>
+         {% comment %} </template>
+          <template v-if="user.configer_permit==true">
+          <div style="width: 50%;float: left;">
+            <input  type="checkbox" value="true1" id="isTeam" :checked=true @click="changePetmit(index,$event,'config')">
+             <span >有</span>
+             </div>
+            <div style="width: 50%;float: left;">
+            <input  type="checkbox" value="false1" id="isTeam" :checked=false @click="changePetmit(index,$event,'config')">
+             <span >无</span>
+            </div>
+          </template>{% endcomment %}
       </td>
-        <td>
-            <button type="submit" class="btn btn-primary btn-sm" >编辑</button>
-          <button type="submit" class="btn btn-danger btn-sm" >删除</button>
+        <td >
+            <button type="submit" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(user)" >编辑</button>
+          <button type="submit" class="btn btn-danger btn-sm" @click="delUser(user.id)" >删除</button>
 
         </td>
     </tr>
@@ -68,6 +79,75 @@
 </table>
         </div>
     </div>
+   <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 450px;margin: 75px auto">
+                    <div class="modal-content" id="newinfo">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="newapiLabel">
+                                编辑用户
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form role="form" class="form-horizontal">
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-3">用户名</label>
+                               <div class="col-sm-7">
+                               <span  class="form-control" v-model="editusername" >23123131313
+                               </span>
+                               </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-3">职位:</label>
+                               <div class="col-sm-7">
+                               <select  class="form-control" name="selectPrior" v-model="department" >
+                                   <option value="" >请选择</option>
+                                   <option value="测试工程师" >测试工程师</option>
+                                   <option value="开发工程师">开发工程师</option>
+
+                               </select>
+                               </div>
+                                <div class="col-sm-2"></div>
+                            </div>
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-3">职位等级:</label>
+                               <div class="col-sm-7">
+                               <select class="form-control" name="selectPrior" v-model="depart_level">
+                                   <option >请选择</option>
+                                 <option >超级管理员</option>
+                                 <option >组长</option>
+                                 <option >组员</option>
+
+                               </select>
+                               <div class="col-sm-2"></div>
+                            </div>
+                            </div>
+                                <div class="form-group">
+                               <label  for="version" class="col-sm-3">所属小组:</label>
+                               <div class="col-sm-7">
+                               <select class="form-control" name="selectPrior" v-model="group">
+                                 <option >请选择</option>
+                                 <option >有鱼股票</option>
+                                 <option >有鱼智投</option>
+                                 <option >产品网站</option>
+                               </select>
+                               </div>
+                               <div class="col-sm-2"></div>
+                            </div>
+                        </form>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                            </button>
+                            <input type="submit" class="btn btn-primary" @click="newCase()" data-dismiss="modal"/>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+</div>
 {% endblock %}
 {% block vuejs1 %}
 <script type="text/javascript">
@@ -76,8 +156,11 @@ delimiters: ['{!', '!}'],
 el:'#userpermit',
 data:function(){
     return{
-        userList:[]
-
+        userList:[],
+        editusername: "wrwerwrwre",
+        department:"",
+        depart_level:"",
+        group:""
     }
 },
 created(){
@@ -94,14 +177,65 @@ methods:{
      getUserData(){
          axios.get('/getUserData/',{params:{ username:vm.$data.login_user}})
              .then(resp =>{
-                 console.log(resp.data);
+                 for(var i=0;i<resp.data.datas.length;i++){
+                     if(resp.data.datas[i].configer_permit===false){
+                         resp.data.datas[i].config_true=false;
+                         resp.data.datas[i].config_false=true
+                     }else if(resp.data.datas[i].configer_permit===true){
+                          resp.data.datas[i].config_true=true;
+                         resp.data.datas[i].config_false=false
+                     }
+                 }
+                 console.log(resp.data.datas);
                  this.userList=resp.data.datas;
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
+    },
+     delUser(params){
+          axios.post('/delUserData/',{params:{ id:params}})
+             .then(resp =>{
+                 console.log(resp.data);
+                  window.location.reload(true);
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+     },
+     saveData(){
+         console.log(this.userList);
+         {% comment %}axios.post('/delUserData/',{params:{ id:params}})
+             .then(resp =>{
+                 console.log(resp.data);
+                  window.location.reload(true);
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                }){% endcomment %}
 
+     },
+     changePetmit(params,e,type){
+         console.log(params,e.target.value,type);
+         if (type==='check'){
+             this.userList[params].batch_check=e.target.checked;
+         }else if(type==='del'){
+             this.userList[params].batch_del=e.target.checked;
+        }else if(type==='run'){
+             this.userList[params].batch_run=e.target.checked;
+         }else if(type==='configtrue' ){
+              this.userList[params].config_true=e.target.checked;
+              this.userList[params].config_false=false
+         }else if(type==='configfalse' ){
+              this.userList[params].config_false=e.target.checked;
+              this.userList[params].config_true=false
+         }
+         console.log(this.userList);
+    },
+     editUser(params){
+         console.log(params);
+         this.editusername=params.username;
+         this.department = params.department;
+         this.depart_level= params.depart_name;
+         this.group = params.group
     }
-
 
 }
 }).$mount('div');
