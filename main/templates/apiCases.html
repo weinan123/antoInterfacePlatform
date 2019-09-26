@@ -34,7 +34,7 @@
         </div>
 
         <div style="margin:30px">
-            <div class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;">
+            <div id="tableBody" class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;" >
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -46,7 +46,7 @@
                         <th>操作</th>
                     </tr>
                     </thead>
-                    <tbody ref="tables">
+                    <tbody ref="tables" >
                         <tr v-for="(info,index) in result.data">
                             <td><label class="form-check-label">
                                 <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
@@ -55,7 +55,7 @@
                             </td>
                             <td>{! info.name !}</td>
                             <td>
-                                <p v-if="info.lastrunrslt ===  'null'">无</p>
+                                <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>
                                 <p v-else>Fail</p>
                             </td>
@@ -160,7 +160,7 @@
                         this.result = resp.data;
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
+                });
             },
             getProinfo(){
                 axios.get('/projectInfos/')
@@ -386,35 +386,40 @@
                 }
             },
             search(){
-                    axios.get('/namesearch/', {
-                    params: {
-                        searchinfo:this.searchinfo,
-                        moduleName: this.moduleName,
-                        projectName: this.projectName,
-                    },
-                    })
-                    .then(resp => {
-                        console.log(resp.data);
-                        this.result = resp.data;
-                    }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner().spin(target);
+                axios.get('/namesearch/', {
+                params: {
+                    searchinfo:this.searchinfo,
+                    moduleName: this.moduleName,
+                    projectName: this.projectName,
+                },
+                })
+                .then(resp => {
+                    console.log(resp.data);
+                    this.result = resp.data;
+                    spinner1.spin();
+                }).catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                })
             },
             selectPro(e){
-             let selProj = e.target.value;
-             let allModules = this.allModules;
-             if(this.moduleList.length!==0){
-                 this.moduleList = [];
-                 this.moduleName = "";
-             }
-             for(let q=0;q<allModules.length;q++){
-                 let pname = allModules[q]["projectName"];
-                 if(selProj===pname) {
-                     this.moduleList.push(allModules[q]["moduleName"]);
-                 }
-             }
-             console.log(this.moduleList);
-             axios.get('/searchproj/', {
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner().spin(target);
+                let selProj = e.target.value;
+                let allModules = this.allModules;
+                if(this.moduleList.length!==0){
+                    this.moduleList = [];
+                    this.moduleName = "";
+                }
+                for(let q=0;q<allModules.length;q++){
+                    let pname = allModules[q]["projectName"];
+                    if(selProj===pname) {
+                        this.moduleList.push(allModules[q]["moduleName"]);
+                    }
+                }
+                console.log(this.moduleList);
+                axios.get('/searchproj/', {
                     params: {
                         selproj: selProj,
                         searchinfo: this.searchinfo,
@@ -423,11 +428,14 @@
                     .then(resp => {
                         console.log(resp.data);
                         this.result = resp.data;
+                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
             },
             selectModu(e){
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner().spin(target);
                 let selModu = e.target.value;
                 let selProj = this.projectName;
                 console.log(selModu,selProj);
@@ -441,6 +449,7 @@
                     .then(resp => {
                         console.log(resp.data);
                         this.result = resp.data;
+                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })

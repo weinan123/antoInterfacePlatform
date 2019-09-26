@@ -16,7 +16,7 @@ def getReportList(request):
         for i in allList:
             json_dict = {}
             json_dict["id"] = i.id
-            json_dict["ownMoudle"] = i.ownMoudle
+            json_dict["report_runName"] = i.report_runName
             json_dict["startTime"] = i.startTime.strftime('%Y-%m-%d %H:%M:%S')
             json_dict["endTime"] = i.endTime.strftime('%Y-%m-%d %H:%M:%S')
             json_dict["totalNum"] = i.totalNum
@@ -24,7 +24,7 @@ def getReportList(request):
             json_dict["failNum"] = i.failNum
             json_dict["errorNum"] = i.errorNum
             json_dict["executor"] = i.executor
-            json_dict["reportPath"] = i.reportName
+            json_dict["report_localName"] = i.report_localName
             json_list.append(json_dict)
         result = {
             'datas': json_list,
@@ -39,10 +39,10 @@ def reportDelete(request):
         req = json.loads(request.body)["params"]
         id = req['id']
         ainfo = reports.objects.get(id=id)
-        reName = ainfo.reportName
+        reName = ainfo.report_localName
         if ainfo:
             try:
-                ainfo.delete()
+                # ainfo.delete()
                 print("delete success from sql.")
             except BaseException as e:
                 result = {'code': -1, 'info': 'delete error' + str(e)}
@@ -66,7 +66,7 @@ def reportbatchDelete(request):
         flist = []
         for id in idlist:
             ainfo = reports.objects.get(id=id)
-            reName = ainfo.reportName
+            reName = ainfo.report_localName
             if ainfo:
                 try:
                     ainfo.delete()

@@ -28,7 +28,7 @@
                                 <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
                             </label>
                             {! index+1 !}</td>
-                        <td>{! info.ownMoudle !}</td>
+                        <td>{! info.report_runName !}</td>
                         <td>{! info.startTime !}</td>
                         <td>{! info.endTime !}</td>
                         <td>{! info.totalNum !}</td>
@@ -37,8 +37,8 @@
                         <td>{! info.errorNum !}</td>
                         <td>{! info.executor !}</td>
                         <td>
-                            <a :href="['/viewreport/?report='+info.reportPath]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
-                            <button type="button" class="btn btn-sm btn-primary" @click="loadreport(info.reportPath)">下载</button>
+                            <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
+                            <button type="button" class="btn btn-sm btn-primary" @click="loadreport(info.report_localName)">下载</button>
                             <button type="button" class="btn btn-sm btn-danger" @click="delreport(info.id)">删除</button>
                         </td>
                     </tr>
