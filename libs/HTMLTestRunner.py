@@ -96,6 +96,7 @@ import sys
 import time
 import unittest
 from xml.sax import saxutils
+import re
 
 
 # ------------------------------------------------------------------------
@@ -176,7 +177,7 @@ class Template_mixin(object):
     2: 'error',
     }
 
-    DEFAULT_TITLE = 'Unit Test Report'
+    DEFAULT_TITLE = 'Test Report'
     DEFAULT_DESCRIPTION = ''
 
     # ------------------------------------------------------------------------
@@ -426,9 +427,11 @@ a.popup_link:hover {
 <col align='right' />
 <col align='right' />
 <col align='right' />
+<col align='right' />
 </colgroup>
 <tr id='header_row'>
     <td>Test Group/Test case</td>
+    <td>caseName</td>
     <td>Count</td>
     <td>Pass</td>
     <td>Fail</td>
@@ -437,7 +440,7 @@ a.popup_link:hover {
 </tr>
 %(test_list)s
 <tr id='total_row'>
-    <td>Total</td>
+    <td colspan='2'>Total</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
@@ -449,7 +452,7 @@ a.popup_link:hover {
 
     REPORT_CLASS_TMPL = r"""
 <tr class='%(style)s'>
-    <td>%(desc)s</td>
+    <td colspan='2'>%(desc)s</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
@@ -462,6 +465,7 @@ a.popup_link:hover {
     REPORT_TEST_WITH_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
+    <td align='center'>%(caseName)s</td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
@@ -494,7 +498,11 @@ a.popup_link:hover {
 
     REPORT_TEST_OUTPUT_TMPL = r"""
 %(id)s: %(output)s
-""" # variables: (id, output)
+"""
+    REPORT_TEST_OUTPUT_CASENAME = r"""
+    %(caseName)s
+    """
+    # variables: (id, output)
 
 
 
@@ -777,12 +785,18 @@ class HTMLTestRunner(Template_mixin):
             output = saxutils.escape(uo+ue),
         )
 
+        caseName = self.REPORT_TEST_OUTPUT_CASENAME % dict(
+            caseName = saxutils.escape(uo+ue),
+        )
+
+        # caseName[caseName.find("caseName"):(int(caseName.find("caseName"))+25)],
         row = tmpl % dict(
             tid = tid,
             Class = (n == 0 and 'hiddenRow' or 'none'),
             style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'none'),
             desc = desc,
             script = script,
+            caseName = re.search(r'caseName:.*.', caseName).group(),
             status = self.STATUS[n],
         )
         rows.append(row)
