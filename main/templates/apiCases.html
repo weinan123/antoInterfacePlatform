@@ -474,6 +474,8 @@
                     })
             },
             viewapi(id){
+                var target = document.getElementById("infos");
+                var spinner1 = Spinner({top:"1",left:"2"}).spin(target);
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,
@@ -501,7 +503,7 @@
                         }
                         console.log("header:", this.headers);
                         console.log("body:", this.bodys);
-
+                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
