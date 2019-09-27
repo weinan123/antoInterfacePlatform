@@ -34,7 +34,7 @@
         </div>
 
         <div style="margin:30px">
-            <div id="tableBody" class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;" >
+            <div class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;" >
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -46,7 +46,7 @@
                         <th>操作</th>
                     </tr>
                     </thead>
-                    <tbody ref="tables" >
+                    <tbody ref="tables" id="tableBody">
                         <tr v-for="(info,index) in result.data">
                             <td><label class="form-check-label">
                                 <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
@@ -65,7 +65,7 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)">查看</button>
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
                                         <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
@@ -80,8 +80,8 @@
                     <label class="form-check-label">
                         <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
-                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
-                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;" v-if="permission_run">批量执行</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;" v-if="permission_del">批量删除</button>
                 </div>
                 <div>
                     <label class="form-check-label">
@@ -118,7 +118,6 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
-
     </div>
 {% endblock %}
 
@@ -142,6 +141,10 @@
             viewapiInfos: "",
             headers: {},
             bodys: {},
+            permission:{},
+            permission_run:false,
+            permission_del:false,
+            permission_view:true,
         },
         created(){
             vm1.$data.isActiveSi = false;
@@ -149,15 +152,31 @@
             vm1.$data.isActiveAl = false;
             vm1.$data.isActiveApi = true;
             vm1.$data.isActiveRs = false;
+            axios.get('/getPermission/')
+                    .then(resp =>{
+                        console.log(resp.data);
+                        this.permission = resp.data.permits;
+                        console.log(this.permission);
+                        this.permission_run = this.permission.permission_run;
+                        this.permission_del = this.permission.permission_del;
+                        this.permission_view = this.permission.permission_view;
+                    }).catch(err=> {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                });
+        },
+        mounted(){
             this.getlist();
             this.getProinfo();
         },
         methods:{
             getlist(){
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner({top:"1"}).spin(target);
                 axios.get('/apiAllCases/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
+                        spinner1.spin();
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });

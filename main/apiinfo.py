@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList,reports
+from models import apiInfoTable, interfaceList,reports, users
 import time
 import json
 from django.http.response import JsonResponse
-import requests
 from untils.until import mul_bodyData
 from untils import sendRequests
-from common import authService,batchstart
+from common import authService,batchstart,getDependData
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -33,7 +32,6 @@ def allinfo(request):
             json_dict["lastruntime"] = i.lastRunTime.strftime('%Y-%m-%d %H:%M:%S')
         json_dict["owing"] = i.creator
         json_dict["listid"] = i.owningListID
-        #json_dict["listname"] = i.owningListID.projectName
         json_dict["method"] = i.method
         json_dict["url"] = i.url
         # data = json.dumps(json_dict)       #转化为json字符串
@@ -54,7 +52,20 @@ def allinfopage(request):
 def apiCases(request):
     return render(request, "apiCases.html")
 
-
+def getPermission(request):
+    username = request.session.get('username')
+    query = users.objects.get(username=username)
+    permission_run = query.batch_run
+    permission_del = query.batch_del
+    permission_view = query.batch_check
+    permission = {"code":0,
+                  "permits":{
+                      "permission_run": permission_run,
+                      "permission_del": permission_del,
+                      "permission_view": permission_view
+                  }
+                  }
+    return JsonResponse(permission)
 # def list(request):
 #     list = interfaceList.objects.all()
 #     return render(request, 'list.html', {'list': list})
@@ -216,7 +227,13 @@ def runsingle(request):
         bodyinfor = query.body
         if bodyinfor != "" or bodyinfor != "{}":
             bodyinfor = json.loads(bodyinfor)
-        # Authorization = data["Screatinfor"]["Screatinfor"]
+        # 判断是否有关联用例
+        depend_flag = query.depend_caseId
+        if depend_flag != "" or depend_flag != "[]":
+            depend_list = json.loads(depend_flag)
+            depend_data = query.depend_casedata
+            if depend_data != "" or depend_data != "{}":
+                dependData = getDependData.getdepands(depend_list, depend_data)
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
         host = querylist.host
