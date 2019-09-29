@@ -66,9 +66,6 @@ def getPermission(request):
                   }
                   }
     return JsonResponse(permission)
-# def list(request):
-#     list = interfaceList.objects.all()
-#     return render(request, 'list.html', {'list': list})
 
 
 def addApi(request):
@@ -229,7 +226,10 @@ def runsingle(request):
             bodyinfor = json.loads(bodyinfor)
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
-        if depend_flag != "" or depend_flag != "[]":
+        print("11111:",depend_flag)
+        if depend_flag == "" or depend_flag is None:
+            print("not depend")
+        else:
             depend_list = json.loads(depend_flag)
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
