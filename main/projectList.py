@@ -340,6 +340,16 @@ def projectImport(request):
                     url = data_list[2]
                     headers = data_list[4]
                     body = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
+                    print statuscode
                     user = request.session.get('username')
                     api_infos = {
                         'apiName': apiname,
@@ -350,7 +360,8 @@ def projectImport(request):
                         'lastRunResult': 0,
                         'lastRunTime': None,
                         'creator': user,
-                        'owningListID': int(listid)
+                        'owningListID': int(listid),
+                        'assertinfo': statuscode
                     }
                     try:
                         s = apiInfoTable.objects.create(**api_infos)
