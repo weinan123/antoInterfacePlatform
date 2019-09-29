@@ -227,7 +227,9 @@ def runsingle(request):
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
         print("11111:",depend_flag)
-        if depend_flag != u"":
+        if depend_flag == "" or depend_flag is None:
+            print("not depend")
+        else:
             depend_list = json.loads(depend_flag)
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
