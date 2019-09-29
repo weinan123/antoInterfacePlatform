@@ -58,7 +58,7 @@ def getPermission(request):
     permission_run = query.batch_run
     permission_del = query.batch_del
     permission_view = query.batch_check
-    permission = {"code":0,
+    permission = {"code": 0,
                   "permits":{
                       "permission_run": permission_run,
                       "permission_del": permission_del,
@@ -95,9 +95,9 @@ def addApi(request):
             s.save()
         except BaseException as e:
             print(" SQL Error: %s" % e)
-            result = {'code':-1,'info':'sql error'}
+            result = {'code': -1,'info':'sql error'}
             return JsonResponse(result)
-        result = {'code':0, 'info':'insert success'}
+        result = {'code': 0, 'info':'insert success'}
     return JsonResponse(result)
 
 def apidel(request):
@@ -116,7 +116,7 @@ def apidel(request):
                 return JsonResponse(result)
             result = {'code': 0, 'info': 'delete success'}
         else:
-            result = {'code':-2,'info':'no exist'}
+            result = {'code': -2,'info':'no exist'}
     return JsonResponse(result)
 
 def searchapi(request):
@@ -226,7 +226,6 @@ def runsingle(request):
             bodyinfor = json.loads(bodyinfor)
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
-        print("11111:",depend_flag)
         if depend_flag == "" or depend_flag is None:
             print("not depend")
         else:
@@ -284,7 +283,7 @@ def runsingle(request):
             text = resp.text
         except AttributeError as e:
             statusCode = -999
-            text = "error!"
+            text = "error!code: -999"
 
         if assertinfo == "":
             datas = {"status_code": statusCode}
@@ -296,7 +295,7 @@ def runsingle(request):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": assertinfo}
-            if statusCode == 200 and assertinfo in str(text):
+            if str(assertinfo) in str(text):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
