@@ -89,8 +89,8 @@
         <li><a href="#tab7" data-toggle="tab" v-on:click="makeFrom(6)">高级设置</a></li>
 
     </ul>
-    <div class="row" v-if="showState === 1">
-        <div class="col-lg-1 radio ">
+    <div class="row" v-if="showState === 1"style="width: 80%">
+        <div class=" col-lg-1 radio " style="width: 16%">
         <label>
             <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv" @click="showBodyform(0)"> Form-data
         </label>
@@ -111,7 +111,7 @@
         </label>
         </div>
     </div>
-    <table class="table table-bordered" v-if="(showState === 0) " style="width: 70%" >
+    <table class="table table-bordered" v-if="(showState === 0) " >
 
            <thead>
            <tr>
@@ -147,7 +147,7 @@
             </tr>
           </tbody>
     </table>
-    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 0)" style="width: 70%">
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 0)">
           <thead>
             <tr>
               <th>参数名</th>
@@ -178,7 +178,7 @@
             </tr>
           </tbody>
     </table>
-    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 1)" style="width: 70%">
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 1)" >
           <thead>
             <tr>
               <th>参数名</th>
@@ -204,7 +204,7 @@
             </tr>
           </tbody>
     </table>
-    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 2)" style="width: 70%">
+    <table class="table table-bordered" v-if="(showState === 1 && showbodyState === 2)" >
           <thead>
             <tr>
               <th>参数名</th>
@@ -232,7 +232,7 @@
                 <textarea class="form-control" rows="15" v-model="rawValue"></textarea>
          </div>
      </div>
-    <table class="table table-bordered" v-if="showState === 2" style="width: 70%">
+    <table class="table table-bordered" v-if="showState === 2">
           <thead>
             <tr>
               <th>参数名</th>
@@ -294,7 +294,7 @@
         </div>
         </form>
     </div>
-    <div v-if="showState === 6" style="border: 1px solid #ccc;padding-left: 25px;padding-top: 20px;width: 70%">
+    <div v-if="showState === 6" style="border: 1px solid #ccc;padding-left: 25px;padding-top: 20px;">
         <form role="form" class="form-horizontal">
         <div class="form-group">
             <label  for="version" >是否跟随重定向:&nbsp;&nbsp;&nbsp;&nbsp;
@@ -307,7 +307,7 @@
         </div>
         </form>
     </div>
-    <div class="row" style="width:75% " >
+    <div class="row" >
          <div class="col-lg-6 form-group">
                 <label for="name">请求数据</label>
                 <textarea v-model="request_infor" class="form-control" rows="15"></textarea>
