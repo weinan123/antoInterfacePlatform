@@ -7,7 +7,7 @@
     </div>
     <div class="form-horizontal" role="form" style="margin:30px">
         <div class="form-group">
-            <label class="col-sm-1 ">环境切换</label>
+            <label class="col-sm-1 "style="width: 13%">环境切换</label>
             <div class="col-sm-2">
                 <select class="form-control" v-model="eviorment">
                   <option selected>Qa</option>
@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="form-group form-inline">
-            <label for="lastname" class="col-sm-1 ">是否生成报告</label>
+            <label for="lastname" class="col-sm-1 " style="width: 13%">是否生成报告</label>
             <div class="col-sm-1 " style="margin-top: -7px">
                 <div class="radio">
                     <label>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="form-group form-inline">
-        <label for="lastname" class="col-sm-1 ">是否发送邮件</label>
+        <label for="lastname" class="col-sm-1 "style="width: 13%">是否发送邮件</label>
         <div class="col-sm-1 " style="margin-top: -7px">
             <div class="radio">
                 <label>
@@ -52,10 +52,10 @@
         </div>
   </div>
   <div v-if="isMail==='Y'" class="form-group form-inline">
-      <label class="col-sm-1 " for="name">收件人</label>
+      <label class="col-sm-1 " for="name" style="width: 13%">收件人</label>
       <button type="submit" class="btn btn-primary btn-sm" @click="addSender()">添加收件人</button>
        <template v-for="sender,index in senderList">
-       <div v-if="index>0" style="margin-top: 7px;margin-left: 8.3%">
+       <div v-if="index>0" style="margin-top: 7px;margin-left: 13%">
            <span  for="name">收件人{!index!}:</span>
             <input type="text"  class="form-control" @blur="checkemail(index,senderList[index])" id="name" placeholder="请输入收件人邮箱" v-model="senderList[index]">
             </div>
@@ -63,8 +63,8 @@
           <p v-show="indexsss" :style="styles" >邮箱格式不正确,请检查</p>
   </div>
         <div class="form-group">
-      <label class="col-sm-1 " for="name">定时执行</label>
-      <div class="col-sm-5" >
+      <label class="col-sm-1 " for="name" style="width: 13%">定时执行</label>
+      <div class="col-sm-6" >
                 <ul id="myTab"  class="nav nav-tabs" style="margin-left: -16px">
 			                <li v-for="projectName,index in projectList" v-bind:class="index===0?'active':''"><a @click="changeModel(projectName)" data-toggle="tab">
                         {! projectName !}</a></li>
@@ -97,15 +97,15 @@
   </div>
         </div>
         <div class="form-group">
-        <label class="col-sm-1 " for="name">定时时间</label>
-        <div class="col-sm-1">
+        <label class="col-sm-1 " for="name" style="width: 13%">定时时间</label>
+        <div class="col-sm-2">
        <select class="form-control" v-model="timingDay">
           <option selected>每天</option>
           <option>每周</option>
           <option>每月</option>
         </select>
         </div>
-        <div class="col-sm-1">
+        <div class="col-sm-2">
         <select class="form-control" v-model="timingHour">
           <option selected>9:00</option>
           <option>15:00</option>
@@ -114,7 +114,7 @@
     </div>
     </div>
         <div class="form-group" style="margin-top: 75px">
-        <div class="col-sm-1"></div>
+        <div class="col-sm-2"></div>
         <div class="col-sm-2">
             <button type="submit" class="btn btn-success btn-block" @click="saveConfig()">保存设置</button>
         </div>
