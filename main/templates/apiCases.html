@@ -8,7 +8,6 @@
                 <input type="text" class="form-control" name="search" v-model="searchinfo"
                             placeholder="请输入搜索接口名称的文本" @change="search()">
             </div>
-<<<<<<< HEAD
             <label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                 <select class="form-control" v-model="projectName" @change="selectPro($event)">
@@ -22,23 +21,6 @@
                     <option selected value="">请选择</option>
                     <option  v-for="item in moduleList" :value="item">{! item !}</option>
                 </select>
-=======
-            <div class="col-sm-6">
-                <label class="col-sm-2" style="margin-right: -30px;margin-top: 8px;margin-left: -10px;">选择项目：</label>
-                <div class="col-sm-3">
-                    <select class="form-control" v-model="projectName" @change="selectPro($event)">
-                        <option selected value="">请选择</option>
-                        <option  v-for="item in projectList" :value="item">{! item !}</option>
-                    </select>
-                </div>
-                <label class="col-sm-2" style="margin-right: -30px;margin-top: 8px;">选择模块：</label>
-                <div class="col-sm-3">
-                    <select class="form-control" v-model="moduleName" @change="selectModu($event)">
-                        <option selected value="">请选择</option>
-                        <option  v-for="item in moduleList" :value="item">{! item !}</option>
-                    </select>
-                </div>
->>>>>>> 2b5de770701b6da75de216dd884306091f0f821e
             </div>
             <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="align-content: right">
                 <a href="/singleInterface/addapi/">
