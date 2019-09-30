@@ -59,7 +59,7 @@ def getPermission(request):
     permission_del = query.batch_del
     permission_view = query.batch_check
     permission = {"code": 0,
-                  "permits":{
+                  "permits": {
                       "permission_run": permission_run,
                       "permission_del": permission_del,
                       "permission_view": permission_view
