@@ -31,6 +31,7 @@ class getChartData():
         except Exception as e:
            print e
     def updatedb(self,casetype,casevalue,projectName,moduleName):
+        print casetype, casevalue, projectName, moduleName
         if (casetype=="allcase"):
             updataCount = " update main_countCase set allcaseNum=%d where (projectName='%s' and moduleName='%s')" % (casevalue,projectName,moduleName)
             self.cursor.execute(updataCount)

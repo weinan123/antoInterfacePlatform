@@ -170,8 +170,8 @@
 
                 </div>
             </div>
-            <div style="width:100%;margin-left: 15px;">
-                <table class="table table-hover">
+            <div style="width:100%;margin-left: 15px;height: 100%"  >
+                <table class="table table-hover" >
                     <thead>
                     <tr>
                         <th>项目名称</th>
@@ -183,7 +183,7 @@
                         <th>批量删除</th>
                     </tr>
                     </thead>
-                    <tbody id="row">
+                    <tbody id="row" >
                     <tr v-for="item in list">
                         <td>{! item.projectName !}</td>
                         <td>{! item.moduleName !}</td>
@@ -323,8 +323,7 @@
             },
             mounted() {
                 var target = document.getElementById("row");
-                var spinner = Spinner().spin(target);
-
+                var spinner = Spinner({top:'1'}).spin(target);
                 axios
                     .get('/projectListInfo/')
                     .then(resp => {

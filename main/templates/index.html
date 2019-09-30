@@ -6,15 +6,30 @@
 {% block content1 %}
     <div class="col-md-2 row"  id ="app1" style="position: fixed;border-right: 1px solid gainsboro;height: 100%"  >
             <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
+                {% comment %}<li role="presentation" v-for="tab in tabs" :active="tab.active"><a href="/singleInterface/" >{!tab.name!}</a></li>{% endcomment %}
+                <keep-alive>
                 <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
+                 </keep-alive>
+                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
+                </keep-alive>
+                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/projectList/" >项目管理</a></li>
+                </keep-alive>
+                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
+                </keep-alive>
+                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
+                </keep-alive>
+                <keep-alive>
                 <template v-if="user_level!==3">
                 <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/userPermit/" >权限管理</a></li>
                 </template>
+                </keep-alive>
+                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
+                </keep-alive>
 
             </ul>
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
@@ -34,6 +49,7 @@ var vm1 = new Vue({
         isActiveCo:false,
         isActiveApi:false,
         isActiveRs:false,
+        tabs:[],
         user_level:3
     },
     created(){
@@ -75,12 +91,20 @@ var vm1 = new Vue({
          axios.get('/getUserLevel/',{params:{ username:this.getCookie("usename")}})
              .then(resp =>{
                  console.log(resp.data);
-                 this.user_level = resp.data.user_level
+                 this.user_level = resp.data.user_level;
+                 this.showTabs(resp.data.user_level);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
 
-    }
+    },
+        showTabs(params){
+            if(params!==3){
+                this.tabs=[{name:"首页",active:true},{name:"单接口",active:false},
+        {name:"项目管理",active:false},{name:"接口用例集管理",active:false},
+        {name:"测试报告",active:false},{name:"权限管理",active:false}]
+            }
+        }
         }
 })
 </script>

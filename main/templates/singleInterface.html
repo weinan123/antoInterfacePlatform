@@ -776,9 +776,13 @@ var vm = new Vue({
              console.log(this.data_to_send);
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
-             for(var c=0;c<this.data_to_send["bodyinfor"]["datas"].length;c++){
-                body_str =body_str+JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
-            }
+             if(this.data_to_send["bodyinfor"]["datas"]===""){
+                 body_str = ""
+             }else {
+                 for (var c = 0; c < this.data_to_send["bodyinfor"]["datas"].length; c++) {
+                     body_str = body_str + JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
+                 }
+             }
              console.log(body_str);
              var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+this.data_to_send["host"]+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
                                 "\n"+"请求参数："+body_str;
@@ -878,7 +882,7 @@ var vm = new Vue({
                 bodyArr.push(bodyinfor);
                 bodysData["datas"] = bodyArr;
             }else{
-                bodysData = {};
+                bodysData = {"datas":""};
             }
 
             var Screatinfor={

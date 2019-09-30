@@ -78,7 +78,7 @@
                             <li v-for="model in modelList" class="list-group-item " style="background-color: lightblue">{! model !}</li>
                         </ul>{% endcomment %}
 
-                    <div  class="col-md-12" style="margin-bottom: 5px">
+                    <div  class="col-md-12" style="margin-bottom: 5px;height: 300px">
                         <template v-for="item in modelList">
                         <label for="name" style="width: 100%">{! item.modelname !}:</label>
                         <template v-for="itemcase in item.allData">
@@ -88,12 +88,13 @@
                             </div>
                         </template>
                         </template>
-                     <div style="float: right">
+                    </div>
+                     <div style="float: right;margin: 10px;">
                         <input  type="checkbox" value="1" id="isTeam" :checked="selectAll" @click="choseAll($event)" >
                             <span >全选</span>
                         </div>
                     </div>
-      </div>
+
   </div>
         </div>
         <div class="form-group">
@@ -195,14 +196,16 @@ var vm = new Vue({
             console.log(this.senderList)
         },
         checkemail(index,email){
-            this.indexsss=true;
+
             console.log(email);
-            var reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+            var reg = /^[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/;
             if(reg.test(email)){
+                this.indexsss=false;
                 this.styles={
                    display: "none",
                 }
             }else{
+                this.indexsss=true;
                 this.styles={
                     color: "red",
                     display:"block",

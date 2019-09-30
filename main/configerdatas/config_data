@@ -1,11 +1,10 @@
 [configerinfor]
-eviorment = Dev
+eviorment = Qa
 isreport = Y
 ismail = Y
-senderlist = , weinan@qq.com
-runcase = , 10, 13, 12, 15, 14, 17, 16, 1, 3, 2, 4, 9
+senderlist = , nan.wei@yff.com, ruru.yang@yff.com
+runcase = , 1, 5, 4, 6
 sechdel_time = 每周&15:00
-sendlist = ['weinann', 'hahhaha', 'shihshis']
 selectall = True
 
 [email]

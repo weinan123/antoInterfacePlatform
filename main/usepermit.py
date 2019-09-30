@@ -25,11 +25,18 @@ def getUserLevel(request):
 def getUserData(request):
     if request.method == 'GET':
         username = request.GET['username']
+        page_num = request.GET['page']
+        data_count =  request.GET['count']
+        print page_num,data_count
+        page_end = int(page_num)*int(data_count)
+        page_start = page_end-int(data_count)
+        print page_start,page_end
         depart_lever = users.objects.filter(username=username).values("depart_lever")
         user_group = users.objects.filter(username=username).values("group")
         depart_lever_value = depart_lever[0]["depart_lever"]
         if depart_lever_value==1:
-            allusers = users.objects.all()
+            allusers = users.objects.all()[page_start:page_end]
+            page_count = users.objects.all().count()
             json_list = []
             for i in allusers:
                 json_dict = {}
@@ -45,6 +52,7 @@ def getUserData(request):
                 json_dict["configer_permit"] = i.configer_permit
                 json_list.append(json_dict)
             resonseData = {
+                'page_count':page_count,
                 'datas': json_list,
                 'code': 0,
                 'info': 'success'
@@ -65,8 +73,8 @@ def getUserData(request):
             json_dict["batch_del"] = login_user.batch_del
             json_dict["configer_permit"] = login_user.configer_permit
             json_list.append(json_dict)
-            allusers = users.objects.filter(group=user_group[0]["group"],depart_lever=3,).all()
-
+            allusers = users.objects.filter(group=user_group[0]["group"],depart_lever=3,).all()[page_start:page_end]
+            page_count =users.objects.filter(group=user_group[0]["group"],depart_lever=3,).all().count()
             for i in allusers:
                 json_dict = {}
                 json_dict["id"] = i.id
@@ -81,12 +89,12 @@ def getUserData(request):
                 json_dict["configer_permit"] = i.configer_permit
                 json_list.append(json_dict)
             resonseData = {
+                'page_count': page_count,
                 'datas': json_list,
                 'code': 0,
                 'info': 'success'
             }
             return JsonResponse(resonseData, safe=False)
-
         elif depart_lever_value==3:
             resonseData = {
                 'datas': "login is user",
@@ -94,6 +102,14 @@ def getUserData(request):
                 'info': 'success'
             }
             return JsonResponse(resonseData, safe=False)
+    elif request.method=='POST':
+        page_count = users.objects.count()
+        x,y = divmod(page_count,14)
+        if y:
+            page_num =x+1
+        else:
+            page_num = x
+        return JsonResponse({"page_num":page_num}, safe=False)
 def delUserData(request):
     result = {}
     if request.method == 'POST':

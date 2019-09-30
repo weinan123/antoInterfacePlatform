@@ -73,5 +73,6 @@ urlpatterns = [
     url(r'^viewapiInfos/$', apiinfo.getapiInfos),
     url(r'^delUserData/$', usepermit.delUserData),
     url(r'^saveUserData/$', usepermit.saveUserData),
+    url(r'^getUserData/$', usepermit.getUserData),
 
 ]

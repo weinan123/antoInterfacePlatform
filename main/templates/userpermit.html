@@ -11,8 +11,8 @@
           <button type="submit" class="btn btn-success "  style="width: 40%" @click="saveData()">保存</button>
         </div>
     </div>
-        <div style="margin-left: 10px;margin-top: 20px;width: 90%" >
-    <table class="table table-bordered" >
+        <div style="margin-left: 10px;margin-top: 20px;width: 90%;height: 750px" >
+       <table class="table table-bordered" >
   <thead>
     <tr>
       <th class="col-xs-1" >编号</th>
@@ -25,9 +25,9 @@
       <th class="col-xs-1">操作</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="row" >
     <tr v-for="user,index in userList">
-      <td >{!index+1!}</td>
+      <td >{!index+1+count!}</td>
       <td >{! user.username !}</td>
       <td>{! user.department !}</td>
       <td>{! user.depart_name !}</td>
@@ -74,10 +74,13 @@
 
         </td>
     </tr>
-
   </tbody>
 </table>
         </div>
+        <div id="example" style="text-align: center">
+            <ul id="pageLimit">
+            </ul>
+            </div>
 
    <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 450px;margin: 75px auto">
@@ -162,23 +165,82 @@ data:function(){
         department:"请选择",
         depart_level:"请选择",
         group:"请选择",
-        userid:""
+        userid:"",
+        page_num:"",
+        username:vm.$data.login_user,
+        count:0
     }
 },
 created(){
-    this.getUserData()
+    //this.getUserData(1,14);
+    //this.getPageNum(this.username);
 
 
-   //this.changeChart(this.projectName)
 },
 mounted:function() {
-
-
+    this.getUserData(1,14);
+    this.getPageNum(this.username);
 },
 methods:{
-     getUserData(){
-         axios.get('/getUserData/',{params:{ username:vm.$data.login_user}})
+     showPaginator(username){
+            let self = this;
+            $('#pageLimit').bootstrapPaginator({
+            currentPage: 1,//当前的请求页面。
+            totalPages: this.page_num,//一共多少页。
+            size:"normal",//应该是页眉的大小。
+            bootstrapMajorVersion: 3,//bootstrap的版本要求。
+            alignment:"right",
+            numberOfPages:5,//一页列出多少数据。
+            itemTexts: function (type, page, current) {//如下的代码是将页眉显示的中文显示我们自定义的中文。
+                switch (type) {
+                case "first": return "首页";
+                case "prev": return "上一页";
+                case "next": return "下一页";
+                case "last": return "末页";
+                case "page": return page;
+                }
+            },
+             onPageClicked: function (event, originalEvent, type, page){
+                 var target = document.getElementById("row");
+                 var spinner = Spinner({top:'1'}).spin(target);
+                axios.get('/getUserData/',{params:{ username:username,page:page,count:14}})
              .then(resp =>{
+                 spinner.spin();
+                 for(var i=0;i<resp.data.datas.length;i++){
+                     if(resp.data.datas[i].configer_permit===false){
+                         resp.data.datas[i].config_true=false;
+                         resp.data.datas[i].config_false=true
+                     }else if(resp.data.datas[i].configer_permit===true){
+                          resp.data.datas[i].config_true=true;
+                         resp.data.datas[i].config_false=false
+                     }
+                 }
+                 console.log(resp.data.datas);
+                 self.count =(page-1)*14;
+                 this.userList=[];
+                 self.userList=resp.data.datas;
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+             }
+        });
+     },
+     getPageNum(username){
+           axios.post('/getUserData/')
+             .then(resp =>{
+                 console.log(resp.data);
+                 this.page_num = resp.data.page_num;
+                 this.showPaginator(username)
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+     },
+     getUserData(page,count){
+         var target = document.getElementById("row");
+         var spinner = Spinner({top:'1'}).spin(target);
+         axios.get('/getUserData/',{params:{ username:vm.$data.login_user,page:page,count:count}})
+             .then(resp =>{
+
                  for(var i=0;i<resp.data.datas.length;i++){
                      if(resp.data.datas[i].configer_permit===false){
                          resp.data.datas[i].config_true=false;
@@ -190,6 +252,7 @@ methods:{
                  }
                  console.log(resp.data.datas);
                  this.userList=resp.data.datas;
+                 spinner.spin();
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
@@ -246,10 +309,12 @@ methods:{
              this.userList[params].batch_run=e.target.checked;
          }else if(type==='configtrue' ){
               this.userList[params].config_true=e.target.checked;
-              this.userList[params].config_false=false
+              this.userList[params].config_false=false;
+              this.userList[params].configer_permit=true
          }else if(type==='configfalse' ){
               this.userList[params].config_false=e.target.checked;
-              this.userList[params].config_true=false
+              this.userList[params].config_true=false;
+              this.userList[params].configer_permit=false
          }
          console.log(this.userList);
     },
