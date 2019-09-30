@@ -55,7 +55,7 @@
       <label class="col-sm-1 " for="name" style="width: 13%">收件人</label>
       <button type="submit" class="btn btn-primary btn-sm" @click="addSender()">添加收件人</button>
        <template v-for="sender,index in senderList">
-       <div v-if="index>0" style="margin-top: 7px;margin-left: 9.3%">
+       <div v-if="index>0" style="margin-top: 7px;margin-left: 13%">
            <span  for="name">收件人{!index!}:</span>
             <input type="text"  class="form-control" @blur="checkemail(index,senderList[index])" id="name" placeholder="请输入收件人邮箱" v-model="senderList[index]">
             </div>
@@ -114,7 +114,7 @@
     </div>
     </div>
         <div class="form-group" style="margin-top: 75px">
-        <div class="col-sm-1"></div>
+        <div class="col-sm-2"></div>
         <div class="col-sm-2">
             <button type="submit" class="btn btn-success btn-block" @click="saveConfig()">保存设置</button>
         </div>
