@@ -229,10 +229,12 @@ def runsingle(request):
         if depend_flag == "" or depend_flag is None:
             print("not depend")
         else:
-            depend_list = json.loads(depend_flag)
+            depend_list = depend_flag
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
                 dependData = getDependData.getdepands(depend_list, depend_data)
+            else:
+                print("depend data is None.")
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
         host = querylist.host
