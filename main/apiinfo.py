@@ -226,6 +226,8 @@ def runsingle(request):
             bodyinfor = json.loads(bodyinfor)
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
+
+        dependData = []
         if depend_flag == "" or depend_flag is None:
             print("not depend")
         else:
@@ -241,14 +243,14 @@ def runsingle(request):
         url = host + send_url
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
+        if len(dependData) != 0:
+            for dd in dependData:
+                send_body[dd.keys()[0]] = dd.values()[0]
         print(send_body)
         isRedirect = query.isRedirect
-        # isScreat = Screatinfor["isScreat"]
         isScreat = query.isScreat
         key_id = query.key_id
         secret_key = query.secret_key
-        # key_id = Screatinfor["key_id"]
-        # secret_key = Screatinfor["secret_key"].encode("utf-8")
         timestamp = int(time.time())
         assertinfo = str(query.assertinfo)
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
