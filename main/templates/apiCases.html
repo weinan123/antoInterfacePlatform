@@ -1,39 +1,7 @@
 {% extends 'index.html' %}
 {% block title %}<title> 接口场景用例</title> {% endblock %}
-{% block content %}
-    <div class="col-md-10 row" id="apiCases" style="margin-left: 15%">
-        <div class="col-md-5" style="width:90%;margin: 25px;">
-            <div class="col-md-1">
-                <a href="/singleInterface/addapi/">
-                    <button type="button" class="btn btn-primary">新建用例</button>
-                </a>
-            </div>
-            <div class="col-md-6">
-                <label class="col-sm-2" style="margin-right: -20px;margin-top: 8px;">选择项目：</label>
-                <div class="col-sm-3" style="margin-right: 30px;">
-                    <select class="form-control" v-model="projectName" @change="selectPro($event)">
-                        <option selected value="">请选择</option>
-                        <option  v-for="item in projectList" :value="item">{! item !}</option>
-                    </select>
-                </div>
-                <label class="col-sm-2" style="margin-right: -20px;margin-top: 8px;">选择模块：</label>
-                <div class="col-sm-3">
-                    <select class="form-control" v-model="moduleName" @change="selectModu($event)">
-                        <option selected value="">请选择</option>
-                        <option  v-for="item in moduleList" :value="item">{! item !}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4"  id="search" style="float: right;">
-                <div class="col-md-8" style="margin-left: 100px;">
-                    <input type="text" class="form-control" name="search" v-model="searchinfo"
-                            placeholder="请输入搜索接口名称的文本" @change="search()">
-                </div>
-            </div>
-        </div>
 
-        <div style="margin:30px">
-            <div id="tableBody" class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;" >
+{% block content %}
     <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 row" id="apiCases" style="margin-left: 15%">
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="width:90%;margin: 20px;">
             <div class="col-md-3 cl-sm-3 cl-xs-3"  id="search" style="padding-left: 0px;">
@@ -74,7 +42,7 @@
                         <th>操作</th>
                     </tr>
                     </thead>
-                    <tbody ref="tables" >
+                    <tbody ref="tables" id="tableBody">
                         <tr v-for="(info,index) in result.data">
                             <td><label class="form-check-label">
                                 <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
@@ -92,9 +60,6 @@
                                 <p v-else>{! info.lastruntime !}</p>
                             </td>
                             <td>{! info.owing !}</td>
-
-                            <td>
-                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)">查看</button>
                             <td style="width: 25%">
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
@@ -111,8 +76,8 @@
                     <label class="form-check-label">
                         <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
-                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;">批量执行</button>
-                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;" v-if="permission_run">批量执行</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;" v-if="permission_del">批量删除</button>
                 </div>
                 <div>
                     <label class="form-check-label">
@@ -149,7 +114,6 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
-
     </div>
 {% endblock %}
 
@@ -173,6 +137,10 @@
             viewapiInfos: "",
             headers: {},
             bodys: {},
+            permission:{},
+            permission_run:false,
+            permission_del:false,
+            permission_view:true,
         },
         created(){
             vm1.$data.isActiveSi = false;
@@ -180,15 +148,31 @@
             vm1.$data.isActiveAl = false;
             vm1.$data.isActiveApi = true;
             vm1.$data.isActiveRs = false;
+            axios.get('/getPermission/')
+                    .then(resp =>{
+                        console.log(resp.data);
+                        this.permission = resp.data.permits;
+                        console.log(this.permission);
+                        this.permission_run = this.permission.permission_run;
+                        this.permission_del = this.permission.permission_del;
+                        this.permission_view = this.permission.permission_view;
+                    }).catch(err=> {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                });
+        },
+        mounted(){
             this.getlist();
             this.getProinfo();
         },
         methods:{
             getlist(){
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner({top:"1"}).spin(target);
                 axios.get('/apiAllCases/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
+                        spinner1.spin();
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
@@ -486,6 +470,8 @@
                     })
             },
             viewapi(id){
+                var target = document.getElementById("infos");
+                var spinner1 = Spinner({top:"1",left:"2"}).spin(target);
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,
@@ -513,7 +499,7 @@
                         }
                         console.log("header:", this.headers);
                         console.log("body:", this.bodys);
-
+                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
