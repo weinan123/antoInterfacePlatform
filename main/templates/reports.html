@@ -38,7 +38,8 @@
                         <td>{! info.executor !}</td>
                         <td>
                             <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
-                            <button type="button" class="btn btn-sm btn-primary" @click="loadreport(info.report_localName)">下载</button>
+                            <a :href="['/viewreport/?report='+info.report_localName]" download ><button type="button" class="btn btn-sm btn-primary">下载</button>
+                            </a>
                             <button type="button" class="btn btn-sm btn-danger" @click="delreport(info.id)">删除</button>
                         </td>
                     </tr>
@@ -201,9 +202,6 @@ var vmRs = new Vue({
                     }
                 }
             },
-        loadreport(path){
-            window.open("\\main"+path);
-        },
 
     }
 })

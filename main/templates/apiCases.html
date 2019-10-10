@@ -1,6 +1,5 @@
 {% extends 'index.html' %}
 {% block title %}<title> 接口场景用例</title> {% endblock %}
-
 {% block content %}
     <div class="col-md-10 row" id="apiCases" style="margin-left: 15%">
         <div class="col-md-5" style="width:90%;margin: 25px;">
@@ -35,6 +34,35 @@
 
         <div style="margin:30px">
             <div id="tableBody" class="form-horizontal" role="form" style="margin-right:100px;margin-top: 20px;" >
+    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 row" id="apiCases" style="margin-left: 15%">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="width:90%;margin: 20px;">
+            <div class="col-md-3 cl-sm-3 cl-xs-3"  id="search" style="padding-left: 0px;">
+                <input type="text" class="form-control" name="search" v-model="searchinfo"
+                            placeholder="请输入搜索接口名称的文本" @change="search()">
+            </div>
+            <label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <select class="form-control" v-model="projectName" @change="selectPro($event)">
+                    <option selected value="">请选择</option>
+                    <option  v-for="item in projectList" :value="item">{! item !}</option>
+                </select>
+            </div>
+            <label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择模块：</label>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <select class="form-control" v-model="moduleName" @change="selectModu($event)">
+                    <option selected value="">请选择</option>
+                    <option  v-for="item in moduleList" :value="item">{! item !}</option>
+                </select>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="align-content: right">
+                <a href="/singleInterface/addapi/">
+                    <button type="button" class="btn btn-primary">新建用例</button>
+                </a>
+            </div>
+        </div>
+
+        <div style="margin:2%">
+            <div class="form-horizontal" role="form" style="margin-right:10%;margin-top: 20px;" >
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -64,8 +92,11 @@
                                 <p v-else>{! info.lastruntime !}</p>
                             </td>
                             <td>{! info.owing !}</td>
+
                             <td>
                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)">查看</button>
+                            <td style="width: 25%">
+                                <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
                                         <button type="button" class="btn btn-sm btn-primary">编辑</button>
                                 </a>
