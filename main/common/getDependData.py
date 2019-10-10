@@ -59,7 +59,8 @@ def getdepands(depend_list, depend_data):
         print(key)
         # 这里拿依赖的数据
         value = re.findall("'%s':'(.*?)'" % str(key), resp.text)
-        data_dict[tid] = value
-        datas.append(data_dict)
+        if len(value) != 0:
+            data_dict[tid] = value[0]
+            datas.append(data_dict)
         print datas
     return datas

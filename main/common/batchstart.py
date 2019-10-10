@@ -4,7 +4,7 @@ from libs import HTMLTestRunner,sendMail
 import batchUntils
 from main.models import apiInfoTable,interfaceList
 from main.untils import until,sendRequests
-from main.common import authService
+from main.common import authService, getDependData
 import time
 import json
 
@@ -55,6 +55,20 @@ class RunTest(unittest.TestCase):
         bodyinfor = query.body
         if bodyinfor != "" or bodyinfor != "{}":
             bodyinfor = json.loads(bodyinfor)
+
+        # 判断是否有关联用例
+        depend_flag = query.depend_caseId
+        dependData = []
+        if depend_flag == "" or depend_flag is None:
+            print("not depend")
+        else:
+            depend_list = depend_flag
+            depend_data = query.depend_casedata
+            if depend_data != "" or depend_data != "{}":
+                dependData = getDependData.getdepands(depend_list, depend_data)
+            else:
+                print("depend data is None.")
+
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
         host = querylist.host

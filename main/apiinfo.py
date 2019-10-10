@@ -454,10 +454,20 @@ def getapiInfos(request):
 
 
 def getAllCases(request):
+    # 根据分页获取数据
+    pagenum = request.GET["pageNum"]
+    count = request.GET["pageCount"]
+    startidx = (int(pagenum) - 1) * int(count)
+    endidx = int(pagenum) * int(count)
+    print(startidx, endidx)
+    apilist2 = apiInfoTable.objects.all().order_by("apiID")[startidx:endidx]
+    print("apilist2:", apilist2)
+    count = apiInfoTable.objects.all().count()
+    print(count)
     # 使用get方法只获取一条匹配的数据，若有多条会报错,有多条使用filter
-    apilist = apiInfoTable.objects.all()
+    # apilist = apiInfoTable.objects.all().order_by("apiID")
     json_list = []
-    for i in apilist:
+    for i in apilist2:
         json_dict = {}
         json_dict["id"] = i.apiID
         json_dict["name"] = i.apiName
@@ -479,7 +489,8 @@ def getAllCases(request):
     result = {
         'data': json_list,
         'code': 0,
-        'info': 'success'
+        'info': 'success',
+        'totalCount': count,
     }
     # return render(request, 'apiInfo.html', {'datas': data})
     return JsonResponse(result)
