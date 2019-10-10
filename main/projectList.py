@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from django import forms
 import re
 
-
 def addProjectList(request):
     result = {
         'code': -1,
@@ -80,7 +79,8 @@ def projectListInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
+        projectName = request.GET.get('projectName')
+        resp = interfaceList.objects.filter(projectName=projectName).values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
         respList = list(resp)
         for i in range(len(respList)):
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
@@ -108,6 +108,27 @@ def projectListInfo(request):
         #     'code': 0,
         #     'info': 'success'
         # }
+    return JsonResponse(result, safe=False)
+
+def firstProjectListInfo(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用GET方法查询！'
+    }
+    if request.method == 'GET':
+        resp = interfaceList.objects.values("projectName")
+        respList = list(resp)
+        seen = set()
+        for i in range(len(respList)):
+            projectName=respList[i]['projectName']
+            if projectName not in seen:
+                seen.add(projectName)
+        JsonList = list(seen)
+        result = {
+            'data': JsonList,
+            'code': 0,
+            'info': 'success'
+        }
     return JsonResponse(result, safe=False)
 
 

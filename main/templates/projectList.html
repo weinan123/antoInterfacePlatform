@@ -8,7 +8,8 @@
     <div class="col-md-10 row" id="projectList" style="margin-left: 15%">
         <ul class="breadcrumb">
             <li><a href="/index/">首页</a></li>
-            <li><a href="/projectList/">项目管理</a></li>
+            <li><a href="/firstProjectList/">项目管理</a></li>
+            <li>{! projectNameTitle !}</li>
         </ul>
         <div class="row" style="width:100%;">
             <div class="col-md-4" style="width:100%;">
@@ -170,8 +171,8 @@
 
                 </div>
             </div>
-            <div style="width:100%;margin-left: 15px;height: 100%"  >
-                <table class="table table-hover" >
+            <div style="width:100%;margin-left: 15px;height: 100%">
+                <table class="table table-hover">
                     <thead>
                     <tr>
                         <th>项目名称</th>
@@ -183,7 +184,7 @@
                         <th>批量删除</th>
                     </tr>
                     </thead>
-                    <tbody id="row" >
+                    <tbody id="row">
                     <tr v-for="item in list">
                         <td>{! item.projectName !}</td>
                         <td>{! item.moduleName !}</td>
@@ -294,6 +295,7 @@
 {% block vuejs1 %}
 
     <script type="text/javascript">
+        var pro = "";
         var vm2 = new Vue({
             delimiters: ['{!', '!}'],
             el: '#projectList',
@@ -301,6 +303,7 @@
             data() {
                 projectBatchDelete = true;
                 return {
+                    projectNameTitle: '',
                     projectName: '',
                     moduleName: '',
                     host: '',
@@ -321,10 +324,15 @@
                 vm1.$data.isActiveApi = false;
             },
             mounted() {
+                let id = this.getparam('projectName');
+                {#let id = this.$route.query.projectName;#}
+                pro = id;
+                this.projectNameTitle = pro;
+
                 var target = document.getElementById("row");
-                var spinner = Spinner({top:'1'}).spin(target);
+                var spinner = Spinner({top: '1'}).spin(target);
                 axios
-                    .get('/projectListInfo/')
+                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
                         spinner.spin();
@@ -334,6 +342,19 @@
                 })
             },
             methods: {
+                getparam(str) {
+                    var argsstr = decodeURI(location.search.substr(1));
+                    var param = {};
+                    console.log(argsstr);
+                    if (argsstr !== "") {
+                        var strs = argsstr.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            param[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    return param[str];
+                },
+
                 projectBatchDelete() {
                     var target = document.getElementById("row");
                     var spinner = Spinner({top: '1'}).spin(target);
