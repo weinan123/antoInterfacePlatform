@@ -116,6 +116,9 @@ def projectList(request):
     # return render(request, 'projectList.html', {'form': form})
     return render(request, 'projectList.html')
 
+def firstProjectList(request):
+     return render(request, 'firstProjectList.html')
+
 
 def projectView(request):
     if request.method == 'GET':

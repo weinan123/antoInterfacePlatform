@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import url
 from main import views as main
-from main import apiinfo,report
-from main import projectList,configer,usepermit
+from main import apiinfo, report
+from main import projectList, configer, usepermit
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^logout/$', main.logout, ),
     url(r'^register/$', main.register),
     url(r'^projectList/$', projectList.projectList),
+    url(r'^firstProjectList/$', projectList.firstProjectList),
     url(r'^addProjectList/$', projectList.addProjectList),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^projectView/$', projectList.projectView),
@@ -58,7 +59,7 @@ urlpatterns = [
     url(r'^reportList/$', report.getReportList),
     url(r'^reportDelete/$', report.reportDelete),
     url(r'^reportbatchdel/$', report.reportbatchDelete),
-    url(r'^singleInterface/addapi/$',main.singleInterface),
+    url(r'^singleInterface/addapi/$', main.singleInterface),
     url(r'^apiCases/$', apiinfo.apiCases),
     url(r'^apiAllCases/$', apiinfo.getAllCases),
     url(r'^projectInfos/$', apiinfo.getProjInfos),
