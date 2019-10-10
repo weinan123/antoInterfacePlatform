@@ -7,7 +7,7 @@
             <h3>批量执行结果报告</h3>
         </div>
         <div class="form-horizontal" role="form" style="margin:25px">
-            <table class="table table-bordered" ref="tables">
+            <table class="table table-bordered" ref="tables" id="tableBody">
                 <thead>
                 <tr>
                     <th>序号</th>
@@ -70,13 +70,18 @@ var vmRs = new Vue({
         vm1.$data.isActiveCo = false;
         vm1.$data.isActiveApi = false;
         vm1.$data.isActiveRs = true;
+    },
+    mounted(){
         this.getreportList();
     },
     methods: {
         getreportList() {
+            var target = document.getElementById("tableBody");
+            var spinner1 = Spinner({top:"1"}).spin(target);
             axios.get('/reportList/')
                 .then(resp => {
                     this.reportList = resp.data.datas;
+                    spinner1.spin();
                 }).catch(err => {
                 console.log('请求失败:' + err.status + ',' + err.statusText);
             })

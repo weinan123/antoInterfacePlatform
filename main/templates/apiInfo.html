@@ -54,7 +54,7 @@
 
         <div id="start" style="margin:30px">
             <div class="form-horizontal" role="form" style="margin-right:80px;margin-top: 20px;">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="tableBody">
                     <thead>
                     <tr>
                         <th>序号</th>
@@ -155,17 +155,21 @@
             bodys: {},
         },
         created(){
-            let id=this.getparam('pid');
-            proid = id;
-            this.getlist(id);
             vm1.$data.isActiveSi = false;
             vm1.$data.isActiveIn = false;
             vm1.$data.isActiveAl = true;
             vm1.$data.isActiveApi = false;
             vm1.$data.isActiveRs = false;
         },
+        mounted(){
+            let id=this.getparam('pid');
+            proid = id;
+            this.getlist(id);
+        },
         methods:{
             getlist(id){
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner({top:"1"}).spin(target);
                 axios.get('/apiInfo/',{
                     params: {
                         pid:id
@@ -174,6 +178,7 @@
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
+                        spinner1.spin();
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
@@ -404,6 +409,8 @@
                 }
             },
             viewapi(id){
+                var target = document.getElementById("infos");
+                var spinner1 = Spinner({top:"1",left:"2"}).spin(target);
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,
@@ -429,6 +436,7 @@
                                 this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
                             }
                         }
+                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
@@ -529,18 +537,21 @@
         },
         methods: {
             search(){
-                    axios.get('/searchinfo/', {
-                    params: {
-                        listid: this.listid,
-                        searinfo:this.searchinfo,
-                    },
-                    })
-                    .then(resp => {
-                        console.log(resp.data);
-                        apilist.$data.result = resp.data;
-                    }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner({top:"1"}).spin(target);
+                axios.get('/searchinfo/', {
+                params: {
+                    listid: this.listid,
+                    searinfo:this.searchinfo,
+                },
+                })
+                .then(resp => {
+                    console.log(resp.data);
+                    apilist.$data.result = resp.data;
+                    spinner1.spin();
+                }).catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                })
             }
         }
     });

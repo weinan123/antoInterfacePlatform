@@ -175,12 +175,28 @@ def projectEdit(request):
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
         host = request.POST.get('host')
-        edit = interfaceList.objects.get(id=id)
-        edit.projectName = projectName
-        edit.moduleName = moduleName
-        edit.host = host
-        edit.save()
-        return HttpResponseRedirect('/projectList/')
+        resp = interfaceList.objects.filter(id=id).values("projectName", "host", "moduleName")
+        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName and resp[0]['host'] == host):
+            code = -1
+            info = '未做任何修改！'
+            result = {
+                'code': code,
+                'info': info
+            }
+            return JsonResponse(result, safe=False)
+        else:
+            edit = interfaceList.objects.get(id=id)
+            edit.projectName = projectName
+            edit.moduleName = moduleName
+            edit.host = host
+            edit.save()
+            code = 0
+            info = '修改成功！'
+            result = {
+                'code': code,
+                'info': info
+            }
+            return JsonResponse(result, safe=False)
 
 
 # def projectSort(request):
@@ -324,6 +340,16 @@ def projectImport(request):
                     url = data_list[2]
                     headers = data_list[4]
                     body = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
+                    print statuscode
                     user = request.session.get('username')
                     api_infos = {
                         'apiName': apiname,
@@ -334,7 +360,8 @@ def projectImport(request):
                         'lastRunResult': 0,
                         'lastRunTime': None,
                         'creator': user,
-                        'owningListID': int(listid)
+                        'owningListID': int(listid),
+                        'assertinfo': statuscode
                     }
                     try:
                         s = apiInfoTable.objects.create(**api_infos)
