@@ -27,7 +27,7 @@
                         <td><label class="form-check-label">
                                 <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
                             </label>
-                            {! index+1 !}</td>
+                            {! index+ pageCount*(pageNum-1) +1 !}
                         <td>{! info.report_runName !}</td>
                         <td>{! info.startTime !}</td>
                         <td>{! info.endTime !}</td>
@@ -45,6 +45,13 @@
                     </tr>
                 </tbody>
             </table>
+            <div style="margin: -6px auto;width: 10%" v-if="pageview">
+                <ul class="pagination">
+                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
+                    <li><a>{! pageNum !}</a></li>
+                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
+                </ul>
+            </div>
             <div ref="selall">
                 <label class="form-check-label">
                     <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
@@ -63,6 +70,12 @@ var vmRs = new Vue({
     data: {
         reportList: "",
         delList:[],
+        pageNum:1,
+        disflag_left:"disabled",
+        disflag_right:"",
+        pageCount: 10,
+        totalCount:0,
+        pageview: false,
     },
     created() {
         vm1.$data.isActiveSi = false;
@@ -79,9 +92,22 @@ var vmRs = new Vue({
         getreportList() {
             var target = document.getElementById("tableBody");
             var spinner1 = Spinner({top:"1"}).spin(target);
-            axios.get('/reportList/')
+            axios.get('/reportList/', {
+                params:{
+                        pageNum: this.pageNum,
+                        pageCount:this.pageCount,
+                    }
+            })
                 .then(resp => {
                     this.reportList = resp.data.datas;
+                    this.totalCount = resp.data.totalCount;
+                    if((this.totalCount / this.pageCount) > 1){
+                        this.pageview = true;
+                    }
+                    {#if(this.totalCount < this.pageCount){#}
+                    {#    this.disflag_right = "disabled";#}
+                    {# }#}
+
                     spinner1.spin();
                 }).catch(err => {
                 console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -201,6 +227,30 @@ var vmRs = new Vue({
                             })
                     }
                 }
+            },
+        addPage(num){
+                this.pageNum = num +1;
+                if(this.pageNum > 1){
+                    this.disflag_left = "";
+                }
+                let totalNums = this.totalCount / this.pageCount;
+                if(this.pageNum >= totalNums){
+                    this.disflag_right = "disabled";
+                }
+                this.result = "";
+                this.getlist();
+            },
+        cutPage(num){
+                this.pageNum = num -1;
+                if(this.pageNum === 1){
+                    this.disflag_left = "disabled";
+                }
+                let totalNums = this.totalCount / this.pageCount;
+                if(this.pageNum < totalNums){
+                    this.disflag_right = "";
+                }
+                this.result = "";
+                this.getlist();
             },
 
     }

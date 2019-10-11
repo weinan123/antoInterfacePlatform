@@ -136,7 +136,7 @@
             projectName:"",
             moduleList:[],
             moduleName:"",
-            searchinfo : '',
+            searchinfo : "",
             listid:proid,
             allModules:"",
             reportflag: true,
@@ -173,16 +173,20 @@
                 });
         },
         mounted(){
-            this.getlist();
+            this.getlist(1);
             this.getProinfo();
         },
         methods:{
-            getlist(){
+            getlist(number){
+                let pagenumber = number;
                 var target = document.getElementById("tableBody");
                 var spinner1 = Spinner({top:"1"}).spin(target);
                 axios.get('/apiAllCases/',{
                     params:{
-                        pageNum: this.pageNum,
+                        searchinfo:this.searchinfo,
+                        moduleName: this.moduleName,
+                        projectName: this.projectName,
+                        pageNum: pagenumber,
                         pageCount:this.pageCount,
                     }
                 })
@@ -190,8 +194,16 @@
                         console.log(resp.data);
                         this.result = resp.data;
                         this.totalCount = resp.data.totalCount;
-                        if((this.totalCount / this.pageCount) > 1){
+                        if((this.totalCount / this.pageCount) > 1)
+                        {
                             this.pageview = true;
+                        }else{
+                            this.pageview = false;
+                        }
+                        this.pageNum = pagenumber;
+                        if(this.pageNum === 1){
+                            this.disflag_left = "disabled";
+                            this.disflag_right = "";
                         }
                         spinner1.spin();
                     }).catch(err=> {
@@ -422,26 +434,9 @@
                 }
             },
             search(){
-                var target = document.getElementById("tableBody");
-                var spinner1 = Spinner().spin(target);
-                axios.get('/namesearch/', {
-                params: {
-                    searchinfo:this.searchinfo,
-                    moduleName: this.moduleName,
-                    projectName: this.projectName,
-                },
-                })
-                .then(resp => {
-                    console.log(resp.data);
-                    this.result = resp.data;
-                    spinner1.spin();
-                }).catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
+                this.getlist(1);
             },
             selectPro(e){
-                var target = document.getElementById("tableBody");
-                var spinner1 = Spinner().spin(target);
                 let selProj = e.target.value;
                 let allModules = this.allModules;
                 if(this.moduleList.length!==0){
@@ -454,41 +449,13 @@
                         this.moduleList.push(allModules[q]["moduleName"]);
                     }
                 }
-                console.log(this.moduleList);
-                axios.get('/searchproj/', {
-                    params: {
-                        selproj: selProj,
-                        searchinfo: this.searchinfo,
-                    },
-                    })
-                    .then(resp => {
-                        console.log(resp.data);
-                        this.result = resp.data;
-                        spinner1.spin();
-                    }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
+                this.getlist(1);
             },
             selectModu(e){
-                var target = document.getElementById("tableBody");
-                var spinner1 = Spinner().spin(target);
                 let selModu = e.target.value;
                 let selProj = this.projectName;
                 console.log(selModu,selProj);
-                axios.get('/searchModu/', {
-                    params: {
-                        selproj: selProj,
-                        selmodu:selModu,
-                        searchinfo: this.searchinfo,
-                    },
-                    })
-                    .then(resp => {
-                        console.log(resp.data);
-                        this.result = resp.data;
-                        spinner1.spin();
-                    }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
+                this.getlist(1);
             },
             viewapi(id){
                 var target = document.getElementById("infos");
@@ -535,7 +502,7 @@
                     this.disflag_right = "disabled";
                 }
                 this.result = "";
-                this.getlist();
+                this.getlist(this.pageNum);
             },
             cutPage(num){
                 this.pageNum = num -1;
@@ -547,7 +514,7 @@
                     this.disflag_right = "";
                 }
                 this.result = "";
-                this.getlist();
+                this.getlist(this.pageNum);
             },
         }
     });
