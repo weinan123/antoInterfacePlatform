@@ -1,43 +1,47 @@
 {% extends 'index.html' %}
 {% block title %}
-    <title> 项目信息 </title>
+    <title xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"> 项目信息 </title>
     <style type="text/css">
         .customButton {
             background-color: #428bca;
             color: white;
             font-size: 40px;
-            width: 30%;
+            width: 300px;
             height: 180px;
-            margin: 40px;
+            margin: 20px;
         }
 
         .createProjectButton {
             background-color: grey;
             color: lightgrey;
             font-size: 40px;
-            width: 30%;
+            width: 300px;
             height: 180px;
-            margin: 40px;
+            margin: 20px;
         }
     </style>
 {% endblock %}
 {% block navbar %}
 {% endblock %}
 {% block content %}
-    <div class="col-md-10 row" id="projectList" style="margin-left: 15%;height: 100%;position: fixed;">
+    <div class="col-md-10 row" id="projectList" style="margin-left: 15%;">
         <ul class="breadcrumb">
             <li><a href="/index/">首页</a></li>
             <li><a href="/firstProjectList/">项目管理</a></li>
         </ul>
 
-        <div class="row" id="row" style="margin: auto;justify-content:center;display:flex;align-items: center;height: 50%;">
-
-            <button v-for="item in list" type="button" class="customButton" @click="moduleInfo(item)" v-bind:style="{ visibility: isHidden }">
-                {! item !}
-            </button>
-            <button type="button" class="createProjectButton" v-bind:style="{ visibility: isHidden }">
-                新建
-            </button>
+        <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;">
+            <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6" style="text-align:center;">
+                <button type="button" class="customButton" @click="moduleInfo(item)"
+                        v-bind:style="{ visibility: isHidden }">
+                    {! item !}
+                </button>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6" style="text-align:center;">
+                <button type="button" class="createProjectButton" v-bind:style="{ visibility: isHidden }">
+                    新建
+                </button>
+            </div>
 
         </div>
     </div>
@@ -93,7 +97,7 @@
             },
             methods: {
                 moduleInfo(projectName) {
-                    window.location.href='/projectList?projectName='+projectName;
+                    window.location.href = '/projectList?projectName=' + projectName;
                 },
             }
         })
