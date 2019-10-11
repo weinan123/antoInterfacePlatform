@@ -36,12 +36,7 @@ urlpatterns = [
     url(r'^projectEdit/$', projectList.projectEdit),
     url(r'^singleInterface/$', main.singleInterface),
     url(r'^sendRequest/$', main.sendRequest),
-    url(r'^apiInfo/$', apiinfo.allinfo),
-    url(r'^apiInfopage/$', apiinfo.allinfopage),
-    url(r'^addApi/$', apiinfo.addApi),
     url(r'^apidelete/$', apiinfo.apidel),
-    url(r'^searchinfo/$', apiinfo.searchapi),
-    url(r'^getlistpath/$', apiinfo.getlistpath),
     url(r'^batchdel/$', apiinfo.batchdel),
     url(r'^runsingle/$', apiinfo.runsingle),
     url(r'^batchrun/$', apiinfo.batchrun),
@@ -64,9 +59,6 @@ urlpatterns = [
     url(r'^apiCases/$', apiinfo.apiCases),
     url(r'^apiAllCases/$', apiinfo.getAllCases),
     url(r'^projectInfos/$', apiinfo.getProjInfos),
-    url(r'^searchproj/$', apiinfo.searchproj),
-    url(r'^searchModu/$', apiinfo.searchModu),
-    url(r'^namesearch/$', apiinfo.namesearch),
     url(r'^viewreport/$', report.viewReport),
     url(r'^getprojectCase/$', configer.getprojectCase),
     url(r'^userPermit/$', usepermit.userpermit),
@@ -76,7 +68,8 @@ urlpatterns = [
     url(r'^delUserData/$', usepermit.delUserData),
     url(r'^saveUserData/$', usepermit.saveUserData),
     url(r'^getUserData/$', usepermit.getUserData),
-    url(r'^getPermission/$', apiinfo.getPermission)
+    url(r'^getPermission/$', apiinfo.getPermission),
+    url(r'^getProjectInfos/$', apiinfo.getProjectInfos),
 
 
 ]

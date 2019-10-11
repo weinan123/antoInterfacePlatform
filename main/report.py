@@ -11,7 +11,15 @@ def batchReports(request):
 def getReportList(request):
     result = {}
     if request.method == 'GET':
-        allList = reports.objects.all().order_by("-startTime")
+
+        # 根据分页获取数据
+        pagenum = request.GET["pageNum"]
+        count = request.GET["pageCount"]
+        startidx = (int(pagenum) - 1) * int(count)
+        endidx = int(pagenum) * int(count)
+
+        allList = reports.objects.all().order_by("-startTime")[startidx:endidx]
+        count = reports.objects.all().count()
         json_list = []
         for i in allList:
             json_dict = {}
@@ -29,7 +37,8 @@ def getReportList(request):
         result = {
             'datas': json_list,
             'code': 0,
-            'info': 'success'
+            'info': 'success',
+            'totalCount': count,
         }
     return JsonResponse(result)
 
