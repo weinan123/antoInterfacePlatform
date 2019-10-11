@@ -11,43 +11,6 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-def allinfo(request):
-    proid = request.GET['pid']
-    print("pid:%s" % proid)
-    # 使用get方法只获取一条匹配的数据，若有多条会报错,有多条使用filter
-    apilist = apiInfoTable.objects.filter(owningListID=proid)
-    print("apilist:%s." % apilist)
-    json_list = []
-    for i in apilist:
-        json_dict = {}
-        json_dict["id"] = i.apiID
-        json_dict["name"] = i.apiName
-        if i.lastRunResult == 0:
-            json_dict["lastrunrslt"] = 0
-        else:
-            json_dict["lastrunrslt"] = i.lastRunResult
-        if i.lastRunTime is None:
-            json_dict["lastruntime"] = 'null'
-        else:
-            json_dict["lastruntime"] = i.lastRunTime.strftime('%Y-%m-%d %H:%M:%S')
-        json_dict["owing"] = i.creator
-        json_dict["listid"] = i.owningListID
-        json_dict["method"] = i.method
-        json_dict["url"] = i.url
-        # data = json.dumps(json_dict)       #转化为json字符串
-        json_list.append(json_dict)
-    result = {
-        'data': json_list,
-        'code': 0,
-        'info': 'success'
-    }
-    # return render(request, 'apiInfo.html', {'datas': data})
-    return JsonResponse(result)
-
-
-def allinfopage(request):
-    return render(request, "apiInfo.html")
-
 
 def apiCases(request):
     return render(request, "apiCases.html")
@@ -66,39 +29,6 @@ def getPermission(request):
                   }
                   }
     return JsonResponse(permission)
-
-
-def addApi(request):
-    result = {}
-    if request.method == 'POST':
-        """ post获取不到前台传递过来的数据，原因是数据没有序列化，1.前台解决：使用URLSearchParams传递参数；后端解决（推荐）：request的json数据是封装在body中的，应该从body中获取"""
-        req = json.loads(request.body)["params"]
-        listid = req['listid']
-        apiname = req['apiname']
-        print apiname
-        if (apiname == "") or (apiname is None):
-            result = {'code': -2, 'info': '名称不能为空'}
-            return JsonResponse(result)
-        user = req['user']
-        api_infos = {
-            'apiName': apiname,
-            'lastRunResult': 0,
-            'lastRunTime': None,
-            'creator': user,
-            'owningListID': int(listid)
-        }
-        print(api_infos)
-        try:
-            s = apiInfoTable.objects.create(**api_infos)
-            allinfo = apiInfoTable.objects.all()
-            print(allinfo)
-            s.save()
-        except BaseException as e:
-            print(" SQL Error: %s" % e)
-            result = {'code': -1,'info':'sql error'}
-            return JsonResponse(result)
-        result = {'code': 0, 'info':'insert success'}
-    return JsonResponse(result)
 
 def apidel(request):
     result={}
@@ -119,63 +49,6 @@ def apidel(request):
             result = {'code': -2,'info':'no exist'}
     return JsonResponse(result)
 
-def searchapi(request):
-    result={}
-    if request.method == 'GET':
-        pid = request.GET['listid']
-        sear = request.GET['searinfo']
-        print("pid:%s,sear:%s" % (pid,sear))
-        query = apiInfoTable.objects.filter(apiName__icontains=sear).values()
-        print(query.values())
-        if query != None:
-            json_list = []
-            for i in query:
-                print i
-                json_dict = {}
-                print i['owningListID'],pid
-                if str(i['owningListID']) == pid:
-                    json_dict["id"] = i['apiID']
-                    json_dict["name"] = i['apiName']
-                    if i['lastRunResult'] is None:
-                        json_dict["lastrunrslt"] = 'null'
-                    else:
-                        json_dict["lastrunrslt"] = i['lastRunResult']
-                    if i['lastRunTime'] is None:
-                        json_dict["lastruntime"] = 'null'
-                    else:
-                        json_dict["lastruntime"] = i['lastRunTime'].strftime('%Y-%m-%d %H:%M:%S')
-                    json_dict["owing"] = i['creator']
-                    json_dict["listid"] = i['owningListID']
-                    json_list.append(json_dict)
-                print json_list
-            result = {
-                'data': json_list,
-                'code': 0,
-                'info': 'success'
-            }
-    return JsonResponse(result)
-
-
-def getlistpath(request):
-    result={}
-    if request.method == 'GET':
-        lid = request.GET['id']
-        try:
-            query = interfaceList.objects.get(id=str(lid))
-        except BaseException as e:
-            print(" SQL Error: %s" % e)
-            result = {'code': -1, 'info': 'sql error!'}
-            return JsonResponse(result)
-        if query != None:
-            json_list = []
-            json_dict = {}
-            json_dict["id"] = query.id
-            json_dict["projectName"] = query.projectName
-            json_dict["moduleName"] = query.moduleName
-            json_list.append(json_dict)
-            print json_list
-            result = {'code': 0, 'data': json_list, 'info': 'success'}
-    return JsonResponse(result)
 
 def batchdel(request):
     result = {}
@@ -519,5 +392,22 @@ def getProjInfos(request):
             projectLists.append(pro["projectName"])
         for mod in modInfos:
             allModuleList.append(mod)
-        result = {'code': 0, 'info': 'query success', 'data': {"allProjList": projectLists,"allModuList":allModuleList}}
+        result = {'code': 0, 'info': 'query success', 'data': {"allProjList": projectLists, "allModuleList": allModuleList}}
+    return JsonResponse(result)
+
+def getProjectInfos(request):
+    result = {}
+    proid = int(request.GET["pid"])
+    projectName = ""
+    moduleName = ""
+    try:
+        pmInfos = interfaceList.objects.filter(id=proid).values("projectName", "moduleName").distinct()
+    except Exception as e:
+        result = {'code': -1, 'info': 'sql error:' + str(e)}
+        return JsonResponse(result)
+    for pm in pmInfos:
+        projectName = pm["projectName"]
+        moduleName = pm["modubleName"]
+    result = {'code': 0, 'info': 'query success',
+                  'data': {"projectName": projectName, "moduleName": moduleName}}
     return JsonResponse(result)

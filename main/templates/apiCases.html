@@ -125,7 +125,6 @@
 
 {% block vuejs1 %}
     <script type="text/javascript">
-    var proid = "";
     var apilist = new Vue({
         delimiters: ['{!', '!}'],
         el:"#apiCases",
@@ -137,7 +136,6 @@
             moduleList:[],
             moduleName:"",
             searchinfo : "",
-            listid:proid,
             allModules:"",
             reportflag: true,
             viewapiInfos: "",
@@ -173,10 +171,21 @@
                 });
         },
         mounted(){
-            this.getlist(1);
-            this.getProinfo();
+            let params = this.geturlparam();
+            this.getProinfo(params);
         },
         methods:{
+            geturlparam(){
+                var argsstr = decodeURI(location.search.substr(1));
+                var param={};
+                if(argsstr !== ""){
+                    var strs = argsstr.split("&");
+                    for(var i = 0; i < strs.length; i++) {
+                         param[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+                    }
+                }
+                return param;
+            },
             getlist(number){
                 let pagenumber = number;
                 var target = document.getElementById("tableBody");
@@ -210,15 +219,28 @@
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
             },
-            getProinfo(){
+            getProinfo(params){
                 axios.get('/projectInfos/')
                     .then(resp =>{
-                        console.log(resp.data);
                         this.projectList = resp.data.data.allProjList;
-                        this.allModules = resp.data.data.allModuList;
+                        this.allModules = resp.data.data.allModuleList;
+                        if(params["projectName"] !== undefined){
+                            console.log("111");
+                            this.projectName = params["projectName"];
+                            let allModules = this.allModules;
+                            for(let q=0;q<allModules.length;q++){
+                                let pname = allModules[q]["projectName"];
+                                if(this.projectName===pname) {
+                                    this.moduleList.push(allModules[q]["moduleName"]);
+                                }
+                            }
+                            this.moduleName = params["moduleName"];
+                        }
+                        this.getlist(1);
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
+                });
+
             },
             delapi(id){
                 if (!confirm("确认要删除？")) {

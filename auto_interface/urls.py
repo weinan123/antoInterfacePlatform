@@ -36,12 +36,7 @@ urlpatterns = [
     url(r'^projectEdit/$', projectList.projectEdit),
     url(r'^singleInterface/$', main.singleInterface),
     url(r'^sendRequest/$', main.sendRequest),
-    url(r'^apiInfo/$', apiinfo.allinfo),
-    url(r'^apiInfopage/$', apiinfo.allinfopage),
-    url(r'^addApi/$', apiinfo.addApi),
     url(r'^apidelete/$', apiinfo.apidel),
-    url(r'^searchinfo/$', apiinfo.searchapi),
-    url(r'^getlistpath/$', apiinfo.getlistpath),
     url(r'^batchdel/$', apiinfo.batchdel),
     url(r'^runsingle/$', apiinfo.runsingle),
     url(r'^batchrun/$', apiinfo.batchrun),
@@ -73,7 +68,8 @@ urlpatterns = [
     url(r'^delUserData/$', usepermit.delUserData),
     url(r'^saveUserData/$', usepermit.saveUserData),
     url(r'^getUserData/$', usepermit.getUserData),
-    url(r'^getPermission/$', apiinfo.getPermission)
+    url(r'^getPermission/$', apiinfo.getPermission),
+    url(r'^getProjectInfos/$', apiinfo.getProjectInfos),
 
 
 ]
