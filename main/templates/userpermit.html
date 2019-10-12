@@ -79,7 +79,8 @@
     </tr>
   </tbody>
 </table>
-        </div>
+
+
         <div id="example" style="text-align: center">
             <ul id="pageLimit">
             </ul>
@@ -175,8 +176,13 @@ data:function(){
     }
 },
 created(){
-    //this.getUserData(1,14);
-    //this.getPageNum(this.username);
+    vm1.$data.isActiveSi = false;
+    vm1.$data.isActiveIn = false;
+    vm1.$data.isActiveAl = false;
+    vm1.$data.isActiveCo = true;
+    vm1.$data.isActiveRs = false;
+    vm1.$data.isActiveApi = false;
+    vm1.$data.isActivePer = false;
 
 
 },

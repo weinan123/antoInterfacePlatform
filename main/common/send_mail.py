@@ -41,8 +41,6 @@ def send_email(smtp_host, smtp_port, sendAddr, password, recipientAddrs, subject
             print(u"登陆失败，code = {loginRes[0]}")
     except Exception as e:
         print(u"发送失败，Exception: e={e}")
-
-
 try:
     subject = 'Python 测试邮件'
     content = '这是一封来自 Python 编写的测试邮件。'

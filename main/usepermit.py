@@ -13,15 +13,16 @@ def userpermit(request):
 def getUserLevel(request):
     if request.method == 'GET':
         username = request.GET['username']
-        depart_lever = users.objects.filter(username=username).values("depart_lever")
+        depart_lever = users.objects.filter(username=username).values("depart_lever","configer_permit")
+        print depart_lever
         depart_lever_value = depart_lever[0]["depart_lever"]
+        configer_permit = depart_lever[0]["configer_permit"]
         resonseData = {
             "code":0,
-            "user_level":depart_lever_value
+            "user_level":depart_lever_value,
+            "user_configPermit":configer_permit
         }
         return JsonResponse(resonseData, safe=False)
-
-
 def getUserData(request):
     if request.method == 'GET':
         username = request.GET['username']

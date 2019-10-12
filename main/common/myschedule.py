@@ -4,9 +4,8 @@ import runChartData,send_mail
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
-import schedule,subprocess
+import schedule,subprocess,batchstart
 from main.untils import configerData
-from main.untils import configerData,batchstart
 '''
 定时批量执行用例
 '''

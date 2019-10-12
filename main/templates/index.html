@@ -28,7 +28,9 @@
                 </template>
                 </keep-alive>
                 <keep-alive>
-                <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
+                <template v-if="user_configPermit===true">
+                <li role="presentation" v-bind:class="{active:isActivePer}"><a href="/configer/" >全局配置</a></li>
+                </template>
                 </keep-alive>
 
             </ul>
@@ -49,8 +51,10 @@ var vm1 = new Vue({
         isActiveCo:false,
         isActiveApi:false,
         isActiveRs:false,
+        isActivePer:false,
         tabs:[],
-        user_level:3
+        user_level:3,
+        user_configPermit:false,
     },
     created(){
         this.getUsername();
@@ -92,6 +96,7 @@ var vm1 = new Vue({
              .then(resp =>{
                  console.log(resp.data);
                  this.user_level = resp.data.user_level;
+                 this.user_configPermit = resp.data.user_configPermit;
                  this.showTabs(resp.data.user_level);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);

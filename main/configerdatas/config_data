@@ -1,10 +1,10 @@
 [configerinfor]
-eviorment = Qa
+eviorment = Stage
 isreport = Y
 ismail = Y
 senderlist = , nan.wei@yff.com, ruru.yang@yff.com
 runcase = , 1, 5, 4, 6
-sechdel_time = 每周&15:00
+sechdel_time = 每天&15:00
 selectall = True
 
 [email]
