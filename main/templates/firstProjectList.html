@@ -35,10 +35,11 @@
             <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6" style="text-align:center;">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{! item !}</h3>
+                        <h3 class="panel-title">{! item.projectName !}</h3>
                     </div>
                     <div class="panel-body">
-                        <button type="button" class="btn btn-primary" @click="moduleInfo(item)">
+                        <p>{! item.host !}</p>
+                        <button type="button" class="btn btn-primary" @click="moduleInfo(item.projectName)">
                             查看
                         </button>
                     </div>
