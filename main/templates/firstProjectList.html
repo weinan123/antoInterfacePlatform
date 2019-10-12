@@ -169,7 +169,6 @@
                         event.preventDefault();
                         let formData = new FormData();
                         formData.append('projectName', this.projectNameNew);
-                        formData.append('moduleName', this.moduleNameNew);
                         formData.append('host', this.hostNew);
 
                         let config = {
@@ -179,7 +178,7 @@
                         };
 
                         axios
-                            .post('/addProjectList/', formData, config)
+                            .post('/addProject/', formData, config)
                             .then(resp => {
                                     spinner.spin();
                                     {#设置为当模态框完全隐藏时，激活弹窗的功能#}
