@@ -34,7 +34,7 @@
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" name="projectName"
                                                        required id="id_projectName" maxlength="50"
-                                                       v-model="projectNameNew"
+                                                       v-model="projectNameNew" readonly="readonly"
                                                        placeholder="请输入项目名称"/>
                                             </div>
                                         </div>
@@ -50,7 +50,7 @@
                                             <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" name="host" required
-                                                       v-model="hostNew"
+                                                       v-model="hostNew" readonly="readonly"
                                                        id="id_host" maxlength="50" placeholder="请输入域名地址"/>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" name="projectName"
                                                        v-model="projectName" required id="id_projectName"
-                                                       maxlength="50" placeholder="请输入项目名称">
+                                                       maxlength="50" placeholder="请输入项目名称" readonly="readonly">
                                             </div>
                                         </div>
 
@@ -109,7 +109,7 @@
                                             <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" name="host" required
-                                                       v-model="host" id="id_host" maxlength="50"
+                                                       v-model="host" id="id_host" maxlength="50" readonly="readonly"
                                                        placeholder="请输入域名地址"/>
                                             </div>
                                         </div>
@@ -175,22 +175,26 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th>项目名称</th>
                         <th>模块名称</th>
-                        <th>host</th>
                         <th>更新时间</th>
                         <th>创建时间</th>
+                        <th>总用例数</th>
+                        <th>通过用例数</th>
+                        <th>失败用例数</th>
+                        <th>未执行用例数</th>
                         <th>操作</th>
                         <th>批量删除</th>
                     </tr>
                     </thead>
                     <tbody id="row">
                     <tr v-for="item in list">
-                        <td>{! item.projectName !}</td>
                         <td>{! item.moduleName !}</td>
-                        <td>{! item.host !}</td>
                         <td>{! item.updateTime !}</td>
                         <td>{! item.createTime !}</td>
+                        <td>{! item.allcaseNum !}</td>
+                        <td>{! item.passcaseNum !}</td>
+                        <td>{! item.failcaseNum !}</td>
+                        <td>{! item.blockcaseNum !}</td>
                         <td style="margin: auto">
                             <div class="btn-group" style="margin: auto">
                                 <a v-bind:href="['/apiCases?projectName='+item.projectName+'&moduleName='+item.moduleName]">
@@ -228,7 +232,7 @@
                                                             <input type="text" name="projectName" class="form-control"
                                                                    v-bind:value="[item.projectName]" required="required"
                                                                    v-bind:id="'projectNameEdit'+[item.id]"
-                                                                   maxlength="50">
+                                                                   maxlength="50" readonly="readonly">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -248,7 +252,7 @@
                                                             <input type="text" name="host" class="form-control"
                                                                    v-bind:value="[item.host]"
                                                                    required="required" v-bind:id="'hostEdit'+[item.id]"
-                                                                   maxlength="50">
+                                                                   maxlength="50" readonly="readonly">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -304,6 +308,7 @@
                 projectBatchDelete = true;
                 return {
                     projectNameTitle: '',
+                    hostTitle: '',
                     projectName: '',
                     moduleName: '',
                     host: '',
@@ -329,6 +334,8 @@
                 {#let id = this.$route.query.projectName;#}
                 pro = id;
                 this.projectNameTitle = pro;
+                this.projectNameNew = this.projectNameTitle;
+                this.projectName = this.projectNameTitle;
 
                 var target = document.getElementById("row");
                 var spinner = Spinner({top: '1'}).spin(target);
@@ -336,6 +343,9 @@
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
+                        this.hostTitle = resp.data.host;
+                        this.hostNew = this.hostTitle;
+                        this.host = this.hostTitle;
                         spinner.spin();
                         console.log(this.list);
                     }).catch(err => {

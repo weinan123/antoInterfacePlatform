@@ -4,11 +4,12 @@ from django.shortcuts import render, redirect
 import json, time
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from main.models import *
-from forms import UserForm, projectForm
+from forms import UserForm, projectForm, firstProjectForm
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django import forms
 import re
+
 
 def addProjectList(request):
     result = {
@@ -61,6 +62,50 @@ def addProjectList(request):
     return JsonResponse(result, safe=False)
 
 
+def addProject(request):
+    result = {
+        'code': -1,
+        'info': '未知错误！'
+    }
+    if request.method == 'POST':
+        # 接受request.POST参数构造form类的实例
+        form = firstProjectForm(request.POST)
+        # 验证数据是否合法
+        if form.is_valid():
+            # 处理form.cleaned_data中的数据
+            # ...
+            # 重定向到一个新的URL
+            # if ():
+            #     return
+            dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            if (interfaceList.objects.filter(projectName=form.cleaned_data['projectName']).count() == 0):
+                inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
+                                                     host=form.cleaned_data['host'])
+                inter.save()
+                interfaceList.objects.filter(projectName=form.cleaned_data['projectName']).update(updateTime=dtime,
+                                                                                                  createTime=dtime)
+                code = 0
+                info = '新建成功！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
+            else:
+                code = -1
+                info = '项目名称不可重复！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
+        else:
+            result = {
+                'code': -1,
+                'info': '数据格式不正确！'
+            }
+
+    return JsonResponse(result, safe=False)
+
+
 def projectListInfo(request):
     # resp = interfaceList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
     # respList = list(resp)
@@ -80,13 +125,35 @@ def projectListInfo(request):
     }
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        resp = interfaceList.objects.filter(projectName=projectName).values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
+        resp = interfaceList.objects.filter(projectName=projectName).values("id", "projectName", "host", "moduleName",
+                                                                            "updateTime", "createTime")
         respList = list(resp)
+        host = respList[0]['host']
+        for i in range(len(respList)):
+            if (respList[i]['moduleName'] == ''):
+                del respList[i]
         for i in range(len(respList)):
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
-        for i in range(len(respList)):
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+            CaseInfo = countCase.objects.filter(pmID=respList[i]['id']).values("allcaseNum", "passcaseNum",
+                                                                               "failcaseNum",
+                                                                               "blockvaseNum")
+            if (CaseInfo.count() == 0):
+                allcaseNum = 0
+                passcaseNum = 0
+                failcaseNum = 0
+                blockcaseNum = 0
+            else:
+                allcaseNum = CaseInfo[0]['allcaseNum']
+                passcaseNum = CaseInfo[0]['passcaseNum']
+                failcaseNum = CaseInfo[0]['failcaseNum']
+                blockcaseNum = CaseInfo[0]['blockvaseNum']
+            respList[i]['allcaseNum'] = allcaseNum
+            respList[i]['passcaseNum'] = passcaseNum
+            respList[i]['failcaseNum'] = failcaseNum
+            respList[i]['blockcaseNum'] = blockcaseNum
         result = {
+            'host': host,
             'data': respList,
             'code': 0,
             'info': 'success'
@@ -110,22 +177,28 @@ def projectListInfo(request):
         # }
     return JsonResponse(result, safe=False)
 
+
 def firstProjectListInfo(request):
     result = {
         'code': -1,
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        resp = interfaceList.objects.values("projectName")
+        resp = interfaceList.objects.values("projectName", "host")
+        json_list = []
         respList = list(resp)
         seen = set()
         for i in range(len(respList)):
-            projectName=respList[i]['projectName']
+            json_dict = {}
+            projectName = respList[i]['projectName']
+            host = respList[i]['host']
             if projectName not in seen:
                 seen.add(projectName)
-        JsonList = list(seen)
+                json_dict["projectName"] = projectName
+                json_dict["host"] = host
+                json_list.append(json_dict)
         result = {
-            'data': JsonList,
+            'data': json_list,
             'code': 0,
             'info': 'success'
         }
@@ -137,8 +210,9 @@ def projectList(request):
     # return render(request, 'projectList.html', {'form': form})
     return render(request, 'projectList.html')
 
+
 def firstProjectList(request):
-     return render(request, 'firstProjectList.html')
+    return render(request, 'firstProjectList.html')
 
 
 def projectView(request):

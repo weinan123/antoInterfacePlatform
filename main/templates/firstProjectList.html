@@ -35,10 +35,11 @@
             <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6" style="text-align:center;">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{! item !}</h3>
+                        <h3 class="panel-title">{! item.projectName !}</h3>
                     </div>
                     <div class="panel-body">
-                        <button type="button" class="btn btn-primary" @click="moduleInfo(item)">
+                        <p>{! item.host !}</p>
+                        <button type="button" class="btn btn-primary" @click="moduleInfo(item.projectName)">
                             查看
                         </button>
                     </div>
@@ -166,7 +167,6 @@
                         event.preventDefault();
                         let formData = new FormData();
                         formData.append('projectName', this.projectNameNew);
-                        formData.append('moduleName', this.moduleNameNew);
                         formData.append('host', this.hostNew);
 
                         let config = {
@@ -176,7 +176,7 @@
                         };
 
                         axios
-                            .post('/addProjectList/', formData, config)
+                            .post('/addProject/', formData, config)
                             .then(resp => {
                                     spinner.spin();
                                     {#设置为当模态框完全隐藏时，激活弹窗的功能#}
