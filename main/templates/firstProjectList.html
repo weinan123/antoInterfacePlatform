@@ -42,6 +42,9 @@
                         <button type="button" class="btn btn-primary" @click="moduleInfo(item.projectName)">
                             查看
                         </button>
+                        <button type="button" class="btn btn-danger" @click="projectDelete(item.projectName)">删除
+                        </button>
+
                     </div>
                 </div>
             </div>
@@ -214,6 +217,33 @@
                     }
                 }
                 ,
+
+                projectDelete(projectName) {
+                    if (!confirm("确认要删除？")) {
+                        window.event.returnValue = false;
+                    } else {
+                        var target = document.getElementById("row");
+                        var spinner = Spinner({top: '1'}).spin(target);
+
+                        axios.get('/firstProjectDelete?projectName=' + projectName)
+                            .then(resp => {
+                                    alert(resp.data.info);
+                                }
+                            ).then(
+                            () => {
+                                axios
+                                    .get('/firstProjectListInfo/')
+                                    .then(resp => {
+                                        this.list = resp.data.data;
+                                        spinner.spin();
+                                        console.log(resp.data);
+                                    }).catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                });
+                                this.checkedDelete = [];
+                            });
+                    }
+                },
 
             }
         })
