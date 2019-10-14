@@ -132,6 +132,7 @@ def projectListInfo(request):
         for i in range(len(respList)):
             if (respList[i]['moduleName'] == ''):
                 del respList[i]
+                break
         for i in range(len(respList)):
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
@@ -240,6 +241,7 @@ def projectDelete(request):
             'info': info
         }
     return JsonResponse(result, safe=False)
+
 
 def firstProjectDelete(request):
     if request.method == 'GET':

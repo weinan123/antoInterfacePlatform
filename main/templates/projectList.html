@@ -330,7 +330,6 @@
             },
             mounted() {
                 let id = this.getparam('projectName');
-                {#let id = this.$route.query.projectName;#}
                 pro = id;
                 this.projectNameTitle = pro;
                 this.projectNameNew = this.projectNameTitle;
@@ -381,7 +380,7 @@
                         ).then(
                             () => {
                                 axios
-                                    .get('/projectListInfo/')
+                                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                     .then(resp => {
                                         this.list = resp.data.data;
                                         spinner.spin();
@@ -405,10 +404,13 @@
                             .then(resp => {
                                     alert(resp.data.info);
                                 }
-                            ).then(
+                            ).then(() => {
+                                this.refresh();
+                            }
+                        ).then(
                             () => {
                                 axios
-                                    .get('/projectListInfo/')
+                                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                     .then(resp => {
                                         this.list = resp.data.data;
                                         spinner.spin();
@@ -423,7 +425,7 @@
 
                 selectAll() {
                     axios
-                        .get('/projectListInfo/')
+                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
                             console.log(resp.data);
@@ -441,7 +443,7 @@
 
                 selectNone() {
                     axios
-                        .get('/projectListInfo/')
+                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
                             console.log(resp.data);
@@ -453,6 +455,14 @@
 
                 getFile(event) {
                     this.file = event.target.files[0];
+                },
+
+                refresh() {
+                    let id = this.getparam('projectName');
+                    pro = id;
+                    this.projectNameTitle = pro;
+                    this.projectNameNew = this.projectNameTitle;
+                    this.projectName = this.projectNameTitle;
                 },
 
                 submitForm(event) {
@@ -491,13 +501,16 @@
                                         alert(resp.data.info);
                                     }
                                 }
-                            )
+                            ).then(() => {
+                                this.refresh();
+                            }
+                        )
                             .then(
                                 () => {
                                     var target2 = document.getElementById("row");
                                     var spinner2 = Spinner({top: '1'}).spin(target2);
                                     axios
-                                        .get('/projectListInfo/')
+                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
@@ -547,23 +560,24 @@
                                         alert(resp.data.info);
                                     }
                                 }
-                            )
-                            .then(
-                                () => {
-                                    var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '1'}).spin(target2);
+                            ).then(() => {
+                                this.refresh();
+                            }
+                        ).then(() => {
+                            var target2 = document.getElementById("row");
+                            var spinner2 = Spinner({top: '1'}).spin(target2);
 
-                                    axios
-                                        .get('/projectListInfo/')
-                                        .then(resp => {
-                                            spinner2.spin();
-                                            this.list = resp.data.data;
-                                            console.log(resp.data);
-                                        }).catch(err => {
-                                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                                    });
-                                    this.checkedDelete = [];
-                                });
+                            axios
+                                .get('/projectListInfo?projectName=' + this.projectNameTitle)
+                                .then(resp => {
+                                    spinner2.spin();
+                                    this.list = resp.data.data;
+                                    console.log(resp.data);
+                                }).catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                            });
+                            this.checkedDelete = [];
+                        });
 
                     }
                 }
@@ -609,11 +623,14 @@
                                         alert(resp.data.info);
                                     }
                                 }
-                            )
+                            ).then(() => {
+                                this.refresh();
+                            }
+                        )
                             .then(
                                 () => {
                                     axios
-                                        .get('/projectListInfo/')
+                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
