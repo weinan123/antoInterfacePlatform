@@ -463,7 +463,7 @@ def projectImport(request):
                     method = data_list[1]
                     url = data_list[2]
                     headers = data_list[4]
-                    body = data_list[5]
+                    body_data = data_list[5]
                     t_id = data_list[6]
                     depend_caseId = data_list[7]
                     depend_casedata = data_list[8]
@@ -475,6 +475,10 @@ def projectImport(request):
                     isRedirect = data_list[14]
                     print statuscode
                     user = request.session.get('username')
+                    body = {}
+                    if body_data != "":
+                        body["showflag"] = 3
+                        body["datas"] = [{"paramValue": body_data}]
                     api_infos = {
                         'apiName': apiname,
                         'method': method,
