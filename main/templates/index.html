@@ -4,44 +4,37 @@
 {% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content1 %}
+    <keep-alive>
     <div class="col-md-2 row"  id ="app1" style="position: fixed;border-right: 1px solid gainsboro;height: 100%"  >
+
             <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
                 {% comment %}<li role="presentation" v-for="tab in tabs" :active="tab.active"><a href="/singleInterface/" >{!tab.name!}</a></li>{% endcomment %}
-                <keep-alive>
                 <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
-                 </keep-alive>
-                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
-                </keep-alive>
-                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/firstProjectList/" >项目管理</a></li>
-                </keep-alive>
-                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
-                </keep-alive>
-                <keep-alive>
                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
-                </keep-alive>
-                <keep-alive>
-                <template v-if="user_level!==3">
-                <li role="presentation" v-bind:class="{active:isActiveCo}"><a href="/userPermit/" >权限管理</a></li>
-                </template>
-                </keep-alive>
-                <keep-alive>
-                <template v-if="user_configPermit===true">
-                <li role="presentation" v-bind:class="{active:isActivePer}"><a href="/configer/" >全局配置</a></li>
-                </template>
-                </keep-alive>
-
+                <li v-show="user_level!==3" role="presentation" v-bind:class="{active:isActivePer}"><a href="/userPermit/" >权限管理</a></li>
+                <li v-show="user_configPermit===true" role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
+                {% comment %} <li role="presentation" v-bind:class="{active:isActiveSi}"><router-link to="/singleInterface">
+                     单接口</router-link></li>{% endcomment %}
             </ul>
+
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
         </div>
+     </keep-alive>
 {% endblock %}
 {% block content %}
+    <router-view></router-view>
 {% endblock %}
 {% block vuejs %}
 <script type="text/javascript">
+const shouye = {template:'<div>ssss</div>'};
+const routes = [
+    {path:'/singleInterface',component:shouye}
+];
 var vm1 = new Vue({
+    routes,
     delimiters: ['{!', '!}'],
     el:'#app1',
     data:{
@@ -111,7 +104,7 @@ var vm1 = new Vue({
             }
         }
         }
-})
+}).$mount('#app1')
 </script>
 {% block vuejs1 %}
 {% endblock %}
