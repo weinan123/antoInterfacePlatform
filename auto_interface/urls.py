@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^projectView/$', projectList.projectView),
     url(r'^projectDelete/$', projectList.projectDelete),
+    url(r'^firstProjectDelete/$', projectList.firstProjectDelete),
     url(r'^projectImport/$', projectList.projectImport),
     url(r'^firstProjectListInfo/$', projectList.firstProjectListInfo),
     url(r'^projectBatchDelete/$', projectList.projectBatchDelete),

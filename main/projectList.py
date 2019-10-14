@@ -234,7 +234,24 @@ def projectDelete(request):
             info = '删除成功！'
         else:
             code = -1
-            info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+            info = '所选模块中还存在用例，请先删除用例，再删除模块！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
+
+def firstProjectDelete(request):
+    if request.method == 'GET':
+        projectName = request.GET.get('projectName')
+        if (interfaceList.objects.filter(projectName=projectName).count() == 1):
+            countCase.objects.filter(projectName=projectName).delete()
+            interfaceList.objects.filter(projectName=projectName).delete()
+            code = 0
+            info = '删除成功！'
+        else:
+            code = -1
+            info = '所选项目中还存在模块，请先删除模块，再删除项目！'
         result = {
             'code': code,
             'info': info
@@ -254,7 +271,7 @@ def projectBatchDelete(request):
             else:
                 flag = False
                 code = -1
-                info = '所选项目中还存在用例，请先删除用例，再删除项目！'
+                info = '所选模块中还存在用例，请先删除用例，再删除模块！'
         for x in idDelete:
             if (flag):
                 interfaceList.objects.filter(id=x[0]).delete()

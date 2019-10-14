@@ -225,13 +225,14 @@
                         this.projectList = resp.data.data.allProjList;
                         this.allModules = resp.data.data.allModuleList;
                         if(params["projectName"] !== undefined){
-                            console.log("111");
                             this.projectName = params["projectName"];
                             let allModules = this.allModules;
                             for(let q=0;q<allModules.length;q++){
                                 let pname = allModules[q]["projectName"];
                                 if(this.projectName===pname) {
-                                    this.moduleList.push(allModules[q]["moduleName"]);
+                                    if(allModules[q]["moduleName"] !== ""){
+                                        this.moduleList.push(allModules[q]["moduleName"]);
+                                    }
                                 }
                             }
                             this.moduleName = params["moduleName"];
@@ -468,7 +469,10 @@
                 for(let q=0;q<allModules.length;q++){
                     let pname = allModules[q]["projectName"];
                     if(selProj===pname) {
-                        this.moduleList.push(allModules[q]["moduleName"]);
+                        if(allModules[q]["moduleName"] !== ""){
+                            this.moduleList.push(allModules[q]["moduleName"]);
+                        }
+
                     }
                 }
                 this.getlist(1);
@@ -482,6 +486,9 @@
             viewapi(id){
                 var target = document.getElementById("infos");
                 var spinner1 = Spinner({top:"1",left:"2"}).spin(target);
+                this.viewapiInfos = "";
+                this.headers = "";
+                this.bodys = "";
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,
