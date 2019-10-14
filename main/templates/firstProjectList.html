@@ -38,13 +38,19 @@
                         <h3 class="panel-title">{! item.projectName !}</h3>
                     </div>
                     <div class="panel-body">
-                        <p>{! item.host !}</p>
-                        <button type="button" class="btn btn-primary" @click="moduleInfo(item.projectName)">
-                            查看
-                        </button>
-                        <button type="button" class="btn btn-danger" @click="projectDelete(item.projectName)">删除
-                        </button>
-
+                        <ul class="list-group">
+                            <li class="list-group-item" style="border-style: none">
+                                <p><span class="badge">域名地址</span>{! item.host !}</p>
+                            </li>
+                            <li class="list-group-item" style="border-style: none">
+                                <button type="button" class="btn btn-primary" @click="moduleInfo(item.projectName)">
+                                    查看
+                                </button>
+                                <button type="button" class="btn btn-danger" @click="projectDelete(item.projectName)">
+                                    删除
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -54,9 +60,14 @@
                         <h3 class="panel-title">操作</h3>
                     </div>
                     <div class="panel-body">
-                        <button type="button" data-toggle="modal" data-target="#newProject" class="btn btn-primary">
-                            新建
-                        </button>
+                        <ul class="list-group">
+                            <li class="list-group-item" style="border-style: none;height: 103px;">
+                                <button type="button" data-toggle="modal" data-target="#newProject"
+                                        class="btn btn-primary">
+                                    新建
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
