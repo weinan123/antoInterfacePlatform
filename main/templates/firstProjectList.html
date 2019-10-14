@@ -33,21 +33,34 @@
 
         <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;">
             <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
-                <div class="panel panel-primary" >
-                    <div class="panel-heading" style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"
+                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
                         <p class="panel-title">{! item.projectName !}</p>
                     </div>
                     <div class="panel-body" style="text-align: left">
                         <p style="font-size: 16px;font-weight: bold">项目信息：</p>
-                        <table class="table table-bordered" >
-                            <tr><td><label>域名地址：</label>{! item.host !}</td></tr>
-                            <tr><td><label>创建时间：</label>2019.09.09</td></tr>
-                            <tr><td><label>更新时间：</label>2019.09.09</td></tr>
-                            <tr><td><label>创建者：</label>nan.wei</td></tr>
+                        <table class="table table-bordered">
+                            <tr>
+                                <td><label>域名地址：</label>{! item.host !}</td>
+                            </tr>
+                            <tr>
+                                <td><label>创建时间：</label>{! item.createTime !}</td>
+                            </tr>
+                            <tr>
+                                <td><label>更新时间：</label>{! item.updateTime !}</td>
+                            </tr>
+                            <tr>
+                                <td><label>总模块数：</label>{! item.totalModule !}</td>
+                            </tr>
                         </table>
                         <div style="float: right">
-                         <button type="button" class="btn btn-success btn-sm" @click="moduleInfo(item.projectName)">查看详情</button>
-                        <button type="button" class="btn btn-danger btn-sm" @click="projectDelete(item.projectName)">删除</button>
+                            <button type="button" class="btn btn-success btn-sm" @click="moduleInfo(item.projectName)">
+                                查看详情
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    @click="projectDelete(item.projectName)">删除
+                            </button>
                         </div>
                         {% comment %}<ul class="list-group">
                             <li class="list-group-item" >
@@ -68,13 +81,16 @@
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="panel panel-primary">
-                    <div class="panel-heading" style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
-                       <p class="panel-title">新增</p>
+                    <div class="panel-heading"
+                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
+                        <p class="panel-title">新增</p>
                     </div>
                     <div class="panel-body">
                         <ul class="list-group">
                             <li class="list-group-item" style="border-style: none;height: 231px;">
-                                <div data-toggle="modal" data-target="#newProject" style="text-align: center;width: 100%;height: 100%" ><img src="../static/image/add.png"></div>
+                                <div data-toggle="modal" data-target="#newProject"
+                                     style="text-align: center;width: 100%;height: 100%"><img
+                                        src="../static/image/add.png"></div>
 
                             </li>
                         </ul>

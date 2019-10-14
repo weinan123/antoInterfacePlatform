@@ -185,7 +185,7 @@ def firstProjectListInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        resp = interfaceList.objects.values("projectName", "host")
+        resp = interfaceList.objects.values("projectName", "host", "moduleName", "createTime", "updateTime")
         json_list = []
         respList = list(resp)
         seen = set()
@@ -193,10 +193,17 @@ def firstProjectListInfo(request):
             json_dict = {}
             projectName = respList[i]['projectName']
             host = respList[i]['host']
-            if projectName not in seen:
+            moduleName = respList[i]['moduleName']
+            createTime = str(respList[i]['createTime']).split('.')[0]
+            updateTime = str(respList[i]['updateTime']).split('.')[0]
+            totalModule = interfaceList.objects.filter(projectName=projectName).count()
+            if (moduleName == ''):
                 seen.add(projectName)
                 json_dict["projectName"] = projectName
                 json_dict["host"] = host
+                json_dict["createTime"] = createTime
+                json_dict["updateTime"] = updateTime
+                json_dict["totalModule"] = totalModule - 1  # 去除一条作为表示项目的，moduleName为空的记录
                 json_list.append(json_dict)
         result = {
             'data': json_list,
