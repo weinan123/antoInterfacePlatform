@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'newindex.html' %}
 {% block title %}
     <title xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"> 项目信息 </title>
     <style type="text/css">
@@ -54,43 +54,44 @@
 {% block navbar %}
 {% endblock %}
 {% block content %}
-    <div class="col-md-10 row" id="projectList" style="margin-left: 15%;">
-        <ul class="breadcrumb">
-            <li><a href="/index/">首页</a></li>
-            <li><a href="/firstProjectList/">项目管理</a></li>
-        </ul>
+    <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
+        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
+            <ul class="breadcrumb">
+                <li><a href="/index/">首页</a></li>
+                <li><a href="/firstProjectList/">项目管理</a></li>
+            </ul>
 
-        <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;">
-            <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading"
-                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
-                        <p class="panel-title">{! item.projectName !}</p>
-                    </div>
-                    <div class="panel-body" style="text-align: left">
-                        <p style="font-size: 16px;font-weight: bold">项目信息：</p>
-                        <table class="table table-bordered">
-                            <tr>
-                                <td><label>域名地址：</label>{! item.host !}</td>
-                            </tr>
-                            <tr>
-                                <td><label>创建时间：</label>{! item.createTime !}</td>
-                            </tr>
-                            <tr>
-                                <td><label>更新时间：</label>{! item.updateTime !}</td>
-                            </tr>
-                            <tr>
-                                <td><label>总模块数：</label>{! item.totalModule !}</td>
-                            </tr>
-                        </table>
-                        <div class="buttonGroup" style="float: right">
-                            <button class="viewButton" type="button" @click="moduleInfo(item.projectName)">
-                                查看
-                            </button>
-                            <button class="deleteButton" type="button" @click="projectDelete(item.projectName)">删除
-                            </button>
+            <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;">
+                <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"
+                             style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
+                            <p class="panel-title">{! item.projectName !}</p>
                         </div>
-                        {% comment %}<ul class="list-group">
+                        <div class="panel-body" style="text-align: left">
+                            <p style="font-size: 16px;font-weight: bold">项目信息：</p>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td><label>域名地址：</label>{! item.host !}</td>
+                                </tr>
+                                <tr>
+                                    <td><label>创建时间：</label>{! item.createTime !}</td>
+                                </tr>
+                                <tr>
+                                    <td><label>更新时间：</label>{! item.updateTime !}</td>
+                                </tr>
+                                <tr>
+                                    <td><label>总模块数：</label>{! item.totalModule !}</td>
+                                </tr>
+                            </table>
+                            <div class="buttonGroup" style="float: right">
+                                <button class="viewButton" type="button" @click="moduleInfo(item.projectName)">
+                                    查看
+                                </button>
+                                <button class="deleteButton" type="button" @click="projectDelete(item.projectName)">删除
+                                </button>
+                            </div>
+                            {% comment %}<ul class="list-group">
                             <li class="list-group-item" >
                                 <p><label>域名地址：</label>{! item.host !}</p>
                             </li>
@@ -104,80 +105,81 @@
                                 </button>
                             </li>
                         </ul>{% endcomment %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading"
-                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
-                        <p class="panel-title">新增</p>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-group">
-                            <li class="list-group-item" style="border-style: none;height: 231px;">
-                                <div data-toggle="modal" data-target="#newProject"
-                                     style="text-align: center;width: 100%;height: 100%"><img
-                                        src="../static/image/add.png"></div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"
+                             style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
+                            <p class="panel-title">新增</p>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-group">
+                                <li class="list-group-item" style="border-style: none;height: 231px;">
+                                    <div data-toggle="modal" data-target="#newProject"
+                                         style="text-align: center;width: 100%;height: 100%"><img
+                                            src="../static/image/add.png"></div>
 
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- 新建模态框（Modal） -->
-            <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog" id="newProjectRow">
-                    <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                            </button>
-                            <label class="modal-title" id="myModalLabel">新建项目</label>
-                        </div>
-                        <div class="modal-body">
-                            <form style="text-align: center" class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control" type="text" name="projectName"
-                                               required id="id_projectName" maxlength="50"
-                                               v-model="projectNameNew"
-                                               placeholder="请输入项目名称"/>
+                <!-- 新建模态框（Modal） -->
+                <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" id="newProjectRow">
+                        <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                </button>
+                                <label class="modal-title" id="myModalLabel">新建项目</label>
+                            </div>
+                            <div class="modal-body">
+                                <form style="text-align: center" class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                        <div class="col-sm-9">
+                                            <input class="form-control" type="text" name="projectName"
+                                                   required id="id_projectName" maxlength="50"
+                                                   v-model="projectNameNew"
+                                                   placeholder="请输入项目名称"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control" type="text" name="host" required
-                                               v-model="hostNew"
-                                               id="id_host" maxlength="50" placeholder="请输入域名地址"/>
+                                    <div class="form-group">
+                                        <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
+                                        <div class="col-sm-9">
+                                            <input class="form-control" type="text" name="host" required
+                                                   v-model="hostNew"
+                                                   id="id_host" maxlength="50" placeholder="请输入域名地址"/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-6">
-                                        <input type="submit" class="btn btn-primary"
-                                               @click="submitFormNew($event)" value="新建"/>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <input type="submit" class="btn btn-primary"
+                                                   @click="submitFormNew($event)" value="新建"/>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-primary"
+                                                    data-dismiss="modal">
+                                                关闭
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <button type="button" class="btn btn-primary"
-                                                data-dismiss="modal">
-                                            关闭
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal -->
-            </div>
+                                </form>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal -->
+                </div>
 
 
+            </div>
         </div>
     </div>
 {% endblock %}
 
-{% block vuejs1 %}
+{% block vuejs %}
 
     <script type="text/javascript">
         var vm2 = new Vue({
