@@ -55,13 +55,13 @@
 {% endblock %}
 {% block content %}
     <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
-        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
-            <ul class="breadcrumb">
+        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;padding: 15px;">
+            <ul class="breadcrumb" style="background-color: white;margin: 20px;">
                 <li><a href="/index/">首页</a></li>
                 <li><a href="/firstProjectList/">项目管理</a></li>
             </ul>
 
-            <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;">
+            <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;background-color: white;margin: 20px;padding-top: 15px;">
                 <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading"
@@ -172,8 +172,6 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal -->
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -209,7 +207,7 @@
             },
             mounted() {
                 var target = document.getElementById("row");
-                var spinner = Spinner({top: '1'}).spin(target);
+                var spinner = Spinner({top: '2'}).spin(target);
 
                 axios
                     .get('/firstProjectListInfo/')
@@ -264,7 +262,7 @@
                             .then(
                                 () => {
                                     var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '1'}).spin(target2);
+                                    var spinner2 = Spinner({top: '2'}).spin(target2);
 
                                     axios
                                         .get('/firstProjectListInfo/')
@@ -287,7 +285,7 @@
                         window.event.returnValue = false;
                     } else {
                         var target = document.getElementById("row");
-                        var spinner = Spinner({top: '1'}).spin(target);
+                        var spinner = Spinner({top: '2'}).spin(target);
 
                         axios.get('/firstProjectDelete?projectName=' + projectName)
                             .then(resp => {

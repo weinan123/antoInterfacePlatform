@@ -33,12 +33,12 @@
 {% block content %}
     <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
         <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;padding: 15px;">
-            <ul class="breadcrumb">
+            <ul class="breadcrumb" style="background-color: white;margin: 20px;">
                 <li><a href="/index/">首页</a></li>
                 <li><a href="/firstProjectList/">项目管理</a></li>
                 <li>{! projectNameTitle !}</li>
             </ul>
-            <div class="row" style="width:100%;">
+            <div class="row" style="background-color: white;margin: 20px;padding-top: 15px;">
                 <div class="col-md-4" style="width:100%;">
                     <div class="btn-group" style="width:100%;padding: 15px;">
                         <!-- 新建按钮触发模态框 -->
@@ -379,7 +379,7 @@
                 this.projectName = this.projectNameTitle;
 
                 var target = document.getElementById("row");
-                var spinner = Spinner({top: '1'}).spin(target);
+                var spinner = Spinner({top: '3'}).spin(target);
                 axios
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
@@ -409,7 +409,7 @@
 
                 projectBatchDelete() {
                     var target = document.getElementById("row");
-                    var spinner = Spinner({top: '1'}).spin(target);
+                    var spinner = Spinner({top: '3'}).spin(target);
 
                     console.log(projectBatchDelete);
                     if (projectBatchDelete) {
@@ -443,7 +443,7 @@
                         window.event.returnValue = false;
                     } else {
                         var target = document.getElementById("row");
-                        var spinner = Spinner({top: '1'}).spin(target);
+                        var spinner = Spinner({top: '3'}).spin(target);
 
                         axios.get('/projectDelete?id=' + id)
                             .then(resp => {
@@ -553,7 +553,7 @@
                             .then(
                                 () => {
                                     var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '1'}).spin(target2);
+                                    var spinner2 = Spinner({top: '3'}).spin(target2);
                                     axios
                                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                         .then(resp => {
@@ -613,7 +613,7 @@
                             }
                         ).then(() => {
                             var target2 = document.getElementById("row");
-                            var spinner2 = Spinner({top: '1'}).spin(target2);
+                            var spinner2 = Spinner({top: '3'}).spin(target2);
 
                             axios
                                 .get('/projectListInfo?projectName=' + this.projectNameTitle)
@@ -655,7 +655,7 @@
                             }
                         };
                         var target2 = document.getElementById("row");
-                        var spinner2 = new Spinner({top: '1'});
+                        var spinner2 = new Spinner({top: '3'});
                         axios
                             .post('/projectEdit/', formData, config)
                             .then(resp => {
