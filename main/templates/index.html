@@ -15,7 +15,7 @@
                 <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
                 <li v-show="user_level!==3" role="presentation" v-bind:class="{active:isActivePer}"><a href="/userPermit/" >权限管理</a></li>
-                <li v-show="user_configPermit===true" role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>{% endcomment %}
+                <li v-show="user_configPermit===true" role="presentation" v-bind:class="{active:isActiveCo}"><a href="/userPermit/" >全局配置</a></li>{% endcomment %}
                  <li role="presentation" v-bind:class="{active:isActiveSi}"><router-link to="/myindex">
                      首页</router-link></li>
                  <li role="presentation" v-bind:class="{active:isActiveAl}"><router-link to="/firstProjectList">
