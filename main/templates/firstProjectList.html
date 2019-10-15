@@ -20,6 +20,35 @@
             padding-left: 15px;
             padding-right: 15px;
         }
+
+        .buttonGroup {
+            background: #deeaf2;
+            border-radius: 3px;
+        }
+
+        .deleteButton {
+            background: #deeaf2;
+            font-size: 14px;
+            color: #2372A8;
+            letter-spacing: 0;
+            background-image: -webkit-linear-gradient(top, #deeaf2 0%, #deeaf2 0%);
+            border-style: none;
+            height: 36px;
+            width: 66px;
+            border-radius: 0px 3px 3px 0px;
+        }
+
+        .viewButton {
+            background: #deeaf2;
+            font-size: 14px;
+            color: #FFFFFF;
+            letter-spacing: 0;
+            background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
+            border-style: none;
+            height: 36px;
+            width: 66px;
+            border-radius: 3px 0px 0px 3px;
+        }
     </style>
 {% endblock %}
 {% block navbar %}
@@ -35,7 +64,7 @@
             <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
                 <div class="panel panel-primary">
                     <div class="panel-heading"
-                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
+                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
                         <p class="panel-title">{! item.projectName !}</p>
                     </div>
                     <div class="panel-body" style="text-align: left">
@@ -54,12 +83,11 @@
                                 <td><label>总模块数：</label>{! item.totalModule !}</td>
                             </tr>
                         </table>
-                        <div style="float: right">
-                            <button type="button" class="btn btn-success btn-sm" @click="moduleInfo(item.projectName)">
-                                查看详情
+                        <div class="buttonGroup" style="float: right">
+                            <button class="viewButton" type="button" @click="moduleInfo(item.projectName)">
+                                查看
                             </button>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    @click="projectDelete(item.projectName)">删除
+                            <button class="deleteButton" type="button" @click="projectDelete(item.projectName)">删除
                             </button>
                         </div>
                         {% comment %}<ul class="list-group">
@@ -82,7 +110,7 @@
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="panel panel-primary">
                     <div class="panel-heading"
-                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #428bca 0%, #428bca 0%)">
+                         style="color: #fff;background-color: #428bca;border-color: #428bca;background-image:-webkit-linear-gradient(top, #2372a8 0%, #2372a8 0%)">
                         <p class="panel-title">新增</p>
                     </div>
                     <div class="panel-body">

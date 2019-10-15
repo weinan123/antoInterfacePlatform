@@ -1,6 +1,32 @@
 {% extends 'index.html' %}
 {% block title %}
     <title> 项目信息 </title>
+    <style type="text/css">
+        .viewButton {
+            background: #deeaf2;
+            font-size: 14px;
+            color: #FFFFFF;
+            letter-spacing: 0;
+            background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
+            border-style: none;
+            height: 36px;
+            width: 66px;
+            border-radius: 3px;
+        }
+
+        .deleteButton {
+            background: #deeaf2;
+            font-size: 14px;
+            color: #2372A8;
+            letter-spacing: 0;
+            background-image: -webkit-linear-gradient(top, #deeaf2 0%, #deeaf2 0%);
+            border-style: none;
+            height: 36px;
+            width: 66px;
+            border-radius: 3px;
+        }
+
+    </style>
 {% endblock %}
 {% block navbar %}
 {% endblock %}
@@ -16,7 +42,7 @@
                 <div class="btn-group" style="width:100%;">
                     <!-- 新建按钮触发模态框 -->
 
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#newProject">新建</button>
+                    <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
                     <!-- 新建模态框（Modal） -->
                     <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                          aria-hidden="true">
@@ -56,11 +82,11 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="col-sm-6">
-                                                <input type="submit" class="btn btn-primary"
+                                                <input type="submit" class="viewButton"
                                                        @click="submitFormNew($event)" value="新建"/>
                                             </div>
                                             <div class="col-sm-6">
-                                                <button type="button" class="btn btn-primary"
+                                                <button type="button" class="viewButton"
                                                         data-dismiss="modal">
                                                     关闭
                                                 </button>
@@ -72,7 +98,7 @@
                         </div><!-- /.modal -->
                     </div>
                     <!-- 导入按钮触发模态框 -->
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#importProject">导入</button>
+                    <button class="viewButton" data-toggle="modal" data-target="#importProject">导入</button>
                     <!-- 导入模态框（Modal） -->
                     <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
                          aria-labelledby="myModalLabel"
@@ -125,12 +151,12 @@
                                         {#                                        <div class="modal-footer" style="text-align: center">#}
                                         <div class="form-group">
                                             <div class="col-sm-6">
-                                                <button class="btn btn-primary" @click="submitForm($event)">
+                                                <button class="viewButton" @click="submitForm($event)">
                                                     提交
                                                 </button>
                                             </div>
                                             <div class="col-sm-6">
-                                                <button type="button" class="btn btn-primary"
+                                                <button type="button" class="viewButton"
                                                         data-dismiss="modal">
                                                     关闭
                                                 </button>
@@ -162,11 +188,13 @@
 
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
-                    <button class="btn btn-primary" @click="selectAll()">全选</button>
-                    <button class="btn btn-primary" @click="selectNone()">全不选</button>
+                    <button class="viewButton" @click="selectAll()">全选</button>
+                    <button class="viewButton" @click="selectNone()">全不选</button>
 
                     <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
-                        <button class="btn btn-danger" onClick="delcfm()" @click="projectBatchDelete()">批量删除</button>
+                        <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
+                                @click="projectBatchDelete()">批量删除
+                        </button>
                     </template>
 
                 </div>
@@ -198,13 +226,13 @@
                         <td style="margin: auto">
                             <div class="btn-group" style="margin: auto">
                                 <a v-bind:href="['/apiCases?projectName='+item.projectName+'&moduleName='+item.moduleName]">
-                                    <button type="button" class="btn btn-primary">
+                                    <button type="button" class="viewButton">
                                         查看
                                     </button>
                                 </a>
 
                                 <a>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    <button type="button" class="viewButton" data-toggle="modal"
                                             v-bind:data-target="'#editProject'+[item.id]">
                                         编辑
                                     </button>
@@ -257,13 +285,13 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <div class="col-sm-6">
-                                                            <button class="btn btn-primary"
+                                                            <button class="viewButton"
                                                                     @click="editForm($event,item.id)">
                                                                 修改
                                                             </button>
                                                         </div>
                                                         <div class="col-sm-6">
-                                                            <button type="button" class="btn btn-primary"
+                                                            <button type="button" class="viewButton"
                                                                     data-dismiss="modal">
                                                                 关闭
                                                             </button>
@@ -276,7 +304,7 @@
                                 </div>
 
                                 <a>
-                                    <button type="button" class="btn btn-danger" @click="projectDelete(item.id)">删除
+                                    <button type="button" class="deleteButton" @click="projectDelete(item.id)">删除
                                     </button>
                                 </a>
 
@@ -391,6 +419,8 @@
                                 });
                                 this.checkedDelete = [];
                             });
+                    } else {
+                        spinner.spin();
                     }
                 },
 
