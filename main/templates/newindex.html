@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/css/newindex.css" rel="stylesheet">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/csrf.js"></script>
+    <script src="/static/js/axios.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<div id="row">
+    <div id="left" style="width: 260px;height: 935px;background: #05314E;">
+        <div class="indexleft"><p>自动化接口平台</p></div>
+        <div style="width: 100%;padding-top: 18%;">
+            <ul style=" list-style: none;padding-inline-start: 1px;" >
+                <div v-for="(item,index) in navTab" :key="index"  @click="active(index)" class="row" style="height:40px;width:100%;padding-top: 5px">
+
+                <div :class="{'isshow':currentSort!=index}" style="width: 1.5%;height: 100%;background-color: ghostwhite;float: left"></div>
+                <div :class="{'selected':currentSort==index}" >
+                    <p class="indextab" style="margin-top: 10px">{!item.name !}</p></div>
+                </div>
+            </ul>
+        </div>
+        <div class="userdiv"></div>
+        <div style="width: 100%;padding-top: 40.1%;">
+            <p class="indextab">当前用户：{! username !}</p>
+            <div class="username"><p class="btnquit" @click="quitServer()">退出当前用户</p></div>
+        </div>
+    </div>
+    {% block content %}
+
+    {% endblock %}
+
+
+</div>
+</body>
+<script type="text/javascript">
+var vm1 = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#left',
+    data(){
+       return {
+           currentSort:0,
+           username:"",
+           navTab:[{
+               name:"首页"
+
+           },{
+               name:"单接口"
+
+           },{
+               name:"项目管理"
+
+           },{
+               name:"测试用例集管理"
+
+           },{
+               name:"测试报告管理"
+
+           },{
+               name:"权限控制"
+
+           },{
+               name:"全局配置"
+
+           }]
+
+       }
+
+    },
+    created(){
+    },
+     mounted:function() {
+         this.getUsername();
+         this.getUserLevel();
+
+    },
+    methods:{
+        //获取cookie
+        getCookie(cname){
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                var key = c.split("=")[0].replace(/\s*/g,"");
+                if(cname===key){
+                    let cookie_value = c.split("=")[1];
+                    return cookie_value
+                }
+            }
+        return "";
+      },
+        //赋值username
+        getUsername(){
+            console.log(this.getCookie("usename"));
+            this.username = this.getCookie("usename");
+        },
+        //获取登录等级，显示左侧列表
+        getUserLevel(){
+         axios.get('/getUserLevel/',{params:{ username:this.getCookie("usename")}})
+             .then(resp =>{
+                 console.log(resp.data);
+                 this.user_level = resp.data.user_level;
+                 this.user_configPermit = resp.data.user_configPermit;
+                 this.showTabs(resp.data.user_level);
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+    },
+        quitServer(){
+            window.location.href="/logout/";
+        },
+        active(index){
+            this.currentSort = index;
+        },
+        }
+}).$mount('#app1')
+</script>
+{% block vuejs %}
+{% endblock %}
+</html>

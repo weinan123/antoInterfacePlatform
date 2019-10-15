@@ -1,40 +1,53 @@
 {% extends 'basemain.html' %}
 {% block script %}
 <script src="/static/js/echarts.min.js"></script>
+
 {% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content1 %}
-    <keep-alive>
     <div class="col-md-2 row"  id ="app1" style="position: fixed;border-right: 1px solid gainsboro;height: 100%"  >
 
             <ul class="nav nav-pills nav-stacked" style="background-color:gainsboro;text-align:center;">
                 {% comment %}<li role="presentation" v-for="tab in tabs" :active="tab.active"><a href="/singleInterface/" >{!tab.name!}</a></li>{% endcomment %}
-                <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
+               {% comment %} <li role="presentation"  v-bind:class="{active:isActiveIn}"><a href="/index/"  >首页</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveSi}"><a href="/singleInterface/" >单接口</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveAl}"><a href="/firstProjectList/" >项目管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveApi}"><a href="/apiCases/" >接口用例集管理</a></li>
                 <li role="presentation" v-bind:class="{active:isActiveRs}"><a href="/batchReports/" >测试报告管理</a></li>
                 <li v-show="user_level!==3" role="presentation" v-bind:class="{active:isActivePer}"><a href="/userPermit/" >权限管理</a></li>
-                <li v-show="user_configPermit===true" role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>
-                {% comment %} <li role="presentation" v-bind:class="{active:isActiveSi}"><router-link to="/singleInterface">
-                     单接口</router-link></li>{% endcomment %}
+                <li v-show="user_configPermit===true" role="presentation" v-bind:class="{active:isActiveCo}"><a href="/configer/" >全局配置</a></li>{% endcomment %}
+                 <li role="presentation" v-bind:class="{active:isActiveSi}"><router-link to="/myindex">
+                     首页</router-link></li>
+                 <li role="presentation" v-bind:class="{active:isActiveAl}"><router-link to="/firstProjectList">
+                     项目管理</router-link></li>
+                 <li role="presentation" v-bind:class="{active:isActiveApi}"><router-link to="/apiCases">
+                     接口用例集管理</router-link></li>
             </ul>
 
             <div style="width:0;height:300px;border-left: 1px solid blue"></div>
+
         </div>
-     </keep-alive>
+
 {% endblock %}
 {% block content %}
     <router-view></router-view>
+
 {% endblock %}
 {% block vuejs %}
 <script type="text/javascript">
-const shouye = {template:'<div>ssss</div>'};
+var myindex = Vue.extend({template:'/myindex.html'});
+var firstProjectList = Vue.extend({template:'/firstProjectList.html'});
+var apiCases = Vue.extend({template:'/apiCases.html'});
 const routes = [
-    {path:'/singleInterface',component:shouye}
+    {path:'/myindex',component:myindex},
+    {path:'/firstProjectList',component:firstProjectList},
+    {path:'/apiCases',component:apiCases}
 ];
+const router = new VueRouter({
+   routes: routes
+});
 var vm1 = new Vue({
-    routes,
+    router,
     delimiters: ['{!', '!}'],
     el:'#app1',
     data:{

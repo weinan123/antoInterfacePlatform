@@ -14,7 +14,7 @@ from django.core import serializers
 @my_login
 def index(request):
     if request.method == 'GET':
-        return render(request,'myindex.html')
+        return render(request, 'newindex.html')
 def login(request):
     username = request.COOKIES.get('username')
     print username
