@@ -147,7 +147,7 @@ def newCase(request):
         print flag
         if(flag == False):
             try:
-                id = interfaceList.objects.filter(projectName=projectName,moduleName=moduleName).values("id")
+                id = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
                 print id
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
@@ -165,11 +165,11 @@ def newCase(request):
         else:
             try:
                 id1 = int(reqdata["apiId"])
-                pid = apiInfoTable.objects.get(apiID=id1).owningListID
+                proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
+                print("---------------id:-------", proid)
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
                                                               headers=headers,
-                                                              body=send_body)
-                interfaceList.objects.filter(id=pid).update(projectName=projectName, moduleName=moduleName)
+                                                              body=send_body,owningListID=proid[0]["id"])
             except Exception as e:
                 data = {
                     "code": -1,

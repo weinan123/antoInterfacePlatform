@@ -338,8 +338,10 @@ def getAllCases(request):
     moduleName = request.GET["moduleName"]
     pidList = []
     if projectName != "" or moduleName != "":
-        query_projId = interfaceList.objects.filter(projectName__contains=projectName).filter(
-            moduleName__contains=moduleName).values("id")
+        if moduleName != "":
+            query_projId = interfaceList.objects.filter(projectName=projectName).filter(moduleName=moduleName).values("id")
+        else:
+            query_projId = interfaceList.objects.filter(projectName=projectName).values("id")
         for pj in query_projId:
             pidList.append(pj["id"])
     if len(pidList) == 0:
