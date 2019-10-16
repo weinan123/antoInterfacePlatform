@@ -8,9 +8,9 @@
 
 #navSelBar{
     width:90%;
-    margin-left: 30px;
+    margin-left: 37px;
     margin-bottom:0px;
-    margin-top:30px;
+    margin-top:37px;
     background-color: #ffffff;
     padding:15px;
 }
@@ -21,17 +21,53 @@
 #tableContent{
     width:90%;
     height: 85%;
-    margin-left: 30px;
+    margin-left: 37px;
     margin-top:10px;
     margin-bottom:20px;
     background-color: #ffffff;
+    padding-left: 37px;
+    padding-top: 37px;
 }
-.apitable table, .apitable td, .apitable th {
+.tableStyles table, .tableStyles td, .tableStyles th {
     border: 1px solid #EEEEEE;
 }
-.apitable td, .apitable th
+.tableStyles td, .tableStyles th
 {
     height:48px;
     padding:10px;
 }
 
+#batchdel{
+    padding: 2px 6px;
+    margin-left: 10px;
+    margin-bottom: 2px;
+}
+.btn-local{
+    background-color: rgba(35,114,168,0.15);
+    color: #2372A8;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    display: inline-block;
+    border: 1px solid transparent;
+    font-family: inherit;
+}
+.btn-delete{
+    background-color: rgba(255, 0, 0, 0.15);
+    color: rgb(255, 0, 0);
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    display: inline-block;
+    border: 1px solid transparent;
+    font-family: inherit;
+}
+.reportsPage{
+    background-color: #f7f7f7;
+    float: left;
+    width: 85%;
+    height: 935px;
+    margin-left: 260px;
+}

@@ -30,8 +30,8 @@
         </div>
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
-            <div class="" role="form" style="margin: 20px;" >
-                <table class="apitable" style="width: 90%">
+            <div  class="tableStyles" style="height: 570px;">
+                <table style="width: 85%">
                     <thead>
                     <tr>
                         <th>序号</th>
@@ -61,37 +61,36 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td style="width: 25%">
-                                <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" style="background-color: rgba(35,114,168,0.15);color: #2372A8;">查看</button>
+                                <button class="btn-local" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view">查看</button>
                                 <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                        <button type="button" class="btn btn-sm" style="background-color: rgba(35,114,168,0.15);color: #2372A8; ">编辑</button>
+                                        <button class="btn-local">编辑</button>
                                 </a>
-                                <button type="button" class="btn btn-sm" @click="runsingle(info.id)" style="background-color: rgba(35,114,168,0.15);color: #2372A8;">执行</button>
-                                <button type="button" class="btn btn-sm" @click="delapi(result.data[index].id)" style="background-color: rgba(255,0,0,0.15);color: #ff0000;">删除</button>
+                                <button class="btn-local" @click="runsingle(info.id)">执行</button>
+                                <button class="btn-delete" @click="delapi(result.data[index].id)">删除</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div ref="selall" style="margin: 10px;">
+            </div>
+            <div ref="selall" style="margin: 10px;">
                     <label class="form-check-label">
                         <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
-                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;" v-if="permission_del">批量删除</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
                     <label class="form-check-label">
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
                     </label><span> 批量执行是否生成报告</span>
-                </div>
-
-                <div style="margin: -6px auto;width: 10%" v-if="pageview">
-                    <ul class="pagination">
-                        <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
-                        <li><a>{! pageNum !}</a></li>
-                        <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
-                    </ul>
-                </div>
-
-                <p>{! dlist !}</p>
             </div>
+            <div style="margin: -6px auto;width: 10%" v-if="pageview">
+                <ul class="pagination">
+                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
+                    <li><a>{! pageNum !}</a></li>
+                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
+                </ul>
+            </div>
+
+            <p>{! dlist !}</p>
         </div>
         <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 500px;margin: 75px auto">
@@ -154,11 +153,7 @@
             pageview: false,
         },
         created(){
-            {#vm1.$data.isActiveSi = false;#}
-            {#vm1.$data.isActiveIn = false;#}
-            {#vm1.$data.isActiveAl = false;#}
-            {#vm1.$data.isActiveApi = true;#}
-            {#vm1.$data.isActiveRs = false;#}
+            vm1.$data.currentSort = 3;
             axios.get('/getPermission/')
                     .then(resp =>{
                         console.log(resp.data);
