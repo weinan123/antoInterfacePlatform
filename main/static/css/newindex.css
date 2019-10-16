@@ -1,3 +1,10 @@
+.navleft{
+    width: 260px;
+    height: 100%;
+    background: #05314E;
+    position: fixed;
+    float: left
+}
 .indexleft{
     margin-left: 30px;
     padding-top: 50px;

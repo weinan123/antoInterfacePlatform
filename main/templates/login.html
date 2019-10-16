@@ -1,9 +1,36 @@
-{% extends 'basemain.html' %}
-{% block title %}个人信息修改 {% endblock %}
-{% block navbar %}
-{% endblock %}
-{% block content %}
-<div id="app2">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/css/login.css" rel="stylesheet">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/csrf.js"></script>
+    <script src="/static/js/axios.js"></script>
+</head>
+<body >
+<div id="login" class="logincontent" style="background: url(../static/image/login-back.jpg) no-repeat center;background-size: 100%;">
+<div class="logindiv">
+<div class="logintitle"><p>自动化接口平台</p></div>
+    <div class="login_control">
+        <div class="input_control">
+             <label style="color: white;float: left;width: 15%;text-align: left" >登录名:</label>
+             <input type="text" class="form-control" name="username" v-model="username"
+                placeholder="请输入用户名">
+        </div>
+    <div class="input_control">
+        <label style="color: white;float: left;width: 15%;text-align: left" >密码:</label>
+         <input type="password" class="form-control"  name="password" v-model="password"
+            placeholder="请输入密码">
+    </div>
+
+        <div class="input_control">
+            <button class="login_btn" @click="login()"><p style="margin-top: 8px">登录</p></button>
+             <p style="color: red">{! login_error !}</p>
+        </div>
+</div>
+{% comment %}<div id="app2">
 <div class="col-md-4" style="width: 33%"></div>
 <div class=" col-md-4  panel panel-default" style="margin-top: 150px;width: 33%" >
     <div class="panel-body">
@@ -36,13 +63,13 @@
     </div>
 </div>
 <div class="col-md-4"></div>
+</div>{% endcomment %}
 </div>
-{% endblock %}
-{% block vuejs %}
+</div>
 <script type="text/javascript">
 var vm0 = new Vue({
     delimiters: ['{!', '!}'],
-    el:'#app2',
+    el:'#login',
     data:{
         username :"",
         password:"",
@@ -115,4 +142,7 @@ var vm0 = new Vue({
     }
 })
 </script>
-{% endblock %}
+</body>
+</html>
+
+

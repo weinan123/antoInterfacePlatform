@@ -4,18 +4,16 @@
 {% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
-    <div class="title" id ="userpermit">
+    <div class="content" id ="userpermit">
     <div class="pageheader">
-        <p class="projectnamesel" style="float: left;font-size: 24px;
-    margin-left: 37px;">用户权限管理</p>
-        <div  style="padding-right: 30px;padding-top:5px;float: right"  >
-          <button type="submit" class="btn btn-success "  style="background: #03BABF;
-border-radius: 2px;" @click="saveData()">保存</button>
-        </div>
+        <p class="titlecss">用户权限管理</p>
+        {% comment %}<div style="padding-right: 30px;padding-top:5px;float: right"  >
+          <button type="submit" class="btnsave" @click="saveData()">保存</button>
+        </div>{% endcomment %}
     </div>
 
 
-   <div class="chartContent" style="height: 100%;">
+   <div class="formContent">
   <table class="table table-bordered" style="margin-top: 10px" >
   <thead>
     <tr>
@@ -24,9 +22,9 @@ border-radius: 2px;" @click="saveData()">保存</button>
       <th style="width: 10%">职位</th>
       <th style="width: 10%">职位等级</th>
       <th style="width: 10%">所属小组</th>
-      <th style="width: 20%">批量操作权限</th>
+      <th style="width: 25%">批量操作权限</th>
       <th style="width: 15%">全局配置权限</th>
-      <th style="width: 10%">操作</th>
+      <th style="width: 15%">操作</th>
     </tr>
   </thead>
   <tbody id="row" >
@@ -88,15 +86,12 @@ border-radius: 3px;" type="submit" class="btn btn-sm" @click="delUser(user.id)" 
     </tr>
   </tbody>
 </table>
+
    </div>
-
-
-  <div id="example" style="text-align: center">
+        <div id="example" style="text-align: center">
             <ul id="pageLimit">
             </ul>
             </div>
-
-
    <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 450px;margin: 75px auto">
                     <div class="modal-content" id="newinfo">

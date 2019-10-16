@@ -4,7 +4,7 @@
     float: left;
     margin-left: 260px;
     background-color:#F7F7F7 ;
-    width: 88%
+    width: 85%
 }
 /*顶栏样式*/
 .pageheader{
@@ -13,14 +13,6 @@
     background: #FFFFFF;
     margin-top: 44px;
     text-align: center;
-}
-/*下部框整体样式*/
-.formContent{
-    margin-left: 31px;
-    background-color: white;
-    margin-top: 1%;
-    height: 100%;
-    width: 97%;
 }
 /*标题样式*/
 .titlecss{
@@ -32,6 +24,15 @@
     float: left;font-size: 24px;
     margin-left: 37px;
 }
+/*下部框整体样式*/
+.formContent{
+    margin-left: 31px;
+    background-color: white;
+    margin-top: 1%;
+    height: 100%;
+    width: 95%;
+}
+
 /*保存按钮样式*/
 .btnsave{
     background: #03BABF;
@@ -53,5 +54,7 @@
     letter-spacing: 0;
     border-radius: 3px;
 }
+
+
 
 

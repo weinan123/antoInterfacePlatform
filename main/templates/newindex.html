@@ -34,7 +34,7 @@
 </head>
 <body>
 <div id="row">
-    <div id="left" style="width: 260px;height: 935px;background: #05314E;position: fixed;float: left">
+    <div id="left" class="navleft">
         <div class="indexleft"><p>自动化接口平台</p></div>
         <div style="width: 100%;padding-top: 18%;">
             <ul style=" list-style: none;padding-inline-start: 14px;" >
@@ -49,7 +49,7 @@
         <div class="userdiv"></div>
         <div style="width: 100%;padding-top: 40.1%;">
             <p class="indextab">当前用户：{! username !}</p>
-            <div class="username"><p class="btnquit" @click="quitServer()">退出当前用户</p></div>
+            <button class="username" @click="quitServer()"><p class="btnquit" >退出当前用户</p></button>
         </div>
     </div>
     {% block content %}
@@ -89,7 +89,7 @@ var vm1 = new Vue({
 
            },{
                name:"全局配置",
-               url:"/userPermit/"
+               url:"/configer/"
 
            }]
 
@@ -120,8 +120,13 @@ var vm1 = new Vue({
       },
         //赋值username
         getUsername(){
-            console.log(this.getCookie("usename"));
+            let username = this.getCookie("usename");
+            if (username===""){
+                window.location.href='/login';
+            }else{
+                console.log(this.getCookie("usename"));
             this.username = this.getCookie("usename");
+            }
         },
         //获取登录等级，显示左侧列表
         getUserLevel(){
