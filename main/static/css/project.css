@@ -1,0 +1,69 @@
+.customButton {
+    background-color: #428bca;
+    color: white;
+    font-size: 40px;
+    width: 300px;
+    height: 180px;
+    margin: 20px;
+}
+
+.createProjectButton {
+    background-color: grey;
+    color: lightgrey;
+    font-size: 40px;
+    width: 100%;
+    height: 102px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.buttonGroup {
+    background: #deeaf2;
+    border-radius: 3px;
+}
+
+.deleteButton {
+    background: #deeaf2;
+    font-size: 14px;
+    color: #2372A8;
+    letter-spacing: 0;
+    background-image: -webkit-linear-gradient(top, #deeaf2 0%, #deeaf2 0%);
+    border-style: none;
+    height: 36px;
+    width: 66px;
+    border-radius: 0px 3px 3px 0px;
+}
+
+.viewButton {
+    background: #deeaf2;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
+    border-style: none;
+    height: 36px;
+    width: 66px;
+    border-radius: 3px 0px 0px 3px;
+}
+
+.projectnamesel {
+        top: 0;
+    bottom: 0;
+    margin: auto;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2372A8;
+    letter-spacing: 0;
+}
+
+.projectCss{
+    margin-left: 46px;
+    float: left;
+    margin-top: 10px
+}
+
+.mouduleCss{
+    margin-left: 62px;
+    float: left;
+    margin-top: 10px
+}

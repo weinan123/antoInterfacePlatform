@@ -1,67 +1,23 @@
 {% extends 'newindex.html' %}
 {% block title %}
     <title xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"> 项目信息 </title>
-    <style type="text/css">
-        .customButton {
-            background-color: #428bca;
-            color: white;
-            font-size: 40px;
-            width: 300px;
-            height: 180px;
-            margin: 20px;
-        }
-
-        .createProjectButton {
-            background-color: grey;
-            color: lightgrey;
-            font-size: 40px;
-            width: 100%;
-            height: 102px;
-            padding-left: 15px;
-            padding-right: 15px;
-        }
-
-        .buttonGroup {
-            background: #deeaf2;
-            border-radius: 3px;
-        }
-
-        .deleteButton {
-            background: #deeaf2;
-            font-size: 14px;
-            color: #2372A8;
-            letter-spacing: 0;
-            background-image: -webkit-linear-gradient(top, #deeaf2 0%, #deeaf2 0%);
-            border-style: none;
-            height: 36px;
-            width: 66px;
-            border-radius: 0px 3px 3px 0px;
-        }
-
-        .viewButton {
-            background: #deeaf2;
-            font-size: 14px;
-            color: #FFFFFF;
-            letter-spacing: 0;
-            background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
-            border-style: none;
-            height: 36px;
-            width: 66px;
-            border-radius: 3px 0px 0px 3px;
-        }
-    </style>
 {% endblock %}
-{% block navbar %}
+{% block script %}
+    <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
-        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;padding: 15px;">
-            <ul class="breadcrumb" style="background-color: white;margin: 20px;">
-                <li><a href="/index/">首页</a></li>
-                <li><a href="/firstProjectList/">项目管理</a></li>
-            </ul>
+    <div id="right" class="content" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
+        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
+            <div class="pageheader" style="text-align: left;">
+                <div class="projectCss">
+                    <span class="projectnamesel">
+                        项目管理
+                    </span>
+                </div>
+            </div>
 
-            <div class="row" id="row" style="margin: auto;justify-content:center;align-items: center;background-color: white;margin: 20px;padding-top: 15px;">
+            <div class="formContent" id="row"
+                 style="justify-content:center;align-items: center;background-color: white;padding-top: 15px;">
                 <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading"
@@ -198,12 +154,7 @@
                 };
             },
             created() {
-                vm1.$data.isActiveSi = false;
-                vm1.$data.isActiveIn = false;
-                vm1.$data.isActiveAl = true;
-                vm1.$data.isActiveCo = false;
-                vm1.$data.isActiveRs = false;
-                vm1.$data.isActiveApi = false;
+                vm1.$data.currentSort = 2;
             },
             mounted() {
                 var target = document.getElementById("row");

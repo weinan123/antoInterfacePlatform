@@ -1,50 +1,57 @@
 {% extends 'newindex.html' %}
 {% block title %}<title> 结果报告</title> {% endblock %}
 {% block content %}
-<div class="col-md-9 row" id ="reports" style="margin-left: 16%;">
-    <div>
-        <div style="border-bottom: 1px solid gainsboro;width: 100%">
-            <h3>批量执行结果报告</h3>
+<div class="reportsPage" id ="reports">
+        <div class="pagetitle" style="">
+            <p style="margin-top: 0px;margin-bottom: 0px;">批量执行结果报告</p>
         </div>
-        <div class="form-horizontal" role="form" style="margin:25px">
-            <table class="table table-bordered" ref="tables" id="tableBody">
-                <thead>
-                <tr>
-                    <th>序号</th>
-                    <th>报告名称</th>
-                    <th>批量执行开始时间</th>
-                    <th>批量执行结束时间</th>
-                    <th>执行用例总数</th>
-                    <th>成功用例数</th>
-                    <th>失败用例数</th>
-                    <th>错误用例数</th>
-                    <th>执行者</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(info,index) in reportList">
-                        <td><label class="form-check-label">
-                                <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
-                            </label>
-                            {! index+ pageCount*(pageNum-1) +1 !}
-                        <td>{! info.report_runName !}</td>
-                        <td>{! info.startTime !}</td>
-                        <td>{! info.endTime !}</td>
-                        <td>{! info.totalNum !}</td>
-                        <td>{! info.successNum !}</td>
-                        <td>{! info.failNum !}</td>
-                        <td>{! info.errorNum !}</td>
-                        <td>{! info.executor !}</td>
-                        <td>
-                            <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn btn-sm btn-primary">查看</button></a>
-                            <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_localName" ><button type="button" class="btn btn-sm btn-primary">下载</button>
-                            </a>
-                            <button type="button" class="btn btn-sm btn-danger" @click="delreport(info.id)">删除</button>
-                        </td>
+        <div class="tableContent" id="tableContent" role="form">
+            <div class="tableStyles" style="height: 620px;">
+                <table ref="tables" id="tableBody" style="width: 90%">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>报告名称</th>
+                        <th>批量执行开始时间</th>
+                        <th>批量执行结束时间</th>
+                        <th>执行用例总数</th>
+                        <th>成功用例数</th>
+                        <th>失败用例数</th>
+                        <th>错误用例数</th>
+                        <th>执行者</th>
+                        <th>操作</th>
                     </tr>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(info,index) in reportList">
+                            <td><label class="form-check-label">
+                                    <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
+                                </label>
+                                {! index+ pageCount*(pageNum-1) +1 !}
+                            <td>{! info.report_runName !}</td>
+                            <td>{! info.startTime !}</td>
+                            <td>{! info.endTime !}</td>
+                            <td>{! info.totalNum !}</td>
+                            <td>{! info.successNum !}</td>
+                            <td>{! info.failNum !}</td>
+                            <td>{! info.errorNum !}</td>
+                            <td>{! info.executor !}</td>
+                            <td>
+                                <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn-local">查看</button></a>
+                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_localName" ><button type="button" class="btn-local">下载</button>
+                                </a>
+                                <button class="btn-delete" @click="delreport(info.id)">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div ref="selall" style="margin: 10px;">
+                    <label class="form-check-label">
+                        <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
+                    </label><span>&nbsp;全选&nbsp;</span>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()">批量删除</button>
+                </div>
+            </div>
             <div style="margin: -6px auto;width: 10%" v-if="pageview">
                 <ul class="pagination">
                     <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
@@ -52,17 +59,10 @@
                     <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
                 </ul>
             </div>
-            <div ref="selall">
-                <label class="form-check-label">
-                    <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
-                </label><span>&nbsp;全选&nbsp;</span>
-                <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" style="padding: 2px 6px;">批量删除</button>
-            </div>
         </div>
-    </div>
 </div>
 {% endblock %}
-{% block vuejs1 %}
+{% block vuejs %}
     <script type="text/javascript">
 var vmRs = new Vue({
     delimiters: ['{!', '!}'],
@@ -78,13 +78,7 @@ var vmRs = new Vue({
         pageview: false,
     },
     created() {
-        vm1.$data.isActiveSi = false;
-        vm1.$data.isActiveIn = false;
-        vm1.$data.isActiveAl = false;
-        vm1.$data.isActiveCo = false;
-        vm1.$data.isActiveApi = false;
-        vm1.$data.isActiveRs = true;
-        vm1.$data.isActivePer = false;
+        vm1.$data.currentSort = 4;
     },
     mounted(){
         this.getreportList();
