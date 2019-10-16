@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'newindex.html' %}
 {% block title %}<title> 单接口</title> {% endblock %}
 {% block content %}
     <!--<div class="row" style="border: #337ab7">-->
@@ -385,13 +385,12 @@
 </div>
 </div>
 {% endblock %}
-{% block vuejs1 %}
+{% block vuejs%}
 <script type="text/javascript">
 var vm = new Vue({
     delimiters: ['{!', '!}'],
     el:'#app2',
     data:{
-
             file:"",
             fileName:"请选择文件",
             checkv : "option1",
@@ -464,14 +463,8 @@ var vm = new Vue({
 
     },
 
-    created() {
-                vm1.$data.isActiveSi = true;
-                vm1.$data.isActiveIn = false;
-                vm1.$data.isActiveAl = false;
-                vm1.$data.isActiveCo = false;
-                vm1.$data.isActiveRs = false;
-                vm1.$data.isActiveApi = false;
-                vm1.$data.isActivePer = false;
+    created(){
+                vm1.$data.currentSort = 1;
 
             },
     mounted:function(){

@@ -1,0 +1,46 @@
+.title{
+    float: left;
+    margin-left: 12%;
+    background-color:#C0C0C0 ;
+    width: 88%
+}
+.pageheader{
+    height: 44px;
+    width: 100% ;
+    background: #FFFFFF;
+    margin-top: 44px;
+    text-align: center;
+}
+.projectCss{
+    margin-left: 31px;
+    height:100px;
+    float: left;
+    margin-top: 10px
+}
+.projectname{
+    font-family: PingFangSC-Semibold;
+    font-size: 16px;
+    font-weight: bold;
+    color: #9B9B9B;
+    letter-spacing: 0;
+}
+.projectnamesel{
+    font-family: PingFangSC-Semibold;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2372A8;
+    letter-spacing: 0;
+}
+.chartContent{
+    margin-left: 31px;
+    background-color: white;
+    margin-top: 1%;
+    height: 600px;
+    width: 97%;
+}
+.myTabContent{
+    height: 90%;
+    width: 80%;
+    margin-left: 10%
+}
+

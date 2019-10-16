@@ -1,31 +1,32 @@
-{% extends 'index.html' %}
+{% extends 'newindex.html' %}
 {% block script %}
-
+    <link href="/static/css/myindex.css" rel="stylesheet">
 {% endblock %}
 {% block title %}<title> 首页</title> {% endblock %}
 {% block content %}
-    <div class="col-md-10 row" id ="userpermit" style="margin-left: 16%">
-    <div style="width: 100%;height: 100%">
-        <h3 class="col-xs-10"  >用户权限管理</h3>
-        <div class="col-xs-2" style="padding-top: 10px;float: right"  >
-          <button type="submit" class="btn btn-success "  style="width: 40%" @click="saveData()">保存</button>
+    <div class="title" id ="userpermit">
+    <div class="pageheader">
+        <p class="projectnamesel" style="float: left;font-size: 24px;
+    margin-left: 37px;">用户权限管理</p>
+        <div  style="padding-right: 30px;padding-top:5px;float: right"  >
+          <button type="submit" class="btn btn-success "  style="background: #03BABF;
+border-radius: 2px;" @click="saveData()">保存</button>
         </div>
     </div>
-        <div style="margin-left: 10px;margin-top: 20px;width: 90%;height: 750px" >
 
 
-    <table class="table table-bordered" >
-
+   <div class="chartContent" style="height: 100%;">
+  <table class="table table-bordered" style="margin-top: 10px" >
   <thead>
     <tr>
-      <th class="col-xs-1" >编号</th>
-      <th class="col-xs-1" >姓名</th>
-      <th class="col-xs-1">职位</th>
-      <th class="col-xs-1">职位等级</th>
-      <th class="col-xs-1">所属小组</th>
-      <th class="col-xs-3">批量操作权限</th>
-      <th class="col-xs-2">全局配置权限</th>
-      <th class="col-xs-1">操作</th>
+      <th style="width: 5%" >编号</th>
+      <th style="width: 10%" >姓名</th>
+      <th style="width: 10%">职位</th>
+      <th style="width: 10%">职位等级</th>
+      <th style="width: 10%">所属小组</th>
+      <th style="width: 20%">批量操作权限</th>
+      <th style="width: 15%">全局配置权限</th>
+      <th style="width: 10%">操作</th>
     </tr>
   </thead>
   <tbody id="row" >
@@ -72,19 +73,29 @@
           </template>{% endcomment %}
       </td>
         <td >
-            <button type="submit" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
-          <button type="submit" class="btn btn-danger btn-sm" @click="delUser(user.id)" >删除</button>
+            <button  style="background: #2372A8;font-family: PingFang-SC-Regular;
+font-size: 14px;
+color: #FFFFFF;
+letter-spacing: 0;
+border-radius: 3px 0px 0px 3px;" type="submit" class="btn  btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
+          <button style="font-family: PingFang-SC-Regular;
+font-size: 14px;
+color: #2372A8;
+letter-spacing: 0;
+border-radius: 3px;" type="submit" class="btn btn-sm" @click="delUser(user.id)" >删除</button>
 
         </td>
     </tr>
   </tbody>
 </table>
+   </div>
 
 
-        <div id="example" style="text-align: center">
+  <div id="example" style="text-align: center">
             <ul id="pageLimit">
             </ul>
             </div>
+
 
    <div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 450px;margin: 75px auto">
@@ -157,7 +168,7 @@
 </div>
     </div>
 {% endblock %}
-{% block vuejs1 %}
+{% block vuejs%}
 <script type="text/javascript">
 var vm = new Vue({
 delimiters: ['{!', '!}'],
@@ -171,19 +182,12 @@ data:function(){
         group:"请选择",
         userid:"",
         page_num:"",
-        username:vm.$data.login_user,
+        username:vm1.$data.username,
         count:0
     }
 },
 created(){
-    vm1.$data.isActiveSi = false;
-    vm1.$data.isActiveIn = false;
-    vm1.$data.isActiveAl = false;
-    vm1.$data.isActiveCo = false;
-    vm1.$data.isActiveRs = false;
-    vm1.$data.isActiveApi = false;
-    vm1.$data.isActivePer = true;
-
+    vm1.$data.currentSort = 5;
 
 },
 mounted:function() {
@@ -247,7 +251,7 @@ methods:{
      getUserData(page,count){
          var target = document.getElementById("row");
          var spinner = Spinner({top:'1'}).spin(target);
-         axios.get('/getUserData/',{params:{ username:vm.$data.login_user,page:page,count:count}})
+         axios.get('/getUserData/',{params:{ username:vm1.$data.username,page:page,count:count}})
              .then(resp =>{
 
                  for(var i=0;i<resp.data.datas.length;i++){

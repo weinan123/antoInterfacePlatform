@@ -1,18 +1,25 @@
 {% extends 'newindex.html' %}
 {% block title %}<title> 首页</title> {% endblock %}
+{% block script %}
+<link href="/static/css/myindex.css" rel="stylesheet">
+{% endblock %}
 {% block content %}
-<div class="col-md-8 row" id ="myindex" style="float: left;margin-left: 15%">
-    <div></div>
-    <ul id="myTab"  class="nav nav-tabs" >
+<div  id ="myindex" class="title">
+    <div class="pageheader">
+        <div v-for="projectName,index in projectNameList" class="projectCss" ><span :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="changeChart(index,projectName)">{! projectName !}</span>
+        <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
+        </div>
+    </div>
+   {% comment %} <ul id="myTab"  class="nav nav-tabs" >
 			<li v-for="projectName,index in projectNameList" v-bind:class="index===0?'active':''"><a @click="changeChart(projectName)" data-toggle="tab">
                 {! projectName !}</a></li>
-    </ul>
-    <div class="container">
-		<div id="myTabContent" style="height: 500px;width: 1000px;">
+    </ul>{% endcomment %}
+    <div class="chartContent">
+		<div id="myTabContent" class="myTabContent" >
 		</div>
 	</div>
-    <div class="container">
-		<div id="myTabContent1" style="height: 500px;width: 1000px">
+    <div class="chartContent">
+		<div id="myTabContent1" class="myTabContent" style="padding-top: 20px">
 		</div>
 	</div>
 </div>
@@ -24,6 +31,7 @@ var vm = new Vue({
     el:'#myindex',
     data:function(){
         return{
+            currentSort:0,
             projectName:"",
             showchart:"",
             projectNameList:[],
@@ -43,6 +51,10 @@ var vm = new Vue({
 
     },
     methods:{
+        active(index){
+
+
+        },
         getinitData(){
           this.myTabContent = echarts.init(document.getElementById('myTabContent'));
           this.myTabContent.setOption(this.options);
@@ -56,7 +68,7 @@ var vm = new Vue({
                  this.projectNameList=resp.data.projectList;
                  var projectName=this.projectNameList[0];
                  this.returndata = (resp.data.data);
-                 this.changeChart(projectName);
+                 this.changeChart(0,projectName);
                  console.log(resp.data.data);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
@@ -91,7 +103,7 @@ var vm = new Vue({
 					name : '执行通过',
                     itemStyle: {
 				    normal:{
-				        color:"#009900"
+				        color:"#03BABF"
                     }
                 }
 				}, {
@@ -99,7 +111,7 @@ var vm = new Vue({
 					name : '执行失败',
                     itemStyle: {
 				    normal:{
-				        color:"#CC0000"
+				        color:"#FF4834 "
                     }
                 }
 				}, {
@@ -107,7 +119,7 @@ var vm = new Vue({
 					name : '未执行',
                     itemStyle: {
 				    normal:{
-				        color:"#C0C0C0"
+				        color:"#EEEEEE"
                     }
                 }
 				},],
@@ -147,7 +159,7 @@ var vm = new Vue({
 				type : 'bar',
                 itemStyle: {
 				    normal:{
-				        color:"#428bca"
+				        color:"#2372A8"
                     }
                 }
 			},
@@ -158,7 +170,7 @@ var vm = new Vue({
 				type : 'bar',
                 itemStyle: {
 				    normal:{
-				        color:"#009900"
+				        color:"#03BABF"
                     }
                 }
 			},
@@ -169,7 +181,7 @@ var vm = new Vue({
 				type : 'bar',
                 itemStyle: {
 				    normal:{
-				        color:"#CC0000"
+				        color:"#FF4834"
                     }
                 }
 
@@ -180,7 +192,7 @@ var vm = new Vue({
 				type : 'bar',
                 itemStyle: {
 				    normal:{
-				        color:"#C0C0C0"
+				        color:"#EEEEEE"
                     }
                 }
 
@@ -192,7 +204,8 @@ var vm = new Vue({
             this.getinitData()
 
         },
-        changeChart(projectName){
+        changeChart(index,projectName){
+            this.currentSort = index;
             var modelListName = [];
             var allcasemodellist = [];
             var passcasemodelist = [];
