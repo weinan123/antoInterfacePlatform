@@ -28,14 +28,11 @@
     <script src="/static/js/echarts.min.js"></script>
     <script src="/static/js/spin.min.js"></script>
     <script src="/static/js/bootstrap-paginator.js"></script>
-    <title>首页</title>
-    {% block script %}
-
-    {% endblock %}
+{% block title %}<title> 首页</title> {% endblock %}
 </head>
 <body>
 <div id="row">
-    <div id="left" style="width: 226px;height: 935px;background: #05314E;position: fixed;float: left">
+    <div id="left" style="width: 260px;height: 935px;background: #05314E;position: fixed;float: left">
         <div class="indexleft"><p>自动化接口平台</p></div>
         <div style="width: 100%;padding-top: 18%;">
             <ul style=" list-style: none;padding-inline-start: 14px;" >
@@ -48,7 +45,7 @@
             </ul>
         </div>
         <div class="userdiv"></div>
-        <div v-show="username!==''" style="width: 100%;padding-top: 40.1%;">
+        <div style="width: 100%;padding-top: 40.1%;">
             <p class="indextab">当前用户：{! username !}</p>
             <div class="username"><p class="btnquit" @click="quitServer()">退出当前用户</p></div>
         </div>
@@ -90,7 +87,7 @@ var vm1 = new Vue({
 
            },{
                name:"全局配置",
-               url:"/configer/"
+               url:"/userPermit/"
 
            }]
 
@@ -122,13 +119,7 @@ var vm1 = new Vue({
         //赋值username
         getUsername(){
             console.log(this.getCookie("usename"));
-            let username = this.getCookie("usename");
-            if(username!==""){
-                this.username = this.getCookie("usename");
-            }else {
-              window.location.href="/login/";
-            }
-
+            this.username = this.getCookie("usename");
         },
         //获取登录等级，显示左侧列表
         getUserLevel(){
@@ -147,17 +138,8 @@ var vm1 = new Vue({
         },
         active(index){
             this.currentSort = index;
-            var url = this.navTab[index].url;
-            if(url==="/userPermit/"||url==="/configer/" ){
-            if(this.user_level=== 3 || this.user_configPermit===false){
-                window.alert("您没有次操作权限，请联系管理员添加权限")
-            }else{
-                 window.location.href=url;
+            window.location.href=this.navTab[index].url;
 
-            }
-            }else{
-                window.location.href=url;
-            }
         },
         }
 }).$mount('#left')

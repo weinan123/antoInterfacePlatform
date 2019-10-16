@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'newindex.html' %}
 {% block title %}
     <title> 项目信息 </title>
     <style type="text/css">
@@ -31,291 +31,305 @@
 {% block navbar %}
 {% endblock %}
 {% block content %}
-    <div class="col-md-10 row" id="projectList" style="margin-left: 15%">
-        <ul class="breadcrumb">
-            <li><a href="/index/">首页</a></li>
-            <li><a href="/firstProjectList/">项目管理</a></li>
-            <li>{! projectNameTitle !}</li>
-        </ul>
-        <div class="row" style="width:100%;">
-            <div class="col-md-4" style="width:100%;">
-                <div class="btn-group" style="width:100%;">
-                    <!-- 新建按钮触发模态框 -->
+    <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
+        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;padding: 15px;">
+            <ul class="breadcrumb" style="background-color: white;margin: 20px;">
+                <li><a href="/index/">首页</a></li>
+                <li><a href="/firstProjectList/">项目管理</a></li>
+                <li>{! projectNameTitle !}</li>
+            </ul>
+            <div class="row" style="background-color: white;margin: 20px;padding-top: 15px;">
+                <div class="col-md-4" style="width:100%;">
+                    <div class="btn-group" style="width:100%;padding: 15px;">
+                        <!-- 新建按钮触发模态框 -->
 
-                    <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
-                    <!-- 新建模态框（Modal） -->
-                    <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" id="newProjectRow">
-                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                                    </button>
-                                    <label class="modal-title" id="myModalLabel">新建项目</label>
-                                </div>
-                                <div class="modal-body">
-                                    <form style="text-align: center" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="projectName"
-                                                       required id="id_projectName" maxlength="50"
-                                                       v-model="projectNameNew" readonly="readonly"
-                                                       placeholder="请输入项目名称"/>
+                        <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
+                        <!-- 新建模态框（Modal） -->
+                        <div class="modal fade" id="newProject" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" id="newProjectRow">
+                                <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <label class="modal-title" id="myModalLabel">新建项目</label>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form style="text-align: center" class="form-horizontal">
+                                            <div class="form-group">
+                                                <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="projectName"
+                                                           required id="id_projectName" maxlength="50"
+                                                           v-model="projectNameNew" readonly="readonly"
+                                                           placeholder="请输入项目名称"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="moduleName"
-                                                       required id="id_moduleName" v-model="moduleNameNew"
-                                                       maxlength="50" placeholder="请输入模块名称"/>
+                                            <div class="form-group">
+                                                <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="moduleName"
+                                                           required id="id_moduleName" v-model="moduleNameNew"
+                                                           maxlength="50" placeholder="请输入模块名称"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="host" required
-                                                       v-model="hostNew" readonly="readonly"
-                                                       id="id_host" maxlength="50" placeholder="请输入域名地址"/>
+                                            <div class="form-group">
+                                                <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="host" required
+                                                           v-model="hostNew" readonly="readonly"
+                                                           id="id_host" maxlength="50" placeholder="请输入域名地址"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-6">
-                                                <input type="submit" class="viewButton"
-                                                       @click="submitFormNew($event)" value="新建"/>
+                                            <div class="form-group">
+                                                <div class="col-sm-6">
+                                                    <input type="submit" class="viewButton"
+                                                           @click="submitFormNew($event)" value="新建"/>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" class="viewButton"
+                                                            data-dismiss="modal">
+                                                        关闭
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <button type="button" class="viewButton"
-                                                        data-dismiss="modal">
-                                                    关闭
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal -->
-                    </div>
-                    <!-- 导入按钮触发模态框 -->
-                    <button class="viewButton" data-toggle="modal" data-target="#importProject">导入</button>
-                    <!-- 导入模态框（Modal） -->
-                    <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" id="importProjectRow">
-                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
-                                    </button>
-                                    <label class="modal-title" id="myModalLabel">导入</label>
-                                </div>
-                                <div class="modal-body">
-                                    {#                                    新版本#}
-                                    <form style="text-align: center" class="form-horizontal">
+                                        </form>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+                        <!-- 导入按钮触发模态框 -->
+                        <button class="viewButton" data-toggle="modal" data-target="#importProject">导入</button>
+                        <!-- 导入模态框（Modal） -->
+                        <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog" id="importProjectRow">
+                                <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <label class="modal-title" id="myModalLabel">导入</label>
+                                    </div>
+                                    <div class="modal-body">
+                                        {#                                    新版本#}
+                                        <form style="text-align: center" class="form-horizontal">
 
-                                        <div class="form-group">
-                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="projectName"
-                                                       v-model="projectName" required id="id_projectName"
-                                                       maxlength="50" placeholder="请输入项目名称" readonly="readonly">
+                                            <div class="form-group">
+                                                <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="projectName"
+                                                           v-model="projectName" required id="id_projectName"
+                                                           maxlength="50" placeholder="请输入项目名称" readonly="readonly">
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="moduleName"
-                                                       required id="id_moduleName" v-model="moduleName"
-                                                       maxlength="50" placeholder="请输入模块名称"/>
+                                            <div class="form-group">
+                                                <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="moduleName"
+                                                           required id="id_moduleName" v-model="moduleName"
+                                                           maxlength="50" placeholder="请输入模块名称"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="host" required
-                                                       v-model="host" id="id_host" maxlength="50" readonly="readonly"
-                                                       placeholder="请输入域名地址"/>
+                                            <div class="form-group">
+                                                <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
+                                                <div class="col-sm-9">
+                                                    <input class="form-control" type="text" name="host" required
+                                                           v-model="host" id="id_host" maxlength="50"
+                                                           readonly="readonly"
+                                                           placeholder="请输入域名地址"/>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="uploadFile" class="col-sm-3 control-label">选择文件：</label>
-                                            <div class="col-sm-9">
-                                                <input type="file" id="uploadFile" ref="inputFile"
-                                                       @change="getFile($event)" class="form-control" name="uploadFile"
-                                                       required/>
+                                            <div class="form-group">
+                                                <label for="uploadFile" class="col-sm-3 control-label">选择文件：</label>
+                                                <div class="col-sm-9">
+                                                    <input type="file" id="uploadFile" ref="inputFile"
+                                                           @change="getFile($event)" class="form-control"
+                                                           name="uploadFile"
+                                                           required/>
+                                                </div>
                                             </div>
-                                        </div>
 
+                                            {#                                        <div class="modal-footer" style="text-align: center">#}
+                                            <div class="form-group">
+                                                <div class="col-sm-6">
+                                                    <button class="viewButton" @click="submitForm($event)">
+                                                        提交
+                                                    </button>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <button type="button" class="viewButton"
+                                                            data-dismiss="modal">
+                                                        关闭
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        {#                                    <form>#}
+                                        {#                                        <input type="text" value="" v-model="name" placeholder="请输入用户名">#}
+                                        {#                                        <input type="text" value="" v-model="age" placeholder="请输入年龄">#}
+                                        {#                                        <input type="file" @change="getFile($event)">#}
+                                        {#                                        <button @click="submitForm($event)">提交</button>#}
+                                        {#                                    </form>#}
+
+
+                                        {#                                    旧版本#}
+                                        {#                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">#}
+                                        {#                                        <input type="file" name="file"/>#}
                                         {#                                        <div class="modal-footer" style="text-align: center">#}
-                                        <div class="form-group">
-                                            <div class="col-sm-6">
-                                                <button class="viewButton" @click="submitForm($event)">
-                                                    提交
-                                                </button>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <button type="button" class="viewButton"
-                                                        data-dismiss="modal">
-                                                    关闭
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        {#                                            <button type="submit" class="btn btn-primary">提交文件</button>#}
+                                        {#                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭#}
+                                        {#                                            </button>#}
+                                        {#                                        </div>#}
+                                        {#                                    </form>#}
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
 
-                                    {#                                    <form>#}
-                                    {#                                        <input type="text" value="" v-model="name" placeholder="请输入用户名">#}
-                                    {#                                        <input type="text" value="" v-model="age" placeholder="请输入年龄">#}
-                                    {#                                        <input type="file" @change="getFile($event)">#}
-                                    {#                                        <button @click="submitForm($event)">提交</button>#}
-                                    {#                                    </form>#}
+                        {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
+                        {#                checkedDelete为数组，记录着选中的项目的ID#}
+                        <button class="viewButton" @click="selectAll()">全选</button>
+                        <button class="viewButton" @click="selectNone()">全不选</button>
 
+                        <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
+                            <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
+                                    @click="projectBatchDelete()">批量删除
+                            </button>
+                        </template>
 
-                                    {#                                    旧版本#}
-                                    {#                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">#}
-                                    {#                                        <input type="file" name="file"/>#}
-                                    {#                                        <div class="modal-footer" style="text-align: center">#}
-                                    {#                                            <button type="submit" class="btn btn-primary">提交文件</button>#}
-                                    {#                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭#}
-                                    {#                                            </button>#}
-                                    {#                                        </div>#}
-                                    {#                                    </form>#}
-                                </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal -->
                     </div>
-
-                    {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
-                    {#                checkedDelete为数组，记录着选中的项目的ID#}
-                    <button class="viewButton" @click="selectAll()">全选</button>
-                    <button class="viewButton" @click="selectNone()">全不选</button>
-
-                    <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
-                        <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
-                                @click="projectBatchDelete()">批量删除
-                        </button>
-                    </template>
-
                 </div>
-            </div>
-            <div style="width:100%;margin-left: 15px;height: 100%">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>模块名称</th>
-                        <th>更新时间</th>
-                        <th>创建时间</th>
-                        <th>总用例数</th>
-                        <th>通过用例数</th>
-                        <th>失败用例数</th>
-                        <th>未执行用例数</th>
-                        <th>操作</th>
-                        <th>批量删除</th>
-                    </tr>
-                    </thead>
-                    <tbody id="row">
-                    <tr v-for="item in list">
-                        <td>{! item.moduleName !}</td>
-                        <td>{! item.updateTime !}</td>
-                        <td>{! item.createTime !}</td>
-                        <td>{! item.allcaseNum !}</td>
-                        <td>{! item.passcaseNum !}</td>
-                        <td>{! item.failcaseNum !}</td>
-                        <td>{! item.blockcaseNum !}</td>
-                        <td style="margin: auto">
-                            <div class="btn-group" style="margin: auto">
-                                <a v-bind:href="['/apiCases?projectName='+item.projectName+'&moduleName='+item.moduleName]">
-                                    <button type="button" class="viewButton">
-                                        查看
-                                    </button>
-                                </a>
+                <div style="width:100%;margin-left: 15px;height: 100%;padding: 15px;">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>模块名称</th>
+                            <th>更新时间</th>
+                            <th>创建时间</th>
+                            <th>总用例数</th>
+                            <th>通过用例数</th>
+                            <th>失败用例数</th>
+                            <th>未执行用例数</th>
+                            <th>操作</th>
+                            <th>批量删除</th>
+                        </tr>
+                        </thead>
+                        <tbody id="row">
+                        <tr v-for="item in list">
+                            <td>{! item.moduleName !}</td>
+                            <td>{! item.updateTime !}</td>
+                            <td>{! item.createTime !}</td>
+                            <td>{! item.allcaseNum !}</td>
+                            <td>{! item.passcaseNum !}</td>
+                            <td>{! item.failcaseNum !}</td>
+                            <td>{! item.blockcaseNum !}</td>
+                            <td style="margin: auto">
+                                <div class="btn-group" style="margin: auto">
+                                    <a v-bind:href="['/apiCases?projectName='+item.projectName+'&moduleName='+item.moduleName]">
+                                        <button type="button" class="viewButton">
+                                            查看
+                                        </button>
+                                    </a>
 
-                                <a>
-                                    <button type="button" class="viewButton" data-toggle="modal"
-                                            v-bind:data-target="'#editProject'+[item.id]">
-                                        编辑
-                                    </button>
-                                </a>
+                                    <a>
+                                        <button type="button" class="viewButton" data-toggle="modal"
+                                                v-bind:data-target="'#editProject'+[item.id]">
+                                            编辑
+                                        </button>
+                                    </a>
 
 
-                                <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1" role="dialog"
-                                     aria-labelledby="myModalLabel"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
-                                        <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-hidden="true">
-                                                    &times;
-                                                </button>
-                                                <label class="modal-title" id="myModalLabel">编辑</label>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form style="text-align: center" class="form-horizontal">
-                                                    <div class="form-group">
-                                                        <label for="id_projectName"
-                                                               class="col-sm-3 control-label">项目名称:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="projectName" class="form-control"
-                                                                   v-bind:value="[item.projectName]" required="required"
-                                                                   v-bind:id="'projectNameEdit'+[item.id]"
-                                                                   maxlength="50" readonly="readonly">
+                                    <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
+                                         role="dialog"
+                                         aria-labelledby="myModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
+                                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <label class="modal-title" id="myModalLabel">编辑</label>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form style="text-align: center" class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label for="id_projectName"
+                                                                   class="col-sm-3 control-label">项目名称:</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="projectName"
+                                                                       class="form-control"
+                                                                       v-bind:value="[item.projectName]"
+                                                                       required="required"
+                                                                       v-bind:id="'projectNameEdit'+[item.id]"
+                                                                       maxlength="50" readonly="readonly">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="id_moduleName"
-                                                               class="col-sm-3 control-label">模块名称:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="moduleName" class="form-control"
-                                                                   v-bind:value="[item.moduleName]" required="required"
-                                                                   v-bind:id="'moduleNameEdit'+[item.id]"
-                                                                   maxlength="50">
+                                                        <div class="form-group">
+                                                            <label for="id_moduleName"
+                                                                   class="col-sm-3 control-label">模块名称:</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="moduleName"
+                                                                       class="form-control"
+                                                                       v-bind:value="[item.moduleName]"
+                                                                       required="required"
+                                                                       v-bind:id="'moduleNameEdit'+[item.id]"
+                                                                       maxlength="50">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="id_host"
-                                                               class="col-sm-3 control-label">host:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="host" class="form-control"
-                                                                   v-bind:value="[item.host]"
-                                                                   required="required" v-bind:id="'hostEdit'+[item.id]"
-                                                                   maxlength="50" readonly="readonly">
+                                                        <div class="form-group">
+                                                            <label for="id_host"
+                                                                   class="col-sm-3 control-label">host:</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="host" class="form-control"
+                                                                       v-bind:value="[item.host]"
+                                                                       required="required"
+                                                                       v-bind:id="'hostEdit'+[item.id]"
+                                                                       maxlength="50" readonly="readonly">
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-sm-6">
-                                                            <button class="viewButton"
-                                                                    @click="editForm($event,item.id)">
-                                                                修改
-                                                            </button>
+                                                        <div class="form-group">
+                                                            <div class="col-sm-6">
+                                                                <button class="viewButton"
+                                                                        @click="editForm($event,item.id)">
+                                                                    修改
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <button type="button" class="viewButton"
+                                                                        data-dismiss="modal">
+                                                                    关闭
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-sm-6">
-                                                            <button type="button" class="viewButton"
-                                                                    data-dismiss="modal">
-                                                                关闭
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal -->
+                                                    </form>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal -->
+                                    </div>
+
+                                    <a>
+                                        <button type="button" class="deleteButton" @click="projectDelete(item.id)">删除
+                                        </button>
+                                    </a>
+
+
                                 </div>
-
-                                <a>
-                                    <button type="button" class="deleteButton" @click="projectDelete(item.id)">删除
-                                    </button>
-                                </a>
-
-
-                            </div>
-                        </td>
-                        <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]" v-model="checkedDelete">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </td>
+                            <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]"
+                                       v-model="checkedDelete">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -324,7 +338,7 @@
 </div>
 <div class="col-md-4"></div>
 
-{% block vuejs1 %}
+{% block vuejs %}
 
     <script type="text/javascript">
         var pro = "";
@@ -365,7 +379,7 @@
                 this.projectName = this.projectNameTitle;
 
                 var target = document.getElementById("row");
-                var spinner = Spinner({top: '1'}).spin(target);
+                var spinner = Spinner({top: '3'}).spin(target);
                 axios
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
@@ -395,7 +409,7 @@
 
                 projectBatchDelete() {
                     var target = document.getElementById("row");
-                    var spinner = Spinner({top: '1'}).spin(target);
+                    var spinner = Spinner({top: '3'}).spin(target);
 
                     console.log(projectBatchDelete);
                     if (projectBatchDelete) {
@@ -429,7 +443,7 @@
                         window.event.returnValue = false;
                     } else {
                         var target = document.getElementById("row");
-                        var spinner = Spinner({top: '1'}).spin(target);
+                        var spinner = Spinner({top: '3'}).spin(target);
 
                         axios.get('/projectDelete?id=' + id)
                             .then(resp => {
@@ -539,7 +553,7 @@
                             .then(
                                 () => {
                                     var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '1'}).spin(target2);
+                                    var spinner2 = Spinner({top: '3'}).spin(target2);
                                     axios
                                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                                         .then(resp => {
@@ -599,7 +613,7 @@
                             }
                         ).then(() => {
                             var target2 = document.getElementById("row");
-                            var spinner2 = Spinner({top: '1'}).spin(target2);
+                            var spinner2 = Spinner({top: '3'}).spin(target2);
 
                             axios
                                 .get('/projectListInfo?projectName=' + this.projectNameTitle)
@@ -641,7 +655,7 @@
                             }
                         };
                         var target2 = document.getElementById("row");
-                        var spinner2 = new Spinner({top: '1'});
+                        var spinner2 = new Spinner({top: '3'});
                         axios
                             .post('/projectEdit/', formData, config)
                             .then(resp => {
