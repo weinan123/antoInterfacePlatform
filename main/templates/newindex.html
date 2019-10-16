@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     <link href="/static/css/newindex.css" rel="stylesheet">
+    <link href="/static/css/baseCss.css" rel="stylesheet">
     <link href="/static/css/apiCasesPage.css" rel="stylesheet">
     <link href="/static/css/bootstrap.css" rel="stylesheet">
     <link href="/static/css/bootstrap-theme.css" rel="stylesheet">
@@ -26,7 +28,9 @@
     <script src="/static/js/echarts.min.js"></script>
     <script src="/static/js/spin.min.js"></script>
     <script src="/static/js/bootstrap-paginator.js"></script>
-{% block title %}<title> 首页</title> {% endblock %}
+    {% block script %}
+    {% endblock %}
+    {% block title %}<title> 首页</title> {% endblock %}
 </head>
 <body>
 <div id="row">

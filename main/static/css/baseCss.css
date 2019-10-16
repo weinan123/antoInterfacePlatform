@@ -1,0 +1,57 @@
+/*
+外部框整体样式*/
+.content{
+    float: left;
+    margin-left: 260px;
+    background-color:#C0C0C0 ;
+    width: 88%
+}
+/*顶栏样式*/
+.pageheader{
+    height: 44px;
+    width: 100% ;
+    background: #FFFFFF;
+    margin-top: 44px;
+    text-align: center;
+}
+/*下部框整体样式*/
+.formContent{
+    margin-left: 31px;
+    background-color: white;
+    margin-top: 1%;
+    height: 100%;
+    width: 97%;
+}
+/*标题样式*/
+.titlecss{
+    font-family: PingFangSC-Semibold;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2372A8;
+    letter-spacing: 0;
+    float: left;font-size: 24px;
+    margin-left: 37px;
+}
+/*保存按钮样式*/
+.btnsave{
+    background: #03BABF;
+ border-radius: 2px;
+}
+/*删除按钮样式*/
+.btnedit{
+    background: #2372A8;font-family: PingFang-SC-Regular;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    border-radius: 3px 0px 0px 3px;
+}
+/*编辑按钮样式*/
+.btndel{
+    font-family: PingFang-SC-Regular;
+    font-size: 14px;
+    color: #2372A8;
+    letter-spacing: 0;
+    border-radius: 3px;
+}
+
+
