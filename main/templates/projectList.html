@@ -1,49 +1,22 @@
 {% extends 'newindex.html' %}
 {% block title %}
     <title> 项目信息 </title>
-    <style type="text/css">
-        .viewButton {
-            background: #deeaf2;
-            font-size: 14px;
-            color: #FFFFFF;
-            letter-spacing: 0;
-            background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
-            border-style: none;
-            height: 36px;
-            width: 66px;
-            border-radius: 3px;
-        }
-
-        .deleteButton {
-            background: #deeaf2;
-            font-size: 14px;
-            color: #2372A8;
-            letter-spacing: 0;
-            background-image: -webkit-linear-gradient(top, #deeaf2 0%, #deeaf2 0%);
-            border-style: none;
-            height: 36px;
-            width: 66px;
-            border-radius: 3px;
-        }
-
-        .custom-checkbox {
-            border-color: #deeaf2;
-            background-color: #deeaf2;
-        }
-
-    </style>
 {% endblock %}
-{% block navbar %}
+{% block script %}
+    <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
-        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;padding: 15px;">
-            <ul class="breadcrumb" style="background-color: white;margin: 20px;">
-                <li><a href="/index/">首页</a></li>
-                <li><a href="/firstProjectList/">项目管理</a></li>
-                <li>{! projectNameTitle !}</li>
-            </ul>
-            <div class="row" style="background-color: white;margin: 20px;padding-top: 15px;">
+    <div class="content" id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
+        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
+            <div class="pageheader" style="text-align: left;margin-right: -15px;">
+                <div class="mouduleCss">
+                    <span class="projectnamesel">
+                        {! projectNameTitle !}
+                    </span>
+                </div>
+            </div>
+
+            <div class="formContent" style="background-color: white;padding-top: 15px;">
                 <div class="col-md-4" style="width:100%;">
                     <div class="btn-group" style="width:100%;padding: 15px;">
                         <!-- 新建按钮触发模态框 -->
