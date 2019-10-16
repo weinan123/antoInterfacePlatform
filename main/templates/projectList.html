@@ -26,6 +26,11 @@
             border-radius: 3px;
         }
 
+        .custom-checkbox {
+            border-color: #deeaf2;
+            background-color: #deeaf2;
+        }
+
     </style>
 {% endblock %}
 {% block navbar %}
@@ -323,8 +328,12 @@
 
                                 </div>
                             </td>
-                            <td><input id="checkboxDelete" type="checkbox" v-bind:value="[item.id]"
-                                       v-model="checkedDelete">
+                            <td>
+                                <div>
+                                    <input class="custom-checkbox" id="checkboxDelete" type="checkbox"
+                                           v-bind:value="[item.id]"
+                                           v-model="checkedDelete">
+                                </div>
                             </td>
                         </tr>
                         </tbody>
@@ -363,13 +372,7 @@
                 };
             },
             created() {
-                vm1.$data.isActiveSi = false;
-                vm1.$data.isActiveIn = false;
-                vm1.$data.isActiveAl = true;
-                vm1.$data.isActiveCo = false;
-                vm1.$data.isActiveRs = false;
-                vm1.$data.isActiveApi = false;
-                vm1.$data.isActivePer = false;
+                vm1.$data.currentSort = 2;
             },
             mounted() {
                 let id = this.getparam('projectName');
