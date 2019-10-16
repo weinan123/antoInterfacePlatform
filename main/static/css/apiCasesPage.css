@@ -1,0 +1,37 @@
+#apiCases{
+    background-color: #f7f7f7;
+    float: left;
+    width: 85%;
+    height: 935px;
+    margin-left: 260px;
+}
+
+#navSelBar{
+    width:90%;
+    margin-left: 30px;
+    margin-bottom:0px;
+    margin-top:30px;
+    background-color: #ffffff;
+    padding:15px;
+}
+#search{
+    padding-left: 19px;
+}
+
+#tableContent{
+    width:90%;
+    height: 85%;
+    margin-left: 30px;
+    margin-top:10px;
+    margin-bottom:20px;
+    background-color: #ffffff;
+}
+.apitable table, .apitable td, .apitable th {
+    border: 1px solid #EEEEEE;
+}
+.apitable td, .apitable th
+{
+    height:48px;
+    padding:10px;
+}
+
