@@ -25,7 +25,7 @@
                     <tbody>
                         <tr v-for="(info,index) in reportList">
                             <td><label class="form-check-label">
-                                    <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
+                                    <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" v-model="casesSel_list" @click="changeSel($event)">
                                 </label>
                                 {! index+ pageCount*(pageNum-1) +1 !}
                             <td>{! info.report_runName !}</td>
@@ -47,7 +47,7 @@
                 </table>
                 <div ref="selall" style="margin: 10px;">
                     <label class="form-check-label">
-                        <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
+                        <input type="checkbox" id="selAllBtn" class="selAllBtn" v-model="isSelectAll" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()">批量删除</button>
                 </div>
@@ -76,6 +76,9 @@ var vmRs = new Vue({
         pageCount: 10,
         totalCount:0,
         pageview: false,
+        isSelectAll: false,
+        cases_list: [],
+        casesSel_list: [],
     },
     created() {
         vm1.$data.currentSort = 4;
@@ -95,19 +98,41 @@ var vmRs = new Vue({
             })
                 .then(resp => {
                     this.reportList = resp.data.datas;
+                    this.cases_list = [];
+                    for(let i=0;i<this.reportList.length;i++){
+                        let id = this.reportList[i].id;
+                        if(this.cases_list.indexOf(id) === -1){
+                            this.cases_list.push(id);
+                        }
+                    }
                     this.totalCount = resp.data.totalCount;
                     if((this.totalCount / this.pageCount) > 1){
                         this.pageview = true;
                     }
-                    {#if(this.totalCount < this.pageCount){#}
-                    {#    this.disflag_right = "disabled";#}
-                    {# }#}
-
                     spinner1.spin();
+                    this.selectCheck();
                 }).catch(err => {
                 console.log('请求失败:' + err.status + ',' + err.statusText);
             })
         },
+        selectCheck(){
+                // 根据case行的选择设置换页之后全选的状态
+                let case_list = this.cases_list;
+                let casesSel_list = [];
+                for(let j=0;j<this.casesSel_list.length;j++){
+                    casesSel_list.push(this.casesSel_list[j][0]);
+                }
+                for(let i=0;i<case_list.length;i++){
+                    if(casesSel_list.indexOf(case_list[i]) > -1){
+                        this.delList.push(case_list[i]);
+                    }
+                }
+                if((this.delList.length) === this.cases_list.length){
+                    this.isSelectAll=true;
+                }else{
+                    this.isSelectAll=false;
+                }
+            },
         delreport(id){
             if (!confirm("确认要删除？")) {
                     window.event.returnValue = false;
@@ -134,69 +159,55 @@ var vmRs = new Vue({
                         })
                 }
             },
-        changeSel(id, e){
-                console.log("-------------");
-                console.log(id);
+        changeSel(e){
                 let chev = e.target.checked;
-                console.log(chev);
+                let id = parseInt(e.target.value);
                 if(chev === true) {
                     if(this.delList.indexOf(id) === -1) {
                         this.delList.push(id);
                     }
-                }
-                else {
+                 } else {
                     let index = this.delList.indexOf(id);
                         if (index > -1) {
                             this.delList.splice(index, 1);
                         }
-                }
-                let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
-                console.log(checkDom);
-                let vlist = [];
-                let sums=0;
-                console.log(checkDom.length);
-                for(let i=0;i<checkDom.length;i++){
-                    vlist[i] = checkDom[i].checked;
-                    if(vlist[i]){
-                        sums += 1;
-                    }
-                }
-                console.log(vlist);
-                console.log(sums);
-                if(sums === checkDom.length){
-                    return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=true;
+                 }
+                if((this.delList.length) === this.cases_list.length){
+                    this.isSelectAll=true;
                 }else{
-                    return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=false;
+                    this.isSelectAll=false;
                 }
             },
         selectAllBtn(e){
                 let checked = e.target.checked;
-                console.log(checked);
-                let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
-                console.log(checkDom);
                 if(checked){
-                    for(var i=0;i<checkDom.length;i++){
-                        checkDom[i].checked=true;
-                        let checkvalue = parseInt(checkDom[i].value);
-                        console.log(this.delList.indexOf(checkvalue));
-                        if(this.delList.indexOf(checkvalue) === -1){
-                            this.delList.push(checkvalue);
+                    for(let i=0;i<this.cases_list.length;i++){
+                        let caseid = parseInt(this.cases_list[i]);
+                        let inflag = false;
+                        for(let j=0;j<this.casesSel_list.length;j++){
+                            if(this.casesSel_list[j].indexOf(caseid) > -1){
+                                inflag = true;
+                                break;
+                            }
+                        }
+                        if(inflag === false){
+                            this.casesSel_list.push([caseid]);
+                        }
+                        if(this.delList.indexOf(caseid) === -1){
+                            this.delList.push(caseid);
                         }
                     }
                 }else{
-                    for(i=0;i<checkDom.length;i++){
-                        checkDom[i].checked=false;
-                        let index = this.delList.indexOf(parseInt(checkDom[i].value));
-                        if (index > -1) {
-                            this.delList.splice(index, 1);
-                        }
-                    }
+                    this.casesSel_list = [];
+                    this.delList = [];
                 }
             },
         batchdel(){
-                let dellist = this.delList;
-                console.log("********************");
-                console.log(dellist);
+                let dellist = [];
+                for(let j=0;j<this.casesSel_list.length;j++){
+                    dellist.push(this.casesSel_list[j][0]);
+                }
+                console.log("**********dellist**********",dellist);
                 if (dellist.length !== 0) {
                     if (!confirm("删除之后无法恢复，确认要删除？")) {
                         window.event.returnValue = false;
@@ -232,7 +243,8 @@ var vmRs = new Vue({
                 if(this.pageNum >= totalNums){
                     this.disflag_right = "disabled";
                 }
-                this.result = "";
+                this.reportList = [];
+                this.delList = [];
                 this.getlist();
             },
         cutPage(num){
@@ -244,7 +256,8 @@ var vmRs = new Vue({
                 if(this.pageNum < totalNums){
                     this.disflag_right = "";
                 }
-                this.result = "";
+                this.reportList = [];
+                this.delList = [];
                 this.getlist();
             },
 
