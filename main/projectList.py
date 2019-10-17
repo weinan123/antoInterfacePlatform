@@ -475,10 +475,44 @@ def projectImport(request):
                     isRedirect = data_list[14]
                     print statuscode
                     user = request.session.get('username')
+                    content_type = ""
+                    if headers != "":
+                        headers = json.loads(headers);
+                        try:
+                            content_type = headers["Content-Type"]
+                        except Exception as e:
+                            content_type = ""
                     body = {}
                     if body_data != "":
-                        body["showflag"] = 3
-                        body["datas"] = [{"paramValue": body_data}]
+                        body_data = json.loads(body_data)
+                        body["datas"] = []
+                        if content_type == "multipart/form-data":
+                            body["showflag"] = 0
+                            d_dict = {}
+                            for d,k in body_data:
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = k
+                                d_dict["paramType"] = "Text"
+                            body["datas"].append(d_dict)
+                        elif content_type == "application/json":
+                            body["showflag"] = 1
+                            d_dict = {}
+                            for d, k in body_data:
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = k
+                                d_dict["paramType"] = "String"
+                            body["datas"].append(d_dict)
+                        elif content_type == "application/xml":
+                            body["showflag"] = 2
+                            d_dict = {}
+                            for d, k in body_data:
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = k
+                                d_dict["paramType"] = "Object"
+                            body["datas"].append(d_dict)
+                        else:
+                            body["showflag"] = 3
+                            body["datas"].append({"paramValue": body_data})
                     api_infos = {
                         'apiName': apiname,
                         'method': method,
