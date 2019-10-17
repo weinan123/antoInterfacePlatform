@@ -43,28 +43,7 @@
     margin-left: 10px;
     margin-bottom: 2px;
 }
-.btn-local{
-    background-color: rgba(35,114,168,0.15);
-    color: #2372A8;
-    padding: 5px 10px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-    display: inline-block;
-    border: 1px solid transparent;
-    font-family: inherit;
-}
-.btn-delete{
-    background-color: rgba(255, 0, 0, 0.15);
-    color: rgb(255, 0, 0);
-    padding: 5px 10px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-    display: inline-block;
-    border: 1px solid transparent;
-    font-family: inherit;
-}
+
 .reportsPage{
     background-color: #f7f7f7;
     float: left;

@@ -53,10 +53,10 @@
 				</div><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
             <div class="col-lg-2">
-                <button id="fat-btn" class="btn btn-success" data-loading-text="Loading..."
+                <button id="fat-btn" class="btn-save" data-loading-text="Loading..."
                 type="button" @click="sendQuest()">测试
                 </button>
-                <button id="fat-btn" class="btn btn-primary" data-toggle="modal" data-target="#newcase"
+                <button id="fat-btn" class="btn-save" style="background:#2372A8;border: 1px solid #2372A8; " data-toggle="modal" data-target="#newcase"
                 type="button" @click="getProjectList()">保存
                 </button>
             </div>
@@ -147,8 +147,8 @@
                     <option value="X-encryptflag" >X-encryptflag</option>
                 </select></td>
                 <td col-xs-2><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
-                <td col-xs-2><button type="button" class="btnCss" @click="insertTable(showState,showbodyState)"><span class="btnedit">增加</span></button>
-                    <button type="button" class="btnCss" @click="deleteHeader(index,showState,showbodyState)"><span class="btndel">删除</span></button></td>
+                <td col-xs-2><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
+                    <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -178,8 +178,8 @@
                         <input type="file" name="excel" id="excel" ref="file" accept="application/vnd.ms-excel" style="display:none" @change="changeText(this)">
                     </form>
                 </td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
+                <td col-xs-3><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
+                             <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -204,8 +204,8 @@
                     <option value="null" >null</option>
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyJVal.value" >{{ bodyJVal.value }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                    <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
+                <td col-xs-3><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
+                    <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -226,8 +226,8 @@
 
                 </select></td>
                 <td col-xs-3><input type="text" class="form-control" id="name" placeholder="参数值" v-model="bodyXVal.value">{{ bodyXVal.value }}</td>
-                <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                             <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
+                <td col-xs-3><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
+                             <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>
@@ -249,8 +249,8 @@
             <tr v-for="getVal,index in getVals">
              <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数名" v-model="getVal.name">{{ getVal.name }}</td>
              <td col-xs-1><input type="text" class="form-control" id="name" placeholder="参数值" v-model="getVal.value">{{ getVal.value }}</td>
-             <td col-xs-3><button type="button" class="btn btn-primary" @click="insertTable(showState,showbodyState)">增加</button>
-                    <button type="button" class="btn btn-danger" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
+             <td col-xs-3><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
+                    <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>
             </tr>
           </tbody>
     </table>

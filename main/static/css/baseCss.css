@@ -34,47 +34,52 @@
 }
 
 /*保存按钮样式*/
-.btnsave{
+.btn-save{
     background: #03BABF;
- border-radius: 2px;
-}
-/*删除按钮样式*/
-.btnCss{
-    width:66px;
-    height:33px;
-    border: 1px solid #2372A8;
-   border-radius: 3px 0px 0px 3px;
-}
-/*按钮字体样式*/
-.btnedit{
-    background: #2372A8;
-    background-size: 100%;
-    font-family: PingFang-SC-Regular;
+    border-radius: 2px;
+    width:70px;
+    height:35px;
+    border: 1px solid #03BABF;
     font-size: 14px;
     color: #FFFFFF;
     letter-spacing: 0;
-    border-radius: 3px 0px 0px 3px;
 }
-/*编辑按钮样式*/
-.btndel{
-   font-family: PingFang-SC-Regular;
-    font-size: 14px;
-    color: gray;
-    letter-spacing: 0;
-    border-radius: 3px;
-}
-/*上传按钮样式*/
+
+/*导入按钮样式*/
 .uploadbtn{
-    margin-left: 37px;
     width:80px;height:28px;background: rgba(245,166,35,0.15);
     border: 1px solid #F5A623;
     border-radius: 2px;
-}
-.uploadbtn_font{
     font-family: PingFang-SC-Regular;
     font-size: 14px;
     color: #F5A623;
-     letter-spacing: 0;
+    letter-spacing: 0;
+}
+
+
+/*表格中普通按钮样式*/
+.btn-local{
+    background-color: rgba(35,114,168,0.15);
+    color: #2372A8;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    display: inline-block;
+    border: 1px solid  #2372A8;
+    font-family: inherit;
+}
+/*表格中删除按钮样式*/
+.btn-delete{
+    background-color: rgba(255, 0, 0, 0.15);
+    color: rgb(255, 0, 0);
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    display: inline-block;
+    border: 1px solid rgb(255, 0, 0);;
+    font-family: inherit;
 }
 
 

@@ -71,16 +71,8 @@
           </template>{% endcomment %}
       </td>
         <td >
-            <button  style="background: #2372A8;font-family: PingFang-SC-Regular;
-font-size: 14px;
-color: #FFFFFF;
-letter-spacing: 0;
-border-radius: 3px 0px 0px 3px;" type="submit" class="btn  btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
-          <button style="font-family: PingFang-SC-Regular;
-font-size: 14px;
-color: #2372A8;
-letter-spacing: 0;
-border-radius: 3px;" type="submit" class="btn btn-sm" @click="delUser(user.id)" >删除</button>
+            <button  class="btn-local" type="submit" class="btn  btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
+          <button class="btn-delete" type="submit" class="btn btn-sm" @click="delUser(user.id)" >删除</button>
 
         </td>
     </tr>
