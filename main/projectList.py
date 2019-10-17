@@ -382,78 +382,20 @@ def projectImport(request):
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if (interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
             f = request.FILES['file']
-            # 将上传的xlsx表格先保存下来
-            with open('main/postfiles/file.xlsx', 'wb+') as destination:
-                for chunk in f.chunks():
-                    destination.write(chunk)
-            # 打开excel文件
-            data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
-            # 获取第一张工作表（通过索引的方式）
-            table = data.sheets()[0]
-            # 获取第一张工作表有效的行数
-            nrows = table.nrows
-            # 数据校验
-            verification = True
-            for i in range(1, nrows):
-                # data_list用来存放数据
-                data_list = []
-                # 将table中第一行的数据读取并添加到data_list中
-                data_list.extend(table.row_values(i))
-                apiname = data_list[0]
-                method = data_list[1]
-                url = data_list[2]
-                headers = data_list[4]
-                body = data_list[5]
-                if (apiname == "") or (apiname is None):
-                    code = -2
-                    info = '名称不能为空！'
-                    verification = False
-                    break
-                if (interfaceList.objects.filter(projectName=projectName,
-                                                 moduleName=moduleName).count() != 0):
-                    code = -3
-                    info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
-                    verification = False
-                    break
-                seen = set()
-                if apiname not in seen:
-                    seen.add(apiname)
-                else:
-                    code = -4
-                    info = '当前批量导入文件的模块名称中存在重复！'
-                    verification = False
-                    break
-                try:
-                    json.loads(headers)
-                except ValueError:
-                    code = -6
-                    info = '当前批量导入文件的header列存在数据不符合json规范！'
-                    verification = False
-                    break
-                try:
-                    json.loads(body)
-                except ValueError:
-                    code = -7
-                    info = '当前批量导入文件的body列存在数据不符合json规范！'
-                    verification = False
-                    break
-
-            # 通过数据校验，导入数据
-            if (verification):
-                inter = interfaceList.objects.create(projectName=projectName, host=host,
-                                                     moduleName=moduleName)
-
-                counttable = countCase.objects.create(projectName=projectName,
-                                                      moduleName=moduleName)
-                counttable.save()
-                inter.save()
-                interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
-                                                                                                    createTime=dtime)
-
-                listid = \
-                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
-                        "id")[0][
-                        'id']
+            filename = f.name.split('.')[-1]
+            if (filename == 'xlsx' or filename == 'xls'):
+                # 将上传的xlsx表格先保存下来
+                with open('main/postfiles/file.xlsx', 'wb+') as destination:
+                    for chunk in f.chunks():
+                        destination.write(chunk)
+                # 打开excel文件
+                data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
+                # 获取第一张工作表（通过索引的方式）
+                table = data.sheets()[0]
+                # 获取第一张工作表有效的行数
+                nrows = table.nrows
+                # 数据校验
+                verification = True
                 for i in range(1, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -463,43 +405,111 @@ def projectImport(request):
                     method = data_list[1]
                     url = data_list[2]
                     headers = data_list[4]
-                    body_data = data_list[5]
-                    t_id = data_list[6]
-                    depend_caseId = data_list[7]
-                    depend_casedata = data_list[8]
-                    statuscode = data_list[9]
-                    files = data_list[10]
-                    isSecret = data_list[11]
-                    key_id = data_list[12]
-                    secret_key = data_list[13]
-                    isRedirect = data_list[14]
-                    print statuscode
-                    user = request.session.get('username')
-                    body = {}
-                    if body_data != "":
-                        body["showflag"] = 3
-                        body["datas"] = [{"paramValue": body_data}]
-                    api_infos = {
-                        'apiName': apiname,
-                        'method': method,
-                        'url': url,
-                        'headers': headers,
-                        'body': body,
-                        'lastRunResult': 0,
-                        'lastRunTime': None,
-                        'creator': user,
-                        'owningListID': int(listid),
-                        'assertinfo': statuscode
-                    }
+                    body = data_list[5]
+                    if (apiname == "") or (apiname is None):
+                        code = -2
+                        info = '名称不能为空！'
+                        verification = False
+                        break
+                    if (interfaceList.objects.filter(projectName=projectName,
+                                                     moduleName=moduleName).count() != 0):
+                        code = -3
+                        info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
+                        verification = False
+                        break
+                    seen = set()
+                    if apiname not in seen:
+                        seen.add(apiname)
+                    else:
+                        code = -4
+                        info = '当前批量导入文件的模块名称中存在重复！'
+                        verification = False
+                        break
                     try:
-                        s = apiInfoTable.objects.create(**api_infos)
-                        s.save()
-                    except BaseException as e:
-                        print(" SQL Error: %s" % e)
-                        code = -1
-                        info = 'sql error！'
-                code = 0
-                info = '导入成功！'
+                        json.loads(headers)
+                    except ValueError:
+                        code = -6
+                        info = '当前批量导入文件的header列存在数据不符合json规范！'
+                        verification = False
+                        break
+                    try:
+                        json.loads(body)
+                    except ValueError:
+                        code = -7
+                        info = '当前批量导入文件的body列存在数据不符合json规范！'
+                        verification = False
+                        break
+
+                # 通过数据校验，导入数据
+                if (verification):
+                    inter = interfaceList.objects.create(projectName=projectName, host=host,
+                                                         moduleName=moduleName)
+
+                    counttable = countCase.objects.create(projectName=projectName,
+                                                          moduleName=moduleName)
+                    counttable.save()
+                    inter.save()
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(
+                        updateTime=dtime,
+                        createTime=dtime)
+
+                    listid = \
+                        interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
+                            "id")[0][
+                            'id']
+                    for i in range(1, nrows):
+                        # data_list用来存放数据
+                        data_list = []
+                        # 将table中第一行的数据读取并添加到data_list中
+                        data_list.extend(table.row_values(i))
+                        apiname = data_list[0]
+                        method = data_list[1]
+                        url = data_list[2]
+                        headers = data_list[4]
+                        body_data = data_list[5]
+                        t_id = data_list[6]
+                        depend_caseId = data_list[7]
+                        depend_casedata = data_list[8]
+                        statuscode = data_list[9]
+                        files = data_list[10]
+                        isSecret = data_list[11]
+                        key_id = data_list[12]
+                        secret_key = data_list[13]
+                        isRedirect = data_list[14]
+                        print statuscode
+                        user = request.session.get('username')
+                        body = {}
+                        if body_data != "":
+                            body["showflag"] = 3
+                            body["datas"] = [{"paramValue": body_data}]
+                        api_infos = {
+                            'apiName': apiname,
+                            'method': method,
+                            'url': url,
+                            'headers': headers,
+                            'body': body,
+                            'lastRunResult': 0,
+                            'lastRunTime': None,
+                            'creator': user,
+                            'owningListID': int(listid),
+                            'assertinfo': statuscode
+                        }
+                        try:
+                            s = apiInfoTable.objects.create(**api_infos)
+                            s.save()
+                        except BaseException as e:
+                            print(" SQL Error: %s" % e)
+                            code = -1
+                            info = 'sql error！'
+                    code = 0
+                    info = '导入成功！'
+            else:
+                code = -6
+                info = '不支持' + filename + '格式，请上传.xls或.xlsx格式的文件！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
         else:
             code = -5
             info = '同一项目下不可包含相同名称的模块！'
