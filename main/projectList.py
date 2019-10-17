@@ -382,62 +382,71 @@ def projectImport(request):
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if (interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
             f = request.FILES['file']
-            # 将上传的xlsx表格先保存下来
-            with open('main/postfiles/file.xlsx', 'wb+') as destination:
-                for chunk in f.chunks():
-                    destination.write(chunk)
-            # 打开excel文件
-            data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
-            # 获取第一张工作表（通过索引的方式）
-            table = data.sheets()[0]
-            # 获取第一张工作表有效的行数
-            nrows = table.nrows
-            # 数据校验
-            verification = True
-            for i in range(1, nrows):
-                # data_list用来存放数据
-                data_list = []
-                # 将table中第一行的数据读取并添加到data_list中
-                data_list.extend(table.row_values(i))
-                apiname = data_list[0]
-                method = data_list[1]
-                url = data_list[2]
-                headers = data_list[4]
-                body = data_list[5]
-                if (apiname == "") or (apiname is None):
-                    code = -2
-                    info = '名称不能为空！'
-                    verification = False
-                    break
-                if (interfaceList.objects.filter(projectName=projectName,
-                                                 moduleName=moduleName).count() != 0):
-                    code = -3
-                    info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
-                    verification = False
-                    break
-                seen = set()
-                if apiname not in seen:
-                    seen.add(apiname)
-                else:
-                    code = -4
-                    info = '当前批量导入文件的模块名称中存在重复！'
-                    verification = False
-                    break
-                try:
-                    json.loads(headers)
-                except ValueError:
-                    code = -6
-                    info = '当前批量导入文件的header列存在数据不符合json规范！'
-                    verification = False
-                    break
-                try:
-                    json.loads(body)
-                except ValueError:
-                    code = -7
-                    info = '当前批量导入文件的body列存在数据不符合json规范！'
-                    verification = False
-                    break
-
+            filename = f.name.split('.')[-1]
+            if (filename == 'xlsx' or filename == 'xls'):
+                # 将上传的xlsx表格先保存下来
+                with open('main/postfiles/file.xlsx', 'wb+') as destination:
+                    for chunk in f.chunks():
+                        destination.write(chunk)
+                # 打开excel文件
+                data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
+                # 获取第一张工作表（通过索引的方式）
+                table = data.sheets()[0]
+                # 获取第一张工作表有效的行数
+                nrows = table.nrows
+                # 数据校验
+                verification = True
+                for i in range(1, nrows):
+                    # data_list用来存放数据
+                    data_list = []
+                    # 将table中第一行的数据读取并添加到data_list中
+                    data_list.extend(table.row_values(i))
+                    apiname = data_list[0]
+                    method = data_list[1]
+                    url = data_list[2]
+                    headers = data_list[4]
+                    body = data_list[5]
+                    if (apiname == "") or (apiname is None):
+                        code = -2
+                        info = '名称不能为空！'
+                        verification = False
+                        break
+                    if (interfaceList.objects.filter(projectName=projectName,
+                                                     moduleName=moduleName).count() != 0):
+                        code = -3
+                        info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
+                        verification = False
+                        break
+                    seen = set()
+                    if apiname not in seen:
+                        seen.add(apiname)
+                    else:
+                        code = -4
+                        info = '当前批量导入文件的模块名称中存在重复！'
+                        verification = False
+                        break
+                    try:
+                        json.loads(headers)
+                    except ValueError:
+                        code = -6
+                        info = '当前批量导入文件的header列存在数据不符合json规范！'
+                        verification = False
+                        break
+                    try:
+                        json.loads(body)
+                    except ValueError:
+                        code = -7
+                        info = '当前批量导入文件的body列存在数据不符合json规范！'
+                        verification = False
+                        break
+            else:
+                code = -6
+                verification = False
+                info = '不支持.' + filename + '格式，请上传.xls或.xlsx格式的文件'
+                result = {
+                    'code': code,
+                    'info': info
+                }
             # 通过数据校验，导入数据
             if (verification):
                 inter = interfaceList.objects.create(projectName=projectName, host=host,
@@ -475,10 +484,48 @@ def projectImport(request):
                     isRedirect = data_list[14]
                     print statuscode
                     user = request.session.get('username')
+                    content_type = ""
+                    print("****headers***", headers)
+                    if headers != "" or headers != "{}":
+                        headers = json.loads(headers)
+                        try:
+                            content_type = headers["Content-Type"]
+                        except Exception as e:
+                            content_type = ""
+                        headers = json.dumps(headers)
                     body = {}
-                    if body_data != "":
-                        body["showflag"] = 3
-                        body["datas"] = [{"paramValue": body_data}]
+                    if body_data != "" or body_data != "{}":
+                        body_data = json.loads(body_data)
+                        body["datas"] = []
+                        if content_type == "multipart/form-data":
+                            body["showflag"] = 0
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "Text"
+                                body["datas"].append(d_dict)
+                        elif content_type == "application/json":
+                            body["showflag"] = 1
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "String"
+                                body["datas"].append(d_dict)
+                        elif content_type == "application/xml":
+                            body["showflag"] = 2
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "Object"
+                                body["datas"].append(d_dict)
+                        else:
+                            body["showflag"] = 3
+                            body["datas"].append({"paramValue": body_data})
+                        body = json.dumps(body)
+                        print("****body***", body)
                     api_infos = {
                         'apiName': apiname,
                         'method': method,
