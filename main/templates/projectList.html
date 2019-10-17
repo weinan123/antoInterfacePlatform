@@ -6,19 +6,15 @@
     <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="content" id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
-        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
+    <div class="content" id="right" style="width: 88%;height: 920px;">
+        <div class="col-md-10 row" id="projectList" style="width: 100%;margin: 0px;padding: 0px;">
             <div class="pageheader" style="text-align: left;margin-right: -15px;">
-                <div class="mouduleCss">
-                    <span class="projectnamesel">
-                        {! projectNameTitle !}
-                    </span>
-                </div>
+                <p class="titlecss" style="margin-top: 5px;">{! projectNameTitle !}</p>
             </div>
 
             <div class="formContent" style="background-color: white;padding-top: 15px;">
                 <div class="col-md-4" style="width:100%;">
-                    <div class="btn-group" style="width:100%;padding: 15px;">
+                    <div class="btn-group" style="width:100%;padding: 15px;height: 70px;margin: auto;">
                         <!-- 新建按钮触发模态框 -->
 
                         <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
@@ -78,8 +74,18 @@
                                 </div><!-- /.modal-content -->
                             </div><!-- /.modal -->
                         </div>
+                        <button class="viewButton" @click="selectAll()">全选</button>
+                        <button class="viewButton" @click="selectNone()">全不选</button>
+
+
                         <!-- 导入按钮触发模态框 -->
-                        <button class="viewButton" data-toggle="modal" data-target="#importProject">导入</button>
+                        <button class="uploadbtn" data-toggle="modal" data-target="#importProject"
+                                style="width: 74px;height: 36px;"><span
+                                class="glyphicon glyphicon-cloud-download"
+                                style="color:#F5A623 "></span>&nbsp&nbsp
+                            <span class="uploadbtn_font">导入</span></button>
+
+
                         <!-- 导入模态框（Modal） -->
                         <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
                              aria-labelledby="myModalLabel"
@@ -172,19 +178,17 @@
 
                         {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                         {#                checkedDelete为数组，记录着选中的项目的ID#}
-                        <button class="viewButton" @click="selectAll()">全选</button>
-                        <button class="viewButton" @click="selectNone()">全不选</button>
 
-                        <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
-                            <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
-                                    @click="projectBatchDelete()">批量删除
-                            </button>
-                        </template>
+                        <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 " class="btn-delete"
+                                style="width: 74px;height: 36px;" onClick="delcfm()"
+                                @click="projectBatchDelete()">批量删除
+                        </button>
+
 
                     </div>
                 </div>
-                <div style="width:100%;margin-left: 15px;height: 100%;padding: 15px;">
-                    <table class="table table-hover">
+                <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
+                    <table style="width: 90%">
                         <thead>
                         <tr>
                             <th>模块名称</th>
@@ -210,13 +214,13 @@
                             <td style="margin: auto">
                                 <div class="btn-group" style="margin: auto">
                                     <a v-bind:href="['/apiCases?projectName='+item.projectName+'&moduleName='+item.moduleName]">
-                                        <button type="button" class="viewButton">
+                                        <button type="button" class="btn-local">
                                             查看
                                         </button>
                                     </a>
 
                                     <a>
-                                        <button type="button" class="viewButton" data-toggle="modal"
+                                        <button type="button" class="btn-local" data-toggle="modal"
                                                 v-bind:data-target="'#editProject'+[item.id]">
                                             编辑
                                         </button>
@@ -294,7 +298,7 @@
                                     </div>
 
                                     <a>
-                                        <button type="button" class="deleteButton" @click="projectDelete(item.id)">删除
+                                        <button type="button" class="btn-delete" @click="projectDelete(item.id)">删除
                                         </button>
                                     </a>
 

@@ -45,9 +45,10 @@
                     <tbody ref="tables" id="tableBody">
                         <tr v-for="(info,index) in result.data">
                             <td><label class="form-check-label">
-                                <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" @click="changeSel(info.id, $event)" value="info.id">
+                                <input type="checkbox" class="selBtn" id="selBtn" v-bind:value="[info.id]" v-model="casesSel_list" @click="changeSel($event)">
                                 </label>
                                 {! index+ pageCount*(pageNum-1) +1 !}
+                                {! info.isCheck !}
                             </td>
                             <td>{! info.name !}</td>
                             <td>
@@ -74,7 +75,7 @@
             </div>
             <div ref="selall" style="margin: 10px;">
                     <label class="form-check-label">
-                        <input type="checkbox" id="selAllBtn" class="selAllBtn" @click="selectAllBtn($event)">
+                        <input type="checkbox" id="selAllBtn" class="selAllBtn"  v-model="isSelectAll" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
@@ -89,8 +90,6 @@
                     <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
                 </ul>
             </div>
-
-            <p>{! dlist !}</p>
         </div>
         <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 500px;margin: 75px auto">
@@ -151,6 +150,9 @@
             pageCount: 10,
             totalCount:0,
             pageview: false,
+            isSelectAll: false,
+            cases_list: [],
+            casesSel_list: [],
         },
         created(){
             vm1.$data.currentSort = 3;
@@ -198,6 +200,13 @@
                     .then(resp =>{
                         console.log(resp.data);
                         this.result = resp.data;
+                        this.cases_list = [];
+                        for(let i=0;i<this.result.data.length;i++){
+                            let id = this.result.data[i].id;
+                            if(this.cases_list.indexOf(id) === -1){
+                                this.cases_list.push(id);
+                            }
+                        }
                         this.totalCount = resp.data.totalCount;
                         if((this.totalCount / this.pageCount) > 1)
                         {
@@ -211,9 +220,28 @@
                             this.disflag_right = "";
                         }
                         spinner1.spin();
+                        this.selectCheck();
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
+            },
+            selectCheck(){
+                // 根据case行的选择设置换页之后全选的状态
+                let case_list = this.cases_list;
+                let casesSel_list = [];
+                for(let j=0;j<this.casesSel_list.length;j++){
+                    casesSel_list.push(this.casesSel_list[j][0]);
+                }
+                for(let i=0;i<case_list.length;i++){
+                    if(casesSel_list.indexOf(case_list[i]) > -1){
+                        this.dlist.push(case_list[i]);
+                    }
+                }
+                if((this.dlist.length) === this.cases_list.length){
+                    this.isSelectAll=true;
+                }else{
+                    this.isSelectAll=false;
+                }
             },
             getProinfo(params){
                 axios.get('/projectInfos/')
@@ -268,68 +296,54 @@
             },
             selectAllBtn(e){
                 let checked = e.target.checked;
-                console.log(checked);
-                let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
-                console.log(checkDom);
                 if(checked){
-                    for(var i=0;i<checkDom.length;i++){
-                        checkDom[i].checked=true;
-                        let checkvalue = parseInt(checkDom[i].value);
-                        console.log(this.dlist.indexOf(checkvalue));
-                        if(this.dlist.indexOf(checkvalue) === -1){
-                            this.dlist.push(checkvalue);
+                    for(let i=0;i<this.cases_list.length;i++){
+                        let caseid = parseInt(this.cases_list[i]);
+                        let inflag = false;
+                        for(let j=0;j<this.casesSel_list.length;j++){
+                            if(this.casesSel_list[j].indexOf(caseid) > -1){
+                                inflag = true;
+                                break;
+                            }
+                        }
+                        if(inflag === false){
+                            this.casesSel_list.push([caseid]);
+                        }
+                        if(this.dlist.indexOf(caseid) === -1){
+                            this.dlist.push(caseid);
                         }
                     }
                 }else{
-                    for(i=0;i<checkDom.length;i++){
-                        checkDom[i].checked=false;
-                        let index = this.dlist.indexOf(parseInt(checkDom[i].value));
-                        if (index > -1) {
-                            this.dlist.splice(index, 1);
-                        }
-                    }
+                    this.casesSel_list = [];
+                    this.dlist = [];
                 }
             },
-            changeSel(id, e){
-                console.log("-------------");
-                console.log(id);
+            changeSel(e){
                 let chev = e.target.checked;
-                console.log(chev);
+                let id = parseInt(e.target.value);
                 if(chev === true) {
                     if(this.dlist.indexOf(id) === -1) {
                         this.dlist.push(id);
                     }
-                }
-                else {
+                 } else {
                     let index = this.dlist.indexOf(id);
                         if (index > -1) {
                             this.dlist.splice(index, 1);
                         }
-                }
-                let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
-                console.log(checkDom);
-                let vlist = [];
-                let sums=0;
-                console.log(checkDom.length);
-                for(let i=0;i<checkDom.length;i++){
-                    vlist[i] = checkDom[i].checked;
-                    if(vlist[i]){
-                        sums += 1;
-                    }
-                }
-                console.log(vlist);
-                console.log(sums);
-                if(sums === checkDom.length){
-                    return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=true;
+                 }
+                console.log("*****",this.dlist.length,this.cases_list.length);
+                if((this.dlist.length) === this.cases_list.length){
+                    this.isSelectAll=true;
                 }else{
-                    return this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=false;
+                    this.isSelectAll=false;
                 }
             },
             batchdel(){
-                let dellist = this.dlist;
-                console.log("********************");
-                console.log(dellist);
-                console.log(dellist.length);
+                let dellist = [];
+                for(let j=0;j<this.casesSel_list.length;j++){
+                    dellist.push(this.casesSel_list[j][0]);
+                }
+                console.log("********dellist************",dellist);
                 if (dellist.length !== 0) {
                     if (!confirm("删除之后无法恢复，确认要删除？")) {
                         window.event.returnValue = false;
@@ -398,7 +412,10 @@
                 }
             },
             batchrun(){
-                let runlist = this.dlist;
+                let runlist = [];
+                for(let j=0;j<this.casesSel_list.length;j++){
+                    runlist.push(this.casesSel_list[j][0]);
+                }
                 if (runlist.length !== 0) {
                     let datas = this.result.data;
                     let method = "";
@@ -408,8 +425,6 @@
                         let rid = runlist[i];
                         for (let d = 0; d < datas.length; d++) {
                             let did = datas[d].id;
-                            console.log("-----------------");
-                            console.log(did);
                             if (rid === did) {
                                 method = datas[d].method;
                                 url = datas[d].url;
@@ -527,8 +542,8 @@
                     this.disflag_right = "disabled";
                 }
                 this.result = "";
+                this.dlist = [];
                 this.getlist(this.pageNum);
-                this.$refs.selall.getElementsByClassName("selAllBtn")[0].checked=false;
             },
             cutPage(num){
                 this.pageNum = num -1;
@@ -540,21 +555,8 @@
                     this.disflag_right = "";
                 }
                 this.result = "";
+                this.dlist = [];
                 this.getlist(this.pageNum);
-                let delList = this.dlist;
-                if(delList.length !== 0){
-                    console.log("********************");
-                    let checkDom = this.$refs.tables.getElementsByClassName("selBtn");
-                    for(var i=0;i<checkDom.length;i++){
-                        let checkvalue = parseInt(checkDom[i].value);
-                        console.log(this.dlist.indexOf(checkvalue));
-                        if(delList.indexOf(checkvalue) === -1){
-                            checkDom[i].checked=false;
-                        }else{
-                            checkDom[i].checked=true;
-                        }
-                    }
-                }
             },
         }
     });
