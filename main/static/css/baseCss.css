@@ -17,12 +17,13 @@
 /*标题样式*/
 .titlecss{
     font-family: PingFangSC-Semibold;
-    font-size: 16px;
     font-weight: bold;
     color: #2372A8;
     letter-spacing: 0;
-    float: left;font-size: 24px;
+    float: left;
+    font-size: 24px;
     margin-left: 37px;
+    padding-top: 5px;
 }
 /*下部框整体样式*/
 .formContent{
