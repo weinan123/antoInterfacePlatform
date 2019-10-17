@@ -6,7 +6,14 @@
     position: fixed
 }
 .logindiv{
-    width: 30%;height: 37%;margin-top: 10%;margin-left: 55%;background: #05314E;
+    width: 30%;
+    height: 37%;
+    margin-top: 10%;
+    margin-left: 55%;
+    background: #05314E;
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+
 }
 .logintitle{
     color: white;text-align: center;font-size: 20px;font-weight: bold;padding-top:10px
@@ -30,14 +37,16 @@ input,#btn1,#btn2{
   border:none;
   border-bottom: 1px solid #2372A8;
   background: #05314E ;
-    float: left;
-color: white;
+  background-color: rgba(0,0,0,0);
+  float: left;
+    color: white;
 }
 input:focus {
      border:none;
     height: 30%;
     color: white;
      background: #05314E ;
+    background-color: rgba(0,0,0,0);
 }
 
 .login_btn{

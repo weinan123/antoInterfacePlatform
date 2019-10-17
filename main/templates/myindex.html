@@ -6,7 +6,7 @@
 {% block content %}
 <div  id ="myindex" class="content">
     <div class="pageheader">
-        <div v-for="projectName,index in projectNameList" class="projectCss" ><span :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="changeChart(index,projectName)">{! projectName !}</span>
+        <div v-for="projectName,index in projectNameList" class="projectCss" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="changeChart(index,projectName)">{! projectName !}</a>
         <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
         </div>
     </div>

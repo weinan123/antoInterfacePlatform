@@ -144,9 +144,16 @@ var vm1 = new Vue({
             window.location.href="/logout/";
         },
         active(index){
-            this.currentSort = index;
-            window.location.href=this.navTab[index].url;
 
+            let url = this.navTab[index].url;
+            if (url==="/userPermit/"&&this.user_level===3){
+                window.alert("您没有此页面权限，请联系管理员添加权限")
+            }else if(url==="/configer/"&&this.user_configPermit===false){
+                 window.alert("您没有此页面权限，请联系管理员添加权限")
+            }else{
+                this.currentSort = index;
+                window.location.href=url
+            }
         },
         }
 }).$mount('#left')

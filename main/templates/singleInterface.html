@@ -70,31 +70,14 @@
         <div v-for="navtabName,index in navtabList" class="projectCss" style="height: 0px" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="makeFrom(index)">{! navtabName.name !}</a>
         <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
         </div>
-            <div class="projectCss" style="height: 0px">
-            <button class="uploadbtn" ><span class="glyphicon glyphicon-cloud-download" style="color:#F5A623 "></span>&nbsp&nbsp
+            <div v-if="showState === 0" class="projectCss" style="height: 0px">
+            <button class="uploadbtn" data-toggle="modal" data-target="#loadHeader" ><span class="glyphicon glyphicon-cloud-download" style="color:#F5A623 "></span>&nbsp&nbsp
                 <span class="uploadbtn_font">导入</span></button>
             </div>
     </div>
-    {% comment %}<ul class="nav nav-tabs" style="width: 70%;" >
-        <li v-bind:class="{active:isActive0}"><a v-on:click="makeFrom(0)">请求头部</a></li>
-        <li v-bind:class="{active:isActive1}"><a v-on:click="makeFrom(1)">请求体</a></li>
-        <li v-bind:class="{active:isActive2}"><a v-on:click="makeFrom(2)">GET/URL参数</a></li>
-        <li v-bind:class="{active:isActive3}"><a v-on:click="makeFrom(3)">REST参数</a></li>
-        <li v-bind:class="{active:isActive4}"><a v-on:click="makeFrom(4)">请求加密</a></li>
-        <li v-bind:class="{active:isActive5}"><a v-on:click="makeFrom(5)">权限校验</a></li>
-        <li v-bind:class="{active:isActive6}"><a v-on:click="makeFrom(6)">高级设置</a></li>
-        <li class="active"><a href="#tab1" data-toggle="tab" v-on:click="makeFrom(0)">请求头部</a></li>
-        <li><a href="#tab2" data-toggle="tab" v-on:click="makeFrom(1)">请求体</a></li>
-        <li><a href="#tab3" data-toggle="tab" v-on:click="makeFrom(2)">GET/URL参数</a></li>
-        <li><a href="#tab4" data-toggle="tab" v-on:click="makeFrom(3)">REST参数</a></li>
-        <li><a href="#tab5" data-toggle="tab" v-on:click="makeFrom(4)">请求加密</a></li>
-        <li><a href="#tab6" data-toggle="tab" v-on:click="makeFrom(5)">权限校验</a></li>
-        <li><a href="#tab7" data-toggle="tab" v-on:click="makeFrom(6)">高级设置</a></li>
-
-    </ul>{% endcomment %}
     <div class="tablediv">
     <div class="row" v-if="showState === 1">
-        <div class=" col-lg-2 col-md-3 col-sm-3  radio ">
+        <div class=" col-lg-2 col-md-3 col-sm-3  radio " style="width: 13%;float: left">
         <label>
             <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv" @click="showBodyform(0)"> Form-data
         </label>
@@ -615,19 +598,19 @@ var vm = new Vue({
              for(var q=0;q<models.length;q++){
                  var name = models[q]["projectName"];
                  if(params===name) {
-                     if(this.modelList.length===0){
+                     {% comment %}if(this.modelList.length===0){{% endcomment %}
                          this.modelList.push(models[q]["moduleName"])
                      }
-                     else{
+                     {% comment %}else{
                          for (var r = 0; r < this.modelList.length; r++) {
                          if (models[q]["moduleName"] === this.modelList[r]){
                                 break
                             }
                          else{
                          this.modelList.push(models[q]["moduleName"])}
-                        }
-                     }
-                 }
+                        }{% endcomment %}
+                     {% comment %}}{% endcomment %}
+                {% comment %} }{% endcomment %}
              }
              console.log(this.modelList);
         },
@@ -776,7 +759,7 @@ var vm = new Vue({
              console.log(this.data_to_send);
              var hreader_str = JSON.stringify(this.data_to_send["headers"]);
              var body_str = "";
-             if(this.data_to_send["bodyinfor"]["datas"]===""){
+             if( JSON.stringify(this.data_to_send["bodyinfor"]) == '{}'){
                  body_str = ""
              }else {
                  for (var c = 0; c < this.data_to_send["bodyinfor"]["datas"].length; c++) {
@@ -846,7 +829,6 @@ var vm = new Vue({
                         bodyinfor["paramName"] = this.bodyFVals[j].name;
                     }
                 bodyArr.push(bodyinfor)
-
                 }
                 bodysData["datas"] = bodyArr;
             }
@@ -882,7 +864,9 @@ var vm = new Vue({
                 bodyArr.push(bodyinfor);
                 bodysData["datas"] = bodyArr;
             }else{
-                bodysData = {};
+                bodysData = {
+
+                };
             }
 
             var Screatinfor={

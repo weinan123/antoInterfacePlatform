@@ -2,14 +2,12 @@
 {% block script %}
     <link href="/static/css/myindex.css" rel="stylesheet">
 {% endblock %}
-{% block title %}<title> 首页</title> {% endblock %}
+{% block title %}<title> 权限控制</title> {% endblock %}
 {% block content %}
     <div class="content" id ="userpermit">
     <div class="pageheader">
         <p class="titlecss">用户权限管理</p>
-        {% comment %}<div style="padding-right: 30px;padding-top:5px;float: right"  >
-          <button type="submit" class="btnsave" @click="saveData()">保存</button>
-        </div>{% endcomment %}
+        <button type="submit" class="btn-save" style="margin-left: 52%;margin-top: 5px;" @click="saveData()">保存</button>
     </div>
 
 
@@ -238,8 +236,8 @@ methods:{
                 })
      },
      getUserData(page,count){
-         var target = document.getElementById("row");
-         var spinner = Spinner({top:'1'}).spin(target);
+         //var target = document.getElementById("row");
+         //var spinner = Spinner({top:'1'}).spin(target);
          axios.get('/getUserData/',{params:{ username:vm1.$data.username,page:page,count:count}})
              .then(resp =>{
 
@@ -254,7 +252,7 @@ methods:{
                  }
                  console.log(resp.data.datas);
                  this.userList=resp.data.datas;
-                 spinner.spin();
+                 //spinner.spin();
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
@@ -273,6 +271,8 @@ methods:{
          data_to_send = {
              userdatas:this.userList
          };
+         var target = document.getElementById("row");
+         var spinner = Spinner({top:'1'}).spin(target);
          axios.post('/saveUserData/',data_to_send)
              .then(resp =>{
                  //console.log(resp.data);
@@ -292,10 +292,15 @@ methods:{
                              hideMethod: "fadeOut"
                          };
                  if(resp.data.code==0) {
+                     spinner.spin();
+                     //window.location.reload(true);
                      toastr.success(resp.data.info);
+                     this.getUserData(1,14);
+                     this.getPageNum(this.username);
                  }else{
                     toastr.error(resp.data.info);
                  }
+                 //window.location.reload(true);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })

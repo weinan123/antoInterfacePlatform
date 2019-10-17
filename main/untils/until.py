@@ -20,7 +20,7 @@ def mul_bodyData(bodyinfor):
     body = {}
     files={}
     print("bodyinfor",type(bodyinfor))
-    if bodyinfor == "" or bodyinfor == {}:
+    if bodyinfor == "" or bodyinfor == {} :
         body = {}
         files = {}
     else:
