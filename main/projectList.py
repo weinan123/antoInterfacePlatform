@@ -440,76 +440,106 @@ def projectImport(request):
                         verification = False
                         break
 
-                # 通过数据校验，导入数据
-                if (verification):
-                    inter = interfaceList.objects.create(projectName=projectName, host=host,
-                                                         moduleName=moduleName)
+            # 通过数据校验，导入数据
+            if (verification):
+                inter = interfaceList.objects.create(projectName=projectName, host=host,
+                                                     moduleName=moduleName)
 
-                    counttable = countCase.objects.create(projectName=projectName,
-                                                          moduleName=moduleName)
-                    counttable.save()
-                    inter.save()
-                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(
-                        updateTime=dtime,
-                        createTime=dtime)
+                counttable = countCase.objects.create(projectName=projectName,
+                                                      moduleName=moduleName)
+                counttable.save()
+                inter.save()
+                interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
+                                                                                                    createTime=dtime)
 
-                    listid = \
-                        interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
-                            "id")[0][
-                            'id']
-                    for i in range(1, nrows):
-                        # data_list用来存放数据
-                        data_list = []
-                        # 将table中第一行的数据读取并添加到data_list中
-                        data_list.extend(table.row_values(i))
-                        apiname = data_list[0]
-                        method = data_list[1]
-                        url = data_list[2]
-                        headers = data_list[4]
-                        body_data = data_list[5]
-                        t_id = data_list[6]
-                        depend_caseId = data_list[7]
-                        depend_casedata = data_list[8]
-                        statuscode = data_list[9]
-                        files = data_list[10]
-                        isSecret = data_list[11]
-                        key_id = data_list[12]
-                        secret_key = data_list[13]
-                        isRedirect = data_list[14]
-                        print statuscode
-                        user = request.session.get('username')
-                        body = {}
-                        if body_data != "":
-                            body["showflag"] = 3
-                            body["datas"] = [{"paramValue": body_data}]
-                        api_infos = {
-                            'apiName': apiname,
-                            'method': method,
-                            'url': url,
-                            'headers': headers,
-                            'body': body,
-                            'lastRunResult': 0,
-                            'lastRunTime': None,
-                            'creator': user,
-                            'owningListID': int(listid),
-                            'assertinfo': statuscode
-                        }
+                listid = \
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
+                        "id")[0][
+                        'id']
+                for i in range(1, nrows):
+                    # data_list用来存放数据
+                    data_list = []
+                    # 将table中第一行的数据读取并添加到data_list中
+                    data_list.extend(table.row_values(i))
+                    apiname = data_list[0]
+                    method = data_list[1]
+                    url = data_list[2]
+                    headers = data_list[4]
+                    body_data = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
+                    print statuscode
+                    user = request.session.get('username')
+                    content_type = ""
+                    print("****headers***", headers)
+                    if headers != "" or headers != "{}":
+                        headers = json.loads(headers)
                         try:
-                            s = apiInfoTable.objects.create(**api_infos)
-                            s.save()
-                        except BaseException as e:
-                            print(" SQL Error: %s" % e)
-                            code = -1
-                            info = 'sql error！'
-                    code = 0
-                    info = '导入成功！'
-            else:
-                code = -6
-                info = '不支持' + filename + '格式，请上传.xls或.xlsx格式的文件！'
-                result = {
-                    'code': code,
-                    'info': info
-                }
+                            content_type = headers["Content-Type"]
+                        except Exception as e:
+                            content_type = ""
+                        headers = json.dumps(headers)
+                    body = {}
+                    if body_data != "" or body_data != "{}":
+                        body_data = json.loads(body_data)
+                        body["datas"] = []
+                        if content_type == "multipart/form-data":
+                            body["showflag"] = 0
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "Text"
+                                body["datas"].append(d_dict)
+                        elif content_type == "application/json":
+                            body["showflag"] = 1
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "String"
+                                body["datas"].append(d_dict)
+                        elif content_type == "application/xml":
+                            body["showflag"] = 2
+                            for d in body_data:
+                                d_dict = {}
+                                d_dict["paramName"] = d
+                                d_dict["paramValue"] = body_data[d]
+                                d_dict["paramType"] = "Object"
+                                body["datas"].append(d_dict)
+                        else:
+                            body["showflag"] = 3
+                            body["datas"].append({"paramValue": body_data})
+                        body = json.dumps(body)
+                        print("****body***", body)
+                    api_infos = {
+                        'apiName': apiname,
+                        'method': method,
+                        'url': url,
+                        'headers': headers,
+                        'body': body,
+                        'lastRunResult': 0,
+                        'lastRunTime': None,
+                        'creator': user,
+                        'owningListID': int(listid),
+                        'assertinfo': statuscode
+                    }
+                    try:
+                        s = apiInfoTable.objects.create(**api_infos)
+                        s.save()
+                    except BaseException as e:
+                        print(" SQL Error: %s" % e)
+                        code = -1
+                        info = 'sql error！'
+                code = 0
+                info = '导入成功！'
         else:
             code = -5
             info = '同一项目下不可包含相同名称的模块！'
