@@ -39,8 +39,17 @@
  border-radius: 2px;
 }
 /*删除按钮样式*/
+.btnCss{
+    width:66px;
+    height:33px;
+    border: 1px solid #2372A8;
+   border-radius: 3px 0px 0px 3px;
+}
+/*按钮字体样式*/
 .btnedit{
-    background: #2372A8;font-family: PingFang-SC-Regular;
+    background: #2372A8;
+    background-size: 100%;
+    font-family: PingFang-SC-Regular;
     font-size: 14px;
     color: #FFFFFF;
     letter-spacing: 0;
@@ -48,11 +57,24 @@
 }
 /*编辑按钮样式*/
 .btndel{
-    font-family: PingFang-SC-Regular;
+   font-family: PingFang-SC-Regular;
     font-size: 14px;
-    color: #2372A8;
+    color: gray;
     letter-spacing: 0;
     border-radius: 3px;
+}
+/*上传按钮样式*/
+.uploadbtn{
+    margin-left: 37px;
+    width:80px;height:28px;background: rgba(245,166,35,0.15);
+    border: 1px solid #F5A623;
+    border-radius: 2px;
+}
+.uploadbtn_font{
+    font-family: PingFang-SC-Regular;
+    font-size: 14px;
+    color: #F5A623;
+     letter-spacing: 0;
 }
 
 

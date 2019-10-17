@@ -1,0 +1,24 @@
+.headerdiv{
+     height: 100px;
+    width: 100% ;
+    background: #FFFFFF;
+    margin-top: 20px;
+    text-align: center;
+}
+.tablediv{
+width: 60%;
+    margin-left: 34px;
+    margin-top: 20px
+}
+/*上传按钮样式*/
+.uploadbtn{
+    width:80px;height:28px;background: rgba(245,166,35,0.15);
+    border: 1px solid #F5A623;
+    border-radius: 2px;
+}
+.uploadbtn_font{
+    font-family: PingFang-SC-Regular;
+    font-size: 14px;
+    color: #F5A623;
+     letter-spacing: 0;
+}
