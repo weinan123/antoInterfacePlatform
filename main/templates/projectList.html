@@ -9,11 +9,7 @@
     <div class="content" id="right" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
         <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
             <div class="pageheader" style="text-align: left;margin-right: -15px;">
-                <div class="mouduleCss">
-                    <span class="projectnamesel">
-                        {! projectNameTitle !}
-                    </span>
-                </div>
+                <p class="titlecss" style="margin-top: 5px;">{! projectNameTitle !}</p>
             </div>
 
             <div class="formContent" style="background-color: white;padding-top: 15px;">
@@ -78,8 +74,22 @@
                                 </div><!-- /.modal-content -->
                             </div><!-- /.modal -->
                         </div>
+                        <button class="viewButton" @click="selectAll()">全选</button>
+                        <button class="viewButton" @click="selectNone()">全不选</button>
+
+                        <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
+                            <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
+                                    @click="projectBatchDelete()">批量删除
+                            </button>
+                        </template>
+
                         <!-- 导入按钮触发模态框 -->
-                        <button class="viewButton" data-toggle="modal" data-target="#importProject">导入</button>
+                        <button class="uploadbtn" data-toggle="modal" data-target="#importProject"><span
+                                class="glyphicon glyphicon-cloud-download"
+                                style="color:#F5A623 "></span>&nbsp&nbsp
+                            <span class="uploadbtn_font">导入</span></button>
+
+
                         <!-- 导入模态框（Modal） -->
                         <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
                              aria-labelledby="myModalLabel"
@@ -172,14 +182,6 @@
 
                         {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                         {#                checkedDelete为数组，记录着选中的项目的ID#}
-                        <button class="viewButton" @click="selectAll()">全选</button>
-                        <button class="viewButton" @click="selectNone()">全不选</button>
-
-                        <template v-if="checkedDelete !== undefined && checkedDelete.length > 0 ">
-                            <button class="deleteButton" style="width: 75px;" onClick="delcfm()"
-                                    @click="projectBatchDelete()">批量删除
-                            </button>
-                        </template>
 
                     </div>
                 </div>
