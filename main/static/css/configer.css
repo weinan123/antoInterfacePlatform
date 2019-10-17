@@ -1,0 +1,26 @@
+.leftlable{
+    width: 8%;
+    text-align: left;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 6px
+}
+.rightform{
+    width: 20%;
+    float: left;
+    margin-left: 30px
+}
+.caseDiv{
+    width: 50%;float: left;border: 1px solid gainsboro;margin-left: 30px
+}
+.btn-config{
+     background: #2372A8;
+    border-radius: 2px;
+    width:70%;
+    height:35px;
+    border: 1px solid #2372A8;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+}
