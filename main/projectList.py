@@ -439,7 +439,14 @@ def projectImport(request):
                         info = '当前批量导入文件的body列存在数据不符合json规范！'
                         verification = False
                         break
-
+            else:
+                code = -6
+                verification = False
+                info = '不支持.' + filename + '格式，请上传.xls或.xlsx格式的文件'
+                result = {
+                    'code': code,
+                    'info': info
+                }
             # 通过数据校验，导入数据
             if (verification):
                 inter = interfaceList.objects.create(projectName=projectName, host=host,
