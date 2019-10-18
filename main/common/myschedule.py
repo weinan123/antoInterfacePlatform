@@ -9,9 +9,9 @@ from main.untils import configerData
 '''
 定时批量执行用例
 '''
-def runCase():
+def runCase(ismail):
     conf = configerData.configerData()
-    runcase = conf.getItemData("runcase").split(",")
+    runcase = conf.getItemData("configerinfor","runcase").split(",")
     scheduleList = []
     for i in runcase:
         if(i!=""):
@@ -29,9 +29,11 @@ def runCase():
     exeuser = ""
     endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     print reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath
-    sql = "insert into main_reports(ownMoudle,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,reportName)" \
+    sql = "insert into main_reports(report_runName,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,report_localName)" \
           "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath)
     mulSQL.mulSql().insertData(sql)
+    if(ismail=="Y"):
+        getEamilData()
 '''
 图表数据定时更新
 '''
@@ -81,22 +83,21 @@ def getEamilData():
     sql = "select report_localName from main_reports where id=(select MAX(id) from main_reports )"
     reportname = mulSQL.mulSql().selectData(sql)
     print str(reportname[0])
-    reportpath = r"D:/project/auto_interface/antoInterfacePlatform/main/report/"+ str(reportname[0])
-    mailsender.sendMail(senderList, subject, content,
+    reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\"+ str(reportname[0])
+    mailsender.sendMail(senderList, subject, content,True,
                         reportpath, 'high')
 if __name__ == '__main__':
-    getEamilData()
-    """
     schedule.every(5).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
-        schedule.every().day.at(localTime).do(runCase)
+        schedule.every().day.at(localTime).do(runCase,ismail)
     elif everyRounder =="每周":
         schedule.every().monday.at(localTime).do(runCase)
     elif everyRounder =="每月":
         schedule.every(28).to(31).at(localTime).do(runCase)
     while True:
         schedule.run_pending()
-        if ismail=="Y":
-            getEamilData()
-    """
+
+
+
+
