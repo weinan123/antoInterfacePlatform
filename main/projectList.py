@@ -136,19 +136,34 @@ def projectListInfo(request):
         for i in range(len(respList)):
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
-            CaseInfo = countCase.objects.filter(pmID=respList[i]['id']).values("allcaseNum", "passcaseNum",
-                                                                               "failcaseNum",
-                                                                               "blockvaseNum")
+            CaseInfo = countCase.objects.filter(projectName=respList[i]['projectName'],
+                                                moduleName=respList[i]['moduleName']).values("allcaseNum",
+                                                                                             "passcaseNum",
+                                                                                             "failcaseNum",
+                                                                                             "blockvaseNum")
             if (CaseInfo.count() == 0):
                 allcaseNum = 0
                 passcaseNum = 0
                 failcaseNum = 0
                 blockcaseNum = 0
             else:
-                allcaseNum = CaseInfo[0]['allcaseNum']
-                passcaseNum = CaseInfo[0]['passcaseNum']
-                failcaseNum = CaseInfo[0]['failcaseNum']
-                blockcaseNum = CaseInfo[0]['blockvaseNum']
+                if (not CaseInfo[0]['allcaseNum']):
+                    allcaseNum = 0
+                else:
+                    allcaseNum = CaseInfo[0]['allcaseNum']
+                if (not CaseInfo[0]['passcaseNum']):
+                    passcaseNum = 0
+                else:
+                    passcaseNum = CaseInfo[0]['passcaseNum']
+
+                if (not CaseInfo[0]['failcaseNum']):
+                    failcaseNum = 0
+                else:
+                    failcaseNum = CaseInfo[0]['failcaseNum']
+                if (not CaseInfo[0]['blockvaseNum']):
+                    blockcaseNum = 0
+                else:
+                    blockcaseNum = CaseInfo[0]['blockvaseNum']
             respList[i]['allcaseNum'] = allcaseNum
             respList[i]['passcaseNum'] = passcaseNum
             respList[i]['failcaseNum'] = failcaseNum
@@ -309,6 +324,9 @@ def projectEdit(request):
             }
             return JsonResponse(result, safe=False)
         else:
+            countCase.objects.filter(projectName=resp[0]['projectName'],
+                                     moduleName=resp[0]['moduleName']).update(projectName=projectName,
+                                                                              moduleName=moduleName)
             edit = interfaceList.objects.get(id=id)
             edit.projectName = projectName
             edit.moduleName = moduleName
