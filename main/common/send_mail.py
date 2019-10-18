@@ -44,6 +44,6 @@ def send_email(smtp_host, smtp_port, sendAddr, password, recipientAddrs, subject
 try:
     subject = 'Python 测试邮件'
     content = '这是一封来自 Python 编写的测试邮件。'
-    send_email('smtp.qq.com', 465, '2767055703@qq.con', '邮箱授权码', 'nan.wei@yff.com', subject, content)
+    send_email('smtp.163.com', 465, '18740394057@163.com', 'weinan394057', 'nan.wei@yff.com', subject, content)
 except Exception as err:
     print(err)

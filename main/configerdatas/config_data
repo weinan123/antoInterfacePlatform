@@ -2,16 +2,16 @@
 eviorment = Stage
 isreport = Y
 ismail = Y
-senderlist = , nan.wei@yff.com, ruru.yang@yff.com
+senderlist = nan.wei@yff.com,ruru.yang@yff.com
 runcase = , 1, 5, 4, 6
 sechdel_time = 每天&15:00
 selectall = True
 
 [email]
 issend = Y
-smtp_host = smtp.qq.com
+smtp_host = smtp.163.com
 smtp_port = 465
-sendaddr = 
-password = 
+sendaddr = 18740394057@163.com
+password = weinan394057
 recipientaddrs = 
 

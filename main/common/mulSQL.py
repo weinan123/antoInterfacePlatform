@@ -20,3 +20,14 @@ class mulSql():
 
             #self.conn.rollback()
         self.conn.close()
+    def selectData(self,sql):
+        try:
+            self.cursor.execute(sql)
+            result = self.cursor.fetchone()
+            return result
+        except Exception as e:
+            print e
+
+            #self.conn.rollback()
+        self.conn.close()
+

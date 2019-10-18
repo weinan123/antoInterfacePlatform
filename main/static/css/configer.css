@@ -1,5 +1,5 @@
 .leftlable{
-    width: 15%;
+    width: 12%;
     text-align: left;
     float: left;
     font-size: 14px;
@@ -7,7 +7,7 @@
     padding: 6px
 }
 .rightform{
-    width: 30%;
+    width: 45%;
     float: left;
     margin-left: 30px
 }

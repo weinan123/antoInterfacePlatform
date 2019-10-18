@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import os,django
-import runChartData,send_mail
+import runChartData,sendmail_exchange
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
@@ -64,20 +64,29 @@ def getCofigerData():
     print isreport,ismail
     return isreport,ismail,everyRounder,localTime
 def getEamilData():
+
     conf = configerData.configerData()
-    host = conf.getItemData("email","smtp_host")
-    port = conf.getItemData("email","port")
-    sender = conf.getItemData("email","sendAddr")
-    senderlist = conf.getItemData("configerinfor", "senderlist")
+    #host = conf.getItemData("email","smtp_host")
+    #port = conf.getItemData("email","port")
+
+    #sender = conf.getItemData("email","sendAddr")
+    senderlist = conf.getItemData("configerinfor", "senderlist").split(",")
     senderList = []
     for i in senderlist:
         if (i != ""):
-            senderList.append(int(i))
-    password = conf.getItemData("email", "password")
-    subject = '接口运行报告'
-    content = '接口运行详情'
-    send_mail.send_email(host,port,sender,password,senderList,subject,content)
+            senderList.append(i)
+    subject = '定时接口运行报告'
+    content = '接口运行详情见附件'
+    mailsender = sendmail_exchange.MailSender()
+    sql = "select report_localName from main_reports where id=(select MAX(id) from main_reports )"
+    reportname = mulSQL.mulSql().selectData(sql)
+    print str(reportname[0])
+    reportpath = r"D:/project/auto_interface/antoInterfacePlatform/main/report/"+ str(reportname[0])
+    mailsender.sendMail(senderList, subject, content,
+                        reportpath, 'high')
 if __name__ == '__main__':
+    getEamilData()
+    """
     schedule.every(5).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
@@ -90,3 +99,4 @@ if __name__ == '__main__':
         schedule.run_pending()
         if ismail=="Y":
             getEamilData()
+    """

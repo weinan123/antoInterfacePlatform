@@ -63,6 +63,7 @@
        <div v-if="index>0" style="margin-top: 2px">
            <span  for="name">收件人{!index!}:</span>
             <input type="text" style="width: 80%;"  class="form-control" @blur="checkemail(index,senderList[index])" id="name" placeholder="请输入收件人邮箱" v-model="senderList[index]">
+           <img v-show="index>1" style="width: 20px;height: 20px;margin-left: 6px" @click="deleteSender(index)" src="../static/image/delete.png">
             </div>
       </template>
           <p v-show="indexsss" :style="styles" >邮箱格式不正确,请检查</p>
@@ -201,6 +202,9 @@ var vm = new Vue({
             this.senderList.push(data);
             console.log(this.senderList)
         },
+        deleteSender(index){
+            this.senderList.splice(index,1)
+        },
         checkemail(index,email){
 
             console.log(email);
@@ -304,6 +308,8 @@ var vm = new Vue({
             console.log(this.caseList)
         },
         saveConfig(){
+            var target = document.getElementById("configer");
+            var spinner = Spinner({top:'2'}).spin(target);
             if(this.styles.display==="block"){
                 alert("请检查界面信息")
             }
@@ -337,6 +343,7 @@ var vm = new Vue({
                         };
                         console.log(resp.data);
                         if (resp.data.code === 0) {
+                            spinner.spin();
                             toastr.success(resp.data.msg);
                         } else {
                             toastr.error(resp.data.msg)
