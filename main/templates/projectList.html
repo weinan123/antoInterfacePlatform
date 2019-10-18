@@ -711,7 +711,7 @@
                 }
             }
             alert("不支持" + extension + "格式，请上传.xls或.xlsx格式的文件");
-            return false;
+            window.event.returnValue = false;
         }
     </script>
 
