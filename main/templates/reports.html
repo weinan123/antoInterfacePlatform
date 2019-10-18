@@ -149,7 +149,7 @@ var vmRs = new Vue({
                             let code = resp.data.code;
                             if (code === 0) {
                                 alert("删除成功");
-                                window.location.reload(true);
+                                this.getreportList();
                             } else {
                                 alert("删除失败:" + info);
                             }
@@ -222,7 +222,7 @@ var vmRs = new Vue({
                                 let info = resp.data.info;
                                 if (code === 0) {
                                     alert("删除成功，结果：" + info);
-                                    window.location.reload(true);
+                                    this.getreportList();
                                 }else{
                                     alert("删除失败");
                                 }

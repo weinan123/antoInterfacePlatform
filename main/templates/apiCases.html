@@ -153,6 +153,7 @@
             isSelectAll: false,
             cases_list: [],
             casesSel_list: [],
+            current_pageCount:10,
         },
         created(){
             vm1.$data.currentSort = 3;
@@ -201,6 +202,7 @@
                         console.log(resp.data);
                         this.result = resp.data;
                         this.cases_list = [];
+                        this.current_pageCount = resp.data.currentPageCount;
                         for(let i=0;i<this.result.data.length;i++){
                             let id = this.result.data[i].id;
                             if(this.cases_list.indexOf(id) === -1){
@@ -284,7 +286,7 @@
                             let code = resp.data.code;
                             if (code === 0) {
                                 alert("删除成功");
-                                window.location.reload(true);
+                                this.getlist(this.pageNum);
                             } else {
                                 alert("删除失败:" + info);
                             }
@@ -331,7 +333,6 @@
                             this.dlist.splice(index, 1);
                         }
                  }
-                console.log("*****",this.dlist.length,this.cases_list.length);
                 if((this.dlist.length) === this.cases_list.length){
                     this.isSelectAll=true;
                 }else{
@@ -359,7 +360,7 @@
                                 let info = resp.data.info;
                                 if (code === 0) {
                                     alert("删除成功，结果：" + info);
-                                    window.location.reload(true);
+                                    this.getlist(this.pageNum);
                                 }else{
                                     alert("删除失败");
                                 }
@@ -402,7 +403,7 @@
                             } else {
                                 alert("执行失败: " + datas);
                             }
-                            window.location.reload(true);
+                            this.getlist(this.pageNum);
                         })
                         .catch(err => {
                             console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -416,6 +417,7 @@
                 for(let j=0;j<this.casesSel_list.length;j++){
                     runlist.push(this.casesSel_list[j][0]);
                 }
+                console.log("runlist",runlist);
                 if (runlist.length !== 0) {
                     let datas = this.result.data;
                     let method = "";
@@ -453,7 +455,7 @@
                                     let code = resp.data.code;
                                     if (code === 0) {
                                         alert("执行结束");
-                                        window.location.reload(true);
+                                        this.getlist(this.pageNum);
                                     } else {
                                         alert("执行失败");
                                     }
