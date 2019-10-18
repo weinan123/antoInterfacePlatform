@@ -30,7 +30,10 @@ class sendRequest():
             response = s.get(url, headers=headers, params=send_body, verify=False, allow_redirects=redirect)
             resp = response.text
         elif (methods == "POST"):
-            headerType = headers["Content-Type"]
+            try:
+                headerType = headers["Content-Type"]
+            except Exception as e:
+                headerType = ""
             postbody = self.mulBody(headerType, send_body)
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
