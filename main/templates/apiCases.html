@@ -31,7 +31,7 @@
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
             <div  class="tableStyles" style="height: 570px;">
-                <table style="width: 90%">
+                <table style="width: 100%">
                     <thead>
                     <tr>
                         <th>序号</th>
@@ -506,21 +506,22 @@
                     },
                     })
                     .then(resp => {
-                        console.log(resp.data.datas);
                         this.viewapiInfos = resp.data.datas;
                         let viewHeaders = resp.data.datas.header;
                         let viewBodys = resp.data.datas.body;
-                        if(viewHeaders.length === 0){
-                            this.headers = {};
-                        }else{
+                        let showflag = parseInt(resp.data.showbody);
+                        this.headers = {};
+                        if(viewHeaders.length > 0){
                             for(let i=0;i<viewHeaders.length;i++){
-                                console.log("view_header:", viewHeaders[i]["type"]);
+                                console.log("view_header:", viewHeaders[i]["type"], viewHeaders[i]["value"]);
                                 this.headers[viewHeaders[i]["type"]] = viewHeaders[i]["value"];
                             }
                         }
-                        if(viewBodys.length === 0){
-                            this.bodys = {};
-                        }else{
+                        this.bodys = {};
+                        if(viewBodys.length > 0){
+                            if(showflag === 3){
+                                this.bodys = viewBodys[0].value;
+                            }
                             for(let i=0;i<viewBodys.length;i++){
                                 this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
                             }

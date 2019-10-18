@@ -28,10 +28,12 @@
     background-color: #ffffff;
     padding-left: 37px;
     padding-top: 37px;
+    padding-right: 37px;
 }
 .tableStyles table, .tableStyles td, .tableStyles th {
     border: 1px solid #EEEEEE;
 }
+
 .tableStyles td, .tableStyles th
 {
     height:48px;

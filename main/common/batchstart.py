@@ -138,8 +138,14 @@ class RunTest(unittest.TestCase):
 def _getTestcase(list):
     testlist = list
     for args in testlist:
+        try:
+            id = apiInfoTable.objects.get(apiID=args).apiID
+        except Exception as e:
+            print("e")
+            continue
         fun = RunTest.getTestFunc(args)
         setattr(RunTest, 'test_func_%s' % (args), fun)
+
 
 def start_main(list, reportflag):
     _getTestcase(list)
@@ -158,5 +164,3 @@ def start_main(list, reportflag):
         result = runner.run(testSuite)
         print result
         return result
-
-

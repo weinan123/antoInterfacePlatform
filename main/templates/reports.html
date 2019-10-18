@@ -7,17 +7,17 @@
         </div>
         <div class="tableContent" id="tableContent" role="form">
             <div class="tableStyles" style="height: 620px;">
-                <table ref="tables" id="tableBody" style="width: 90%">
+                <table ref="tables" id="tableBody" style="width: 100%">
                     <thead>
                     <tr>
-                        <th>序号</th>
+                        <th style="width: 6%">序号</th>
                         <th>报告名称</th>
-                        <th>批量执行开始时间</th>
-                        <th>批量执行结束时间</th>
-                        <th>执行用例总数</th>
-                        <th>成功用例数</th>
-                        <th>失败用例数</th>
-                        <th>错误用例数</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th style="width: 8%">用例总数</th>
+                        <th style="width: 6%">成功</th>
+                        <th style="width: 6%">失败</th>
+                        <th style="width: 6%">错误</th>
                         <th>执行者</th>
                         <th>操作</th>
                     </tr>
@@ -207,7 +207,6 @@ var vmRs = new Vue({
                 for(let j=0;j<this.casesSel_list.length;j++){
                     dellist.push(this.casesSel_list[j][0]);
                 }
-                console.log("**********dellist**********",dellist);
                 if (dellist.length !== 0) {
                     if (!confirm("删除之后无法恢复，确认要删除？")) {
                         window.event.returnValue = false;
