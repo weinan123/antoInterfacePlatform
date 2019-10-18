@@ -191,6 +191,7 @@
                     <table style="width: 90%">
                         <thead>
                         <tr>
+                            <th>批量删除</th>
                             <th>模块名称</th>
                             <th>更新时间</th>
                             <th>创建时间</th>
@@ -199,11 +200,17 @@
                             <th>失败用例数</th>
                             <th>未执行用例数</th>
                             <th>操作</th>
-                            <th>批量删除</th>
                         </tr>
                         </thead>
                         <tbody id="row">
                         <tr v-for="item in list">
+                            <td>
+                                <div>
+                                    <input class="custom-checkbox" id="checkboxDelete" type="checkbox"
+                                           v-bind:value="[item.id]"
+                                           v-model="checkedDelete">
+                                </div>
+                            </td>
                             <td>{! item.moduleName !}</td>
                             <td>{! item.updateTime !}</td>
                             <td>{! item.createTime !}</td>
@@ -303,13 +310,6 @@
                                     </a>
 
 
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    <input class="custom-checkbox" id="checkboxDelete" type="checkbox"
-                                           v-bind:value="[item.id]"
-                                           v-model="checkedDelete">
                                 </div>
                             </td>
                         </tr>
