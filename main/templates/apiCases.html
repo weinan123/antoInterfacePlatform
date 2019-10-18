@@ -79,9 +79,10 @@
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
+                    <span v-if="permission_run">
                     <label class="form-check-label">
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
-                    </label><span> 批量执行是否生成报告</span>
+                    </label><span> 批量执行是否生成报告</span></span>
             </div>
             <div style="margin: -6px auto;width: 10%" v-if="pageview">
                 <ul class="pagination">
