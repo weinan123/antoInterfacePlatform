@@ -2,7 +2,6 @@
     background-color: #f7f7f7;
     float: left;
     width: 82%;
-    height: 935px;
     margin-left: 260px;
 }
 
@@ -24,11 +23,9 @@
     height: 85%;
     margin-left: 37px;
     margin-top:10px;
-    margin-bottom:20px;
+    margin-bottom:37px;
     background-color: #ffffff;
-    padding-left: 37px;
-    padding-top: 37px;
-    padding-right: 37px;
+    padding: 37px;
 }
 .tableStyles table, .tableStyles td, .tableStyles th {
     border: 1px solid #EEEEEE;
@@ -50,7 +47,6 @@
     background-color: #f7f7f7;
     float: left;
     width: 82%;
-    height: 935px;
     margin-left: 260px;
 }
 .pagetitle{

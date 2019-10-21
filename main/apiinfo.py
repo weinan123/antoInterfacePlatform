@@ -172,7 +172,6 @@ def runsingle(request):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": str(assertinfo)}
-            print("str(assertinfo) in str(text):::", str(assertinfo) in str(text))
             if str(assertinfo) in str(text):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}

@@ -443,22 +443,28 @@ def projectImport(request):
                         info = '当前批量导入文件的模块名称中存在重复！'
                         verification = False
                         break
-                    try:
-                        json.loads(headers)
-                    except ValueError:
-                        code = -6
-                        info = '当前批量导入文件的header列存在数据不符合json规范！'
-                        verification = False
-                        break
-                    try:
-                        json.loads(body)
-                    except ValueError:
-                        code = -7
-                        info = '当前批量导入文件的body列存在数据不符合json规范！'
-                        verification = False
-                        break
+                    if (headers == '') or (headers is None):
+                        continue
+                    else:
+                        try:
+                            json.loads(headers)
+                        except ValueError:
+                            code = -6
+                            info = '当前批量导入文件的header列存在数据不符合json规范！'
+                            verification = False
+                            break
+                    if (body == '') or (body is None):
+                        continue
+                    else:
+                        try:
+                            json.loads(body)
+                        except ValueError:
+                            code = -7
+                            info = '当前批量导入文件的body列存在数据不符合json规范！'
+                            verification = False
+                            break
             else:
-                code = -6
+                code = -8
                 verification = False
                 info = '不支持.' + filename + '格式，请上传.xls或.xlsx格式的文件'
                 result = {
@@ -479,8 +485,7 @@ def projectImport(request):
 
                 listid = \
                     interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
-                        "id")[0][
-                        'id']
+                        "id")[0]['id']
                 for i in range(1, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -504,15 +509,20 @@ def projectImport(request):
                     user = request.session.get('username')
                     content_type = ""
                     print("****headers***", headers)
-                    if headers != "" or headers != "{}":
+                    if (headers is None) or (headers == '') or (headers == '{}'):
+                        headers = '{}'
+                    else:
                         headers = json.loads(headers)
                         try:
                             content_type = headers["Content-Type"]
                         except Exception as e:
                             content_type = ""
                         headers = json.dumps(headers)
+
                     body = {}
-                    if body_data != "" or body_data != "{}":
+                    if (body_data is None) or (body_data == '') or (body_data == '{}'):
+                        body = '{}'
+                    else:
                         body_data = json.loads(body_data)
                         body["datas"] = []
                         if content_type == "multipart/form-data":
@@ -543,7 +553,7 @@ def projectImport(request):
                             body["showflag"] = 3
                             body["datas"].append({"paramValue": body_data})
                         body = json.dumps(body)
-                        print("****body***", body)
+                    print("****body***", body)
                     api_infos = {
                         'apiName': apiname,
                         'method': method,

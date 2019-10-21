@@ -30,7 +30,7 @@
         </div>
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
-            <div  class="tableStyles" style="height: 570px;">
+            <div  class="tableStyles" style="min-height: 565px;">
                 <table style="width: 100%">
                     <thead>
                     <tr>
@@ -84,7 +84,7 @@
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
                     </label><span> 批量执行是否生成报告</span></span>
             </div>
-            <div style="margin: -6px auto;width: 10%" v-if="pageview">
+            <div style="margin: 0px auto;width: 12%" v-if="pageview">
                 <ul class="pagination">
                     <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
                     <li><a>{! pageNum !}</a></li>
@@ -317,8 +317,16 @@
                         }
                     }
                 }else{
-                    this.casesSel_list = [];
                     this.dlist = [];
+                    for(let i=0;i<this.cases_list.length;i++){
+                        let caseid = parseInt(this.cases_list[i]);
+                        for(let j=0;j<this.casesSel_list.length;j++){
+                            if(this.casesSel_list[j].indexOf(caseid) > -1){
+                                this.casesSel_list.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
                 }
             },
             changeSel(e){
@@ -524,9 +532,10 @@
                         if(viewBodys.length > 0){
                             if(showflag === 3){
                                 this.bodys = viewBodys[0].value;
-                            }
-                            for(let i=0;i<viewBodys.length;i++){
-                                this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                            }else{
+                                for(let i=0;i<viewBodys.length;i++){
+                                    this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                                }
                             }
                         }
                         console.log("header:", this.headers);
