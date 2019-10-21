@@ -30,7 +30,7 @@
         </div>
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
-            <div  class="tableStyles" style="height: 570px;">
+            <div  class="tableStyles" style="min-height: 565px;">
                 <table style="width: 100%">
                     <thead>
                     <tr>
@@ -84,7 +84,7 @@
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
                     </label><span> 批量执行是否生成报告</span></span>
             </div>
-            <div style="margin: -6px auto;width: 10%" v-if="pageview">
+            <div style="margin: 0px auto;width: 12%" v-if="pageview">
                 <ul class="pagination">
                     <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
                     <li><a>{! pageNum !}</a></li>
