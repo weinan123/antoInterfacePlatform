@@ -187,6 +187,7 @@ def batchrun(request):
         req = json.loads(request.body)["params"]
         idlist = req['idList']
         reportflag = req["reportflag"]
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if reportflag == True:
             reflag = "Y"
         else:
@@ -195,14 +196,13 @@ def batchrun(request):
         print batchResult
         if reportflag == True:
             exeuser = request.session.get('username')
-            report_runName = req["pmName"] +"_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+            report_localName = batchResult["reportPath"]
+            print report_localName
+            report_runName = req["pmName"] +"_" + report_localName
             totalNum = len(idlist)
-            starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             successNum = batchResult["sNum"]
             failNum = batchResult["fNum"]
             errorNum = batchResult["eNum"]
-            report_localName = batchResult["reportPath"]
-            print report_localName
             endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             result_infos = {
                 "report_runName": report_runName,

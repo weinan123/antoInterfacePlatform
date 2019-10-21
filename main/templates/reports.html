@@ -38,7 +38,7 @@
                             <td>{! info.executor !}</td>
                             <td>
                                 <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn-local">查看</button></a>
-                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_localName" ><button type="button" class="btn-local">下载</button>
+                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" ><button type="button" class="btn-local">下载</button>
                                 </a>
                                 <button class="btn-delete" @click="delreport(info.id)">删除</button>
                             </td>

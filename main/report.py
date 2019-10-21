@@ -51,7 +51,7 @@ def reportDelete(request):
         reName = ainfo.report_localName
         if ainfo:
             try:
-                # ainfo.delete()
+                ainfo.delete()
                 print("delete success from sql.")
             except BaseException as e:
                 result = {'code': -1, 'info': 'delete error' + str(e)}
