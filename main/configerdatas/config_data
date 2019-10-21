@@ -2,7 +2,7 @@
 eviorment = Stage
 isreport = Y
 ismail = Y
-senderlist = nan.wei@yff.com, ruru.yang@yff.com
+senderlist = nan.wei@yff.com, ruru.yang@yff.com, weinannan@yff.com
 runcase = , 15, 21, 22, 18, 1, 63, 5, 4, 6, 20
 sechdel_time = 每天&15:00
 selectall = True

@@ -36,11 +36,11 @@
 
 /*保存按钮样式*/
 .btn-save{
-    background: #03BABF;
+    background: #2372A8;
     border-radius: 2px;
     width:70px;
     height:35px;
-    border: 1px solid #03BABF;
+    border: 1px solid #2372A8;
     font-size: 14px;
     color: #FFFFFF;
     letter-spacing: 0;
@@ -60,8 +60,8 @@
 
 /*表格中普通按钮样式*/
 .btn-local{
-    background-color: rgba(35,114,168,0.15);
-    color: #2372A8;
+    background-color: #2372A8;
+    color: #FFFFFF;
     padding: 5px 10px;
     font-size: 12px;
     line-height: 1.5;
@@ -72,14 +72,14 @@
 }
 /*表格中删除按钮样式*/
 .btn-delete{
-    background-color: rgba(255, 0, 0, 0.15);
-    color: rgb(255, 0, 0);
+    background-color: rgba(35,114,168,0.15);
+    color: #2372A8;
     padding: 5px 10px;
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
     display: inline-block;
-    border: 1px solid rgb(255, 0, 0);;
+    border: 1px solid rgba(35,114,168,0.15);
     font-family: inherit;
 }
 
