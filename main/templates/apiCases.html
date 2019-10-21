@@ -524,9 +524,10 @@
                         if(viewBodys.length > 0){
                             if(showflag === 3){
                                 this.bodys = viewBodys[0].value;
-                            }
-                            for(let i=0;i<viewBodys.length;i++){
-                                this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                            }else{
+                                for(let i=0;i<viewBodys.length;i++){
+                                    this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                                }
                             }
                         }
                         console.log("header:", this.headers);
