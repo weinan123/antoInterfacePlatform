@@ -50,13 +50,7 @@ class MailSender:
         if importance in ['Normal', 'normal', 'NORMAl', 'N', 'n']:
             choice = 'Normal'
 
-        item = Message(
-            account=account,
-            subject=subject,
-            body = content,
-            to_recipients=mailto,
-            importance=choice
-            )
+
     #发送附件
         if os.path.isfile(attatchment):
             file_obj=open(attatchment,"r")
@@ -65,11 +59,21 @@ class MailSender:
             finally:
                 file_obj.close()
             binary_file_content = attatchcontent.encode('utf-8')
-            attatchmentName=attatchment.split("/")[-1]
+            attatchmentName="接口运行详情报告.html"
             my_file = FileAttachment(name=attatchmentName, content=binary_file_content)
-            item.attach(my_file)
+        else:
+            binary_file_content ="<p>报告获取失败</p>"
+            my_file = ""
+        item = Message(
+            account=account,
+            subject=subject,
+            body=HTMLBody(binary_file_content),
+            to_recipients=mailto,
+            importance=choice
+        )
+        item.attach(my_file)
         item.send()
 
 if __name__ == '__main__':
     mailsender=MailSender()
-    mailsender.sendMail(['nan.wei@yff.com','ruru.yang@yff.com'],'Test','weinannantest',True,r'D:/project\auto_interface\antoInterfacePlatform\main\templates\configer.html','high')
+    mailsender.sendMail(['nan.wei@yff.com'],'Test','weinannantest',True,r'D:\project\auto_interface\antoInterfacePlatform\main\report\2019-09-26-16_54_27_result.html','normal')

@@ -66,12 +66,7 @@ def getCofigerData():
     print isreport,ismail
     return isreport,ismail,everyRounder,localTime
 def getEamilData():
-
     conf = configerData.configerData()
-    #host = conf.getItemData("email","smtp_host")
-    #port = conf.getItemData("email","port")
-
-    #sender = conf.getItemData("email","sendAddr")
     senderlist = conf.getItemData("configerinfor", "senderlist").split(",")
     senderList = []
     for i in senderlist:
@@ -85,7 +80,7 @@ def getEamilData():
     print str(reportname[0])
     reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\"+ str(reportname[0])
     mailsender.sendMail(senderList, subject, content,True,
-                        reportpath, 'high')
+                        reportpath, 'normal')
 if __name__ == '__main__':
     schedule.every(5).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()

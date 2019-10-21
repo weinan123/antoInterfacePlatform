@@ -48,17 +48,17 @@ def getprojectCase(request):
             "data": []
         }
         projectName = request.GET['initProjectName']
-        caseinfor = interfaceList.objects.filter(projectName=projectName).values_list("moduleName")
+        caseinfor = interfaceList.objects.filter(projectName=projectName).values("id","moduleName")
         print caseinfor
         for i in caseinfor:
             cases = {
                 "allcase": []
             }
-            cases["moduleName"] = i[0]
-            id = interfaceList.objects.filter(projectName=projectName, moduleName=i[0]).values("id")
-            owningListID = id[0]["id"]
-            allcase = apiInfoTable.objects.filter(owningListID=int(owningListID)).values("apiID", "apiName")
-            print id, allcase
+            cases["moduleName"] = i["moduleName"]
+            #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
+            #owningListID = id[0]["id"]
+            allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
+            #print id, allcase
             for s in allcase:
                 caseinfor = {}
                 caseinfor["caseName"] = (s["apiName"])
