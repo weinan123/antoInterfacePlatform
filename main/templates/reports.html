@@ -6,8 +6,8 @@
             <p style="margin-top: 0px;margin-bottom: 0px;">批量执行结果报告</p>
         </div>
         <div class="tableContent" id="tableContent" role="form">
-            <div class="tableStyles" style="height: 620px;">
-                <table ref="tables" id="tableBody" style="width: 100%">
+            <div class="tableStyles" style="min-height: 620px;">
+                <table ref="tables" id="tableBody" style="width: 100%;">
                     <thead>
                     <tr>
                         <th style="width: 6%">序号</th>
@@ -52,11 +52,11 @@
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()">批量删除</button>
                 </div>
             </div>
-            <div style="margin: -6px auto;width: 10%" v-if="pageview">
+            <div style="margin: 0px auto;width: 12%" v-if="pageview">
                 <ul class="pagination">
-                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
+                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt</a></li>
                     <li><a>{! pageNum !}</a></li>
-                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
+                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt</a></li>
                 </ul>
             </div>
         </div>
@@ -244,7 +244,7 @@ var vmRs = new Vue({
                 }
                 this.reportList = [];
                 this.delList = [];
-                this.getlist();
+                this.getreportList();
             },
         cutPage(num){
                 this.pageNum = num -1;
@@ -257,7 +257,7 @@ var vmRs = new Vue({
                 }
                 this.reportList = [];
                 this.delList = [];
-                this.getlist();
+                this.getreportList();
             },
 
     }
