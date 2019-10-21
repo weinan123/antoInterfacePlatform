@@ -13,14 +13,16 @@ def userpermit(request):
 def getUserLevel(request):
     if request.method == 'GET':
         username = request.GET['username']
-        depart_lever = users.objects.filter(username=username).values("depart_lever","configer_permit")
+        depart_lever = users.objects.filter(username=username).values("group","depart_lever","configer_permit")
         print depart_lever
         depart_lever_value = depart_lever[0]["depart_lever"]
         configer_permit = depart_lever[0]["configer_permit"]
+        group = depart_lever[0]["group"]
         resonseData = {
             "code":0,
             "user_level":depart_lever_value,
-            "user_configPermit":configer_permit
+            "user_configPermit":configer_permit,
+            "user_group":group
         }
         return JsonResponse(resonseData, safe=False)
 def getUserData(request):
@@ -104,7 +106,16 @@ def getUserData(request):
             }
             return JsonResponse(resonseData, safe=False)
     elif request.method=='POST':
-        page_count = users.objects.count()
+        data = json.loads(request.body)
+        print data
+        username =  data["username"]
+        depart_lever = users.objects.filter(username=username).values("depart_lever")
+        user_group = users.objects.filter(username=username).values("group")
+        depart_lever_value = depart_lever[0]["depart_lever"]
+        if depart_lever_value==1:
+            page_count = users.objects.all().count()
+        else:
+            page_count = users.objects.filter(group=user_group[0]["group"], depart_lever=3).count()
         x,y = divmod(page_count,14)
         if y:
             page_num =x+1

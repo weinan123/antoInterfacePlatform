@@ -23,6 +23,8 @@ def getAllcase(request):
 
     caseinfor = interfaceList.objects.filter().values_list("projectName","moduleName")
     for i in caseinfor:
+        if i[1]=="":
+            continue
         cases = {
             "allcase":[]
         }
@@ -51,21 +53,24 @@ def getprojectCase(request):
         caseinfor = interfaceList.objects.filter(projectName=projectName).values("id","moduleName")
         print caseinfor
         for i in caseinfor:
-            cases = {
-                "allcase": []
-            }
-            cases["moduleName"] = i["moduleName"]
-            #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
-            #owningListID = id[0]["id"]
-            allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
-            #print id, allcase
-            for s in allcase:
-                caseinfor = {}
-                caseinfor["caseName"] = (s["apiName"])
-                caseinfor["caseId"] = s["apiID"]
-                caseinfor["checked"] = False
-                cases["allcase"].append(caseinfor)
-            returndata["data"].append(cases)
+            if i["moduleName"]=="":
+                continue
+            else:
+                cases = {
+                    "allcase": []
+                }
+                cases["moduleName"] = i["moduleName"]
+                #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
+                #owningListID = id[0]["id"]
+                allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
+                #print id, allcase
+                for s in allcase:
+                    caseinfor = {}
+                    caseinfor["caseName"] = (s["apiName"])
+                    caseinfor["caseId"] = s["apiID"]
+                    caseinfor["checked"] = False
+                    cases["allcase"].append(caseinfor)
+                returndata["data"].append(cases)
         return JsonResponse(returndata, safe=False)
 
 

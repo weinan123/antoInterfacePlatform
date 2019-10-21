@@ -63,7 +63,7 @@
        <div style="margin-top: 2px">
            <span  for="name">收件人{!index+1!}:</span>
             <input type="text" style="width: 80%;"  class="form-control" @blur="checkemail(index,senderList[index])" id="name" placeholder="请输入收件人邮箱" v-model="senderList[index]">
-           <img v-show="index>1" style="width: 20px;height: 20px;margin-left: 6px" @click="deleteSender(index)" src="../static/image/delete.png">
+           <img v-show="index>0" style="width: 20px;height: 20px;margin-left: 6px" @click="deleteSender(index)" src="../static/image/delete.png">
             </div>
       </template>
           <p v-show="indexsss" :style="styles" >邮箱格式不正确,请检查</p>

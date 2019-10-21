@@ -226,7 +226,11 @@ methods:{
         });
      },
      getPageNum(username){
-           axios.post('/getUserData/')
+         vm1.$mount();
+         data_to_send = {
+             username:username
+         };
+           axios.post('/getUserData/',data_to_send)
              .then(resp =>{
                  console.log(resp.data);
                  this.page_num = resp.data.page_num;
@@ -238,9 +242,9 @@ methods:{
      getUserData(page,count){
          //var target = document.getElementById("row");
          //var spinner = Spinner({top:'1'}).spin(target);
-         axios.get('/getUserData/',{params:{ username:vm1.$data.username,page:page,count:count}})
+         let username = vm1.$data.username;
+         axios.get('/getUserData/',{params:{  username:username,page:page,count:count}})
              .then(resp =>{
-
                  for(var i=0;i<resp.data.datas.length;i++){
                      if(resp.data.datas[i].configer_permit===false){
                          resp.data.datas[i].config_true=false;
@@ -293,10 +297,12 @@ methods:{
                          };
                  if(resp.data.code==0) {
                      spinner.spin();
+                     vm1.$mount();
                      //window.location.reload(true);
                      toastr.success(resp.data.info);
                      this.getUserData(1,14);
                      this.getPageNum(this.username);
+
                  }else{
                     toastr.error(resp.data.info);
                  }

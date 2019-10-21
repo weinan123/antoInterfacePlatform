@@ -64,6 +64,9 @@ var vm1 = new Vue({
        return {
            currentSort:0,
            username:"",
+           user_level:"",
+           user_group:"",
+
            navTab:[{
                name:"首页",
                url:"/index/"
@@ -135,7 +138,7 @@ var vm1 = new Vue({
                  console.log(resp.data);
                  this.user_level = resp.data.user_level;
                  this.user_configPermit = resp.data.user_configPermit;
-                 this.showTabs(resp.data.user_level);
+                 this.user_group  = resp.data.user_group;
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
@@ -144,7 +147,6 @@ var vm1 = new Vue({
             window.location.href="/logout/";
         },
         active(index){
-
             let url = this.navTab[index].url;
             if (url==="/userPermit/"&&this.user_level===3){
                 window.alert("您没有此页面权限，请联系管理员添加权限")
