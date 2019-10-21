@@ -197,8 +197,7 @@ def batchrun(request):
         if reportflag == True:
             exeuser = request.session.get('username')
             report_localName = batchResult["reportPath"]
-            print report_localName
-            report_runName = req["pmName"] +"_" + report_localName
+            report_runName = req["pmName"] +"_" + batchResult["reportname"]
             totalNum = len(idlist)
             successNum = batchResult["sNum"]
             failNum = batchResult["fNum"]

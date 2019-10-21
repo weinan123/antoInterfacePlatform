@@ -30,5 +30,5 @@ def create():
     suffix = "_result.html"
     relpath = t + suffix
     report_path = os.path.dirname(os.path.dirname(__file__)) + "\\report\\" + relpath
-    print report_path, relpath
-    return report_path, relpath
+    reportname = t
+    return report_path, relpath, reportname
