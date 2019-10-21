@@ -198,8 +198,16 @@ var vmRs = new Vue({
                         }
                     }
                 }else{
-                    this.casesSel_list = [];
                     this.delList = [];
+                    for(let i=0;i<this.cases_list.length;i++){
+                        let caseid = parseInt(this.cases_list[i]);
+                        for(let j=0;j<this.casesSel_list.length;j++){
+                            if(this.casesSel_list[j].indexOf(caseid) > -1){
+                                this.casesSel_list.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
                 }
             },
         batchdel(){

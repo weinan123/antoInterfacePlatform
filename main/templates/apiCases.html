@@ -91,6 +91,9 @@
                     <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
                 </ul>
             </div>
+            <p>a: {! dlist !}</p>
+            <p>b: {! casesSel_list !}</p>
+            <p>c: {! cases_list !}</p>
         </div>
         <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 500px;margin: 75px auto">
@@ -317,8 +320,16 @@
                         }
                     }
                 }else{
-                    this.casesSel_list = [];
                     this.dlist = [];
+                    for(let i=0;i<this.cases_list.length;i++){
+                        let caseid = parseInt(this.cases_list[i]);
+                        for(let j=0;j<this.casesSel_list.length;j++){
+                            if(this.casesSel_list[j].indexOf(caseid) > -1){
+                                this.casesSel_list.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
                 }
             },
             changeSel(e){
