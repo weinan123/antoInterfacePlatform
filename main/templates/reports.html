@@ -3,7 +3,7 @@
 {% block content %}
 <div class="reportsPage" id ="reports">
         <div class="pagetitle" style="">
-            <p style="margin-top: 0px;margin-bottom: 0px;">批量执行结果报告</p>
+            <p style="margin-top: 0px;margin-bottom: 0px;">测试结果报告</p>
         </div>
         <div class="tableContent" id="tableContent" role="form">
             <div class="tableStyles" style="min-height: 620px;">
@@ -38,7 +38,7 @@
                             <td>{! info.executor !}</td>
                             <td>
                                 <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn-local">查看</button></a>
-                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_localName" ><button type="button" class="btn-local">下载</button>
+                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" ><button type="button" class="btn-local">下载</button>
                                 </a>
                                 <button class="btn-delete" @click="delreport(info.id)">删除</button>
                             </td>
@@ -52,7 +52,7 @@
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()">批量删除</button>
                 </div>
             </div>
-            <div style="margin: 0px auto;width: 12%" v-if="pageview">
+            <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
                 <ul class="pagination">
                     <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt</a></li>
                     <li><a>{! pageNum !}</a></li>
