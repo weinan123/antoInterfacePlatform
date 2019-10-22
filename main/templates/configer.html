@@ -209,7 +209,6 @@ var vm = new Vue({
             this.senderList.splice(index,1)
         },
         checkemail(index,email){
-
             console.log(email);
             var reg = /^[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/;
             if(reg.test(email)){
@@ -311,12 +310,23 @@ var vm = new Vue({
             console.log(this.caseList)
         },
         saveConfig(){
-            var target = document.getElementById("configer");
-            var spinner = Spinner({top:'2'}).spin(target);
+
+           {% comment %} for(var i=0;i<this.senderList;i++){
+                if(this.senderList[i]===""){
+                     this.indexsss=true;
+                    this.styles={
+                            color: "red",
+                            display:"block",
+                            "margin-left":"8.3%"
+                        }
+                }
+            }{% endcomment %}
             if(this.styles.display==="block"){
                 alert("请检查界面信息")
             }
             else {
+                var target = document.getElementById("configer");
+                var spinner = Spinner({top:'2'}).spin(target);
                 let data_to_send = {
                     eviorment: this.eviorment,
                     isReport: this.isReport,
