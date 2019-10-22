@@ -39,7 +39,7 @@
                         <th>上一次执行结果</th>
                         <th>上一次执行时间</th>
                         <th>创建者</th>
-                        <th>操作</th>
+                        <th style="width: 16%">操作</th>
                     </tr>
                     </thead>
                     <tbody ref="tables" id="tableBody">
@@ -61,13 +61,19 @@
                                 <p v-else>{! info.lastruntime !}</p>
                             </td>
                             <td>{! info.owing !}</td>
-                            <td style="width: 25%">
-                                <button class="btn-local" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view">查看</button>
-                                <a v-bind:href="['/singleInterface/editor/?id='+info.id]">
-                                        <button class="btn-local">编辑</button>
+                            <td>
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
+                                    <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <button class="btn-local" @click="runsingle(info.id)">执行</button>
-                                <button class="btn-delete" @click="delapi(result.data[index].id)">删除</button>
+                                <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </a>
+                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
+                                    <span class="glyphicon glyphicon-expand"></span>
+                                </a>
+                                <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                </a>
                             </td>
                         </tr>
                     </tbody>
