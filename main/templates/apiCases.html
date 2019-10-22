@@ -271,6 +271,7 @@
 
             },
             delapi(id) {
+                let self = this;
                 zdconfirm("确认要删除吗？", function (r) {
                     if (r) {
                         console.log('id=' + id);
@@ -280,13 +281,14 @@
                             }
                         })
                             .then(resp => {
+                                alert("删除成功");
                                 this.result = resp.data;
                                 console.log(resp.data);
                                 let info = resp.data.info;
                                 let code = resp.data.code;
                                 if (code === 0) {
-                                    alert("删除成功");
-                                    this.getlist(this.pageNum);
+                                    console.log(self);
+                                    self.getlist(self.pageNum);
                                 } else {
                                     alert("删除失败:" + info);
                                 }

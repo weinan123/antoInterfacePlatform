@@ -47,6 +47,7 @@ window.alert = function (txt, time) {
     this.doOk = function () {
         document.body.removeChild(alertDiv);
         document.body.removeChild(shield);
+        return true
     };
     alertDiv.focus();
     document.body.onselectstart = function () {
