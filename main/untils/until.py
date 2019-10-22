@@ -19,7 +19,6 @@ def my_login(func):
 def mul_bodyData(bodyinfor):
     body = {}
     files={}
-    print("bodyinfor",type(bodyinfor))
     if bodyinfor == "" or bodyinfor == {} :
         body = {}
         files = {}
@@ -43,7 +42,6 @@ def mul_bodyData(bodyinfor):
                     getvalue = toType(params_type,params_value).toreturnType()
                     print getvalue
                     body[params_name] = getvalue
-    print body,files
     return body,files
 
 import time,os

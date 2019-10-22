@@ -18,17 +18,22 @@ class RunTest(unittest.TestCase):
     def actions(self, arg1):
         # 获取元素的方式
         caseID = arg1
+        state = False
         try:
             caseName = apiInfoTable.objects.get(apiID=caseID).apiName
+        except Exception as e:
+            print("caseid:%s is not exist or run error." % caseID)
+        else:
             print("caseName:%s." % caseName)  # 报告输出中使用，请勿删除
             singleResult = self.singleRun(caseID)
-            print singleResult
-            state = False
             if singleResult["code"] == 0:
                 state = True
+                print("case %s is run success." % caseID)
+            else:
+                state = False
+                print("case %s is run fail.%s" % (caseID, str(singleResult["datas"])))
             self.assertEqual(True, state)
-        except Exception as e:
-            print("caseid:%s is not exist." % caseID)
+
 
     # 闭包函数
     @staticmethod
@@ -118,8 +123,8 @@ class RunTest(unittest.TestCase):
             statusCode = resp.status_code
             text = resp.text
         except AttributeError as e:
-            statusCode = -999
-            text = "error!code: -999"
+            result = {"code": -1, "info": "run error", "datas": str(e)}
+            return result
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
@@ -141,11 +146,6 @@ class RunTest(unittest.TestCase):
 def _getTestcase(list):
     testlist = list
     for args in testlist:
-        # try:
-        #     id = apiInfoTable.objects.get(apiID=args).apiID
-        # except Exception as e:
-        #     print("用例不存在：%s" % str(e))
-        #     continue
         fun = RunTest.getTestFunc(args)
         setattr(RunTest, 'test_func_%s' % (args), fun)
 
@@ -155,15 +155,12 @@ def start_main(list, reportflag):
     testSuite = batchUntils.getTestSuite(RunTest)
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
-        print pathName
         fp = file(reportFile, "wb")
         runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
         result = runner.run(testSuite)
-        print result.failure_count, result.error_count, result.success_count
         return {"reportPath": pathName, "reportname": reportname,"sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}
     else:
         runner = unittest.TextTestRunner()
         result = runner.run(testSuite)
-        print result
         return result
