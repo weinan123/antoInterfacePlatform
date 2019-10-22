@@ -21,6 +21,7 @@ def runCase(ismail):
     totalNum = len(scheduleList)
     starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     isreport = conf.getItemData("configerinfor", "isreport")
+
     batchResult = batchstart.start_main(scheduleList,isreport)
     successNum = batchResult["sNum"]
     faileNum = batchResult["fNum"]
@@ -82,10 +83,10 @@ def getEamilData():
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath, 'normal')
 if __name__ == '__main__':
-    schedule.every(5).minutes.do(runChart)
+    schedule.every(3).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
-        schedule.every().day.at(localTime).do(runCase,ismail)
+        schedule.every().day.at("11:10").do(runCase,ismail)
     elif everyRounder =="每周":
         schedule.every().monday.at(localTime).do(runCase)
     elif everyRounder =="每月":

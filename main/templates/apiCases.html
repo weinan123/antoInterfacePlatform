@@ -270,33 +270,36 @@
                 });
 
             },
-            delapi(id){
-                if (!confirm("确认要删除？")) {
-                    window.event.returnValue = false;
-                }else {
-                    console.log('id=' + id);
-                    axios.post('/apidelete/', {
-                        params: {
-                            aid: id
-                        }
-                    })
-                        .then(resp => {
-                            this.result = resp.data;
-                            console.log(resp.data);
-                            let info = resp.data.info;
-                            let code = resp.data.code;
-                            if (code === 0) {
-                                alert("删除成功");
-                                this.getlist(this.pageNum);
-                            } else {
-                                alert("删除失败:" + info);
+            delapi(id) {
+                zdconfirm("确认要删除吗？", function (r) {
+                    if (r) {
+                        console.log('id=' + id);
+                        axios.post('/apidelete/', {
+                            params: {
+                                aid: id
                             }
                         })
-                        .catch(err => {
-                            console.log('请求失败:' + err.status + ',' + err.statusText);
-                        })
-                }
+                            .then(resp => {
+                                this.result = resp.data;
+                                console.log(resp.data);
+                                let info = resp.data.info;
+                                let code = resp.data.code;
+                                if (code === 0) {
+                                    alert("删除成功");
+                                    this.getlist(this.pageNum);
+                                } else {
+                                    alert("删除失败:" + info);
+                                }
+                            })
+                            .catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                            });
+                    }
+                })
             },
+
+
+
             selectAllBtn(e){
                 let checked = e.target.checked;
                 if(checked){
