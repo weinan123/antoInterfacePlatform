@@ -18,14 +18,17 @@ class RunTest(unittest.TestCase):
     def actions(self, arg1):
         # 获取元素的方式
         caseID = arg1
-        caseName = apiInfoTable.objects.get(apiID=caseID).apiName
-        print("caseName:%s." % caseName)           #报告输出中使用，请勿删除
-        singleResult = self.singleRun(caseID)
-        print singleResult
-        state = False
-        if singleResult["code"] == 0:
-            state = True
-        self.assertEqual(True, state)
+        try:
+            caseName = apiInfoTable.objects.get(apiID=caseID).apiName
+            print("caseName:%s." % caseName)  # 报告输出中使用，请勿删除
+            singleResult = self.singleRun(caseID)
+            print singleResult
+            state = False
+            if singleResult["code"] == 0:
+                state = True
+            self.assertEqual(True, state)
+        except Exception as e:
+            print("caseid:%s is not exist." % caseID)
 
     # 闭包函数
     @staticmethod
@@ -138,11 +141,11 @@ class RunTest(unittest.TestCase):
 def _getTestcase(list):
     testlist = list
     for args in testlist:
-        try:
-            id = apiInfoTable.objects.get(apiID=args).apiID
-        except Exception as e:
-            print("用例不存在：%s" % str(e))
-            continue
+        # try:
+        #     id = apiInfoTable.objects.get(apiID=args).apiID
+        # except Exception as e:
+        #     print("用例不存在：%s" % str(e))
+        #     continue
         fun = RunTest.getTestFunc(args)
         setattr(RunTest, 'test_func_%s' % (args), fun)
 
