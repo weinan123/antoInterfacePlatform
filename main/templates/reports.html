@@ -37,10 +37,15 @@
                             <td>{! info.errorNum !}</td>
                             <td>{! info.executor !}</td>
                             <td>
-                                <a :href="['/viewreport/?report='+info.report_localName]" target="_blank" ><button type="button" class="btn-local">查看</button></a>
-                                <a :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" ><button type="button" class="btn-local">下载</button>
+                                <a class="iconlink" :href="['/viewreport/?report='+info.report_localName]" target="_blank" title="查看">
+                                    <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <button class="btn-delete" @click="delreport(info.id)">删除</button>
+                                <a class="iconlink" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" title="下载">
+                                    <span class="glyphicon glyphicon-download"></span>
+                                </a>
+                                <a class="iconlink" @click="delreport(info.id)" href="#" title="删除">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                </a>
                             </td>
                         </tr>
                     </tbody>

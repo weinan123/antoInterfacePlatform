@@ -17,7 +17,7 @@ def runCase(ismail):
         if(i!=""):
             scheduleList.append(int(i))
     print scheduleList
-    reportName = u"定时报告" + "_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
+    reportName = u"定时报告" + "_" + time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
     totalNum = len(scheduleList)
     starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     isreport = conf.getItemData("configerinfor", "isreport")
