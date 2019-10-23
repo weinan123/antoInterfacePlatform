@@ -62,16 +62,16 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
-                                <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
+                                <a class="iconlink" @click="delapi(result.data[index].id)" href="" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -117,6 +117,7 @@
                              <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! headers !}</span></p>
                              <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! bodys !}</span></p>
                              <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">response:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
                          </div>
                     </div>
                     <div class="modal-footer">
