@@ -326,8 +326,8 @@ methods:{
                      vm1.$mount();
                      //window.location.reload(true);
                      toastr.success(resp.data.info);
-                     this.getUserData(1,14);
-                     this.getPageNum(this.username);
+                     this.getUserData(self.currentPage,14);
+                     //this.getPageNum(this.username);
 
                  }else{
                     toastr.error(resp.data.info);

@@ -631,8 +631,8 @@ var vm = new Vue({
                   console.log('Mode switched from', oldMode, 'to', newMode);
                 }
               };
-            var editor1 = new JSONEditor(container,options,json);
-
+            this.editor1 = new JSONEditor(container,options,json);
+            //return editor1
         },
         makeFrom(params){
             this.currentSort=params;
@@ -772,6 +772,9 @@ var vm = new Vue({
              this.request_infor = requestStr;
              axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
+                    console.log(resp.data);
+                    //editor1 = this.getEdit();
+                    //this.editor1.setText(resp.data)
                         this.getEdit(JSON.parse(resp.data))
                     }).catch(err=>{
                          toastr.options = {
