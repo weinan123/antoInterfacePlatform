@@ -79,3 +79,6 @@
 .iconlink:active {
     color: #2372A8 !important;
 }
+.disabled{
+    pointer-events: none;
+}

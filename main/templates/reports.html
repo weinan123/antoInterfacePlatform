@@ -43,7 +43,7 @@
                                 <a class="iconlink" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" title="下载">
                                     <span class="glyphicon glyphicon-download"></span>
                                 </a>
-                                <a class="iconlink" @click="delreport(info.id)" href="#" title="删除">
+                                <a class="iconlink" @click="delreport(info.id)" href="" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -59,9 +59,9 @@
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
                 <ul class="pagination">
-                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt</a></li>
+                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
                     <li><a>{! pageNum !}</a></li>
-                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt</a></li>
+                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
                 </ul>
             </div>
         </div>
