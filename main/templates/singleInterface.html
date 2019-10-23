@@ -52,7 +52,7 @@
 					<input v-model="url" type="text" class="form-control" placeholder="请求地址">
 				</div><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
-            <div class="col-lg-2">
+            <div style="width: 18%">
                 <button id="fat-btn" class="btn-save" data-loading-text="Loading..."
                 type="button" @click="sendQuest()">测试
                 </button>
@@ -77,7 +77,7 @@
     </div>
     <div class="tablediv">
     <div class="row" v-if="showState === 1">
-        <div class=" col-lg-2 col-md-3 col-sm-3  radio " style="width: 15%;float: left">
+        <div class=" col-lg-2 col-md-3 col-sm-3  radio " style="width: 19%;float: left">
         <label>
             <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" v-model="checkv" @click="showBodyform(0)"> Form-data
         </label>
