@@ -20,6 +20,7 @@ def getAllcase(request):
     for s in projectName:
         projectList.append(s["projectName"])
     returndata["projectList"] =projectList
+    '''
 
     caseinfor = interfaceList.objects.filter().values_list("projectName","moduleName")
     for i in caseinfor:
@@ -41,6 +42,7 @@ def getAllcase(request):
             caseinfor["checked"] = False
             cases["allcase"].append(caseinfor)
         returndata["data"].append(cases)
+    '''
     return JsonResponse(returndata, safe=False)
 
 def getprojectCase(request):
@@ -49,28 +51,36 @@ def getprojectCase(request):
             "code": 0,
             "data": []
         }
-        projectName = request.GET['initProjectName']
-        caseinfor = interfaceList.objects.filter(projectName=projectName).values("id","moduleName")
-        print caseinfor
-        for i in caseinfor:
-            if i["moduleName"]=="":
-                continue
-            else:
-                cases = {
-                    "allcase": []
-                }
-                cases["moduleName"] = i["moduleName"]
-                #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
-                #owningListID = id[0]["id"]
-                allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
-                #print id, allcase
-                for s in allcase:
-                    caseinfor = {}
-                    caseinfor["caseName"] = (s["apiName"])
-                    caseinfor["caseId"] = s["apiID"]
-                    caseinfor["checked"] = False
-                    cases["allcase"].append(caseinfor)
-                returndata["data"].append(cases)
+        try:
+            projectName = request.GET['initProjectName']
+            caseinfor = interfaceList.objects.filter(projectName=projectName).values("id","moduleName")
+            print caseinfor
+            for i in caseinfor:
+                if i["moduleName"]=="":
+                    continue
+                else:
+                    cases = {
+                        "allcase": []
+                    }
+                    cases["moduleName"] = i["moduleName"]
+                    #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
+                    #owningListID = id[0]["id"]
+                    allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
+                    #print id, allcase
+                    for s in allcase:
+                        caseinfor = {}
+                        caseinfor["caseName"] = (s["apiName"])
+                        caseinfor["caseId"] = s["apiID"]
+                        caseinfor["checked"] = False
+                        cases["allcase"].append(caseinfor)
+                    returndata["data"].append(cases)
+        except:
+            returndata = {
+                "msg":"请求数据为空",
+                "code": 0,
+                "data": []
+            }
+
         return JsonResponse(returndata, safe=False)
 
 

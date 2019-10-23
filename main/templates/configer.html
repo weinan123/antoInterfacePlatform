@@ -84,7 +84,7 @@
 			                <li v-for="projectName,index in projectList" v-bind:class="index===0?'active':''"><a @click="changeModel(projectName)" data-toggle="tab">
                         {! projectName !}</a></li>
                         </ul>{% endcomment %}
-                <div class="row" id="allmodelcase" style="padding-left: 23px"  >
+                <div  class="row" id="allmodelcase" style="padding-left: 23px"  >
 
                        {% comment %} <ul class="list-group" style="text-align: center">
                             <li v-for="projectName,index in projectList" class="list-group-item " v-bind:class="index===0?'active':''" style="background-color: lightblue">{! projectName !}</li>
@@ -92,9 +92,11 @@
                         {% comment %}<ul class="list-group" style="text-align: center">
                             <li v-for="model in modelList" class="list-group-item " style="background-color: lightblue">{! model !}</li>
                         </ul>{% endcomment %}
+                    <div v-if="datas==0"   class="col-md-12" style="margin-bottom: 5px;height: 80%;margin-top: 40px">
+                        <h4 style="text-align: center">暂无数据,请先添加用例</h4>
+                    </div>
 
-                    <div  class="col-md-12" style="margin-bottom: 5px;height: 80%;margin-top: 40px">
-
+                    <div v-if="datas!==0"   class="col-md-12" style="margin-bottom: 5px;height: 80%;margin-top: 40px">
                         <template v-for="item in modelList">
                         <label for="name" style="width: 100%">{! item.modelname !}:</label>
                         <template v-for="itemcase in item.allData">
@@ -146,6 +148,7 @@ var vm = new Vue({
     delimiters: ['{!', '!}'],
     el:'#configer',
     data:{
+        datas:0,
         currentSort:0,
         styles:{
             display: "none",
@@ -231,9 +234,13 @@ var vm = new Vue({
                     console.log(resp.data);
                     this.projectList = resp.data.projectList;
                     console.log(this.projectList);
-                    //this.allData=resp.data.data;
-                    //console.log(this.allData);
-                    this.changeModel(0,this.projectList[0])
+                    if(resp.data.projectList.length===0){
+                        this.datas = 0
+                    }
+                    else{
+                        this.datas  =1;
+                        this.changeModel(0,this.projectList[0])
+                    }
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
