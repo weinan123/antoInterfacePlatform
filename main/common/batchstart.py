@@ -21,7 +21,7 @@ class RunTest(unittest.TestCase):
         state = False
         caseName = arg2
         print("\ncaseName:%s." % caseName)  # 报告输出中使用，请勿删除
-        print("\ncaseID:%s." % caseID)  # 报告输出中使用，请勿删除
+        print("caseID:%s." % caseID)  # 报告输出中使用，请勿删除
         singleResult = self.singleRun(caseID)
         if singleResult["code"] == 0:
             state = True
