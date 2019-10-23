@@ -1,6 +1,6 @@
 # coding=utf-8
 import unittest
-from libs import HTMLTestRunner,sendMail
+from libs import HTMLTestRunner,HTMLTestRunner1
 import batchUntils
 from main.models import apiInfoTable,interfaceList
 from main.untils import until,sendRequests
@@ -15,31 +15,28 @@ class RunTest(unittest.TestCase):
     def setUpClass(cls):
         print("batch run start....")
 
-    def actions(self, arg1):
+    def actions(self, arg1, arg2):
         # 获取元素的方式
         caseID = arg1
         state = False
-        try:
-            caseName = apiInfoTable.objects.get(apiID=caseID).apiName
-        except Exception as e:
-            print("caseid:%s is not exist or run error." % caseID)
+        caseName = arg2
+        print("\ncaseName:%s." % caseName)  # 报告输出中使用，请勿删除
+        print("caseID:%s." % caseID)  # 报告输出中使用，请勿删除
+        singleResult = self.singleRun(caseID)
+        if singleResult["code"] == 0:
+            state = True
+            print("case (%s:%s) is run success." % (caseID, caseName))
         else:
-            print("caseName:%s." % caseName)  # 报告输出中使用，请勿删除
-            singleResult = self.singleRun(caseID)
-            if singleResult["code"] == 0:
-                state = True
-                print("case %s is run success." % caseID)
-            else:
-                state = False
-                print("case %s is run fail.%s" % (caseID, str(singleResult["datas"])))
-            self.assertEqual(True, state)
+            state = False
+            print("case (%s:%s) is run fail:%s" % (caseID, caseName, str(singleResult["datas"])))
+        self.assertEqual(True, state)
 
 
     # 闭包函数
     @staticmethod
-    def getTestFunc(arg1):
+    def getTestFunc(arg1, arg2):
         def func(self):
-            self.actions(arg1)
+            self.actions(arg1, arg2)
         return func
 
     @classmethod
@@ -146,17 +143,21 @@ class RunTest(unittest.TestCase):
 def _getTestcase(list):
     testlist = list
     for args in testlist:
-        fun = RunTest.getTestFunc(args)
-        setattr(RunTest, 'test_func_%s' % (args), fun)
+        try:
+            caseName = apiInfoTable.objects.get(apiID=args).apiName
+        except Exception as e:
+            caseName = "null"
+        fun = RunTest.getTestFunc(args, caseName)
+        setattr(RunTest, 'test_func_%s' % (caseName), fun)
 
 
-def start_main(list, reportflag):
+def start_main(list, reportflag, exeuser):
     _getTestcase(list)
     testSuite = batchUntils.getTestSuite(RunTest)
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
         fp = file(reportFile, "wb")
-        runner = HTMLTestRunner.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况')
+        runner = HTMLTestRunner1.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况', tester=str(exeuser))
         result = runner.run(testSuite)
         return {"reportPath": pathName, "reportname": reportname,"sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}

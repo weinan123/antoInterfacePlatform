@@ -86,7 +86,7 @@ if __name__ == '__main__':
     schedule.every(3).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
-        schedule.every().day.at("11:10").do(runCase,ismail)
+        schedule.every().day.at(localTime).do(runCase,ismail)
     elif everyRounder =="每周":
         schedule.every().monday.at(localTime).do(runCase)
     elif everyRounder =="每月":

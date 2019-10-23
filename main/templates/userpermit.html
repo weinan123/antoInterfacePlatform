@@ -40,11 +40,11 @@
              </div>
             <div style="width: 33%;float: left;">
             <input  type="checkbox" value="1" id="isTeam"  :checked="user.batch_del" @click="changePetmit(index,$event,'del')" >
-             <span >批量删除</span>
+             <span >删除</span>
             </div>
             <div style="width: 33%;float: left;">
             <input  type="checkbox" value="1" id="isTeam" :checked="user.batch_run" @click="changePetmit(index,$event,'run')" >
-             <span >批量执行</span>
+             <span >执行</span>
              </div>
         </td>
       <td>
@@ -71,7 +71,7 @@
       </td>
         <td >
             <button  class="btn-local" type="submit" class="btn  btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
-          <button class="btn-delete" type="submit" class="btn btn-sm" @click="delUser(user.id)" >删除</button>
+          <button class="btn-delete" type="submit" class="btn btn-sm" @click="delUser(index,user.id)" >删除</button>
 
         </td>
     </tr>
@@ -170,7 +170,8 @@ data:function(){
         userid:"",
         page_num:"",
         username:vm1.$data.username,
-        count:0
+        count:0,
+        currentPage:1
     }
 },
 created(){
@@ -219,6 +220,7 @@ methods:{
                  self.count =(page-1)*14;
                  this.userList=[];
                  self.userList=resp.data.datas;
+                 self.currentPage = page;
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
@@ -261,14 +263,41 @@ methods:{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
     },
-     delUser(params){
-          axios.post('/delUserData/',{params:{ id:params}})
-             .then(resp =>{
-                 console.log(resp.data);
-                  window.location.reload(true);
-                    }).catch(err=>{
-                        console.log('请求失败:'+err.status+','+err.statusText);
-                })
+     delUser(index,params){
+         if(this.username===this.userList[index].username){
+             alert("不能删除本人")
+         }else {
+             let self = this;
+             zdconfirm("确认要删除吗？", function (r) {
+                 if (r) {
+                     axios.post('/delUserData/', {params: {id: params}})
+                         .then(resp => {
+                             toastr.options = {
+                                 closeButton: false,
+                                 debug: false,
+                                 progressBar: false,
+                                 positionClass: "toast-top-center",
+                                 onclick: null,
+                                 showDuration: "300",
+                                 hideDuration: "1000",
+                                 timeOut: "2000",
+                                 extendedTimeOut: "1000",
+                                 showEasing: "swing",
+                                 hideEasing: "linear",
+                                 showMethod: "fadeIn",
+                                 hideMethod: "fadeOut"
+                             };
+                             console.log(resp.data);
+                             toastr.success("删除成功");
+                             self.getUserData(self.currentPage, 14);
+
+
+                         }).catch(err => {
+                         console.log('请求失败:' + err.status + ',' + err.statusText);
+                     })
+                 }
+             })
+         }
      },
      saveData(){
          console.log(this.userList);
@@ -300,8 +329,8 @@ methods:{
                      vm1.$mount();
                      //window.location.reload(true);
                      toastr.success(resp.data.info);
-                     this.getUserData(1,14);
-                     this.getPageNum(this.username);
+                     this.getUserData(self.currentPage,14);
+                     //this.getPageNum(this.username);
 
                  }else{
                     toastr.error(resp.data.info);

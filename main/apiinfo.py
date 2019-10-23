@@ -108,6 +108,7 @@ def runsingle(request):
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
                 dependData = getDependData.getdepands(depend_list, depend_data)
+                print("dependData:",dependData)
             else:
                 print("depend data is None.")
         listid = query.owningListID
@@ -119,7 +120,7 @@ def runsingle(request):
         if len(dependData) != 0:
             for dd in dependData:
                 send_body[dd.keys()[0]] = dd.values()[0]
-        print(send_body)
+        print("body:",send_body)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         key_id = query.key_id
@@ -187,15 +188,15 @@ def batchrun(request):
         req = json.loads(request.body)["params"]
         idlist = req['idList']
         reportflag = req["reportflag"]
+        exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if reportflag == True:
             reflag = "Y"
         else:
             reflag = "N"
-        batchResult = batchstart.start_main(idlist,reflag)
+        batchResult = batchstart.start_main(idlist,reflag, exeuser)
         print batchResult
         if reportflag == True:
-            exeuser = request.session.get('username')
             report_localName = batchResult["reportPath"]
             report_runName = req["pmName"] +"_" + batchResult["reportname"]
             totalNum = len(idlist)
