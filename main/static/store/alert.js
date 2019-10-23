@@ -91,9 +91,29 @@ myzconfirm = function (txt,callback) {
     alertDiv.style.lineHeight = "150px";
     alertDiv.style.zIndex = "10000";
     alertDiv.style.zIndex = "9999999";
-    alertDiv.innerHTML = "<ul style='list-style:none;margin:0px;padding:0px;width:100%'><li style='background:#2372A8;text-align:left;padding-left:10px;font-size:16px;font-weight:bold;height:27px;line-height:25px;border:1px solid #2372A8;color:white'>提示:</li><li style='background:#fff;text-align:center;font-size:16px;height:120px;line-height:120px;border-left:1px solid #2372A8;border-right:1px solid #2372A8;'>" + txt + "</li><li style='text-align:center;font-weight:bold;height:27px;line-height:25px; '>" +
-        "<input onclick='doOk()' type='button' style='float:left;width:50%;background-color: #ccc;padding-top: 0px;border-left:1px solid #2372A8;outline:none;color:#2372A8' value='取 消'/>" +
-        "<input onclick='doconfirm()' type='button' style='float:left;width:50%;background-color: #2372A8;padding-top: 0px;border: none;outline:none;color:white' value='确 定'/></li></ul>";
+    alertDiv.innerHTML = "<ul style='list-style:none;margin:0px;padding:0px;width:100%'>" +
+        "<li style='background:#2372A8;text-align:left;padding-left:10px;font-size:16px;font-weight:bold;height:35px;line-height:25px;border:1px solid #2372A8;color:white'>提示:</li>" +
+        "<li style='background:#fff;text-align:center;font-size:16px;height:120px;line-height:120px;border-left:1px solid #2372A8;border-right:1px solid #2372A8;'>" + txt + "</li>" +
+        "<li style='text-align:center;font-weight:bold;height:35px;line-height:25px;background-color: white;border-left:1px solid #2372A8;border-right:1px solid #2372A8;border-bottom:1px solid #2372A8;\" +\n" +
+        " \" '>" +
+        "<input onclick='doconfirm()' type='button' style='float:right;background: #2372A8;margin-right: 10px;\n" +
+        "    border-radius: 2px;\n" +
+        "    width:70px;\n" +
+        "    height:30px;\n" +
+        "    border: 1px solid #2372A8;\n" +
+        "    font-size: 14px;\n" +
+        "    color: white;\n" +
+        "    letter-spacing: 0;'" +
+        "    value='确 定'/>"  +
+        "<input onclick='doOk()' type='button' style='float:right;margin-right:10px;background: rgba(35,114,168,0.15);\n" +
+        "    border-radius: 2px;\n" +
+        "    width:70px;\n" +
+        "    height:30px;\n" +
+        "    border: 1px solid rgba(35,114,168,0.15);\n" +
+        "    font-size: 14px;\n" +
+        "    color: #2372A8;\n" +
+        "    letter-spacing: 0;'" +
+        "    value='取 消 '/></li></ul>";
     document.body.appendChild(alertDiv);
     document.body.appendChild(shield);
     this.doOk = function () {
