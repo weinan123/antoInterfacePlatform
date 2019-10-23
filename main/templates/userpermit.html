@@ -71,7 +71,7 @@
       </td>
         <td >
             <button  class="btn-local" type="submit" class="btn  btn-sm" data-toggle="modal" data-target="#edituser" @click="editUser(index,user)" >编辑</button>
-          <button class="btn-delete" type="submit" class="btn btn-sm" @click="delUser(user.id)" >删除</button>
+          <button class="btn-delete" type="submit" class="btn btn-sm" @click="delUser(index,user.id)" >删除</button>
 
         </td>
     </tr>
@@ -263,38 +263,41 @@ methods:{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
     },
-     delUser(params){
-         let self = this;
-         zdconfirm("确认要删除吗？", function (r) {
-            if (r) {
-                axios.post('/delUserData/',{params:{ id:params}})
-                .then(resp =>{
-                  toastr.options = {
-                             closeButton: false,
-                             debug: false,
-                             progressBar: false,
-                             positionClass: "toast-top-center",
-                             onclick: null,
-                             showDuration: "300",
-                             hideDuration: "1000",
-                             timeOut: "2000",
-                             extendedTimeOut: "1000",
-                             showEasing: "swing",
-                             hideEasing: "linear",
-                             showMethod: "fadeIn",
-                             hideMethod: "fadeOut"
-                         };
-                  console.log(resp.data);
-                  toastr.success("删除成功");
-                  self.getUserData(self.currentPage,14);
+     delUser(index,params){
+         if(this.username===this.userList[index].username){
+             alert("不能删除本人")
+         }else {
+             let self = this;
+             zdconfirm("确认要删除吗？", function (r) {
+                 if (r) {
+                     axios.post('/delUserData/', {params: {id: params}})
+                         .then(resp => {
+                             toastr.options = {
+                                 closeButton: false,
+                                 debug: false,
+                                 progressBar: false,
+                                 positionClass: "toast-top-center",
+                                 onclick: null,
+                                 showDuration: "300",
+                                 hideDuration: "1000",
+                                 timeOut: "2000",
+                                 extendedTimeOut: "1000",
+                                 showEasing: "swing",
+                                 hideEasing: "linear",
+                                 showMethod: "fadeIn",
+                                 hideMethod: "fadeOut"
+                             };
+                             console.log(resp.data);
+                             toastr.success("删除成功");
+                             self.getUserData(self.currentPage, 14);
 
 
-
-            }).catch(err=>{
-                console.log('请求失败:'+err.status+','+err.statusText);
-        })
-            }
-       })
+                         }).catch(err => {
+                         console.log('请求失败:' + err.status + ',' + err.statusText);
+                     })
+                 }
+             })
+         }
      },
      saveData(){
          console.log(this.userList);
