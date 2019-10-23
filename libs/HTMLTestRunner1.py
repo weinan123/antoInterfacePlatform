@@ -324,8 +324,8 @@ function hidden_case() {
 
     STYLESHEET_TMPL = """
 <style type="text/css" media="screen">
-body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 80%; }
-table       { font-size: 100%; }
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
 /* -- heading ---------------------------------------------------------------------- */
 .heading {
     margin-top: 0ex;
