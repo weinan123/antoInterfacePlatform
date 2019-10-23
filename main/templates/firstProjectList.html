@@ -14,35 +14,41 @@
 
             <div class="formContent" id="row"
                  style="justify-content:center;align-items: center;background-color: white;padding-top: 15px;">
-                <div v-for="item in list" class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="panel panel-primary" style="border-color: #05314e;">
+                <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="panel panel-primary" style="border-color: #dbe0eb;">
                         <div class="panel-heading"
-                             style="color: #fff;background-color: #05314e;border-color: #05314e;background-image:-webkit-linear-gradient(top, #05314e 0%, #05314e 0%)">
-                            <p class="panel-title">{! item.projectName !}</p>
+                             style="color: #347daf;border-bottom-color:#ebf3f9;background-color: #ebf3f9;background-image:-webkit-linear-gradient(top, #ebf3f9 0%, #ebf3f9 0%)">
+                            <p class="panel-title" style="font-weight:bold;">{! item.projectName !}</p>
                         </div>
                         <div class="panel-body" style="text-align: left">
                             <p style="font-size: 16px;font-weight: bold">项目信息：</p>
-                            <table class="table table-bordered">
+                            <table class="table table-bordered"
+                                   style="border-style: none;border-width: 0px;margin-bottom: 0px;">
                                 <tr>
-                                    <td><label>域名地址：</label>{! item.host !}</td>
+                                    <td style="border-width: 0px;padding-left: 0px;"><label>域名地址：</label>{! item.host !}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td><label>创建时间：</label>{! item.createTime !}</td>
+                                    <td style="border-width: 0px;padding-left: 0px;"><label>创建时间：</label>{!
+                                        item.createTime !}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td><label>更新时间：</label>{! item.updateTime !}</td>
+                                    <td style="border-width: 0px;padding-left: 0px;"><label>更新时间：</label>{!
+                                        item.updateTime !}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td><label>总模块数：</label>{! item.totalModule !}</td>
+                                    <td style="border-width: 0px;padding-left: 0px;"><label>总模块数：</label>{!
+                                        item.totalModule !}
+                                    </td>
                                 </tr>
                             </table>
-                            <div class="buttonGroup" style="float: right">
-                                <button class="viewButton" type="button" @click="moduleInfo(item.projectName)">
-                                    查看
-                                </button>
-                                <button class="deleteButton" type="button" @click="projectDelete(item.projectName)">删除
-                                </button>
-                            </div>
+                            <button class="firstViewButton" type="button" @click="moduleInfo(item.projectName)">
+                                查看详情
+                            </button>
+                            <button class="firstDeleteButton" type="button" @click="projectDelete(item.projectName)">删除
+                            </button>
                             {% comment %}<ul class="list-group">
                             <li class="list-group-item" >
                                 <p><label>域名地址：</label>{! item.host !}</p>
@@ -60,21 +66,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="panel panel-primary" style="border-color: #05314e;">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="panel panel-primary" style="border-color: #dbe0eb;">
                         <div class="panel-heading"
-                             style="color: #fff;background-color: #05314e;background-image:-webkit-linear-gradient(top, #05314e 0%, #05314e 0%)">
-                            <p class="panel-title">新增</p>
+                             style="color: #347daf;border-bottom-color:#ebf3f9;background-color: #ebf3f9;background-image:-webkit-linear-gradient(top, #ebf3f9 0%, #ebf3f9 0%)">
+                            <p class="panel-title" style="font-weight:bold;">新增</p>
                         </div>
-                        <div class="panel-body">
-                            <ul class="list-group">
-                                <li class="list-group-item" style="border-style: none;height: 231px;">
-                                    <div data-toggle="modal" data-target="#newProject"
-                                         style="text-align: center;width: 100%;height: 100%"><img
-                                            src="../static/image/add.png"></div>
-
-                                </li>
-                            </ul>
+                        <div class="panel-body" style="text-align: center;height: 262px;">
+                            <button type="button" class="addButton" data-toggle="modal" data-target="#newProject">
+                                <div>
+                                    <span class="glyphicon glyphicon-plus" style="font-size: 80px;"></span>
+                                </div>
+                                <div style="margin-top: 5px;"><label style="font-size: 15px;">点击新增项目</label></div>
+                            </button>
                         </div>
                     </div>
                 </div>
