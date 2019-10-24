@@ -1,12 +1,12 @@
 #apiCases{
     background-color: #f7f7f7;
     float: left;
-    width: 82%;
+    width: 88%;
     margin-left: 260px;
 }
 
 #navSelBar{
-    width:95%;
+    width:90%;
     margin-left: 37px;
     margin-right: 37px;
     margin-bottom:0px;
@@ -19,11 +19,12 @@
 }
 
 #tableContent{
-    width:95%;
+    width:90%;
     height: 85%;
     margin-left: 37px;
     margin-top:10px;
     margin-bottom:37px;
+    margin-right: 37px;
     background-color: #ffffff;
     padding: 37px;
 }
@@ -46,7 +47,7 @@
 .reportsPage{
     background-color: #f7f7f7;
     float: left;
-    width: 82%;
+    width: 88%;
     margin-left: 260px;
 }
 .pagetitle{
@@ -81,4 +82,15 @@
 }
 .disabled{
     pointer-events: none;
+}
+#responseCSS{
+    width:70%;
+    height: 25%;
+    text-align: left;
+    padding: 6px;
+    border-radius: 2px;
+    border: 1px solid #999898;
+    background-color:#FFFFFF;
+    resize: none;
+    margin-left: 5px;
 }
