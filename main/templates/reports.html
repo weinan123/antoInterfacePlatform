@@ -139,9 +139,9 @@ var vmRs = new Vue({
                 }
             },
         delreport(id){
-            if (!confirm("确认要删除？")) {
-                    window.event.returnValue = false;
-                }else {
+            let self = this;
+            zdconfirm("确认要删除吗？", function (r) {
+                if (r) {
                     console.log('id=' + id);
                     axios.post('/reportDelete/', {
                         params: {
@@ -153,8 +153,24 @@ var vmRs = new Vue({
                             let info = resp.data.info;
                             let code = resp.data.code;
                             if (code === 0) {
-                                alert("删除成功");
-                                this.getreportList();
+                                console.log(self);
+                                toastr.options = {
+                                     closeButton: false,
+                                     debug: false,
+                                     progressBar: false,
+                                     positionClass: "toast-top-center",
+                                     onclick: null,
+                                     showDuration: "300",
+                                     hideDuration: "1000",
+                                     timeOut: "2000",
+                                     extendedTimeOut: "1000",
+                                     showEasing: "swing",
+                                     hideEasing: "linear",
+                                     showMethod: "fadeIn",
+                                     hideMethod: "fadeOut"
+                                 };
+                                 toastr.success("删除成功");
+                                self.getreportList();
                             } else {
                                 alert("删除失败:" + info);
                             }
@@ -163,7 +179,8 @@ var vmRs = new Vue({
                             console.log('请求失败:' + err.status + ',' + err.statusText);
                         })
                 }
-            },
+            })
+        },
         changeSel(e){
                 let chev = e.target.checked;
                 let id = parseInt(e.target.value);
@@ -216,36 +233,50 @@ var vmRs = new Vue({
                 }
             },
         batchdel(){
-                let dellist = [];
-                for(let j=0;j<this.casesSel_list.length;j++){
-                    dellist.push(this.casesSel_list[j][0]);
-                }
-                if (dellist.length !== 0) {
-                    if (!confirm("删除之后无法恢复，确认要删除？")) {
-                        window.event.returnValue = false;
-                    }else {
-                        axios.post('/reportbatchdel/', {
-                            params: {
-                                idList: dellist,
-                            },
+            let dellist = [];
+            for(let j=0;j<this.casesSel_list.length;j++){
+                dellist.push(this.casesSel_list[j][0]);
+            }
+            let self = this;
+            zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
+                if (r) {
+                    axios.post('/reportbatchdel/', {
+                        params: {
+                            idList: dellist,
+                        },
+                    })
+                        .then(resp => {
+                            console.log(resp.data);
+                            let code = resp.data.code;
+                            let info = resp.data.info;
+                            if (code === 0) {
+                                alert("删除成功，结果：" + info);
+                                self.getreportList();
+                            } else {
+                                toastr.options = {
+                                    closeButton: false,
+                                    debug: false,
+                                    progressBar: false,
+                                    positionClass: "toast-top-center",
+                                    onclick: null,
+                                    showDuration: "300",
+                                    hideDuration: "1000",
+                                    timeOut: "2000",
+                                    extendedTimeOut: "1000",
+                                    showEasing: "swing",
+                                    hideEasing: "linear",
+                                    showMethod: "fadeIn",
+                                    hideMethod: "fadeOut"
+                                };
+                                toastr.error("删除失败");
+                            }
                         })
-                            .then(resp => {
-                                console.log(resp.data);
-                                let code = resp.data.code;
-                                let info = resp.data.info;
-                                if (code === 0) {
-                                    alert("删除成功，结果：" + info);
-                                    this.getreportList();
-                                }else{
-                                    alert("删除失败");
-                                }
-                            })
-                            .catch(err => {
-                                console.log('请求失败:' + err.status + ',' + err.statusText);
-                            })
-                    }
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
                 }
-            },
+            })
+        },
         addPage(num){
                 this.pageNum = num +1;
                 if(this.pageNum > 1){
