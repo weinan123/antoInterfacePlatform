@@ -1,6 +1,6 @@
 # coding=utf-8
 import unittest
-from libs import HTMLTestRunner,HTMLTestRunner1
+from libs import HTMLTestRunner1
 import batchUntils
 from main.models import apiInfoTable,interfaceList
 from main.untils import until,sendRequests
