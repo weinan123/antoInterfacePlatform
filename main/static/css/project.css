@@ -118,19 +118,4 @@
     font-size: 24px;
 }
 
-.reportsPage{
-    background-color: #f7f7f7;
-    float: left;
-    width: 82%;
-    margin-left: 260px;
-}
 
-#tableContent{
-    width:95%;
-    height: 85%;
-    margin-left: 37px;
-    margin-top:10px;
-    margin-bottom:37px;
-    background-color: #ffffff;
-    padding: 37px;
-}

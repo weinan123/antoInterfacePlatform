@@ -6,14 +6,14 @@
     <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div id="right" class="reportsPage" style="margin-left: 260px; height: 935px; background: #f7f7f7;">
-        <div class="col-md-10 row" id="projectList" style="height: 100%;width: 100%;">
-            <div class="pagetitle" style="">
-                <p style="margin-top: 0px;margin-bottom: 0px;">项目管理</p>
-            </div>
+    <div class="content" id="projectList" style="width: 100%;">
+        <div class="pageheader">
+            <p class="titlecss">项目管理</p>
+        </div>
 
-            <div class="formContent" id="row"
-                 style="justify-content:center;align-items: center;background-color: white;padding-top: 15px;">
+
+        <div class="formContent" id="row" style="width: 80%;">
+            <div class="form-horizontal" role="form" style="overflow: hidden;">
                 <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6">
                     <div class="panel panel-primary" style="border-color: #dbe0eb;">
                         <div class="panel-heading"
