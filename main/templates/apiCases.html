@@ -62,13 +62,13 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
                                 <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
@@ -287,8 +287,7 @@
                             params: {
                                 aid: id
                             }
-                        })
-                            .then(resp => {
+                        }).then(resp => {
                                 self.result = resp.data;
                                 let info = resp.data.info;
                                 let code = resp.data.code;
