@@ -568,11 +568,11 @@ def projectImport(request):
                         'assertinfo': statuscode,
                         'files': files,
                         'secret_key': secret_key,
-                        'key_id': int(key_id),
-                        'isScreat': isSecret,
-                        'isRedirect': isRedirect,
-                        't_id': int(t_id),
-                        'depend_caseId': int(depend_caseId),
+                        'key_id': key_id,
+                        'isScreat': bool(isSecret),
+                        'isRedirect': bool(isRedirect),
+                        't_id': t_id,
+                        'depend_caseId': depend_caseId,
                         'depend_casedata': depend_casedata,
                     }
                     try:
