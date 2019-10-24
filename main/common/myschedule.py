@@ -22,7 +22,7 @@ def runCase(ismail):
     starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     isreport = conf.getItemData("configerinfor", "isreport")
 
-    batchResult = batchstart.start_main(scheduleList,isreport)
+    batchResult = batchstart.start_main(scheduleList,isreport,"")
     successNum = batchResult["sNum"]
     faileNum = batchResult["fNum"]
     errorNum = batchResult["eNum"]
