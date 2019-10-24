@@ -147,7 +147,7 @@ def _getTestcase(list):
             caseName = "null"
             print("用例ID不存在，用例名为null.")
         fun = RunTest.getTestFunc(args, caseName)
-        setattr(RunTest, 'test_func_%s' % (caseName), fun)
+        setattr(RunTest, 'test_func_%s_%s' % (args, caseName), fun)
 
 
 def start_main(list, reportflag, exeuser):
