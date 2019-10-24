@@ -379,34 +379,50 @@
             },
             batchdel(){
                 let dellist = [];
-                for(let j=0;j<this.casesSel_list.length;j++){
-                    dellist.push(this.casesSel_list[j][0]);
+                let self = this;
+                for(let j=0;j<self.casesSel_list.length;j++){
+                    dellist.push(self.casesSel_list[j][0]);
                 }
                 console.log("********dellist************",dellist);
                 if (dellist.length !== 0) {
-                    if (!confirm("删除之后无法恢复，确认要删除？")) {
-                        window.event.returnValue = false;
-                    }else {
-                        axios.post('/batchdel/', {
-                            params: {
-                                idList: dellist,
-                            },
-                        })
-                            .then(resp => {
-                                console.log(resp.data);
-                                let code = resp.data.code;
-                                let info = resp.data.info;
-                                if (code === 0) {
-                                    alert("删除成功，结果：" + info);
-                                    this.getlist(this.pageNum);
-                                }else{
-                                    alert("删除失败");
-                                }
+                    zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
+                        if (r) {
+                            axios.post('/batchdel/', {
+                                params: {
+                                    idList: dellist,
+                                },
                             })
-                            .catch(err => {
-                                console.log('请求失败:' + err.status + ',' + err.statusText);
-                            })
-                    }
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    let code = resp.data.code;
+                                    let info = resp.data.info;
+                                    if (code === 0) {
+                                        alert("删除成功，结果：" + info);
+                                        self.getlist(self.pageNum);
+                                    } else {
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.error("删除失败");
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                })
+                        }
+                    });
                 }
             },
             runsingle(id){
@@ -467,34 +483,52 @@
             },
             batchrun(){
                 let runlist = [];
-                for(let j=0;j<this.casesSel_list.length;j++){
-                    runlist.push(this.casesSel_list[j][0]);
+                let self = this;
+                for(let j=0;j<self.casesSel_list.length;j++){
+                    runlist.push(self.casesSel_list[j][0]);
                 }
                 console.log("runlist",runlist);
-                if (!confirm("是否开始执行？")) {
-                    window.event.returnValue = false;
-                } else {
-                    axios.post('/batchrun/', {
-                        params: {
-                            idList: runlist,
-                            pmName: "批量执行",
-                            reportflag:this.reportflag,
-                        },
-                    })
-                        .then(resp => {
-                            console.log(resp.data);
-                            let code = resp.data.code;
-                            let info = resp.data.datas;
-                            if (code === 0) {
-                                alert("执行结束");
-                                this.getlist(this.pageNum);
-                            } else {
-                                alert("执行失败:" + info);
-                            }
-                        })
-                        .catch(err => {
-                            console.log('请求失败:' + err.status + ',' + err.statusText);
-                        })
+                if (runlist.length !== 0) {
+                    zdconfirm("是否开始执行？", function (r) {
+                        if (r) {
+                            axios.post('/batchrun/', {
+                                params: {
+                                    idList: runlist,
+                                    pmName: "批量执行",
+                                    reportflag: self.reportflag,
+                                },
+                            })
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    let code = resp.data.code;
+                                    let info = resp.data.datas;
+                                    if (code === 0) {
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.success("执行结束");
+                                        self.getlist(self.pageNum);
+                                    } else {
+                                        alert("执行失败:" + info);
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                                })
+                        }
+                    });
                 }
             },
             search(){
@@ -530,6 +564,7 @@
                 this.viewapiInfos = "";
                 this.headers = "";
                 this.bodys = "";
+                this.responseText = "";
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,

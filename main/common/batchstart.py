@@ -147,12 +147,14 @@ def _getTestcase(list):
             caseName = "null"
             print("用例ID不存在，用例名为null.")
         fun = RunTest.getTestFunc(args, caseName)
-        setattr(RunTest, 'test_func_%s' % (caseName), fun)
+        setattr(RunTest, 'test_func_%s_%s' % (args, caseName), fun)
 
 
 def start_main(list, reportflag, exeuser):
     _getTestcase(list)
+    testSuite = ""
     testSuite = batchUntils.getTestSuite(RunTest)
+    print("testSuite:",testSuite)
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
         fp = file(reportFile, "wb")

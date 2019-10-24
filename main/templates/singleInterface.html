@@ -311,7 +311,7 @@
          </div>
      </div>
     <!--模态窗口-->
-    <div class="modal fade" id="newcase" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
+    <div  class="modal fade" id="newcase" tabindex="-1" role="dialog" aria-labelledby="newapiLabel" aria-hidden="true">
             <div class="modal-dialog" style="width: 450px;margin: 200px auto">
                     <div class="modal-content" id="newinfo">
                         <div class="modal-header">
@@ -386,7 +386,6 @@
             </div>
 </div>
      <!--提示框-->
-</div>
 </div>
 </div>
 {% endblock %}
@@ -572,11 +571,11 @@ var vm = new Vue({
         },
         //获取所有项目列表
         getProjectList(){
-            axios.get("/getProjectList/",params={}).then(response => {
+                axios.get("/getProjectList/", params = {}).then(response => {
                     console.log(response.data);
                     var returnlist = [];
                     this.allmodels = response.data.model_list;
-                    for(var p=0;p<response.data.project_list.length;p++){
+                    for (var p = 0; p < response.data.project_list.length; p++) {
                         console.log(response.data.project_list[p]);
                         var name = response.data.project_list[p]["projectName"];
                         console.log(name);
@@ -584,9 +583,10 @@ var vm = new Vue({
                     }
                     this.projectList = returnlist;
                     console.log(this.projectList);
-                }).catch(err=>{
-                        console.log('请求失败:'+err.status+','+err.statusText);
+                }).catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
+
         },
         //获取项目对应模块名称
         selectModel(e){
@@ -773,8 +773,6 @@ var vm = new Vue({
              axios.post('/sendRequest/',this.data_to_send)
              .then(resp =>{
                     console.log(resp.data);
-                    //editor1 = this.getEdit();
-                    //this.editor1.setText(resp.data)
                         this.getEdit(JSON.parse(resp.data))
                     }).catch(err=>{
                          toastr.options = {
@@ -899,13 +897,13 @@ var vm = new Vue({
              this.data_to_send["caseName"] = caseName;
              this.data_to_send["creator"] = vm.$data.login_user;
              console.log(this.data_to_send);
-             if(this.initflag === false) {
+             if (this.initflag === false) {
                  axios.post('/newCase/', {
                      params: {
-                         data_to_send:this.data_to_send,
-                         flag:this.initflag,
+                         data_to_send: this.data_to_send,
+                         flag: this.initflag,
                      }
-                     })
+                 })
                      .then(resp => {
                          toastr.options = {
                              closeButton: false,
@@ -931,26 +929,27 @@ var vm = new Vue({
                      }).catch(err => {
                      console.log('请求失败:' + err.status + ',' + err.statusText);
                  })
-             }else{
-                 axios.post('/newCase/',{
+             } else {
+                 axios.post('/newCase/', {
                      params: {
-                         apiId:this.aid,
-                         data_to_send:this.data_to_send,
-                         flag:this.initflag,
-                    }
+                         apiId: this.aid,
+                         data_to_send: this.data_to_send,
+                         flag: this.initflag,
+                     }
                  })
-                     .then(resp =>{
+                     .then(resp => {
                          console.log(resp.data);
                          let code = resp.data.code;
                          console.log(code);
-                         if(code === 0){
+                         if (code === 0) {
                              alert("更新成功");
                          }
                      })
-                     .catch(err=>{
-                         console.log('请求失败:'+err.status+','+err.statusText);
-                    });
+                     .catch(err => {
+                         console.log('请求失败:' + err.status + ',' + err.statusText);
+                     });
              }
+
         },
          //生成交易认证
         returnAuthorization(){

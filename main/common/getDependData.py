@@ -8,13 +8,13 @@ import json,time,re
 
 def getdepands(depend_list, depend_data):
     datas = []
-    dependCase = json.loads(depend_list)
+    dependCase = depend_list
     dependData = json.loads(depend_data)
-    print(dependCase)
-    print(dependData)
+    print("_____1______", dependCase)
+    print("_____2______", dependData)
     for tid in dependCase:
         data_dict = {}
-        query = apiInfoTable.objects.get(t_id=tid)
+        query = apiInfoTable.objects.get(t_id=str(tid))
         methods = query.method
         send_url = query.url
         if methods == "" or send_url == "":
@@ -55,8 +55,9 @@ def getdepands(depend_list, depend_data):
         print(resp.raw)
         print(resp.cookies)
         print(resp.text)
-        key = dependData[tid]
-        print(key)
+        for k in dependData:
+            key = dependData[k]
+        print("_____3_____:", key)
         # 这里拿依赖的数据
         value = re.findall("'%s':'(.*?)'" % str(key), resp.text)
         if len(value) != 0:
