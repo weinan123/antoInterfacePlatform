@@ -152,7 +152,9 @@ def _getTestcase(list):
 
 def start_main(list, reportflag, exeuser):
     _getTestcase(list)
+    testSuite = ""
     testSuite = batchUntils.getTestSuite(RunTest)
+    print("testSuite:",testSuite)
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
         fp = file(reportFile, "wb")
