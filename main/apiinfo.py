@@ -194,6 +194,16 @@ def batchrun(request):
             reflag = "Y"
         else:
             reflag = "N"
+        for id in idlist:
+            try:
+                query = apiInfoTable.objects.get(apiID=id)
+            except Exception as e:
+                result = {"code": -2, "datas": "用例不存在，" + str(e)}
+                return JsonResponse(result)
+            if query.method == "" or query.url == "":
+                result = {"code": -1, "datas": "method或url不能为空"}
+                return JsonResponse(result)
+
         batchResult = batchstart.start_main(idlist,reflag, exeuser)
         print batchResult
         if reportflag == True:
@@ -321,7 +331,8 @@ def getapiInfos(request):
             print modulelist
             for module in modulelist:
                 if module["projectName"] == json_dict["projectName"]:
-                    module_list.append(module["moduleName"])
+                    if module["moduleName"] != "":
+                        module_list.append(module["moduleName"])
             result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list,"showbody":showbodyState}
     return JsonResponse(result)
 

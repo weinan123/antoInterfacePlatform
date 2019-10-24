@@ -97,7 +97,6 @@ def reportbatchDelete(request):
 
 def delReport(rename):
     path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + "\\main\\report\\"
-    print path
     files = os.listdir(path)
     print files
     print "------------"

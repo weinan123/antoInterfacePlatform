@@ -525,7 +525,6 @@ var vm = new Vue({
                     }
                 })
                 .then(resp =>{
-                    console.log(resp.data);
                     let result = resp.data;
                     this.url = result.datas.url;
                     if(result.datas.method !== ""){
@@ -534,6 +533,7 @@ var vm = new Vue({
                     this.pid = result.datas.listid;
                     this.projectSelect = result.datas.projectName;
                     this.modelList = result.module_list;
+                    console.log("modelList:", this.modelList);
                     this.modelSelect = result.datas.moduleName;
                     console.log(this.modelSelect);
                     this.caseName = result.datas.name;

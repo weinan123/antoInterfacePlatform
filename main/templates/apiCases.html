@@ -62,16 +62,16 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
-                                <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
+                                <a class="iconlink" @click="delapi(result.data[index].id)" href="" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -117,6 +117,7 @@
                              <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! headers !}</span></p>
                              <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! bodys !}</span></p>
                              <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">response:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
                          </div>
                     </div>
                     <div class="modal-footer">
@@ -433,7 +434,22 @@
                             let code = resp.data.code;
                             let datas = resp.data.datas;
                             if (code === 0) {
-                                alert("执行成功:" + datas);
+                                toastr.options = {
+                                         closeButton: false,
+                                         debug: false,
+                                         progressBar: false,
+                                         positionClass: "toast-top-center",
+                                         onclick: null,
+                                         showDuration: "300",
+                                         hideDuration: "1000",
+                                         timeOut: "2000",
+                                         extendedTimeOut: "1000",
+                                         showEasing: "swing",
+                                         hideEasing: "linear",
+                                         showMethod: "fadeIn",
+                                         hideMethod: "fadeOut"
+                                     };
+                                     toastr.success("执行成功");
                             } else {
                                 alert("执行失败: " + datas);
                             }
@@ -452,55 +468,30 @@
                     runlist.push(this.casesSel_list[j][0]);
                 }
                 console.log("runlist",runlist);
-                if (runlist.length !== 0) {
-                    let datas = this.result.data;
-                    let method = "";
-                    let url = "";
-                    let flag = true;
-                    for (let i = 0; i < runlist.length; i++) {
-                        let rid = runlist[i];
-                        for (let d = 0; d < datas.length; d++) {
-                            let did = datas[d].id;
-                            if (rid === did) {
-                                method = datas[d].method;
-                                url = datas[d].url;
-                                console.log(method, url);
-                                break;
+                if (!confirm("是否开始执行？")) {
+                    window.event.returnValue = false;
+                } else {
+                    axios.post('/batchrun/', {
+                        params: {
+                            idList: runlist,
+                            pmName: "批量执行",
+                            reportflag:this.reportflag,
+                        },
+                    })
+                        .then(resp => {
+                            console.log(resp.data);
+                            let code = resp.data.code;
+                            let info = resp.data.datas;
+                            if (code === 0) {
+                                alert("执行结束");
+                                this.getlist(this.pageNum);
+                            } else {
+                                alert("执行失败:" + info);
                             }
-                        }
-                        if (method === "" || url === "" || method === undefined || url === undefined) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                        if (!confirm("是否开始执行？")) {
-                            window.event.returnValue = false;
-                        } else {
-                            axios.post('/batchrun/', {
-                                params: {
-                                    idList: runlist,
-                                    pmName: "批量执行",
-                                    reportflag:this.reportflag,
-                                },
-                            })
-                                .then(resp => {
-                                    console.log(resp.data);
-                                    let code = resp.data.code;
-                                    if (code === 0) {
-                                        alert("执行结束");
-                                        this.getlist(this.pageNum);
-                                    } else {
-                                        alert("执行失败");
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                                })
-                        }
-                    } else {
-                        alert("要执行的接口用例有参数不存在的情况,请先编辑。");
-                    }
+                        })
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
                 }
             },
             search(){

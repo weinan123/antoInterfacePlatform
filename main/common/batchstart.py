@@ -65,7 +65,7 @@ class RunTest(unittest.TestCase):
         depend_flag = query.depend_caseId
         dependData = []
         if depend_flag == "" or depend_flag is None:
-            print("not depend")
+            print("dependency:not depend.")
         else:
             depend_list = depend_flag
             depend_data = query.depend_casedata
@@ -116,12 +116,8 @@ class RunTest(unittest.TestCase):
                 apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return result
-        try:
-            statusCode = resp.status_code
-            text = resp.text
-        except AttributeError as e:
-            result = {"code": -1, "info": "run error", "datas": str(e)}
-            return result
+        statusCode = resp.status_code
+        text = resp.text
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
@@ -147,6 +143,7 @@ def _getTestcase(list):
             caseName = apiInfoTable.objects.get(apiID=args).apiName
         except Exception as e:
             caseName = "null"
+            print("用例ID不存在，用例名为null.")
         fun = RunTest.getTestFunc(args, caseName)
         setattr(RunTest, 'test_func_%s' % (caseName), fun)
 
