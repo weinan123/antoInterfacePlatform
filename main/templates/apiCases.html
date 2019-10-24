@@ -62,13 +62,13 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
                                 <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
@@ -165,7 +165,15 @@
         },
         created() {
             vm1.$data.currentSort = 3;
-            {% comment %}axios.get('/getPermission/')
+            this.getPermission();
+        },
+        mounted(){
+            var params = this.geturlparam();
+            this.getProinfo(params);
+        },
+        methods:{
+            getPermission(){
+                axios.get('/getPermission/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.permission = resp.data.permits;
@@ -176,13 +184,7 @@
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
-        },{% endcomment %}
-        },
-        mounted(){
-            var params = this.geturlparam();
-            this.getProinfo(params);
-        },
-        methods:{
+            },
             geturlparam(){
                 var argsstr = decodeURI(location.search.substr(1));
                 var param={};
@@ -287,8 +289,7 @@
                             params: {
                                 aid: id
                             }
-                        })
-                            .then(resp => {
+                        }).then(resp => {
                                 self.result = resp.data;
                                 let info = resp.data.info;
                                 let code = resp.data.code;
