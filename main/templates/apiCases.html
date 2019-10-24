@@ -62,16 +62,16 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
-                                <a class="iconlink" @click="delapi(result.data[index].id)" href="" title="删除">
+                                <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -163,9 +163,9 @@
             casesSel_list: [],
             current_pageCount:10,
         },
-        created(){
+        created() {
             vm1.$data.currentSort = 3;
-            axios.get('/getPermission/')
+            {% comment %}axios.get('/getPermission/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.permission = resp.data.permits;
@@ -176,9 +176,10 @@
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
+        },{% endcomment %}
         },
         mounted(){
-            let params = this.geturlparam();
+            var params = this.geturlparam();
             this.getProinfo(params);
         },
         methods:{
@@ -218,7 +219,7 @@
                             }
                         }
                         this.totalCount = resp.data.totalCount;
-                        if((this.totalCount / this.pageCount) > 1)
+                        if ((this.totalCount / this.pageCount) > 1)
                         {
                             this.pageview = true;
                         }else{
@@ -278,7 +279,7 @@
 
             },
             delapi(id) {
-                let self = this;
+                {% comment %}var  self = this;{% endcomment %}
                 zdconfirm("确认要删除吗？", function (r) {
                     if (r) {
                         console.log('id=' + id);
@@ -286,9 +287,8 @@
                             params: {
                                 aid: id
                             }
-                        })
-                            .then(resp => {
-                                this.result = resp.data;
+                        }).then(resp => {
+                                self.result = resp.data;
                                 let info = resp.data.info;
                                 let code = resp.data.code;
                                 if (code === 0) {
@@ -311,7 +311,7 @@
                                      toastr.success("删除成功");
                                     self.getlist(self.pageNum);
                                 } else {
-                                    alert("删除失败:" + info);
+                                    window.alert("删除失败:" + info);
                                 }
                             })
                             .catch(err => {
@@ -320,8 +320,6 @@
                     }
                 })
             },
-
-
 
             selectAllBtn(e){
                 let checked = e.target.checked;
@@ -588,6 +586,6 @@
                 this.getlist(this.pageNum);
             },
         }
-    });
+    }).$mount('#apiCases');
     </script>
 {% endblock %}

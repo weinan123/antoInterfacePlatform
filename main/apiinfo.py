@@ -35,7 +35,6 @@ def apidel(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         id = req['aid']
-        print id
         ainfo = apiInfoTable.objects.get(apiID=id)
         if ainfo:
             try:

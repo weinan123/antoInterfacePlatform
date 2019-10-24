@@ -60,7 +60,7 @@ zdconfirm = function(txt,callback){
     })
 };
 myzconfirm = function (txt,callback) {
-    if (document.getElementById("alertFram")) {
+    if (document.getElementById("confirmFram")) {
         return;
     }
     // 遮罩层
@@ -78,7 +78,7 @@ myzconfirm = function (txt,callback) {
     shield.style.zIndex = "25000";
     shield.style.opacity = "0.4";
     var alertDiv = document.createElement("DIV");
-    alertDiv.id = "alertFram";
+    alertDiv.id = "confirmFram";
     alertDiv.style.position = "absolute";
     alertDiv.style.left = "50%";
     alertDiv.style.top = "40%";
@@ -105,7 +105,7 @@ myzconfirm = function (txt,callback) {
         "    color: white;\n" +
         "    letter-spacing: 0;'" +
         "    value='确 定'/>"  +
-        "<input onclick='doOk()' type='button' style='float:right;margin-right:10px;background: rgba(35,114,168,0.15);\n" +
+        "<input onclick='dook()' type='button' style='float:right;margin-right:10px;background: rgba(35,114,168,0.15);\n" +
         "    border-radius: 2px;\n" +
         "    width:70px;\n" +
         "    height:30px;\n" +
@@ -116,15 +116,15 @@ myzconfirm = function (txt,callback) {
         "    value='取 消 '/></li></ul>";
     document.body.appendChild(alertDiv);
     document.body.appendChild(shield);
-    this.doOk = function () {
-        if( callback ) callback(false);
-        document.body.removeChild(alertDiv);
-        document.body.removeChild(shield);
-
-    };
     this.doconfirm=function(){
         if( callback ) callback(true);
          document.body.removeChild(alertDiv);
+         document.body.removeChild(shield);
+
+    };
+    this.dook = function () {
+         if( callback ) callback(false);
+        document.body.removeChild(alertDiv);
         document.body.removeChild(shield);
 
     };

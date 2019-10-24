@@ -28,7 +28,7 @@
     <script src="/static/js/echarts.min.js"></script>
     <script src="/static/js/spin.min.js"></script>
     <script src="/static/js/bootstrap-paginator.js"></script>
-    <script src="/static/store/alert.js"></script>
+    <script src="/static/js/alert.js"></script>
     {% block script %}
     {% endblock %}
     {% block title %}<title> 首页</title> {% endblock %}
@@ -48,7 +48,7 @@
             </ul>
         </div>
         <div class="userdiv"></div>
-        <div style="width: 100%;">
+        <div style="width: 100%;margin-bottom: 10px">
             <p class="indextab">当前用户：{! username !}</p>
             <button class="username" @click="quitServer()"><p class="btnquit" >退出当前用户</p></button>
         </div>
