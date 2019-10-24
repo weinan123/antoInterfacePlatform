@@ -140,6 +140,9 @@ class RunTest(unittest.TestCase):
 
 def _getTestcase(list):
     testlist = list
+    for attr in dir(RunTest):
+        if str(attr).startswith("test_func_"):
+            delattr(RunTest, attr)
     for args in testlist:
         try:
             caseName = apiInfoTable.objects.get(apiID=args).apiName
@@ -152,14 +155,14 @@ def _getTestcase(list):
 
 def start_main(list, reportflag, exeuser):
     _getTestcase(list)
-    testSuite = ""
     testSuite = batchUntils.getTestSuite(RunTest)
-    print("testSuite:",testSuite)
+    print("testSuite: ", testSuite)
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
-        fp = file(reportFile, "wb")
+        fp = open(reportFile, "wb")
         runner = HTMLTestRunner1.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况', tester=str(exeuser))
         result = runner.run(testSuite)
+        fp.close()
         return {"reportPath": pathName, "reportname": reportname,"sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}
     else:
