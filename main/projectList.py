@@ -2,7 +2,7 @@
 import xlrd
 from django.shortcuts import render, redirect
 import json, time
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, FileResponse
 from main.models import *
 from forms import UserForm, projectForm, firstProjectForm
 from django.contrib import auth
@@ -238,6 +238,18 @@ def firstProjectList(request):
     return render(request, 'firstProjectList.html')
 
 
+def firstProjectList(request):
+    return render(request, 'firstProjectList.html')
+
+
+def download(request):
+    file = open('main/postfiles/template.xlsx', 'rb')
+    response = FileResponse(file)
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
+    return response
+
+
 def projectView(request):
     if request.method == 'GET':
         id = request.GET.get('id')
@@ -425,7 +437,16 @@ def projectImport(request):
                     url = data_list[2]
                     headers = data_list[4]
                     body = data_list[5]
-                    if (apiname == "") or (apiname is None):
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
+                    if (apiname is None) or (apiname == ""):
                         code = -2
                         info = '名称不能为空！'
                         verification = False
@@ -444,7 +465,20 @@ def projectImport(request):
                         info = '当前批量导入文件的模块名称中存在重复！'
                         verification = False
                         break
-                    if (headers == '') or (headers is None):
+                    if (apiInfoTable.objects.filter(t_id=t_id, ).count() != 0):
+                        code = -10
+                        info = '当前批量导入文件的t_id与同一项目下已存在的t_id重复！'
+                        verification = False
+                        break
+                    seen = set()
+                    if t_id not in seen:
+                        seen.add(t_id)
+                    else:
+                        code = -11
+                        info = '当前批量导入文件的t_id中存在重复！'
+                        verification = False
+                        break
+                    if (headers is None) or (headers == ''):
                         continue
                     else:
                         try:
@@ -454,7 +488,17 @@ def projectImport(request):
                             info = '当前批量导入文件的header列存在数据不符合json规范！'
                             verification = False
                             break
-                    if (body == '') or (body is None):
+                    if (depend_caseId is None) or (depend_caseId == ''):
+                        continue
+                    else:
+                        try:
+                            list(depend_caseId)
+                        except ValueError:
+                            code = -9
+                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            verification = False
+                            break
+                    if (body is None) or (body == ''):
                         continue
                     else:
                         try:
@@ -464,6 +508,21 @@ def projectImport(request):
                             info = '当前批量导入文件的body列存在数据不符合json规范！'
                             verification = False
                             break
+                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                        continue
+                    else:
+                        code = -6
+                        info = '当前批量导入文件的isSecret列存在数据不为0或1！'
+                        print isSecret
+                        verification = False
+                        break
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
+                        continue
+                    else:
+                        code = -7
+                        info = '当前批量导入文件的isRedirect列存在数据不为0或1！'
+                        verification = False
+                        break
             else:
                 code = -8
                 verification = False

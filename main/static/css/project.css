@@ -122,7 +122,11 @@ body {
     background-color: #f7f7f7;
 }
 
-.formContent{
+.formContent {
     height: 100%;
+}
+
+.form-horizontal .control-label {
+    text-align: left;
 }
 
