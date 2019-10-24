@@ -165,7 +165,15 @@
         },
         created() {
             vm1.$data.currentSort = 3;
-            {% comment %}axios.get('/getPermission/')
+            this.getPermission();
+        },
+        mounted(){
+            var params = this.geturlparam();
+            this.getProinfo(params);
+        },
+        methods:{
+            getPermission(){
+                axios.get('/getPermission/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.permission = resp.data.permits;
@@ -176,13 +184,7 @@
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
-        },{% endcomment %}
-        },
-        mounted(){
-            var params = this.geturlparam();
-            this.getProinfo(params);
-        },
-        methods:{
+            },
             geturlparam(){
                 var argsstr = decodeURI(location.search.substr(1));
                 var param={};

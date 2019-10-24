@@ -33,7 +33,7 @@
     {% endblock %}
     {% block title %}<title> 首页</title> {% endblock %}
 </head>
-<body>
+<body style="background-color: #f7f7f7;height: 100%" >
 <div id="row" style="overflow-x: hidden;height: 100%;width: 100%">
     <div id="left" class="navleft">
         <div class="indexleft"><p>自动化接口平台</p></div>
@@ -41,7 +41,7 @@
             <ul style=" list-style: none;padding-inline-start: 14px;" >
                 <div v-for="(item,index) in navTab" :key="index"  @click="active(index)" class="row" style="height:40px;width:100%;">
 
-                <div :class="{'isshow':currentSort!==index}" style="width: 1.5%;height: 100%;background-color: ghostwhite;float: left"></div>
+                <div :class="{'isshow':currentSort!==index}" style="width: 1.8%;height: 100%;background-color: ghostwhite;float: left"></div>
                 <div :class="{'selected':currentSort==index}" >
                     <p class="indextab" style="margin-top: 10px">{!item.name !}</p></div>
                 </div>
