@@ -62,13 +62,13 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
                                 <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
+                                <a class="iconlink" @click="runsingle(info.id)" href="" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
                                 <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
@@ -117,6 +117,7 @@
                              <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! headers !}</span></p>
                              <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! bodys !}</span></p>
                              <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">response:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
                          </div>
                     </div>
                     <div class="modal-footer">
@@ -162,9 +163,9 @@
             casesSel_list: [],
             current_pageCount:10,
         },
-        created(){
+        created() {
             vm1.$data.currentSort = 3;
-            axios.get('/getPermission/')
+            {% comment %}axios.get('/getPermission/')
                     .then(resp =>{
                         console.log(resp.data);
                         this.permission = resp.data.permits;
@@ -175,9 +176,10 @@
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
+        },{% endcomment %}
         },
         mounted(){
-            let params = this.geturlparam();
+            var params = this.geturlparam();
             this.getProinfo(params);
         },
         methods:{
@@ -217,7 +219,7 @@
                             }
                         }
                         this.totalCount = resp.data.totalCount;
-                        if((this.totalCount / this.pageCount) > 1)
+                        if ((this.totalCount / this.pageCount) > 1)
                         {
                             this.pageview = true;
                         }else{
@@ -277,7 +279,7 @@
 
             },
             delapi(id) {
-                let self = this;
+                {% comment %}var  self = this;{% endcomment %}
                 zdconfirm("确认要删除吗？", function (r) {
                     if (r) {
                         console.log('id=' + id);
@@ -287,7 +289,7 @@
                             }
                         })
                             .then(resp => {
-                                this.result = resp.data;
+                                self.result = resp.data;
                                 let info = resp.data.info;
                                 let code = resp.data.code;
                                 if (code === 0) {
@@ -310,7 +312,7 @@
                                      toastr.success("删除成功");
                                     self.getlist(self.pageNum);
                                 } else {
-                                    alert("删除失败:" + info);
+                                    window.alert("删除失败:" + info);
                                 }
                             })
                             .catch(err => {
@@ -319,8 +321,6 @@
                     }
                 })
             },
-
-
 
             selectAllBtn(e){
                 let checked = e.target.checked;
@@ -433,7 +433,22 @@
                             let code = resp.data.code;
                             let datas = resp.data.datas;
                             if (code === 0) {
-                                alert("执行成功:" + datas);
+                                toastr.options = {
+                                         closeButton: false,
+                                         debug: false,
+                                         progressBar: false,
+                                         positionClass: "toast-top-center",
+                                         onclick: null,
+                                         showDuration: "300",
+                                         hideDuration: "1000",
+                                         timeOut: "2000",
+                                         extendedTimeOut: "1000",
+                                         showEasing: "swing",
+                                         hideEasing: "linear",
+                                         showMethod: "fadeIn",
+                                         hideMethod: "fadeOut"
+                                     };
+                                     toastr.success("执行成功");
                             } else {
                                 alert("执行失败: " + datas);
                             }
@@ -452,55 +467,30 @@
                     runlist.push(this.casesSel_list[j][0]);
                 }
                 console.log("runlist",runlist);
-                if (runlist.length !== 0) {
-                    let datas = this.result.data;
-                    let method = "";
-                    let url = "";
-                    let flag = true;
-                    for (let i = 0; i < runlist.length; i++) {
-                        let rid = runlist[i];
-                        for (let d = 0; d < datas.length; d++) {
-                            let did = datas[d].id;
-                            if (rid === did) {
-                                method = datas[d].method;
-                                url = datas[d].url;
-                                console.log(method, url);
-                                break;
+                if (!confirm("是否开始执行？")) {
+                    window.event.returnValue = false;
+                } else {
+                    axios.post('/batchrun/', {
+                        params: {
+                            idList: runlist,
+                            pmName: "批量执行",
+                            reportflag:this.reportflag,
+                        },
+                    })
+                        .then(resp => {
+                            console.log(resp.data);
+                            let code = resp.data.code;
+                            let info = resp.data.datas;
+                            if (code === 0) {
+                                alert("执行结束");
+                                this.getlist(this.pageNum);
+                            } else {
+                                alert("执行失败:" + info);
                             }
-                        }
-                        if (method === "" || url === "" || method === undefined || url === undefined) {
-                            flag = false;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                        if (!confirm("是否开始执行？")) {
-                            window.event.returnValue = false;
-                        } else {
-                            axios.post('/batchrun/', {
-                                params: {
-                                    idList: runlist,
-                                    pmName: "批量执行",
-                                    reportflag:this.reportflag,
-                                },
-                            })
-                                .then(resp => {
-                                    console.log(resp.data);
-                                    let code = resp.data.code;
-                                    if (code === 0) {
-                                        alert("执行结束");
-                                        this.getlist(this.pageNum);
-                                    } else {
-                                        alert("执行失败");
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                                })
-                        }
-                    } else {
-                        alert("要执行的接口用例有参数不存在的情况,请先编辑。");
-                    }
+                        })
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
                 }
             },
             search(){
@@ -597,6 +587,6 @@
                 this.getlist(this.pageNum);
             },
         }
-    });
+    }).$mount('#apiCases');
     </script>
 {% endblock %}
