@@ -487,6 +487,17 @@
                     this.projectNameTitle = pro;
                     this.projectNameNew = this.projectNameTitle;
                     this.projectName = this.projectNameTitle;
+                    axios
+                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.list = resp.data.data;
+                            this.hostTitle = resp.data.host;
+                            this.hostNew = this.hostTitle;
+                            this.host = this.hostTitle;
+                            console.log(this.list);
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
                 },
 
                 submitForm(event) {
