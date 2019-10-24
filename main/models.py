@@ -49,6 +49,7 @@ class apiInfoTable(models.Model):
     t_id = models.CharField(max_length=200, blank=True,null=True, unique=True)
     depend_caseId = models.CharField(max_length=200, null=True,blank=True)
     depend_casedata = models.CharField(max_length=200, null=True, blank=True)
+    response = models.TextField(null=True, blank=True)
 
 
 class countCase(models.Model):
