@@ -250,7 +250,6 @@ def projectDelete(request):
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
             sss = interfaceList.objects.filter(id=id).values_list("projectName", "moduleName")
-            print sss[0][0]
             countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
             interfaceList.objects.filter(id=id).delete()
             code = 0
@@ -298,6 +297,8 @@ def projectBatchDelete(request):
                 info = '所选模块中还存在用例，请先删除用例，再删除模块！'
         for x in idDelete:
             if (flag):
+                sss = interfaceList.objects.filter(id=x[0]).values_list("projectName", "moduleName")
+                countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
                 interfaceList.objects.filter(id=x[0]).delete()
                 code = 0
                 info = '删除成功！'
@@ -564,7 +565,15 @@ def projectImport(request):
                         'lastRunTime': None,
                         'creator': user,
                         'owningListID': int(listid),
-                        'assertinfo': statuscode
+                        'assertinfo': statuscode,
+                        'files': files,
+                        'secret_key': secret_key,
+                        'key_id': key_id,
+                        'isScreat': bool(isSecret),
+                        'isRedirect': bool(isRedirect),
+                        't_id': t_id,
+                        'depend_caseId': depend_caseId,
+                        'depend_casedata': depend_casedata,
                     }
                     try:
                         s = apiInfoTable.objects.create(**api_infos)

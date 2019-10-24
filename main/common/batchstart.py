@@ -1,6 +1,6 @@
 # coding=utf-8
 import unittest
-from libs import HTMLTestRunner,HTMLTestRunner1
+from libs import HTMLTestRunner1
 import batchUntils
 from main.models import apiInfoTable,interfaceList
 from main.untils import until,sendRequests
@@ -87,6 +87,7 @@ class RunTest(unittest.TestCase):
         timestamp = int(time.time())
         assertinfo = str(query.assertinfo)
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        responseText = ""
         resp = ''
         # 非加密执行接口
         if isScreat == False or isScreat == "":
@@ -94,7 +95,7 @@ class RunTest(unittest.TestCase):
                 resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
             except Exception as e:
                 datas = {"status_code": -999,"error": str(e)}
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return result
         # 加密执行
@@ -113,26 +114,27 @@ class RunTest(unittest.TestCase):
                                                                 send_url, headers, send_body, files, isRedirect)
             except Exception as e:
                 datas = {"status_code": -999,"error": str(e)}
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return result
         statusCode = resp.status_code
         text = resp.text
+        responseText = text
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": assertinfo}
             if str(assertinfo) in str(text):
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
 

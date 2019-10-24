@@ -117,7 +117,9 @@
                              <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;">{! headers !}</span></p>
                              <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;">{! bodys !}</span></p>
                              <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">response:</label><span style="margin: 8px;">{! viewapiInfos.assert !}</span></p>
+                             <p><label style="width: 15%;text-align: right;">response:</label>
+                                 <textarea id="responseCSS" readonly>{! responseText !}</textarea>
+                             </p>
                          </div>
                     </div>
                     <div class="modal-footer">
@@ -162,6 +164,7 @@
             cases_list: [],
             casesSel_list: [],
             current_pageCount:10,
+            responseText:"",
         },
         created() {
             vm1.$data.currentSort = 3;
@@ -556,6 +559,7 @@
                         }
                         console.log("header:", this.headers);
                         console.log("body:", this.bodys);
+                        this.responseText = JSON.parse(resp.data.datas.response);
                         spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);

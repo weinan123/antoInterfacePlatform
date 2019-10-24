@@ -98,7 +98,6 @@ def runsingle(request):
             bodyinfor = json.loads(bodyinfor)
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
-
         dependData = []
         if depend_flag == "" or depend_flag is None:
             print("not depend")
@@ -127,13 +126,14 @@ def runsingle(request):
         timestamp = int(time.time())
         assertinfo = str(query.assertinfo)
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        responseText = ""
         # 非加密执行接口
         if isScreat == False or isScreat == "":
             try:
                 resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return JsonResponse(result)
         # 加密执行
@@ -152,12 +152,13 @@ def runsingle(request):
                 resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": -1, "info": "run error", "datas": str(datas)}
                 return JsonResponse(result)
         try:
             statusCode = resp.status_code
             text = resp.text
+            responseText = text
         except AttributeError as e:
             statusCode = -999
             text = "error!code: -999"
@@ -165,18 +166,18 @@ def runsingle(request):
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": str(assertinfo)}
             if str(assertinfo) in str(text):
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1)
+                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         print result
     return JsonResponse(result)
@@ -322,6 +323,7 @@ def getapiInfos(request):
             json_dict["url"] = query.url
             json_dict["assert"] = query.assertinfo
             json_dict["listid"] = query.owningListID
+            json_dict["response"] = query.response
             listdata = interfaceList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName

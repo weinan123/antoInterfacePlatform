@@ -1,17 +1,17 @@
 {% extends 'newindex.html' %}
 {% block title %}
-    <title> 项目信息 </title>
+    <title> 模块信息 </title>
 {% endblock %}
 {% block script %}
     <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="content" id="projectList" style="width: 100%;height: 100%;position: fixed;">
+    <div class="content" id="projectList" style="width: 100%;height: 100%;position: relative;">
         <div class="pageheader">
             <p class="titlecss">{! projectNameTitle !}</p>
         </div>
 
-        <div class="formContent" style="background-color: white;padding-top: 15px;width: 80%;">
+        <div class="formContent" style="background-color: white;padding-top: 15px;width: 80%;" id="row">
             <div class="col-md-4" style="width:100%;">
                 <div class="btn-group" style="width:100%;padding: 15px;height: 70px;margin: auto;">
                     <!-- 新建按钮触发模态框 -->
@@ -317,7 +317,7 @@
             </div>
         </div>
     </div>
-    </div>
+    <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>
 {% endblock %}
 </div>
 </div>
@@ -357,7 +357,7 @@
                 this.projectNameNew = this.projectNameTitle;
                 this.projectName = this.projectNameTitle;
 
-                var target = document.getElementById("row");
+                var target = document.getElementById("mounted");
                 var spinner = Spinner({top: '3'}).spin(target);
                 axios
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
@@ -487,6 +487,17 @@
                     this.projectNameTitle = pro;
                     this.projectNameNew = this.projectNameTitle;
                     this.projectName = this.projectNameTitle;
+                    axios
+                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.list = resp.data.data;
+                            this.hostTitle = resp.data.host;
+                            this.hostNew = this.hostTitle;
+                            this.host = this.hostTitle;
+                            console.log(this.list);
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
                 },
 
                 submitForm(event) {
