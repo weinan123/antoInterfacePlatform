@@ -107,9 +107,10 @@ def sendRequest(request):
     isScreat = Screatinfor["isScreat"]
     key_id = Screatinfor["key_id"]
     secret_key = Screatinfor["secret_key"].encode("utf-8")
+    showflag = bodyinfor["showflag"]
     #非加密执行接口
     if isScreat=="":
-        resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect)
+        resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect,showflag)
     #加密执行
     else:
         resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect)
