@@ -39,21 +39,8 @@ def runCase(ismail):
 图表数据定时更新
 '''
 def runChart():
-    sqlList = [
-        {"casetype":"allcase",
-         "sql":"select count(*),owningListID from main_apiInfoTable group by owningListID"},
-        {"casetype": "passcase",
-         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=1 group by owningListID " },
-        {"casetype": "failcase",
-         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=-1 group by owningListID "},
-        {"casetype": "nullcase",
-         "sql": "select count(*),owningListID,lastRunResult from main_apiInfoTable where lastRunResult=0 group by owningListID "}
-    ]
     getChartData = runChartData.getChartData()
-    for i in range(0,len(sqlList)):
-        casetype=sqlList[i]["casetype"]
-        sql = sqlList[i]["sql"]
-        getChartData.runDb(casetype,sql)
+    getChartData.nullmodel()
 '''
 获取配置文件数据，是否生成报告及发送邮件
 '''
