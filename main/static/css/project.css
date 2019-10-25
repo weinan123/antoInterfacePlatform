@@ -44,7 +44,7 @@
     border-style: none;
     height: 36px;
     width: 66px;
-    border-radius: 3px 0px 0px 3px;
+    border-radius: 3px;
 }
 
 .firstDeleteButton {
@@ -129,4 +129,18 @@ body {
 .form-horizontal .control-label {
     text-align: left;
 }
+
+.downloadButton {
+    background: #deeaf2;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    background-image: -webkit-linear-gradient(top, #2372A8 0%, #2372A8 0%);
+    border-style: none;
+    height: 36px;
+    width: 86px;
+    border-radius: 3px;
+}
+
+
 
