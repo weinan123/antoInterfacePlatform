@@ -7,11 +7,9 @@ import authService
 import json,time,re
 
 def getdepands(depend_list, depend_data):
-    datas = []
+    dpdatas = []
     dependCase = depend_list
     dependData = json.loads(depend_data)
-    print("_____1______", dependCase)
-    print("_____2______", dependData)
     for tid in dependCase:
         data_dict = {}
         query = apiInfoTable.objects.get(t_id=str(tid))
@@ -24,18 +22,20 @@ def getdepands(depend_list, depend_data):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
-        if bodyinfor != "" or bodyinfor != "{}":
+        showflag = ""
+        if bodyinfor != "" and str(bodyinfor) != "{}":
             bodyinfor = json.loads(bodyinfor)
+            showflag = bodyinfor["showflag"]
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
-        url = host + send_url
+        host = query.host
+        url = str(host) + str(send_url)
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
         # 加密执行
         else:
             key_id = query.key_id
@@ -50,18 +50,21 @@ def getdepands(depend_list, depend_data):
             timestamp = int(time.time())
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
-            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
         print(resp.headers)
         print(resp.raw)
         print(resp.cookies)
         print(resp.text)
         for k in dependData:
-            key = dependData[k]
-        print("_____3_____:", key)
-        # 这里拿依赖的数据
-        value = re.findall("'%s':'(.*?)'" % str(key), resp.text)
-        if len(value) != 0:
-            data_dict[tid] = value[0]
-            datas.append(data_dict)
-        print datas
-    return datas
+            value = ""
+            keyv = dependData[k]
+            # 这里拿依赖的数据
+            responseText = json.loads(resp.text)
+            for v in responseText[k]:
+                if keyv in v.keys():
+                    value = v[keyv]
+                break
+            if len(value) != 0:
+                data_dict[keyv] = value
+                dpdatas.append(data_dict)
+    return dpdatas

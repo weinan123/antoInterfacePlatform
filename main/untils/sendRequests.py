@@ -5,8 +5,8 @@ from main.common import authService
 class sendRequest():
     def __init__(self):
         pass
-    def mulBody(self,headerType,send_body):
-        if(headerType=="application/json"):
+    def mulBody(self,headerType,send_body,showflag):
+        if(headerType=="application/json" and showflag!=3 ):
             postbody = json.dumps(send_body)
         #带文件传输的post请求key=value格式数据
         elif(headerType=="multipart/form-data"):
@@ -21,7 +21,7 @@ class sendRequest():
         else:
             redirect = True
         return redirect
-    def sendRequest(self,methods,url,headers,send_body,files,isRedirect):
+    def sendRequest(self,methods,url,headers,send_body,files,isRedirect,showflag):
         print files
         s = requests.Session()
         response = ""
@@ -34,15 +34,16 @@ class sendRequest():
                 headerType = headers["Content-Type"]
             except Exception as e:
                 headerType = ""
-            postbody = self.mulBody(headerType, send_body)
+            postbody = self.mulBody(headerType, send_body,showflag)
+            print postbody
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect)
             # resp = response.text
         return response
-    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect):
+    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag):
         headerType = headers["Content-Type"]
-        postbody = self.mulBody(headerType, send_body)
+        postbody = self.mulBody(headerType, send_body,showflag)
         redirect = self.isRedirect(isRedirect)
         timestamp = int(time.time())
         credentials = authService.BceCredentials(key_id, secret_key)

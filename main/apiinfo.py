@@ -94,8 +94,10 @@ def runsingle(request):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
-        if bodyinfor != "" or bodyinfor != "{}":
+        showflag = ""
+        if bodyinfor != "" and str(bodyinfor) != "{}":
             bodyinfor = json.loads(bodyinfor)
+            showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
         dependData = []
@@ -106,19 +108,19 @@ def runsingle(request):
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
                 dependData = getDependData.getdepands(depend_list, depend_data)
-                print("dependData:",dependData)
+                print("dependData: ",dependData)
             else:
                 print("depend data is None.")
         listid = query.owningListID
-        querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
-        url = host + send_url
+        # querylist = interfaceList.objects.get(id=listid)
+        host = query.host
+        url = str(host) + str(send_url)
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
         if len(dependData) != 0:
             for dd in dependData:
                 send_body[dd.keys()[0]] = dd.values()[0]
-        print("body:",send_body)
+        print("body: ", send_body)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         key_id = query.key_id
@@ -130,7 +132,7 @@ def runsingle(request):
         # 非加密执行接口
         if isScreat == False or isScreat == "":
             try:
-                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -149,7 +151,7 @@ def runsingle(request):
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
             try:
-                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -327,7 +329,7 @@ def getapiInfos(request):
             listdata = interfaceList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
-            json_dict["host"] = listdata.host
+            json_dict["host"] = query.host
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
             print modulelist
             for module in modulelist:

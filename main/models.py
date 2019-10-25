@@ -37,6 +37,7 @@ class apiInfoTable(models.Model):
     creator = models.CharField(max_length=20, null=False)
     owningListID = models.IntegerField(blank=True,null=True,)
     method = models.CharField(max_length=10)
+    host = models.TextField(null=True, blank=True)
     url = models.URLField(null=True,blank=True)
     headers = models.TextField(null=True,blank=True)
     body = models.TextField(null=True,blank=True)
