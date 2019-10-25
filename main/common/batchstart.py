@@ -20,8 +20,8 @@ class RunTest(unittest.TestCase):
         caseID = arg1
         state = False
         caseName = arg2
-        print("\ncaseName:%s." % caseName)  # 报告输出中使用，请勿删除
-        print("caseID:%s." % caseID)  # 报告输出中使用，请勿删除
+        print(u"\n用例名称:%s." % caseName)  # 报告输出中使用，请勿删除
+        print(u"用例id:%s." % caseID)  # 报告输出中使用，请勿删除
         singleResult = self.singleRun(caseID)
         if singleResult["code"] == 0:
             state = True
@@ -59,7 +59,7 @@ class RunTest(unittest.TestCase):
             headers = json.loads(headers)
         bodyinfor = query.body
         showflag = ""
-        if bodyinfor != "" or bodyinfor != "{}":
+        if bodyinfor != "" and  bodyinfor != "{}":
             bodyinfor = json.loads(bodyinfor)
             showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
@@ -68,24 +68,28 @@ class RunTest(unittest.TestCase):
         if depend_flag == "" or depend_flag is None:
             print("dependency:not depend.")
         else:
-            depend_list = depend_flag
+            depend_list = json.loads(depend_flag)
             depend_data = query.depend_casedata
+            print u"关联用例集：%s"%(depend_list)
             if depend_data != "" or depend_data != "{}":
                 dependData = getDependData.getdepands(depend_list, depend_data)
+                print u"关联数据：%s" % (dependData)
             else:
                 print("depend data is None.")
 
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
         print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
+        print u"请求方法：%s" % (methods)
         host = query.host
         url = host + send_url
+        print u"请求地址：%s" % (url)
         # 处理数据类型的方法
         send_body, files = until.mul_bodyData(bodyinfor)
         if len(dependData) != 0:
             for dd in dependData:
                 send_body[dd.keys()[0]] = dd.values()[0]
-        print("body: ", send_body)
+        print(u"请求体: ", send_body)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         key_id = query.key_id

@@ -100,6 +100,7 @@ def runsingle(request):
             showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
+        print depend_flag
         dependData = []
         if depend_flag == "" or depend_flag is None:
             print("not depend")
@@ -107,6 +108,7 @@ def runsingle(request):
             depend_list = json.loads(depend_flag)
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
+                print depend_list, depend_data
                 dependData = getDependData.getdepands(depend_list, depend_data)
                 print("dependData: ",dependData)
             else:

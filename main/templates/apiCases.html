@@ -452,8 +452,7 @@
                             console.log(resp.data);
                             let code = resp.data.code;
                             let datas = resp.data.datas;
-                            if (code === 0) {
-                                toastr.options = {
+                             toastr.options = {
                                          closeButton: false,
                                          debug: false,
                                          progressBar: false,
@@ -468,7 +467,8 @@
                                          showMethod: "fadeIn",
                                          hideMethod: "fadeOut"
                                      };
-                                     toastr.success("执行成功");
+                            if (code === 0) {
+                                 toastr.success("执行成功");
                             } else {
                                 toastr.error("执行失败");
                                 //alert("执行失败: " + datas);
