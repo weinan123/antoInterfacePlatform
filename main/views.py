@@ -136,6 +136,7 @@ def newCase(request):
         reqdata = json.loads(request.body)["params"]
         data = reqdata["data_to_send"]
         methods = data["methods"]
+        host = data["host"]
         url = data["url"]
         headers = json.dumps(data["headers"])
         bodyinfor = data["bodyinfor"]
@@ -151,7 +152,7 @@ def newCase(request):
                 id = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
                 print id
-                apiInfoTable.objects.get_or_create(method=methods,headers = headers,url =url,body=send_body,
+                apiInfoTable.objects.get_or_create(method=methods,headers = headers,host=host,url =url,body=send_body,
                                                    apiName=caseName,owningListID=int(owningListID),creator=creator)
                 data = {
                     "code":0,
@@ -168,7 +169,7 @@ def newCase(request):
                 id1 = int(reqdata["apiId"])
                 proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 print("---------------id:-------", proid)
-                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
+                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
                                                               headers=headers,
                                                               body=send_body,owningListID=proid[0]["id"])
             except Exception as e:
