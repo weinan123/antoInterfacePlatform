@@ -470,7 +470,8 @@
                                      };
                                      toastr.success("执行成功");
                             } else {
-                                alert("执行失败: " + datas);
+                                toastr.error("执行失败");
+                                //alert("执行失败: " + datas);
                             }
                             this.getlist(this.pageNum);
                         })
@@ -502,8 +503,7 @@
                                     console.log(resp.data);
                                     let code = resp.data.code;
                                     let info = resp.data.datas;
-                                    if (code === 0) {
-                                        toastr.options = {
+                                    toastr.options = {
                                             closeButton: false,
                                             debug: false,
                                             progressBar: false,
@@ -518,6 +518,7 @@
                                             showMethod: "fadeIn",
                                             hideMethod: "fadeOut"
                                         };
+                                    if (code === 0) {
                                         toastr.success("执行结束");
                                         self.getlist(self.pageNum);
                                     } else {
@@ -571,6 +572,7 @@
                     },
                     })
                     .then(resp => {
+                        spinner1.spin();
                         this.viewapiInfos = resp.data.datas;
                         let viewHeaders = resp.data.datas.header;
                         let viewBodys = resp.data.datas.body;
@@ -595,7 +597,6 @@
                         console.log("header:", this.headers);
                         console.log("body:", this.bodys);
                         this.responseText = JSON.parse(resp.data.datas.response);
-                        spinner1.spin();
                     }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
