@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import requests,time
+requests.packages.urllib3.disable_warnings()
 from main.common import authService
 class sendRequest():
     def __init__(self):

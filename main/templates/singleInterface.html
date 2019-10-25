@@ -967,17 +967,22 @@ var vm = new Vue({
 
         },
         loadHeader(){
-            this.headerVals=[];
             var headerInfor = this.headerText;
-            var obj = JSON.parse(headerInfor);
-            console.log(obj);
-            for(var key in obj) {
-                var data = {
-                    "type": key,
-                    "value": obj[key]
-                };
-                this.headerVals.push(data)
-            }
+            try {
+                //
+                var obj = JSON.parse(headerInfor);
+                console.log(obj);
+                for (var key in obj) {
+                    this.headerVals=[];
+                    var data = {
+                        "type": key,
+                        "value": obj[key]
+                    };
+                    this.headerVals.push(data)
+                }
+            }catch(e){
+                alert("导入数据格式不正确，请检查")
+                }
         }
     },
 }).$mount('div')
