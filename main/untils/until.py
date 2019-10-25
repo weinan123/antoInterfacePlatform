@@ -23,7 +23,6 @@ def mul_bodyData(bodyinfor):
         body = {}
         files = {}
     else:
-        bodyinfor = json.loads(bodyinfor)
         paramsData = bodyinfor["datas"]
         if bodyinfor["showflag"] == 3:
             body = paramsData[0]["paramValue"]
