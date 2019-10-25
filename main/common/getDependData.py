@@ -7,14 +7,12 @@ import authService
 import json,time,re
 
 def getdepands(depend_list, depend_data):
-    datas = []
-    dependCase = json.loads(depend_list)
+    dpdatas = []
+    dependCase = depend_list
     dependData = json.loads(depend_data)
-    print(dependCase)
-    print(dependData)
     for tid in dependCase:
         data_dict = {}
-        query = apiInfoTable.objects.get(t_id=tid)
+        query = apiInfoTable.objects.get(t_id=str(tid))
         methods = query.method
         send_url = query.url
         if methods == "" or send_url == "":
@@ -55,12 +53,16 @@ def getdepands(depend_list, depend_data):
         print(resp.raw)
         print(resp.cookies)
         print(resp.text)
-        key = dependData[tid]
-        print(key)
-        # 这里拿依赖的数据
-        value = re.findall("'%s':'(.*?)'" % str(key), resp.text)
-        if len(value) != 0:
-            data_dict[tid] = value[0]
-            datas.append(data_dict)
-        print datas
-    return datas
+        for k in dependData:
+            value = ""
+            keyv = dependData[k]
+            # 这里拿依赖的数据
+            responseText = json.loads(resp.text)
+            for v in responseText[k]:
+                if keyv in v.keys():
+                    value = v[keyv]
+                break
+            if len(value) != 0:
+                data_dict[keyv] = value
+                dpdatas.append(data_dict)
+    return dpdatas

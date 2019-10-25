@@ -342,6 +342,9 @@ table       { font-size: 12px; }
 .errorCase  { color: #f0ad4e; font-weight: bold; }
 .hiddenRow  { display: none; }
 .testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
 </style>
 """
 
@@ -414,7 +417,7 @@ table       { font-size: 12px; }
 </tr>
 """  # variables: (style, desc, count, Pass, fail, error, cid)
 
-    # 失败 的样式，去掉原来JS效果，美化展示效果  -Findyou
+    # 失败 的样式，去掉原来JS效果，美化展示效果  用例执行结果-Findyou
     REPORT_TEST_WITH_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
@@ -423,7 +426,7 @@ table       { font-size: 12px; }
     <button id='btn_%(tid)s' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_%(tid)s'>%(status)s</button>
     <div id='div_%(tid)s' class="collapse">  -->
     <!-- 默认展开错误信息 -Findyou -->
-    <button id='btn_%(tid)s' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_%(tid)s'>%(status)s</button>
+    <button id='btn_%(tid)s' type="button" title="点击按钮，展开或折叠该Case" class="btn %(styleBtn)s btn-xs" data-toggle="collapse" data-target='#div_%(tid)s'>%(status)s</button>
     <div id='div_%(tid)s' class="collapse" align="left">
     <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
     %(script)s
@@ -431,7 +434,7 @@ table       { font-size: 12px; }
     </div>
     </td>
 </tr>
-"""  # variables: (tid, Class, style, desc, status)
+"""  # variables: (tid, Class, style, desc, status,styleBtn)
 
     # 通过 的样式，加标签效果  -Findyou
     REPORT_TEST_NO_OUTPUT_TMPL = r"""
@@ -745,10 +748,11 @@ class HTMLTestRunner(Template_mixin):
         row = tmpl % dict(
             tid=tid,
             Class=(n == 0 and 'hiddenRow' or 'none'),
-            style=n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'passCase'),
+            style=(n == 2 and 'errorCase' or n == 1 and 'failCase' or 'passCase'),
             desc=desc,
             script=script,
             status=self.STATUS[n],
+            styleBtn=(n == 2 and 'btn-warning' or n == 1 and 'btn-danger' or 'btn-success'),
         )
         rows.append(row)
         if not has_output:
