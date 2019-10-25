@@ -49,14 +49,6 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="host" required
-                                                       v-model="hostNew" readonly="readonly"
-                                                       id="id_host" maxlength="50" placeholder="请输入域名地址"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
                                             <div class="col-sm-6">
                                                 <input type="submit" class="viewButton"
                                                        @click="submitFormNew($event)" value="新建"/>
@@ -116,15 +108,6 @@
                                                 <input class="form-control" type="text" name="moduleName"
                                                        required id="id_moduleName" v-model="moduleName"
                                                        maxlength="50" placeholder="请输入模块名称"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="host" required
-                                                       v-model="host" id="id_host" maxlength="50"
-                                                       readonly="readonly"
-                                                       placeholder="请输入域名地址"/>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -278,17 +261,6 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="id_host"
-                                                               class="col-sm-3 control-label">host:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="host" class="form-control"
-                                                                   v-bind:value="[item.host]"
-                                                                   required="required"
-                                                                   v-bind:id="'hostEdit'+[item.id]"
-                                                                   maxlength="50" readonly="readonly">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
                                                         <div class="col-sm-6">
                                                             <button class="viewButton"
                                                                     @click="editForm($event,item.id)">
@@ -340,13 +312,10 @@
                 projectBatchDelete = true;
                 return {
                     projectNameTitle: '',
-                    hostTitle: '',
                     projectName: '',
                     moduleName: '',
-                    host: '',
                     projectNameNew: '',
                     moduleNameNew: '',
-                    hostNew: '',
                     file: '',
                     list: [],
                     checkedDelete: [],
@@ -368,9 +337,6 @@
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
-                        this.hostTitle = resp.data.host;
-                        this.hostNew = this.hostTitle;
-                        this.host = this.hostTitle;
                         spinner.spin();
                         console.log(this.list);
                     }).catch(err => {
@@ -496,9 +462,6 @@
                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
-                            this.hostTitle = resp.data.host;
-                            this.hostNew = this.hostTitle;
-                            this.host = this.hostTitle;
                             console.log(this.list);
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -506,7 +469,7 @@
                 },
 
                 submitForm(event) {
-                    if (this.projectName === '' || this.moduleName === '' || this.host === '' || this.file === '') {
+                    if (this.projectName === '' || this.moduleName === '' || this.file === '') {
                         alert('请输入所有字段！');
                     } else if (checkType()) {
                         var target = document.getElementById("importProjectRow");
@@ -516,7 +479,6 @@
                         let formData = new FormData();
                         formData.append('projectName', this.projectName);
                         formData.append('moduleName', this.moduleName);
-                        formData.append('host', this.host);
                         formData.append('file', this.file);
 
                         let config = {
@@ -554,9 +516,6 @@
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
-                                            this.hostTitle = resp.data.host;
-                                            this.hostNew = this.hostTitle;
-                                            this.host = this.hostTitle;
                                             console.log(resp.data);
                                         }).catch(err => {
                                         console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -568,7 +527,7 @@
                 ,
 
                 submitFormNew(event) {
-                    if (this.projectNameNew === '' || this.moduleNameNew === '' || this.hostNew === '') {
+                    if (this.projectNameNew === '' || this.moduleNameNew === '') {
                         alert('请输入所有字段！');
 
                     } else {
@@ -579,7 +538,6 @@
                         let formData = new FormData();
                         formData.append('projectName', this.projectNameNew);
                         formData.append('moduleName', this.moduleNameNew);
-                        formData.append('host', this.hostNew);
 
                         let config = {
                             headers: {
@@ -630,8 +588,7 @@
                     var idEdit = id;
                     var projectNameEdit = document.getElementById("projectNameEdit" + id).value;
                     var moduleNameEdit = document.getElementById("moduleNameEdit" + id).value;
-                    var hostEdit = document.getElementById("hostEdit" + id).value;
-                    if (idEdit === '' || projectNameEdit === '' || moduleNameEdit === '' || hostEdit === '') {
+                    if (idEdit === '' || projectNameEdit === '' || moduleNameEdit === '') {
                         alert('请输入所有字段！');
                     } else {
                         var target = document.getElementById("editProjectRow" + idEdit);
@@ -642,7 +599,6 @@
                         formData.append('id', idEdit);
                         formData.append('projectName', projectNameEdit);
                         formData.append('moduleName', moduleNameEdit);
-                        formData.append('host', hostEdit);
 
                         let config = {
                             headers: {

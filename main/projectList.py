@@ -30,8 +30,7 @@ def addProjectList(request):
             if (interfaceList.objects.filter(projectName=form.cleaned_data['projectName'],
                                              moduleName=form.cleaned_data['moduleName']).count() == 0):
                 inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                     moduleName=form.cleaned_data['moduleName'],
-                                                     host=form.cleaned_data['host'])
+                                                     moduleName=form.cleaned_data['moduleName'])
 
                 counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
                                                       moduleName=form.cleaned_data['moduleName'], )
@@ -79,8 +78,7 @@ def addProject(request):
             #     return
             dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             if (interfaceList.objects.filter(projectName=form.cleaned_data['projectName']).count() == 0):
-                inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                     host=form.cleaned_data['host'])
+                inter = interfaceList.objects.create(projectName=form.cleaned_data['projectName'])
                 inter.save()
                 interfaceList.objects.filter(projectName=form.cleaned_data['projectName']).update(updateTime=dtime,
                                                                                                   createTime=dtime)
@@ -125,10 +123,9 @@ def projectListInfo(request):
     }
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        resp = interfaceList.objects.filter(projectName=projectName).values("id", "projectName", "host", "moduleName",
+        resp = interfaceList.objects.filter(projectName=projectName).values("id", "projectName", "moduleName",
                                                                             "updateTime", "createTime")
         respList = list(resp)
-        host = respList[0]['host']
         for i in range(len(respList)):
             if (respList[i]['moduleName'] == ''):
                 del respList[i]
@@ -169,7 +166,6 @@ def projectListInfo(request):
             respList[i]['failcaseNum'] = failcaseNum
             respList[i]['blockcaseNum'] = blockcaseNum
         result = {
-            'host': host,
             'data': respList,
             'code': 0,
             'info': 'success'
@@ -200,24 +196,24 @@ def firstProjectListInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        resp = interfaceList.objects.values("projectName", "host", "moduleName", "createTime", "updateTime")
+        resp = interfaceList.objects.values("projectName", "moduleName", "createTime", "updateTime")
         json_list = []
         respList = list(resp)
         seen = set()
         for i in range(len(respList)):
             json_dict = {}
             projectName = respList[i]['projectName']
-            host = respList[i]['host']
             moduleName = respList[i]['moduleName']
             createTime = str(respList[i]['createTime']).split('.')[0]
             # updateTime = str(respList[i]['updateTime']).split('.')[0]
             totalModule = interfaceList.objects.filter(projectName=projectName).count()
             # updateTime = interfaceList.objects.filter(projectName=projectName).order_by('updateTime')[0]['updateTime']
-            updateTime = str(interfaceList.objects.filter(projectName=projectName).order_by('-updateTime').values("updateTime")[0]['updateTime']).split('.')[0]
+            updateTime = str(
+                interfaceList.objects.filter(projectName=projectName).order_by('-updateTime').values("updateTime")[0][
+                    'updateTime']).split('.')[0]
             if (moduleName == ''):
                 seen.add(projectName)
                 json_dict["projectName"] = projectName
-                json_dict["host"] = host
                 json_dict["createTime"] = createTime
                 json_dict["updateTime"] = updateTime
                 json_dict["totalModule"] = totalModule - 1  # 去除一条作为表示项目的，moduleName为空的记录
@@ -328,9 +324,8 @@ def projectEdit(request):
         id = request.POST.get('id')
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
-        host = request.POST.get('host')
-        resp = interfaceList.objects.filter(id=id).values("projectName", "host", "moduleName")
-        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName and resp[0]['host'] == host):
+        resp = interfaceList.objects.filter(id=id).values("projectName", "moduleName")
+        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName):
             code = -1
             info = '未做任何修改！'
             result = {
@@ -345,7 +340,6 @@ def projectEdit(request):
             edit = interfaceList.objects.get(id=id)
             edit.projectName = projectName
             edit.moduleName = moduleName
-            edit.host = host
             edit.save()
             code = 0
             info = '修改成功！'
@@ -411,7 +405,6 @@ def projectImport(request):
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
-        host = request.POST.get('host')
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         if (interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
             f = request.FILES['file']
@@ -436,21 +429,28 @@ def projectImport(request):
                     data_list.extend(table.row_values(i))
                     apiname = data_list[0]
                     method = data_list[1]
-                    url = data_list[2]
-                    headers = data_list[4]
-                    body = data_list[5]
-                    t_id = data_list[6]
-                    depend_caseId = data_list[7]
-                    depend_casedata = data_list[8]
-                    statuscode = data_list[9]
-                    files = data_list[10]
-                    isSecret = data_list[11]
-                    key_id = data_list[12]
-                    secret_key = data_list[13]
-                    isRedirect = data_list[14]
+                    host = data_list[2]
+                    url = data_list[3]
+                    params = data_list[4]
+                    headers = data_list[5]
+                    body = data_list[6]
+                    t_id = data_list[7]
+                    depend_caseId = data_list[8]
+                    depend_casedata = data_list[9]
+                    statuscode = data_list[10]
+                    files = data_list[11]
+                    isSecret = data_list[12]
+                    key_id = data_list[13]
+                    secret_key = data_list[14]
+                    isRedirect = data_list[15]
                     if (apiname is None) or (apiname == ""):
                         code = -2
                         info = '名称不能为空！'
+                        verification = False
+                        break
+                    if (method != 'GET') and (method != 'POST'):
+                        code = -12
+                        info = '当前批量导入文件的method列存在数据不为GET或POST！'
                         verification = False
                         break
                     if (interfaceList.objects.filter(projectName=projectName,
@@ -467,7 +467,7 @@ def projectImport(request):
                         info = '当前批量导入文件的模块名称中存在重复！'
                         verification = False
                         break
-                    if (apiInfoTable.objects.filter(t_id=t_id, ).count() != 0):
+                    if apiInfoTable.objects.filter(t_id=t_id).count() != 0:
                         code = -10
                         info = '当前批量导入文件的t_id与同一项目下已存在的t_id重复！'
                         verification = False
@@ -535,8 +535,7 @@ def projectImport(request):
                 }
             # 通过数据校验，导入数据
             if (verification):
-                inter = interfaceList.objects.create(projectName=projectName, host=host,
-                                                     moduleName=moduleName)
+                inter = interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
 
                 counttable = countCase.objects.create(projectName=projectName,
                                                       moduleName=moduleName)
@@ -546,7 +545,7 @@ def projectImport(request):
                                                                                                     createTime=dtime)
 
                 listid = \
-                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName, host=host).values(
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
                         "id")[0]['id']
                 for i in range(1, nrows):
                     # data_list用来存放数据
@@ -555,18 +554,21 @@ def projectImport(request):
                     data_list.extend(table.row_values(i))
                     apiname = data_list[0]
                     method = data_list[1]
-                    url = data_list[2]
-                    headers = data_list[4]
-                    body_data = data_list[5]
-                    t_id = data_list[6]
-                    depend_caseId = data_list[7]
-                    depend_casedata = data_list[8]
-                    statuscode = data_list[9]
-                    files = data_list[10]
-                    isSecret = data_list[11]
-                    key_id = data_list[12]
-                    secret_key = data_list[13]
-                    isRedirect = data_list[14]
+                    host = data_list[2]
+                    url = data_list[3]
+                    params = data_list[4]
+                    headers = data_list[5]
+                    body_data = data_list[6]
+                    t_id = data_list[7]
+                    depend_caseId = data_list[8]
+                    depend_casedata = data_list[9]
+                    statuscode = data_list[10]
+                    files = data_list[11]
+                    isSecret = data_list[12]
+                    key_id = data_list[13]
+                    secret_key = data_list[14]
+                    isRedirect = data_list[15]
+
                     print statuscode
                     user = request.session.get('username')
                     content_type = ""
@@ -619,6 +621,7 @@ def projectImport(request):
                     api_infos = {
                         'apiName': apiname,
                         'method': method,
+                        'host': host,
                         'url': url,
                         'headers': headers,
                         'body': body,

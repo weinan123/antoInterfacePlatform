@@ -14,7 +14,6 @@ class interfaceList(models.Model):
     )
     projectName = models.CharField(max_length=50, verbose_name='项目名称')
     moduleName = models.CharField(max_length=50, verbose_name='模块名称')
-    host = models.CharField(max_length=50, verbose_name='域名地址')
     updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
