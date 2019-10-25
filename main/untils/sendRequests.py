@@ -41,9 +41,9 @@ class sendRequest():
                               allow_redirects=redirect)
             # resp = response.text
         return response
-    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect):
+    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag):
         headerType = headers["Content-Type"]
-        postbody = self.mulBody(headerType, send_body)
+        postbody = self.mulBody(headerType, send_body,showflag)
         redirect = self.isRedirect(isRedirect)
         timestamp = int(time.time())
         credentials = authService.BceCredentials(key_id, secret_key)
