@@ -112,8 +112,8 @@ def runsingle(request):
             else:
                 print("depend data is None.")
         listid = query.owningListID
-        querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
+        # querylist = interfaceList.objects.get(id=listid)
+        host = query.host
         url = host + send_url
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
@@ -329,7 +329,7 @@ def getapiInfos(request):
             listdata = interfaceList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
-            json_dict["host"] = listdata.host
+            json_dict["host"] = query.host
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
             print modulelist
             for module in modulelist:
