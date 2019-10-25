@@ -106,7 +106,7 @@ def runsingle(request):
             depend_data = query.depend_casedata
             if depend_data != "" or depend_data != "{}":
                 dependData = getDependData.getdepands(depend_list, depend_data)
-                print("dependData:",dependData)
+                print("dependData: ",dependData)
             else:
                 print("depend data is None.")
         listid = query.owningListID
@@ -118,7 +118,7 @@ def runsingle(request):
         if len(dependData) != 0:
             for dd in dependData:
                 send_body[dd.keys()[0]] = dd.values()[0]
-        print("body:",send_body)
+        print("body: ", send_body)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         key_id = query.key_id

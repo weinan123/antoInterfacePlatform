@@ -40,7 +40,6 @@ def mul_bodyData(bodyinfor):
                         files = {'file':""}
                 else:
                     getvalue = toType(params_type,params_value).toreturnType()
-                    print getvalue
                     body[params_name] = getvalue
     return body,files
 
