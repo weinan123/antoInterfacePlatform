@@ -94,8 +94,10 @@ def runsingle(request):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
+        showflag = ""
         if bodyinfor != "" or bodyinfor != "{}":
             bodyinfor = json.loads(bodyinfor)
+            showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
         dependData = []
@@ -130,7 +132,7 @@ def runsingle(request):
         # 非加密执行接口
         if isScreat == False or isScreat == "":
             try:
-                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -149,7 +151,7 @@ def runsingle(request):
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
             try:
-                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999, "error": str(e)}
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
