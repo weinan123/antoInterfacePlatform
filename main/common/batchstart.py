@@ -58,9 +58,10 @@ class RunTest(unittest.TestCase):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
+        showflag = ""
         if bodyinfor != "" or bodyinfor != "{}":
             bodyinfor = json.loads(bodyinfor)
-
+            showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
         depend_flag = query.depend_caseId
         dependData = []
@@ -80,6 +81,10 @@ class RunTest(unittest.TestCase):
         url = host + send_url
         # 处理数据类型的方法
         send_body, files = until.mul_bodyData(bodyinfor)
+        if len(dependData) != 0:
+            for dd in dependData:
+                send_body[dd.keys()[0]] = dd.values()[0]
+        print("body: ", send_body)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         key_id = query.key_id
@@ -92,7 +97,7 @@ class RunTest(unittest.TestCase):
         # 非加密执行接口
         if isScreat == False or isScreat == "":
             try:
-                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999,"error": str(e)}
                 apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -111,7 +116,7 @@ class RunTest(unittest.TestCase):
                                                       headersOpt)
             try:
                 resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
-                                                                send_url, headers, send_body, files, isRedirect)
+                                                                send_url, headers, send_body, files, isRedirect, showflag)
             except Exception as e:
                 datas = {"status_code": -999,"error": str(e)}
                 apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
