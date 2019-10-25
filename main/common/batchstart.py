@@ -77,7 +77,8 @@ class RunTest(unittest.TestCase):
 
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
+        print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
+        host = query.host
         url = host + send_url
         # 处理数据类型的方法
         send_body, files = until.mul_bodyData(bodyinfor)

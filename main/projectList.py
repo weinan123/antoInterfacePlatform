@@ -210,8 +210,10 @@ def firstProjectListInfo(request):
             host = respList[i]['host']
             moduleName = respList[i]['moduleName']
             createTime = str(respList[i]['createTime']).split('.')[0]
-            updateTime = str(respList[i]['updateTime']).split('.')[0]
+            # updateTime = str(respList[i]['updateTime']).split('.')[0]
             totalModule = interfaceList.objects.filter(projectName=projectName).count()
+            # updateTime = interfaceList.objects.filter(projectName=projectName).order_by('updateTime')[0]['updateTime']
+            updateTime = str(interfaceList.objects.filter(projectName=projectName).order_by('-updateTime').values("updateTime")[0]['updateTime']).split('.')[0]
             if (moduleName == ''):
                 seen.add(projectName)
                 json_dict["projectName"] = projectName

@@ -22,18 +22,20 @@ def getdepands(depend_list, depend_data):
         if headers != "":
             headers = json.loads(headers)
         bodyinfor = query.body
-        if bodyinfor != "" or bodyinfor != "{}":
+        showflag = ""
+        if bodyinfor != "" and str(bodyinfor) != "{}":
             bodyinfor = json.loads(bodyinfor)
+            showflag = bodyinfor["showflag"]
         listid = query.owningListID
         querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
-        url = host + send_url
+        host = query.host
+        url = str(host) + str(send_url)
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect)
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
         # 加密执行
         else:
             key_id = query.key_id
@@ -48,7 +50,7 @@ def getdepands(depend_list, depend_data):
             timestamp = int(time.time())
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
-            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect)
+            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
         print(resp.headers)
         print(resp.raw)
         print(resp.cookies)

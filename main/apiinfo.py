@@ -95,7 +95,7 @@ def runsingle(request):
             headers = json.loads(headers)
         bodyinfor = query.body
         showflag = ""
-        if bodyinfor != "" or bodyinfor != "{}":
+        if bodyinfor != "" and str(bodyinfor) != "{}":
             bodyinfor = json.loads(bodyinfor)
             showflag = bodyinfor["showflag"]
         # 判断是否有关联用例
@@ -112,9 +112,9 @@ def runsingle(request):
             else:
                 print("depend data is None.")
         listid = query.owningListID
-        querylist = interfaceList.objects.get(id=listid)
-        host = querylist.host
-        url = host + send_url
+        # querylist = interfaceList.objects.get(id=listid)
+        host = query.host
+        url = str(host) + str(send_url)
         # 处理数据类型的方法
         send_body, files = mul_bodyData(bodyinfor)
         if len(dependData) != 0:
@@ -329,7 +329,7 @@ def getapiInfos(request):
             listdata = interfaceList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
-            json_dict["host"] = listdata.host
+            json_dict["host"] = query.host
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
             print modulelist
             for module in modulelist:
