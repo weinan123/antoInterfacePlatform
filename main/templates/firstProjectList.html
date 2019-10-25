@@ -25,10 +25,6 @@
                             <table class="table table-bordered"
                                    style="border-style: none;border-width: 0px;margin-bottom: 0px;">
                                 <tr>
-                                    <td style="border-width: 0px;padding-left: 0px;"><label>域名地址：</label>{! item.host !}
-                                    </td>
-                                </tr>
-                                <tr>
                                     <td style="border-width: 0px;padding-left: 0px;"><label>创建时间：</label>{!
                                         item.createTime !}
                                     </td>
@@ -104,14 +100,6 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="id_host" class="col-sm-3 control-label">域名地址:</label>
-                                        <div class="col-sm-9">
-                                            <input class="form-control" type="text" name="host" required
-                                                   v-model="hostNew"
-                                                   id="id_host" maxlength="50" placeholder="请输入域名地址"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
                                         <div class="col-sm-6">
                                             <input type="submit" class="btn btn-primary"
                                                    @click="submitFormNew($event)" value="新建"/>
@@ -145,9 +133,7 @@
                 return {
                     projectName: '',
                     moduleName: '',
-                    host: '',
                     projectNameNew: '',
-                    hostNew: '',
                     file: '',
                     list: [],
                     checkedDelete: [],
@@ -176,7 +162,7 @@
                 },
 
                 submitFormNew(event) {
-                    if (this.projectNameNew === '' || this.hostNew === '') {
+                    if (this.projectNameNew === '') {
                         alert('请输入所有字段！');
 
                     } else {
@@ -186,7 +172,6 @@
                         event.preventDefault();
                         let formData = new FormData();
                         formData.append('projectName', this.projectNameNew);
-                        formData.append('host', this.hostNew);
 
                         let config = {
                             headers: {
