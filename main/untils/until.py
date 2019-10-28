@@ -22,10 +22,13 @@ def mul_bodyData(bodyinfor):
     if bodyinfor == "" or str(bodyinfor) == "{}" :
         body = {}
         files = {}
+        showflag = ""
     else:
         paramsData = bodyinfor["datas"]
+        showflag = bodyinfor["showflag"]
         if bodyinfor["showflag"] == 3:
             body = paramsData[0]["paramValue"]
+
         else:
             for i in range(0,len(paramsData)):
                 params_name = paramsData[i]["paramName"]
@@ -41,7 +44,7 @@ def mul_bodyData(bodyinfor):
                 else:
                     getvalue = toType(params_type,params_value).toreturnType()
                     body[params_name] = getvalue
-    return body,files
+    return body,files,showflag
 
 import time,os
 def re_exe(cmd,inc = 60):
