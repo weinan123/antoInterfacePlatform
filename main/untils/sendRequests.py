@@ -23,7 +23,7 @@ class sendRequest():
             redirect = True
         return redirect
     def sendRequest(self,methods,url,headers,send_body,files,isRedirect,showflag):
-        print files
+        #print files
         s = requests.Session()
         response = ""
         if (methods == "GET"):
@@ -36,7 +36,7 @@ class sendRequest():
             except Exception as e:
                 headerType = ""
             postbody = self.mulBody(headerType, send_body,showflag)
-            print postbody
+            #print postbody
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect)
@@ -51,19 +51,19 @@ class sendRequest():
         #加密请求体
         body = postbody.decode('unicode-escape')
         #body = json.dumps(send_body).decode('unicode-escape')
-        print body
+        #print body
         headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
         if Authorization == "":
             result = authService.simplify_sign(credentials, methods, send_url, json.dumps(headers), timestamp, 300,
                                                headersOpt)
-            print result
+            #print result
             headers['X-encryptflag'] = '1'
             headers['Authorization'] = result
         else:
             headers['Authorization'] = Authorization
         if headers.get('X-encryptflag') == '1' and body:
-            print 'body before encrypted: '
-            print body
+            #print 'body before encrypted: '
+            #print body
             body = authService.aes_encrypt(body)
         if (methods == "GET"):
             response = requests.get(url, headers=headers, params=body, verify=False,allow_redirects=redirect)
@@ -71,10 +71,11 @@ class sendRequest():
             response = requests.post(url, headers=headers,files=files, data=body, verify=False,allow_redirects=redirect)
         resp = response.text
         if headers.get('X-encryptflag') != '1':
-            print 'response: '
+            pass
+            #print 'response: '
         else:
-            print 'response before decrypt: '
-            print resp
+            #print 'response before decrypt: '
+            #print resp
             resp = authService.aes_decrypt(resp)
         print('response: ')
         return resp

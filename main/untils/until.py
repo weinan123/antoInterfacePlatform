@@ -34,7 +34,7 @@ def mul_bodyData(bodyinfor):
                 params_name = paramsData[i]["paramName"]
                 params_value = paramsData[i]["paramValue"]
                 params_type = paramsData[i]["paramType"]
-                print params_name,params_value,params_type
+                #print params_name,params_value,params_type
                 if(params_type=='file'):
                     path = r'main/postfiles/%s' % bodyinfor[i]["paramValue"]
                     if os.path.exists(path):

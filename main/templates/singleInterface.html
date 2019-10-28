@@ -896,7 +896,7 @@ var vm = new Vue({
              this.data_to_send["moduleName"] = moduleName;
              this.data_to_send["caseName"] = caseName;
              this.data_to_send["creator"] = vm.$data.login_user;
-             //console.log(this.data_to_send);
+             console.log(this.data_to_send);
              if (this.initflag === false) {
                  axios.post('/newCase/', {
                      params: {

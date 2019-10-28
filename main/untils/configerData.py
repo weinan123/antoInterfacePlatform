@@ -9,14 +9,14 @@ class configerData():
         curpath = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
         print curpath
         self.iniFileUrl = curpath+"/configerdatas/config_data"
-        print self.iniFileUrl
+        #print self.iniFileUrl
         try:
             self.conf.read(self.iniFileUrl)
         except Exception as e:
             print e
     def saveData(self,section,reqdata):
         for key,value in reqdata.items():
-            print key,value
+            #print key,value
             self.conf.set(section,key,(value))
         self.conf.write(open(self.iniFileUrl, "w"))
 
