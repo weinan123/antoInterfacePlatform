@@ -87,8 +87,8 @@ def getprojectCase(request):
 def saveConfigData(request):
     if request.method == "POST":
         reqdata = json.loads(request.body)
-        print reqdata
-        print reqdata.items
+        #print reqdata
+        #print reqdata.items
         reqdata["senderList"] = ", ".join(reqdata["senderList"])
         reqdata["runcase"] =list(set(reqdata["runcase"]))
         reqdata["runcase"]= ", ".join(reqdata["runcase"])
@@ -113,7 +113,7 @@ def updateHost():
     evirment = conf.getItemData("configerinfor","eviorment").lower()
     if(evirment=="live"):
         evirment = ""
-    print evirment
+    #print evirment
     allHost = apiInfoTable.objects.all().values_list("apiID","host")
     for i in allHost:
         print i
@@ -126,7 +126,7 @@ def updateHost():
             match2 = re.search('dev',host )
             match4 = re.search('.youyu',host )
             match3 = re.search('stage',host )
-            print match1,match2,match3,match4
+            #print match1,match2,match3,match4
             if(match1!=None):
                 host =host.replace('qa',evirment)
                 apiInfoTable.objects.filter(apiID=id).update(host=host)
@@ -147,11 +147,11 @@ def updateHost():
 def getConfiginitData(request):
     conf = configerData.configerData()
     confData = conf.getData("configerinfor")
-    print confData
+    #print confData
     data={}
     for i in confData:
         data[i[0]] = i[1]
-    print data
+    #print data
     return JsonResponse(data, safe=False)
 
 

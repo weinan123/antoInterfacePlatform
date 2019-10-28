@@ -206,13 +206,13 @@ var vm = new Vue({
         addSender(){
             var data = "";
             this.senderList.push(data);
-            console.log(this.senderList)
+            //console.log(this.senderList)
         },
         deleteSender(index){
             this.senderList.splice(index,1)
         },
         checkemail(index,email){
-            console.log(email);
+            //console.log(email);
             var reg = /^[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/;
             if(reg.test(email)){
                 this.indexsss=false;
@@ -231,9 +231,9 @@ var vm = new Vue({
         addCase(){
             axios.get('/getAllcase/')
                 .then(resp =>{
-                    console.log(resp.data);
+                    //console.log(resp.data);
                     this.projectList = resp.data.projectList;
-                    console.log(this.projectList);
+                    //console.log(this.projectList);
                     if(resp.data.projectList.length===0){
                         this.datas = 0
                     }
@@ -250,13 +250,13 @@ var vm = new Vue({
             this.selectAll=false;
             var target = document.getElementById("allmodelcase");
             var spinner = Spinner().spin(target);
-            console.log(initProjectName);
+            //console.log(initProjectName);
             axios.get('/getprojectCase/',{params: {
                         initProjectName:initProjectName,
                     }})
                 .then(resp =>{
                     spinner.spin();
-                    console.log(resp.data);
+                    //console.log(resp.data);
                     this.modelList=[];
                     for(var i=0;i<resp.data.data.length;i++){
                             let data = {
@@ -314,7 +314,7 @@ var vm = new Vue({
             }else{
                 this.caseList.pop(e.target.value)
             }
-            console.log(this.caseList)
+            //console.log(this.caseList)
         },
         saveConfig(){
 
@@ -343,7 +343,7 @@ var vm = new Vue({
                     runcase: this.caseList,
                     sechdel_time: this.timingDay + "&" + this.timingHour,
                 };
-                console.log(this, data_to_send);
+                //console.log(this, data_to_send);
                 axios.post('/saveConfigData/', data_to_send)
                     .then(resp => {
                         toastr.options = {
@@ -361,7 +361,7 @@ var vm = new Vue({
                             showMethod: "fadeIn",
                             hideMethod: "fadeOut"
                         };
-                        console.log(resp.data);
+                        //console.log(resp.data);
                         if (resp.data.code === 0) {
                             spinner.spin();
                             toastr.success(resp.data.msg);
@@ -377,7 +377,7 @@ var vm = new Vue({
         getinitData(){
             axios.post('/getConfiginitData/')
                 .then(resp =>{
-                    console.log(resp.data);
+                    //console.log(resp.data);
                     this.showinitData(resp.data)
 
                     }).catch(err=>{

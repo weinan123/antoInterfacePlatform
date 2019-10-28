@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-
     <link href="/static/css/newindex.css" rel="stylesheet">
     <link href="/static/css/baseCss.css" rel="stylesheet">
     <link href="/static/css/apiCasesPage.css" rel="stylesheet">
@@ -128,7 +127,7 @@ var vm1 = new Vue({
             if (username===""){
                 window.location.href='/login';
             }else{
-                console.log(this.getCookie("usename"));
+                //console.log(this.getCookie("usename"));
             this.username = this.getCookie("usename");
             }
         },
@@ -136,7 +135,7 @@ var vm1 = new Vue({
         getUserLevel(){
          axios.get('/getUserLevel/',{params:{ username:this.getCookie("usename")}})
              .then(resp =>{
-                 console.log(resp.data);
+                 //console.log(resp.data);
                  this.user_level = resp.data.user_level;
                  this.user_configPermit = resp.data.user_configPermit;
                  this.user_group  = resp.data.user_group;

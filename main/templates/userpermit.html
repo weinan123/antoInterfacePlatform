@@ -216,7 +216,7 @@ methods:{
                          resp.data.datas[i].config_false=false
                      }
                  }
-                 console.log(resp.data.datas);
+                 //console.log(resp.data.datas);
                  self.count =(page-1)*14;
                  this.userList=[];
                  self.userList=resp.data.datas;
@@ -234,7 +234,7 @@ methods:{
          };
            axios.post('/getUserData/',data_to_send)
              .then(resp =>{
-                 console.log(resp.data);
+                 //console.log(resp.data);
                  this.page_num = resp.data.page_num;
                  this.showPaginator(username)
                     }).catch(err=>{
@@ -256,7 +256,7 @@ methods:{
                          resp.data.datas[i].config_false=false
                      }
                  }
-                 console.log(resp.data.datas);
+                 //console.log(resp.data.datas);
                  this.userList=resp.data.datas;
                  //spinner.spin();
                     }).catch(err=>{
@@ -287,7 +287,7 @@ methods:{
                                  showMethod: "fadeIn",
                                  hideMethod: "fadeOut"
                              };
-                             console.log(resp.data);
+                             //console.log(resp.data);
                              toastr.success("删除成功");
                              self.getUserData(self.currentPage, 14);
 
@@ -300,7 +300,7 @@ methods:{
          }
      },
      saveData(){
-         console.log(this.userList);
+         //console.log(this.userList);
          data_to_send = {
              userdatas:this.userList
          };
@@ -342,7 +342,7 @@ methods:{
 
      },
      changePetmit(params,e,type){
-         console.log(params,e.target.value,type);
+         //console.log(params,e.target.value,type);
          if (type==='check'){
              this.userList[params].batch_check=e.target.checked;
          }else if(type==='del'){
@@ -358,10 +358,10 @@ methods:{
               this.userList[params].config_true=false;
               this.userList[params].configer_permit=false
          }
-         console.log(this.userList);
+         //console.log(this.userList);
     },
      editUser(index,params){
-         console.log(params);
+         //console.log(params);
          this.editusername=params.username;
          this.department = params.department;
          this.depart_level= params.depart_name;

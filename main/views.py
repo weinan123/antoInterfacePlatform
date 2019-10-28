@@ -21,7 +21,6 @@ def login(request):
     if username is not None:
         returndata = {"status": "success", "message": "login success", "username": username}
         return JsonResponse(returndata, safe=False)
-
     else:
         if request.method == 'POST':
             data = json.loads(request.body)
@@ -31,33 +30,32 @@ def login(request):
                 url = 'http://10.9.19.212:8888/accounts/ldapVerify/'
                 data = {'username':username,'password':password}
                 response = requests.post(url,data = data)
-                print response.text
+                #print response.text
                 if response.text == 'pass':
-                    response = redirect('index/', {'username': username})
+                    #response = redirect('index/', {'username': username})
                     request.session['username'] = username
                     request.session['password'] = password
-                    response.set_cookie('username', username, 3600)
-                    response.set_cookie('password', password, 3600)
+                    #response.set_cookie('username', username, 3600)
+                    #response.set_cookie('password', password, 3600)
                     users.objects.get_or_create(username=username)
                     returndata = {"status": "success", "message": "login success", "username": username}
                     return HttpResponse(json.dumps(returndata), content_type="'application/javascript")
                 else:
+                    returndata = {"status": "fail", "message": "用户名或者密码错误"}
+                    return JsonResponse(returndata, safe=False)
+                    '''
                     re = auth.authenticate(username = username,password=password)
                     print re
                     if re is not None:
                         auth.login(request,re)
-                        response = redirect('index/',{'username':username })
+                        #response = redirect('index/',{'username':username })
                         request.session['username'] = username
                         request.session['password'] = password
-                        response.set_cookie('username',username,3600)
-                        response.set_cookie('password', password, 3600)
+                        #response.set_cookie('username',username,3600)
+                        #response.set_cookie('password', password, 3600)
                         returndata = {"status": "success", "message": "login success","username":username}
                         return JsonResponse(returndata,safe=False)
-
-                    else:
-                        returndata = {"status": "fail", "message": "用户名或者密码错误"}
-                        return JsonResponse(returndata,safe=False)
-
+                    '''
             except:
                 print Exception
         return render(request,'login.html')
@@ -67,6 +65,8 @@ def logout(request):
     response = HttpResponse('/login/')
     response.delete_cookie('username')
     return render(request, "login.html")
+'''
+没有注册功能
 def register(request):
     if request.method == 'POST':
         uf = UserForm(request.POST)
@@ -89,6 +89,7 @@ def register(request):
     else:
         uf = UserForm()
     return render(request, 'register.html', {'uf': uf})
+    '''
 def singleInterface(request):
     return render(request, 'singleInterface.html')
 def sendRequest(request):
@@ -117,7 +118,7 @@ def sendRequest(request):
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
     model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
-    print project_list,model_list
+    #print project_list,model_list
     returnData = {
         "project_list":[],
         "model_list":[]
@@ -126,7 +127,7 @@ def getProjectList(request):
         returnData["project_list"].append(project_list[i])
     for j in range(0,len(model_list)):
         returnData["model_list"].append(model_list[j])
-    print returnData
+    #print returnData
     return JsonResponse(returnData,safe=False)
 
 
@@ -145,12 +146,12 @@ def newCase(request):
         creator = request.session.get('username')
         send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
-        print flag
+        #print flag
         if(flag == False):
             try:
                 id = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
-                print id
+                #print id
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,host=host,url =url,body=send_body,
                                                    apiName=caseName,owningListID=int(owningListID),creator=creator)
                 data = {
@@ -167,7 +168,7 @@ def newCase(request):
             try:
                 id1 = int(reqdata["apiId"])
                 proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
-                print("---------------id:-------", proid)
+                #print("---------------id:-------", proid)
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
                                                               headers=headers,
                                                               body=send_body,owningListID=proid[0]["id"])
@@ -199,7 +200,7 @@ def returnAuthorization(request):
         }
         headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
         result = authService.simplify_sign(credentials, http_method, path, headers, timestamp, 300, headersOpt)
-        print result
+        #print result
         returnData = {
             "code":0,
             "data":result
@@ -214,7 +215,7 @@ def getchartData(request):
     for s in projectName:
         projectList.append(s["projectName"])
     alldata = countCase.objects.all().values()
-    print alldata
+    #print alldata
     for i in alldata:
         data={}
         data["projectName"] = i["projectName"]
@@ -247,13 +248,13 @@ def pararmsFiles(request):
                 pic.write(c)
         data={
             'code':0,
-            'msg':"upload file success"
+            'msg':"上传文件成功"
         }
     except Exception as e:
         print e
         data = {
-            'code': 0,
-            'msg': "upload file failed"
+            'code': -1,
+            'msg': "上传文件失败"
         }
     return JsonResponse(data, safe=False)
 
