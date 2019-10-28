@@ -6,13 +6,13 @@
     <link href="/static/css/project.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="content" id="projectList" style="width: 100%;height: 100%;position: relative;">
+    <div class="content" id="projectList" style="width: 88%;height: 100%;">
         <div class="pageheader">
             <p class="titlecss">项目管理</p>
         </div>
 
-        <div class="formContent" id="row" style="width: 80%;">
-            <div class="form-horizontal" role="form" style="overflow: hidden;padding-top: 15px;">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="spinner" style="float: left;width: 78%;position: absolute;padding-left: 31px;padding-right: 31px;margin-top: 1%">
+            <div class="form-horizontal" role="form" style="overflow: hidden;padding-top: 15px;width: 100%;background-color: white;">
                 <div v-for="item in list" class="col-lg-4 col-md-6 col-sm-6">
                     <div class="panel panel-primary" style="border-color: #dbe0eb;">
 
@@ -62,12 +62,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="col-lg-4 col-md-6 col-sm-6" style="height: 286px">
                     <div class="panel panel-primary" style="border-color: #dbe0eb;">
                         <div class="panel-heading"  style="color: #347daf;border-bottom-color:#ebf3f9;background-color: #ebf3f9;background-image:-webkit-linear-gradient(top, #ebf3f9 0%, #ebf3f9 0%)">
                             <p class="panel-title" style="font-weight:bold;">新增</p>
                         </div>
-                        <div class="panel-body" style="text-align: center;height: 262px;">
+                        <div class="panel-body" style="text-align: center;height: 221px;">
                             <button type="button" class="addButton" data-toggle="modal" data-target="#newProject">
                                 <div>
                                     <span class="glyphicon glyphicon-plus" style="font-size: 80px;"></span>
@@ -143,8 +143,8 @@
                 vm1.$data.currentSort = 2;
             },
             mounted() {
-                var target = document.getElementById("row");
-                var spinner = Spinner({top: '2'}).spin(target);
+                var target = document.getElementById("spinner");
+                var spinner = Spinner({top: '1'}).spin(target);
 
                 axios
                     .get('/firstProjectListInfo/')
@@ -197,8 +197,8 @@
                             )
                             .then(
                                 () => {
-                                    var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '2'}).spin(target2);
+                                    var target2 = document.getElementById("spinner");
+                                    var spinner2 = Spinner({top: '1'}).spin(target2);
 
                                     axios
                                         .get('/firstProjectListInfo/')
@@ -220,7 +220,7 @@
                     if (!confirm("确认要删除？")) {
                         window.event.returnValue = false;
                     } else {
-                        var target = document.getElementById("row");
+                        var target = document.getElementById("spinner");
                         var spinner = Spinner({top: '2'}).spin(target);
 
                         axios.get('/firstProjectDelete?projectName=' + projectName)
