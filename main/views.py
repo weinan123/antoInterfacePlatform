@@ -107,7 +107,6 @@ def sendRequest(request):
     isScreat = Screatinfor["isScreat"]
     key_id = Screatinfor["key_id"]
     secret_key = Screatinfor["secret_key"].encode("utf-8")
-    #showflag = bodyinfor["showflag"]
     #非加密执行接口
     if isScreat=="":
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect,showflag)
@@ -207,13 +206,14 @@ def returnAuthorization(request):
         }
         #return result
         return JsonResponse(returnData,safe=False)
+#首页获取图标数据
 def getchartData(request):
     dataList=[]
-    alldata = countCase.objects.all().values()
     projectList = []
     projectName = interfaceList.objects.filter().values("projectName").distinct()
     for s in projectName:
         projectList.append(s["projectName"])
+    alldata = countCase.objects.all().values()
     print alldata
     for i in alldata:
         data={}
@@ -229,7 +229,7 @@ def getchartData(request):
         "data":dataList,
         "projectList":projectList
     }
-    print returndata
+    #print returndata
     return JsonResponse(returndata, safe=False)
 #参数带文件上传
 import os

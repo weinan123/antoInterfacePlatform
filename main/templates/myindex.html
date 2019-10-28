@@ -64,20 +64,18 @@ var vm = new Vue({
         getallData(){
             axios.get('/getchartData/',params={})
              .then(resp =>{
-                 console.log(resp.data);
+                 //console.log(resp.data);
                  this.projectNameList=resp.data.projectList;
                  var projectName=this.projectNameList[0];
                  this.returndata = (resp.data.data);
                  this.changeChart(0,projectName);
-                 console.log(resp.data.data);
+                 //console.log(resp.data.data);
                     }).catch(err=>{
                         console.log('请求失败:'+err.status+','+err.statusText);
                 })
         },
         mulchartData(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
                         failcasemodelist,nullcasemodelist){
-            {% comment %}console.log(subtext,allcase,allcasepass,allcasefail,allcasenull,modelListName,allcasemodellist,passcasemodelist,
-                        failcasemodelist,nullcasemodelist);{% endcomment %}
             var tab2Option ={
 			title : {
 				text : '项目总执行情况',
