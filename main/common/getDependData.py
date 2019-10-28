@@ -51,22 +51,25 @@ def getdepands(depend_list, depend_data):
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
-        print(resp.headers)
-        print(resp.raw)
-        print(resp.cookies)
-        print(resp.text)
+        print(u"依赖接口返回信息： %s " % str(resp.text))
         for k in dependData:
-            print k
             value = ""
             keyv = dependData[k]
             # 这里拿依赖的数据
             responseText = json.loads(resp.text)
-            print responseText[k]
-            for v in responseText[k]:
-                print v
-                if keyv == v :
-                    value = responseText[k][v]
-                    break
+            if "dict" in str(type(responseText[k])):
+                for v in responseText[k]:
+                    if keyv == v :
+                        value = responseText[k][v]
+                        break
+            else:
+                for v in responseText[k]:
+                    for j in v:
+                        if keyv == j:
+                            value = v[j]
+                            break
+                    if value != "":
+                        break
             data_dict[keyv] = value
             dpdatas.append(data_dict)
     return dpdatas
