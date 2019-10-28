@@ -4,9 +4,7 @@ from models import apiInfoTable, interfaceList,reports, users
 import time
 import json
 from django.http.response import JsonResponse
-from untils.until import mul_bodyData
-from untils import sendRequests
-from common import authService,batchstart,getDependData
+from common import batchstart, batchUntils
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -80,85 +78,17 @@ def runsingle(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         id = req["id"]
-        try:
-            query = apiInfoTable.objects.get(apiID=id)
-        except Exception as e:
-            result = {"code": -2, "datas": "执行用例不存在，" + str(e)}
-            return JsonResponse(result)
-        methods = query.method
-        send_url = query.url
-        if methods == "" or send_url == "":
-            result = {"code": -1, "datas": "参数不能为空"}
-            return JsonResponse(result)
-        headers = query.headers
-        if headers != "":
-            headers = json.loads(headers)
-        bodyinfor = query.body
-        showflag = ""
-        if bodyinfor != "" and str(bodyinfor) != "{}":
-            bodyinfor = json.loads(bodyinfor)
-            showflag = bodyinfor["showflag"]
-        # 判断是否有关联用例
-        depend_flag = query.depend_caseId
-        print depend_flag
-        dependData = []
-        if depend_flag == "" or depend_flag is None:
-            print("not depend")
-        else:
-            depend_list = json.loads(depend_flag)
-            depend_data = query.depend_casedata
-            if depend_data != "" or depend_data != "{}":
-                print depend_list, depend_data
-                dependData = getDependData.getdepands(depend_list, depend_data)
-                print("dependData: ",dependData)
-            else:
-                print("depend data is None.")
-        listid = query.owningListID
-        # querylist = interfaceList.objects.get(id=listid)
-        host = query.host
-        url = str(host) + str(send_url)
-        # 处理数据类型的方法
-        send_body, files = mul_bodyData(bodyinfor)
-        if len(dependData) != 0:
-            for dd in dependData:
-                send_body[dd.keys()[0]] = dd.values()[0]
-        print("body: ", send_body)
-        isRedirect = query.isRedirect
-        isScreat = query.isScreat
-        key_id = query.key_id
-        secret_key = query.secret_key
-        timestamp = int(time.time())
-        assertinfo = str(query.assertinfo)
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        respResult = batchUntils.getResp(id, dtime)
+        code = respResult["code"]
         responseText = ""
-        # 非加密执行接口
-        if isScreat == False or isScreat == "":
-            try:
-                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
-            except Exception as e:
-                datas = {"status_code": -999, "error": str(e)}
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
-                result = {"code": -1, "info": "run error", "datas": str(datas)}
-                return JsonResponse(result)
-        # 加密执行
+        if code == 0:
+            resp = respResult["response"]
+            assertinfo = respResult["assert"]
         else:
-            credentials = authService.BceCredentials(key_id, secret_key)
-            print credentials
-            headers_data = {
-                'Accept': 'text/html, */*; q=0.01',
-                'X-Requested-With': 'XMLHttpRequest',
-                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
-            }
-            headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
-            Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
-                                                      headersOpt)
-            try:
-                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
-            except Exception as e:
-                datas = {"status_code": -999, "error": str(e)}
-                apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
-                result = {"code": -1, "info": "run error", "datas": str(datas)}
-                return JsonResponse(result)
+            respinfo = respResult["info"]
+            result = {"code": -1, "datas": respinfo}
+            return JsonResponse(result)
         try:
             statusCode = resp.status_code
             text = resp.text
@@ -208,7 +138,7 @@ def batchrun(request):
                 result = {"code": -1, "datas": "method或url不能为空"}
                 return JsonResponse(result)
 
-        batchResult = batchstart.start_main(idlist,reflag, exeuser)
+        batchResult = batchstart.start_main(idlist, reflag, exeuser)
         print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]
