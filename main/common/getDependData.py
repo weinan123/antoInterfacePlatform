@@ -10,9 +10,7 @@ def getdepands(depend_list, depend_data):
     dpdatas = []
     dependCase = depend_list
     dependData = json.loads(depend_data)
-    print depend_data
     for tid in dependCase:
-        print tid
         data_dict = {}
         query = apiInfoTable.objects.get(t_id=str(tid))
         methods = query.method
