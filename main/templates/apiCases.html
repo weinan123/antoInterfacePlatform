@@ -180,7 +180,6 @@
                     .then(resp =>{
                         console.log(resp.data);
                         this.permission = resp.data.permits;
-                        console.log(this.permission);
                         this.permission_run = this.permission.permission_run;
                         this.permission_del = this.permission.permission_del;
                         this.permission_view = this.permission.permission_view;
@@ -203,6 +202,10 @@
                 let pagenumber = number;
                 var target = document.getElementById("tableBody");
                 var spinner1 = Spinner({top:"1"}).spin(target);
+                if(this.cases_list.length===this.dlist.length && this.pageNum>1){
+                    this.pageNum = this.pageNum -1;
+                    pagenumber = pagenumber -1;
+                }
                 axios.get('/apiAllCases/',{
                     params:{
                         searchinfo:this.searchinfo,

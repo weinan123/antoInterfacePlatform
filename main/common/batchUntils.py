@@ -86,7 +86,7 @@ def getResp(id, dtime):
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
     # 处理数据类型的方法
-    send_body, files = mul_bodyData(bodyinfor)
+    send_body, files, showflag = mul_bodyData(bodyinfor)
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]

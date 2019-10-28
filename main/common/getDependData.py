@@ -31,7 +31,7 @@ def getdepands(depend_list, depend_data):
         host = query.host
         url = str(host) + str(send_url)
         # 处理数据类型的方法
-        send_body, files = mul_bodyData(bodyinfor)
+        send_body, files, showflag1 = mul_bodyData(bodyinfor)
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":

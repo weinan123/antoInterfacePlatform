@@ -39,6 +39,7 @@ def getReportList(request):
             'code': 0,
             'info': 'success',
             'totalCount': count,
+            'currentPageCount': len(json_list),
         }
     return JsonResponse(result)
 
@@ -59,8 +60,6 @@ def reportDelete(request):
             a = delReport(reName)
             if a == 0:
                 result = {'code': 0, 'info': 'delete success'}
-            else:
-                result = {'code': 1, 'info': 'delete sql success,delete local failed.'}
         else:
             result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
@@ -79,15 +78,13 @@ def reportbatchDelete(request):
             if ainfo:
                 try:
                     ainfo.delete()
-                    a = delReport(reName)
-                    if a == 0:
-                        print("delete %d success" % id)
-                    else:
-                        print("delete %d success from sql but delete failed from local." % id)
                     slist.append(id)
                 except BaseException as e:
                     flist.append(id)
                     print("delete %d failed :%s" % (id, str(e)))
+                a = delReport(reName)
+                if a == 0:
+                    print("delete %d success" % id)
             else:
                 flist.append(id)
                 print("删除%d失败:不存在" % id)
@@ -105,15 +102,13 @@ def delReport(rename):
     print "--------------"
     res = 0
     for file in files:
-        print file
         if str(file) == str(report_name):
             os.remove(path + file)
             print(file + " deleted")
             res = 0
             break
         else:
-            print(file + "!=" + report_name + " not delete")
-            res = -1
+            print(file + "!=" + report_name + " not exist,not delete")
     return res
 
 def viewReport(request):

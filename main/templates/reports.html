@@ -95,6 +95,9 @@ var vmRs = new Vue({
         getreportList() {
             var target = document.getElementById("tableBody");
             var spinner1 = Spinner({top:"1"}).spin(target);
+            if(this.cases_list.length===this.delList.length && this.pageNum>1){
+                this.pageNum = this.pageNum -1;
+            }
             axios.get('/reportList/', {
                 params:{
                         pageNum: this.pageNum,
@@ -113,6 +116,8 @@ var vmRs = new Vue({
                     this.totalCount = resp.data.totalCount;
                     if((this.totalCount / this.pageCount) > 1){
                         this.pageview = true;
+                    }else{
+                        this.pageview = false;
                     }
                     spinner1.spin();
                     this.selectCheck();
@@ -142,7 +147,6 @@ var vmRs = new Vue({
             let self = this;
             zdconfirm("确认要删除吗？", function (r) {
                 if (r) {
-                    console.log('id=' + id);
                     axios.post('/reportDelete/', {
                         params: {
                             id: id
@@ -153,7 +157,6 @@ var vmRs = new Vue({
                             let info = resp.data.info;
                             let code = resp.data.code;
                             if (code === 0) {
-                                console.log(self);
                                 toastr.options = {
                                      closeButton: false,
                                      debug: false,
@@ -168,11 +171,12 @@ var vmRs = new Vue({
                                      hideEasing: "linear",
                                      showMethod: "fadeIn",
                                      hideMethod: "fadeOut"
-                                 };
-                                 toastr.success("删除成功");
+                                };
+                                toastr.success("删除成功");
                                 self.getreportList();
                             } else {
                                 alert("删除失败:" + info);
+                                self.getreportList();
                             }
                         })
                         .catch(err => {
@@ -269,6 +273,7 @@ var vmRs = new Vue({
                                     hideMethod: "fadeOut"
                                 };
                                 toastr.error("删除失败");
+                                self.getreportList();
                             }
                         })
                         .catch(err => {
