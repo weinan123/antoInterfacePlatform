@@ -366,6 +366,7 @@ var vm = new Vue({
                             spinner.spin();
                             toastr.success(resp.data.msg);
                         } else {
+                            spinner.spin();
                             toastr.error(resp.data.msg)
                         }
                     }).catch(err => {

@@ -114,32 +114,35 @@ def updateHost():
     if(evirment=="live"):
         evirment = ""
     print evirment
-    allHost = interfaceList.objects.all().values_list("id","host")
+    allHost = apiInfoTable.objects.all().values_list("apiID","host")
     for i in allHost:
         print i
         id = i[0]
         host = i[1]
-        match1 = re.search('qa',host )
-        match2 = re.search('dev',host )
-        match4 = re.search('.youyu',host )
-        match3 = re.search('stage',host )
-        print match1
-        if(match1!=None):
-            host =host.replace('qa',evirment)
-            interfaceList.objects.filter(id=id).update(host=host)
+        if host==None:
             continue
-        if (match2 != None):
-            host = host.replace('dev', evirment)
-            interfaceList.objects.filter(id=id).update(host=host)
-            continue
-        if (match3 != None):
-            host = host.replace('stage', evirment)
-            interfaceList.objects.filter(id=id).update(host=host)
-            continue
-        if (match4 != None):
-            host = host.replace('.youyu', evirment+".youyu")
-            interfaceList.objects.filter(id=id).update(host=host)
-            continue
+        else:
+            match1 = re.search('qa',host )
+            match2 = re.search('dev',host )
+            match4 = re.search('.youyu',host )
+            match3 = re.search('stage',host )
+            print match1,match2,match3,match4
+            if(match1!=None):
+                host =host.replace('qa',evirment)
+                apiInfoTable.objects.filter(apiID=id).update(host=host)
+                continue
+            if (match2 != None):
+                host = host.replace('dev', evirment)
+                apiInfoTable.objects.filter(apiID=id).update(host=host)
+                continue
+            if (match3 != None):
+                host = host.replace('stage', evirment)
+                apiInfoTable.objects.filter(apiID=id).update(host=host)
+                continue
+            if (match4 != None):
+                host = host.replace('.youyu', evirment+".youyu")
+                apiInfoTable.objects.filter(apiID=id).update(host=host)
+                continue
 
 def getConfiginitData(request):
     conf = configerData.configerData()

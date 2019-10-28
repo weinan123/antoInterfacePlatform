@@ -103,11 +103,11 @@ def sendRequest(request):
     url = host+send_url
     Screatinfor = data["Screatinfor"]
     #处理数据类型的方法
-    send_body, files = mul_bodyData(bodyinfor)
+    send_body, files, showflag = mul_bodyData(bodyinfor)
     isScreat = Screatinfor["isScreat"]
     key_id = Screatinfor["key_id"]
     secret_key = Screatinfor["secret_key"].encode("utf-8")
-    showflag = bodyinfor["showflag"]
+    #showflag = bodyinfor["showflag"]
     #非加密执行接口
     if isScreat=="":
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect,showflag)
