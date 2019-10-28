@@ -287,7 +287,7 @@
 
             },
             delapi(id) {
-                {% comment %}var  self = this;{% endcomment %}
+                let self = this;
                 zdconfirm("确认要删除吗？", function (r) {
                     if (r) {
                         console.log('id=' + id);
@@ -316,10 +316,11 @@
                                          showMethod: "fadeIn",
                                          hideMethod: "fadeOut"
                                      };
-                                     toastr.success("删除成功");
+                                    toastr.success("删除成功");
                                     self.getlist(self.pageNum);
                                 } else {
-                                    window.alert("删除失败:" + info);
+                                    toastr.error("删除失败:",info);
+                                    self.getlist(self.pageNum);
                                 }
                             })
                             .catch(err => {
@@ -386,7 +387,6 @@
                 for(let j=0;j<self.casesSel_list.length;j++){
                     dellist.push(self.casesSel_list[j][0]);
                 }
-                console.log("********dellist************",dellist);
                 if (dellist.length !== 0) {
                     zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
                         if (r) {
@@ -419,6 +419,7 @@
                                             hideMethod: "fadeOut"
                                         };
                                         toastr.error("删除失败");
+                                        self.getlist(self.pageNum);
                                     }
                                 })
                                 .catch(err => {
