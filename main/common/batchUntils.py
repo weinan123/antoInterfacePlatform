@@ -80,7 +80,7 @@ def getResp(id, dtime):
             print(u"关联数据：depend data is None.")
     listid = query.owningListID
     querylist = interfaceList.objects.get(id=listid)
-    print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
+    print(u"所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
     print u"请求方法：%s" % (methods)
     host = query.host
     url = str(host) + str(send_url)
