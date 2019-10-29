@@ -25,12 +25,11 @@ class RunTest(unittest.TestCase):
         singleResult = self.singleRun(caseID)
         if singleResult["code"] == 0:
             state = True
-            print("case (%s:%s) is run success." % (caseID, caseName))
+            print (u"执行结果：case (%s:%s) 执行成功." % (caseID, caseName))
         else:
             state = False
-            print("case (%s:%s) is run fail:%s" % (caseID, caseName, str(singleResult["datas"])))
+            print(u"执行结果：case (%s:%s) 执行失败:%s" % (caseID, caseName, str(singleResult["datas"])))
         self.assertEqual(True, state)
-
 
     # 闭包函数
     @staticmethod
@@ -58,6 +57,8 @@ class RunTest(unittest.TestCase):
         statusCode = resp.status_code
         text = resp.text
         responseText = text
+        print(u"返回数据:%s ", responseText)
+        print(u"断言数据:%s ", assertinfo)
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:

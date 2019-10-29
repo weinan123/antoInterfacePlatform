@@ -6,7 +6,7 @@
 {% endblock %}
 {% block content %}
     <!--<div class="row" style="border: #337ab7">-->
-<div class="content" id ="app2">
+<div class="content" id ="app2" style="height: 100%;">
  <div class="headerdiv">
     {% comment %}<form class="bs-example bs-example-form" role="form">
 		<div class="row" >
@@ -217,7 +217,7 @@
     <div class="row"  v-if="(showState === 1 && showbodyState === 3) " >
          <div class="col-lg-12 form-group">
                 <label for="name">ROW数据</label>
-                <textarea class="form-control" rows="15" v-model="rawValue"></textarea>
+                <textarea class="form-control" rows="10" v-model="rawValue"></textarea>
          </div>
      </div>
     <table class="table table-bordered" v-if="showState === 2">
