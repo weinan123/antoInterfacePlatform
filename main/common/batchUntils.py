@@ -68,7 +68,7 @@ def getResp(id, dtime):
     depend_flag = query.depend_caseId
     dependData = []
     if depend_flag == "" or depend_flag is None:
-        print(u"关联数据：无")
+        print(u"是否关联：否")
     else:
         depend_list = json.loads(depend_flag)
         depend_data = query.depend_casedata
@@ -77,7 +77,7 @@ def getResp(id, dtime):
             dependData = getDependData.getdepands(depend_list, depend_data)
             print u"关联数据：%s" % (dependData)
         else:
-            print("depend data is None.")
+            print(u"关联数据：无")
     listid = query.owningListID
     querylist = interfaceList.objects.get(id=listid)
     print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
