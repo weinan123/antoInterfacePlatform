@@ -76,4 +76,4 @@ class MailSender:
 
 if __name__ == '__main__':
     mailsender=MailSender()
-    mailsender.sendMail(['nan.wei@yff.com'],'Test','weinannantest',True,r'D:\project\auto_interface\antoInterfacePlatform\main\report\2019-09-26-16_54_27_result.html','normal')
+    mailsender.sendMail(['nan.wei@yff.com'],'Test','weinannantest',True,r'D:\project\auto_interface\antoInterfacePlatform\main\report\2019-10-27-15_00_06_result.html','normal')

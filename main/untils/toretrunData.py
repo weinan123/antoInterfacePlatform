@@ -5,7 +5,6 @@ class toType():
     def __init__(self,type,data):
         self.type = type
         self.data = data
-        print
     def toreturnType(self):
         data_type = {
             "Text":self.toText,
