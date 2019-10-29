@@ -143,10 +143,10 @@ def batchrun(request):
         if reportflag == True:
             report_localName = batchResult["reportPath"]
             report_runName = req["pmName"] +"_" + batchResult["reportname"]
-            totalNum = len(idlist)
             successNum = batchResult["sNum"]
             failNum = batchResult["fNum"]
             errorNum = batchResult["eNum"]
+            totalNum = successNum + failNum + errorNum
             endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             result_infos = {
                 "report_runName": report_runName,

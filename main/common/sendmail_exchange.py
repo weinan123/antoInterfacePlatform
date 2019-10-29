@@ -12,7 +12,7 @@ class MailSender:
     mailserver="owasz.yff.com"
     sendermail="Automator@yff.com"
 
-    def sendMail(self,recipients,subject,content,isHtml,attatchment,importance='Normal'):
+    def sendMail(self,recipients,subject,content,isHtml,attatchment,successNum,faileNum,errorNum,importance='Normal'):
         """
         发送邮件
         :param recipients:  收件人列表
@@ -64,10 +64,15 @@ class MailSender:
         else:
             binary_file_content ="<p>报告获取失败</p>"
             my_file = ""
+        allcasenum=successNum+faileNum+errorNum
+        body_content = '<html><body style="text-align:center"></h4>' \
+                       '<table border="1" style="width:700px;text-align:center">' \
+                       '<caption>接口运行情况</caption><tr><th>总用例数</th><th>通过用例总数</th><th>失败用例总数</th><th>错误用例总数</th>' \
+                       '</tr><tr><td>%d</td><td style="color:green">%d </td><td style="color:orange">%d </td><td style="color:red">%d </td></tr></table><p>接口详情信息请下载附件查看</p></body></html>'%(allcasenum,successNum,faileNum,errorNum)
         item = Message(
             account=account,
             subject=subject,
-            body=HTMLBody(binary_file_content),
+            body=HTMLBody(body_content),
             to_recipients=mailto,
             importance=choice
         )

@@ -34,7 +34,7 @@ def runCase(ismail):
           "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath)
     mulSQL.mulSql().insertData(sql)
     if(ismail=="Y"):
-        getEamilData()
+        getEamilData(successNum,faileNum,errorNum)
 '''
 图表数据定时更新
 '''
@@ -53,7 +53,7 @@ def getCofigerData():
     localTime = sechdel_time.split("&")[1]
     print isreport,ismail
     return isreport,ismail,everyRounder,localTime
-def getEamilData():
+def getEamilData(successNum,faileNum,errorNum):
     conf = configerData.configerData()
     senderlist = conf.getItemData("configerinfor", "senderlist").split(",")
     senderList = []
@@ -68,7 +68,7 @@ def getEamilData():
     print str(reportname[0])
     reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\"+ str(reportname[0])
     mailsender.sendMail(senderList, subject, content,True,
-                        reportpath, 'normal')
+                        reportpath,successNum,faileNum,errorNum,'normal')
 if __name__ == '__main__':
     schedule.every(3).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
@@ -80,6 +80,8 @@ if __name__ == '__main__':
         schedule.every(28).to(31).at(localTime).do(runCase)
     while True:
         schedule.run_pending()
+
+
 
 
 

@@ -61,7 +61,7 @@ class RunTest(unittest.TestCase):
         if assertinfo == "":
             print(u"断言数据：空")
         else:
-            print(u"断言数据：%s ", assertinfo)
+            print(u"断言数据：%s " % str(assertinfo).decode('raw_unicode_escape'))
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
@@ -89,8 +89,8 @@ def _getTestcase(list):
         try:
             caseName = apiInfoTable.objects.get(apiID=args).apiName
         except Exception as e:
-            caseName = "null"
-            print("用例ID不存在，用例名为null.")
+            print("用例ID:%s, 不存在，跳过执行..." % str(args))
+            continue
         fun = RunTest.getTestFunc(args, caseName)
         setattr(RunTest, 'test_func_%s_%s' % (args, caseName), fun)
 
