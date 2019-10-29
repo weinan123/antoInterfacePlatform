@@ -123,6 +123,7 @@ def getResp(id, dtime):
                                                       headersOpt)
         except Exception as e:
             result = {"code": -1, "info": "run error:" + str(e)}
+            apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
             return result
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
