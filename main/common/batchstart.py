@@ -58,7 +58,10 @@ class RunTest(unittest.TestCase):
         text = resp.text
         responseText = text.decode('raw_unicode_escape')
         print u"返回数据：%s " % (responseText)
-        print u"断言数据：%s " % (assertinfo)
+        if assertinfo == "":
+            print(u"断言数据：空")
+        else:
+            print(u"断言数据：%s ", assertinfo)
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
