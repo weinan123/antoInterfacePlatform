@@ -582,35 +582,10 @@ def projectImport(request):
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
                     else:
-                        body_data = json.loads(body_data)
+                        #body_data = json.loads(body_data)
                         body["datas"] = []
-                        if content_type == "multipart/form-data":
-                            body["showflag"] = 0
-                            for d in body_data:
-                                d_dict = {}
-                                d_dict["paramName"] = d
-                                d_dict["paramValue"] = body_data[d]
-                                d_dict["paramType"] = "Text"
-                                body["datas"].append(d_dict)
-                        elif content_type == "application/json":
-                            body["showflag"] = 1
-                            for d in body_data:
-                                d_dict = {}
-                                d_dict["paramName"] = d
-                                d_dict["paramValue"] = body_data[d]
-                                d_dict["paramType"] = "String"
-                                body["datas"].append(d_dict)
-                        elif content_type == "application/xml":
-                            body["showflag"] = 2
-                            for d in body_data:
-                                d_dict = {}
-                                d_dict["paramName"] = d
-                                d_dict["paramValue"] = body_data[d]
-                                d_dict["paramType"] = "Object"
-                                body["datas"].append(d_dict)
-                        else:
-                            body["showflag"] = 3
-                            body["datas"].append({"paramValue": body_data})
+                        body["showflag"] = 3
+                        body["datas"].append({"paramValue": str(body_data)})
                         body = json.dumps(body)
                     # print("****body***", body)
                     if (t_id is None) or (t_id == ''):

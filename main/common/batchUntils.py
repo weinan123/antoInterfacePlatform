@@ -91,9 +91,12 @@ def getResp(id, dtime):
     print u"请求地址：%s" % (url)
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
+    print json.dumps(dependData)
     if len(dependData) != 0:
         for dd in dependData:
-            send_body[dd.keys()[0]] = dd.values()[0]
+            print dd.items()
+            for key, value in dd.items():
+                send_body[key.decode('raw_unicode_escape')] = value
     print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
