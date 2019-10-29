@@ -71,7 +71,7 @@ def reportbatchDelete(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        print idlist
+        # print idlist
         slist = []
         flist = []
         for id in idlist:
@@ -97,11 +97,11 @@ def reportbatchDelete(request):
 def delReport(rename):
     path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + "\\main\\report\\"
     files = os.listdir(path)
-    print files
-    print "------------"
+    # print files
+    # print "------------"
     report_name = rename
-    print report_name
-    print "--------------"
+    # print report_name
+    # print "--------------"
     res = 0
     for file in files:
         if str(file) == str(report_name):
@@ -116,7 +116,7 @@ def delReport(rename):
 
 def viewReport(request):
     a = request.GET["report"]
-    print a   # \report\2019-09-20-16_09_01_result.html
+    # print a   # \report\2019-09-20-16_09_01_result.html
     reportName = a
-    print reportName
+    # print reportName
     return render(request, reportName)

@@ -251,7 +251,7 @@ var vmRs = new Vue({
                         },
                     })
                         .then(resp => {
-                            console.log(resp.data);
+                            {#console.log(resp.data);#}
                             let code = resp.data.code;
                             let info = resp.data.info;
                             if (code === 0) {

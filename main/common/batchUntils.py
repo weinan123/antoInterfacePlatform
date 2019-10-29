@@ -111,7 +111,7 @@ def getResp(id, dtime):
     # 加密执行
     else:
         credentials = authService.BceCredentials(key_id, secret_key)
-        print credentials
+        # print credentials
         headers_data = {
             'Accept': 'text/html, */*; q=0.01',
             'X-Requested-With': 'XMLHttpRequest',
