@@ -74,8 +74,12 @@ def getResp(id, dtime):
         depend_data = query.depend_casedata
         print u"关联用例集：%s" % (depend_list)
         if depend_data != "" or depend_data != "{}":
-            dependData = getDependData.getdepands(depend_list, depend_data)
-            print u"关联数据：%s" % (dependData)
+            dependRes = getDependData.getdepands(depend_list, depend_data)
+            if dependRes["code"] == 0:
+                dependData = dependRes["dependdata"]
+                print u"关联数据：%s" % (dependData)
+            else:
+                dependData = []
         else:
             print(u"关联数据：depend data is None.")
     listid = query.owningListID

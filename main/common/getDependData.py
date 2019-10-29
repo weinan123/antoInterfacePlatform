@@ -12,7 +12,11 @@ def getdepands(depend_list, depend_data):
     dependData = json.loads(depend_data)
     for tid in dependCase:
         data_dict = {}
-        query = apiInfoTable.objects.get(t_id=str(tid))
+        try:
+            query = apiInfoTable.objects.get(t_id=str(tid))
+        except Exception as e:
+            result = {"code": -1, "datas": "依赖用例不存在"}
+            return result
         methods = query.method
         send_url = query.url
         if methods == "" or send_url == "":
@@ -36,6 +40,7 @@ def getdepands(depend_list, depend_data):
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
+            print(u"依赖接口返回信息： %s " % str(resp.text))
         # 加密执行
         else:
             key_id = query.key_id
@@ -48,10 +53,14 @@ def getdepands(depend_list, depend_data):
             }
             headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
             timestamp = int(time.time())
-            Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
-                                                      headersOpt)
-            resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
-        print(u"依赖接口返回信息： %s " % str(resp.text))
+            try:
+                Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
+                                                          headersOpt)
+                resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
+                print(u"依赖接口返回信息： %s " % str(resp.text))
+            except Exception as e:
+                result = {"code": -1, "datas": "error"}
+                return result
         for k in dependData:
             value = ""
             keyv = dependData[k]
@@ -72,4 +81,5 @@ def getdepands(depend_list, depend_data):
                         break
             data_dict[keyv] = value
             dpdatas.append(data_dict)
-    return dpdatas
+    result = {"code": 0, "datas": "success", "dependdata": dpdatas}
+    return result
