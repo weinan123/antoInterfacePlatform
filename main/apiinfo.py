@@ -52,7 +52,7 @@ def batchdel(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        print idlist
+        # print idlist
         slist = []
         flist = []
         for id in idlist:
@@ -70,7 +70,7 @@ def batchdel(request):
                 flist.append(id)
                 print("删除%d失败:不存在" % id)
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
-        result = {'code': 0, 'info': infos}
+        result = {'code': 0, 'info': infos, 'successNum': len(slist)}
     return JsonResponse(result)
 
 def runsingle(request):
@@ -113,7 +113,7 @@ def runsingle(request):
             else:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
-        print result
+        # print result
     return JsonResponse(result)
 
 def batchrun(request):
@@ -139,7 +139,7 @@ def batchrun(request):
                 return JsonResponse(result)
 
         batchResult = batchstart.start_main(idlist, reflag, exeuser)
-        print batchResult
+        # print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]
             report_runName = req["pmName"] +"_" + batchResult["reportname"]
@@ -199,29 +199,29 @@ def getapiInfos(request):
                     header_dict["type"] = k
                     header_dict["value"] = header_data[k]
                     header_list.append(header_dict)
-                print header_list
+                # print header_list
                 json_dict["header"] = header_list
             else:
                 json_dict["header"] = []
-            print header_list
-            print("query.body:",query.body)
+            # print header_list
+            # print("query.body:",query.body)
             if query.body != "{}" and query.body != "":
                 bodydata = json.loads(query.body)
-                print("bodydata:", bodydata)
+                # print("bodydata:", bodydata)
                 stateflag = bodydata["showflag"]
-                print("stateflag:",stateflag)
+                # print("stateflag:",stateflag)
                 if stateflag==3:
                     showbodyState = 3
                     for i in bodydata["datas"]:
                         body_dict = {}
-                        print i
+                        # print i
                         body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
                 elif stateflag==1:
                     for i in bodydata["datas"]:
                         body_dict = {}
-                        print i
+                        # print i
                         body_dict["name"] = i["paramName"]
                         body_dict["type"] = i["paramType"]
                         body_dict["value"] = i["paramValue"]
@@ -232,18 +232,18 @@ def getapiInfos(request):
                     showbodyState = 2
                     for i in bodydata["datas"]:
                         body_dict = {}
-                        print i
+                        # print i
                         body_dict["name"] = i["paramName"]
                         body_dict["type"] = i["paramType"]
                         body_dict["value"] = i["paramValue"]
                         body_list.append(body_dict)
                     json_dict["body"] = body_list
-                    print("body:****", json_dict["body"])
+                    # print("body:****", json_dict["body"])
                 elif stateflag == 0:
                     showbodyState = 0
                     for i in bodydata["datas"]:
                         body_dict = {}
-                        print i
+                        # print i
                         body_dict["name"] = i["paramName"]
                         body_dict["type"] = i["paramType"]
                         body_dict["value"] = i["paramValue"]
@@ -263,7 +263,7 @@ def getapiInfos(request):
             json_dict["moduleName"] = listdata.moduleName
             json_dict["host"] = query.host
             modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
-            print modulelist
+            # print modulelist
             for module in modulelist:
                 if module["projectName"] == json_dict["projectName"]:
                     if module["moduleName"] != "":
@@ -278,7 +278,7 @@ def getAllCases(request):
     count = request.GET["pageCount"]
     startidx = (int(pagenum) - 1) * int(count)
     endidx = int(pagenum) * int(count)
-    print(startidx, endidx)
+    # print(startidx, endidx)
     sear = request.GET['searchinfo']
     projectName = request.GET["projectName"]
     moduleName = request.GET["moduleName"]
