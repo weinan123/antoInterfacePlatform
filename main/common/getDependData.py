@@ -51,7 +51,7 @@ def getdepands(depend_list, depend_data):
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
-        print(u"依赖接口返回信息： %s " % str(resp.text))
+        print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
         for k in dependData:
             value = ""
             keyv = dependData[k]
