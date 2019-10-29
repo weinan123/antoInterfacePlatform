@@ -74,8 +74,12 @@ def getResp(id, dtime):
         depend_data = query.depend_casedata
         print u"关联用例集：%s" % (depend_list)
         if depend_data != "" or depend_data != "{}":
-            dependData = getDependData.getdepands(depend_list, depend_data)
-            print u"关联数据：%s" % (dependData)
+            dependRes = getDependData.getdepands(depend_list, depend_data)
+            if dependRes["code"] == 0:
+                dependData = dependRes["dependdata"]
+                print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
+            else:
+                dependData = []
         else:
             print(u"关联数据：无")
     listid = query.owningListID
@@ -90,7 +94,7 @@ def getResp(id, dtime):
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]
-    print u"请求体：%s "% (send_body)
+    print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
