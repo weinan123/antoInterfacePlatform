@@ -67,7 +67,7 @@
     <div class="formContent">
         <div style="margin-left: 10%;" >
         <div class="pageheader">
-        <div v-for="navtabName,index in navtabList" class="projectCss" style="height: 0px" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="makeFrom(index)">{! navtabName.name !}</a>
+        <div v-for="navtabName,index in navtabList" class="projectCss" style="height: 0px;cursor:pointer" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="makeFrom(index)">{! navtabName.name !}</a>
         <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
         </div>
             <div v-if="showState === 0" class="projectCss" style="height: 0px">
