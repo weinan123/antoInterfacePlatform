@@ -54,7 +54,7 @@
                     <label class="form-check-label">
                         <input type="checkbox" id="selAllBtn" class="selAllBtn" v-model="isSelectAll" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
-                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()">批量删除</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
                 </div>
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
@@ -84,14 +84,27 @@ var vmRs = new Vue({
         isSelectAll: false,
         cases_list: [],
         casesSel_list: [],
+        permission:{},
+        permission_del:false,
     },
     created() {
         vm1.$data.currentSort = 4;
+        this.getPermission();
     },
     mounted(){
         this.getreportList();
     },
     methods: {
+        getPermission(){
+            axios.get('/getPermission/')
+                .then(resp =>{
+                    {#console.log(resp.data);#}
+                    this.permission = resp.data.permits;
+                    this.permission_del = this.permission.permission_del;
+                }).catch(err=> {
+                console.log('请求失败:' + err.status + ',' + err.statusText);
+            });
+        },
         getreportList() {
             var target = document.getElementById("tableBody");
             var spinner1 = Spinner({top:"1"}).spin(target);
