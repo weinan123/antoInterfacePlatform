@@ -90,7 +90,7 @@ def getResp(id, dtime):
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]
-    print(u"请求体: ", send_body)
+    print(u"请求体: %s" % send_body)
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
@@ -110,16 +110,20 @@ def getResp(id, dtime):
             return result
     # 加密执行
     else:
-        credentials = authService.BceCredentials(key_id, secret_key)
-        # print credentials
-        headers_data = {
-            'Accept': 'text/html, */*; q=0.01',
-            'X-Requested-With': 'XMLHttpRequest',
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
-        }
-        headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
-        Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
-                                                  headersOpt)
+        try:
+            credentials = authService.BceCredentials(key_id, secret_key)
+            # print credentials
+            headers_data = {
+                'Accept': 'text/html, */*; q=0.01',
+                'X-Requested-With': 'XMLHttpRequest',
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36'
+            }
+            headersOpt = {'X-Requested-With', 'User-Agent', 'Accept'}
+            Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
+                                                      headersOpt)
+        except Exception as e:
+            result = {"code": -1, "info": "run error:" + str(e)}
+            return result
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
                                                                 send_url, headers, send_body, files, isRedirect,
