@@ -241,10 +241,10 @@ def firstProjectList(request):
 
 
 def download(request):
-    file = open('main/postfiles/template.zip', 'rb')
+    file = open('main/postfiles/template.xlsx', 'rb')
     response = FileResponse(file)
     response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="接口模板.zip"'
+    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
     return response
 
 
@@ -418,9 +418,11 @@ def projectImport(request):
                 table = data.sheets()[0]
                 # 获取第一张工作表有效的行数
                 nrows = table.nrows
+                # 开始读取的行数
+                srows = 8
                 # 数据校验
                 verification = True
-                for i in range(1, nrows):
+                for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
                     # 将table中第一行的数据读取并添加到data_list中
@@ -435,11 +437,10 @@ def projectImport(request):
                     depend_caseId = data_list[7]
                     depend_casedata = data_list[8]
                     statuscode = data_list[9]
-                    files = data_list[10]
-                    isSecret = data_list[11]
-                    key_id = data_list[12]
-                    secret_key = data_list[13]
-                    isRedirect = data_list[14]
+                    isSecret = data_list[10]
+                    key_id = data_list[11]
+                    secret_key = data_list[12]
+                    isRedirect = data_list[13]
                     if (apiname is None) or (apiname == ""):
                         code = -2
                         info = '名称不能为空！'
@@ -543,7 +544,7 @@ def projectImport(request):
                 listid = \
                     interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
                         "id")[0]['id']
-                for i in range(1, nrows):
+                for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
                     # 将table中第一行的数据读取并添加到data_list中
@@ -558,11 +559,10 @@ def projectImport(request):
                     depend_caseId = data_list[7]
                     depend_casedata = data_list[8]
                     statuscode = data_list[9]
-                    files = data_list[10]
-                    isSecret = data_list[11]
-                    key_id = data_list[12]
-                    secret_key = data_list[13]
-                    isRedirect = data_list[14]
+                    isSecret = data_list[10]
+                    key_id = data_list[11]
+                    secret_key = data_list[12]
+                    isRedirect = data_list[13]
 
                     # print statuscode
                     user = request.session.get('username')
@@ -613,7 +613,7 @@ def projectImport(request):
                             body["datas"].append({"paramValue": body_data})
                         body = json.dumps(body)
                     # print("****body***", body)
-                    if(t_id is None) or (t_id == ''):
+                    if (t_id is None) or (t_id == ''):
                         api_infos = {
                             'apiName': apiname,
                             'method': method,
@@ -626,7 +626,6 @@ def projectImport(request):
                             'creator': user,
                             'owningListID': int(listid),
                             'assertinfo': statuscode,
-                            'files': files,
                             'secret_key': secret_key,
                             'key_id': key_id,
                             'isScreat': bool(isSecret),
@@ -647,7 +646,6 @@ def projectImport(request):
                             'creator': user,
                             'owningListID': int(listid),
                             'assertinfo': statuscode,
-                            'files': files,
                             'secret_key': secret_key,
                             'key_id': key_id,
                             'isScreat': bool(isSecret),
