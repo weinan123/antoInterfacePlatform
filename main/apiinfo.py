@@ -70,7 +70,7 @@ def batchdel(request):
                 flist.append(id)
                 print("删除%d失败:不存在" % id)
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
-        result = {'code': 0, 'info': infos}
+        result = {'code': 0, 'info': infos, 'successNum': len(slist)}
     return JsonResponse(result)
 
 def runsingle(request):

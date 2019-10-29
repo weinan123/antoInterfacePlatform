@@ -60,6 +60,8 @@ def reportDelete(request):
             a = delReport(reName)
             if a == 0:
                 result = {'code': 0, 'info': 'delete success'}
+            else:
+                result = {'code': 0, 'info': 'delete success in sql,delete fail in local'}
         else:
             result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
@@ -89,7 +91,7 @@ def reportbatchDelete(request):
                 flist.append(id)
                 print("删除%d失败:不存在" % id)
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
-        result = {'code': 0, 'info': infos}
+        result = {'code': 0, 'info': infos, 'successNum': len(slist)}
     return JsonResponse(result)
 
 def delReport(rename):
@@ -108,6 +110,7 @@ def delReport(rename):
             res = 0
             break
         else:
+            res = -1
             print(file + "!=" + report_name + " not exist,not delete")
     return res
 

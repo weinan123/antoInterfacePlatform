@@ -202,7 +202,7 @@
                 let pagenumber = number;
                 var target = document.getElementById("tableBody");
                 var spinner1 = Spinner({top:"1"}).spin(target);
-                if(this.cases_list.length===this.dlist.length && this.pageNum>1){
+                if(this.totalCount>0 && (this.totalCount / this.pageCount)<=this.pageNum-1 && (this.pageNum>1)){
                     this.pageNum = this.pageNum -1;
                     pagenumber = pagenumber -1;
                 }
@@ -317,6 +317,7 @@
                                          hideMethod: "fadeOut"
                                      };
                                     toastr.success("删除成功");
+                                    self.totalCount = self.totalCount - 1;
                                     self.getlist(self.pageNum);
                                 } else {
                                     toastr.error("删除失败:",info);
@@ -401,6 +402,7 @@
                                     let info = resp.data.info;
                                     if (code === 0) {
                                         alert("删除成功，结果：" + info);
+                                        self.totalCount = self.totalCount - resp.data.successNum;
                                         self.getlist(self.pageNum);
                                     } else {
                                         toastr.options = {
