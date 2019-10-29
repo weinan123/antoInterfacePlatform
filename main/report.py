@@ -60,6 +60,8 @@ def reportDelete(request):
             a = delReport(reName)
             if a == 0:
                 result = {'code': 0, 'info': 'delete success'}
+            else:
+                result = {'code': 0, 'info': 'delete success in sql,delete fail in local'}
         else:
             result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
@@ -69,7 +71,7 @@ def reportbatchDelete(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
-        print idlist
+        # print idlist
         slist = []
         flist = []
         for id in idlist:
@@ -89,17 +91,17 @@ def reportbatchDelete(request):
                 flist.append(id)
                 print("删除%d失败:不存在" % id)
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
-        result = {'code': 0, 'info': infos}
+        result = {'code': 0, 'info': infos, 'successNum': len(slist)}
     return JsonResponse(result)
 
 def delReport(rename):
     path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + "\\main\\report\\"
     files = os.listdir(path)
-    print files
-    print "------------"
+    # print files
+    # print "------------"
     report_name = rename
-    print report_name
-    print "--------------"
+    # print report_name
+    # print "--------------"
     res = 0
     for file in files:
         if str(file) == str(report_name):
@@ -108,12 +110,13 @@ def delReport(rename):
             res = 0
             break
         else:
+            res = -1
             print(file + "!=" + report_name + " not exist,not delete")
     return res
 
 def viewReport(request):
     a = request.GET["report"]
-    print a   # \report\2019-09-20-16_09_01_result.html
+    # print a   # \report\2019-09-20-16_09_01_result.html
     reportName = a
-    print reportName
+    # print reportName
     return render(request, reportName)

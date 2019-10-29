@@ -251,7 +251,7 @@ def download(request):
 def projectView(request):
     if request.method == 'GET':
         id = request.GET.get('id')
-        print id
+        # print id
     return HttpResponseRedirect('/projectList/')
 
 
@@ -515,7 +515,7 @@ def projectImport(request):
                     else:
                         code = -6
                         info = '当前批量导入文件的isSecret列存在数据不为0或1！'
-                        print isSecret
+                        # print isSecret
                         verification = False
                         break
                     if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
@@ -569,10 +569,10 @@ def projectImport(request):
                     secret_key = data_list[14]
                     isRedirect = data_list[15]
 
-                    print statuscode
+                    # print statuscode
                     user = request.session.get('username')
                     content_type = ""
-                    print("****headers***", headers)
+                    # print("****headers***", headers)
                     if (headers is None) or (headers == '') or (headers == '{}'):
                         headers = '{}'
                     else:
@@ -617,7 +617,7 @@ def projectImport(request):
                             body["showflag"] = 3
                             body["datas"].append({"paramValue": body_data})
                         body = json.dumps(body)
-                    print("****body***", body)
+                    # print("****body***", body)
                     api_infos = {
                         'apiName': apiname,
                         'method': method,
@@ -643,7 +643,7 @@ def projectImport(request):
                         s = apiInfoTable.objects.create(**api_infos)
                         s.save()
                     except BaseException as e:
-                        print(" SQL Error: %s" % e)
+                        # print(" SQL Error: %s" % e)
                         code = -1
                         info = 'sql error！'
                 code = 0
