@@ -241,10 +241,10 @@ def firstProjectList(request):
 
 
 def download(request):
-    file = open('main/postfiles/template.xlsx', 'rb')
+    file = open('main/postfiles/template.zip', 'rb')
     response = FileResponse(file)
     response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
+    response['Content-Disposition'] = 'attachment;filename="接口模板.zip"'
     return response
 
 
@@ -299,14 +299,12 @@ def projectBatchDelete(request):
         req = json.loads(request.body)["params"]
         idDelete = req['idDelete']
         for x in idDelete:
-            if (apiInfoTable.objects.filter(owningListID=x[0]).count() == 0):
-                continue
-            else:
+            if (apiInfoTable.objects.filter(owningListID=x[0]).count() != 0):
                 flag = False
                 code = -1
                 info = '所选模块中还存在用例，请先删除用例，再删除模块！'
-        for x in idDelete:
-            if (flag):
+        if (flag):
+            for x in idDelete:
                 sss = interfaceList.objects.filter(id=x[0]).values_list("projectName", "moduleName")
                 countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
                 interfaceList.objects.filter(id=x[0]).delete()
@@ -431,18 +429,17 @@ def projectImport(request):
                     method = data_list[1]
                     host = data_list[2]
                     url = data_list[3]
-                    params = data_list[4]
-                    headers = data_list[5]
-                    body = data_list[6]
-                    t_id = data_list[7]
-                    depend_caseId = data_list[8]
-                    depend_casedata = data_list[9]
-                    statuscode = data_list[10]
-                    files = data_list[11]
-                    isSecret = data_list[12]
-                    key_id = data_list[13]
-                    secret_key = data_list[14]
-                    isRedirect = data_list[15]
+                    headers = data_list[4]
+                    body = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
                     if (apiname is None) or (apiname == ""):
                         code = -2
                         info = '名称不能为空！'
@@ -453,12 +450,6 @@ def projectImport(request):
                         info = '当前批量导入文件的method列存在数据不为GET或POST！'
                         verification = False
                         break
-                    if (interfaceList.objects.filter(projectName=projectName,
-                                                     moduleName=moduleName).count() != 0):
-                        code = -3
-                        info = '当前批量导入文件的模块名称与同一项目下已存在的模块重复！'
-                        verification = False
-                        break
                     seen = set()
                     if apiname not in seen:
                         seen.add(apiname)
@@ -467,7 +458,9 @@ def projectImport(request):
                         info = '当前批量导入文件的模块名称中存在重复！'
                         verification = False
                         break
-                    if apiInfoTable.objects.filter(t_id=t_id).count() != 0:
+                    if (t_id is None) or (t_id == ""):
+                        verification = True
+                    elif apiInfoTable.objects.filter(t_id=t_id).count() != 0:
                         code = -10
                         info = '当前批量导入文件的t_id与同一项目下已存在的t_id重复！'
                         verification = False
@@ -481,7 +474,7 @@ def projectImport(request):
                         verification = False
                         break
                     if (headers is None) or (headers == ''):
-                        continue
+                        verification = True
                     else:
                         try:
                             json.loads(headers)
@@ -491,7 +484,7 @@ def projectImport(request):
                             verification = False
                             break
                     if (depend_caseId is None) or (depend_caseId == ''):
-                        continue
+                        verification = True
                     else:
                         try:
                             list(depend_caseId)
@@ -501,7 +494,7 @@ def projectImport(request):
                             verification = False
                             break
                     if (body is None) or (body == ''):
-                        continue
+                        verification = True
                     else:
                         try:
                             json.loads(body)
@@ -511,7 +504,7 @@ def projectImport(request):
                             verification = False
                             break
                     if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
-                        continue
+                        verification = True
                     else:
                         code = -6
                         info = '当前批量导入文件的isSecret列存在数据不为0或1！'
@@ -519,7 +512,7 @@ def projectImport(request):
                         verification = False
                         break
                     if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
-                        continue
+                        verification = True
                     else:
                         code = -7
                         info = '当前批量导入文件的isRedirect列存在数据不为0或1！'
@@ -534,6 +527,9 @@ def projectImport(request):
                     'info': info
                 }
             # 通过数据校验，导入数据
+            # verification = False
+            # code = '0'
+            # info = 'test'
             if (verification):
                 inter = interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
 
@@ -556,18 +552,17 @@ def projectImport(request):
                     method = data_list[1]
                     host = data_list[2]
                     url = data_list[3]
-                    params = data_list[4]
-                    headers = data_list[5]
-                    body_data = data_list[6]
-                    t_id = data_list[7]
-                    depend_caseId = data_list[8]
-                    depend_casedata = data_list[9]
-                    statuscode = data_list[10]
-                    files = data_list[11]
-                    isSecret = data_list[12]
-                    key_id = data_list[13]
-                    secret_key = data_list[14]
-                    isRedirect = data_list[15]
+                    headers = data_list[4]
+                    body_data = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    files = data_list[10]
+                    isSecret = data_list[11]
+                    key_id = data_list[12]
+                    secret_key = data_list[13]
+                    isRedirect = data_list[14]
 
                     # print statuscode
                     user = request.session.get('username')
@@ -618,27 +613,50 @@ def projectImport(request):
                             body["datas"].append({"paramValue": body_data})
                         body = json.dumps(body)
                     # print("****body***", body)
-                    api_infos = {
-                        'apiName': apiname,
-                        'method': method,
-                        'host': host,
-                        'url': url,
-                        'headers': headers,
-                        'body': body,
-                        'lastRunResult': 0,
-                        'lastRunTime': None,
-                        'creator': user,
-                        'owningListID': int(listid),
-                        'assertinfo': statuscode,
-                        'files': files,
-                        'secret_key': secret_key,
-                        'key_id': key_id,
-                        'isScreat': bool(isSecret),
-                        'isRedirect': bool(isRedirect),
-                        't_id': t_id,
-                        'depend_caseId': depend_caseId,
-                        'depend_casedata': depend_casedata,
-                    }
+                    if(t_id is None) or (t_id == ''):
+                        api_infos = {
+                            'apiName': apiname,
+                            'method': method,
+                            'host': host,
+                            'url': url,
+                            'headers': headers,
+                            'body': body,
+                            'lastRunResult': 0,
+                            'lastRunTime': None,
+                            'creator': user,
+                            'owningListID': int(listid),
+                            'assertinfo': statuscode,
+                            'files': files,
+                            'secret_key': secret_key,
+                            'key_id': key_id,
+                            'isScreat': bool(isSecret),
+                            'isRedirect': bool(isRedirect),
+                            'depend_caseId': depend_caseId,
+                            'depend_casedata': depend_casedata,
+                        }
+                    else:
+                        api_infos = {
+                            'apiName': apiname,
+                            'method': method,
+                            'host': host,
+                            'url': url,
+                            'headers': headers,
+                            'body': body,
+                            'lastRunResult': 0,
+                            'lastRunTime': None,
+                            'creator': user,
+                            'owningListID': int(listid),
+                            'assertinfo': statuscode,
+                            'files': files,
+                            'secret_key': secret_key,
+                            'key_id': key_id,
+                            'isScreat': bool(isSecret),
+                            'isRedirect': bool(isRedirect),
+                            't_id': t_id,
+                            'depend_caseId': depend_caseId,
+                            'depend_casedata': depend_casedata,
+                        }
+
                     try:
                         s = apiInfoTable.objects.create(**api_infos)
                         s.save()

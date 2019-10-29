@@ -442,20 +442,9 @@
                                     }
                                 ).then(() => {
                                     self.refresh();
+                                    spinner.spin();
                                 }
-                            ).then(
-                                () => {
-                                    axios
-                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                        .then(resp => {
-                                            self.list = resp.data.data;
-                                            spinner.spin();
-                                            {#console.log(resp.data);#}
-                                        }).catch(err => {
-                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                                    });
-                                    self.checkedDelete = [];
-                                });
+                            );
                         }
                     })
                 }
@@ -510,7 +499,7 @@
                             this.list = resp.data.data;
                             {#console.log(this.list);#}
                         }).catch(err => {
-                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
                 }
                 ,
@@ -520,7 +509,7 @@
                         alert('请输入所有字段！');
                     } else if (checkType()) {
                         var target = document.getElementById("importProjectRow");
-                        var spinner = Spinner().spin(target);
+                        var spinner = Spinner({top: '3'}).spin(target);
 
                         event.preventDefault();
                         let formData = new FormData();
@@ -568,22 +557,7 @@
                             ).then(() => {
                                 this.refresh();
                             }
-                        )
-                            .then(
-                                () => {
-                                    var target2 = document.getElementById("row");
-                                    var spinner2 = Spinner({top: '3'}).spin(target2);
-                                    axios
-                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                        .then(resp => {
-                                            spinner2.spin();
-                                            this.list = resp.data.data;
-                                            {#console.log(resp.data);#}
-                                        }).catch(err => {
-                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                                    });
-                                    this.checkedDelete = [];
-                                });
+                        );
                     }
                 }
                 ,
@@ -641,21 +615,7 @@
                             ).then(() => {
                                 this.refresh();
                             }
-                        ).then(() => {
-                            var target2 = document.getElementById("row");
-                            var spinner2 = Spinner({top: '3'}).spin(target2);
-
-                            axios
-                                .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                .then(resp => {
-                                    spinner2.spin();
-                                    this.list = resp.data.data;
-                                    {#console.log(resp.data);#}
-                                }).catch(err => {
-                                {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                            });
-                            this.checkedDelete = [];
-                        });
+                        );
 
                     }
                 }
@@ -716,21 +676,9 @@
                                 }
                             ).then(() => {
                                 this.refresh();
+                                spinner2.spin();
                             }
-                        )
-                            .then(
-                                () => {
-                                    axios
-                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                        .then(resp => {
-                                            spinner2.spin();
-                                            this.list = resp.data.data;
-                                            {#console.log(resp.data);#}
-                                        }).catch(err => {
-                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                                    });
-                                    this.checkedDelete = [];
-                                });
+                        );
 
                     }
                 }
@@ -738,18 +686,6 @@
 
             }
         })
-    </script>
-
-    <script language="javascript">
-        function delcfm() {
-            if (!confirm("确认要删除？")) {
-                projectBatchDelete = false;
-                window.event.returnValue = false;
-            } else {
-                projectBatchDelete = true;
-                window.event.returnValue = true;
-            }
-        }
     </script>
 
     <script language="javascript">
