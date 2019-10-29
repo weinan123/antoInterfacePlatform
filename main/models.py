@@ -41,7 +41,6 @@ class apiInfoTable(models.Model):
     headers = models.TextField(null=True,blank=True)
     body = models.TextField(null=True,blank=True)
     assertinfo = models.CharField(max_length=200, blank=True)
-    files = models.TextField(blank=True, null=True)
     secret_key = models.CharField(max_length=200, blank=True, null=True,)
     key_id = models.CharField(max_length=200, blank=True, null=True,)
     isScreat = models.BooleanField(default=False)
