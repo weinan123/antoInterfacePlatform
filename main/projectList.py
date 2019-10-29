@@ -241,10 +241,10 @@ def firstProjectList(request):
 
 
 def download(request):
-    file = open('main/postfiles/template.zip', 'rb')
+    file = open('main/postfiles/template.xlsx', 'rb')
     response = FileResponse(file)
     response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="接口模板.zip"'
+    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
     return response
 
 
