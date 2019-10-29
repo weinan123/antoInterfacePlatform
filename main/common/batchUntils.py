@@ -77,7 +77,7 @@ def getResp(id, dtime):
             dependRes = getDependData.getdepands(depend_list, depend_data)
             if dependRes["code"] == 0:
                 dependData = dependRes["dependdata"]
-                print u"关联数据：%s" % (dependData)
+                print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
             else:
                 dependData = []
         else:
@@ -94,7 +94,7 @@ def getResp(id, dtime):
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]
-    print u"请求体：%s "% (send_body)
+    print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id

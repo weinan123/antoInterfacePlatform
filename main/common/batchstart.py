@@ -56,8 +56,8 @@ class RunTest(unittest.TestCase):
             return result
         statusCode = resp.status_code
         text = resp.text
-        responseText = text.decode('raw_unicode_escape')
-        print u"返回数据：%s " % (responseText)
+        responseText = text
+        print u"返回数据：%s " % str(responseText).decode('raw_unicode_escape')
         if assertinfo == "":
             print(u"断言数据：空")
         else:

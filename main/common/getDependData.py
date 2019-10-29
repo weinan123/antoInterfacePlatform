@@ -40,7 +40,7 @@ def getdepands(depend_list, depend_data):
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
-            print(u"依赖接口返回信息： %s " % str(resp.text))
+            print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
         # 加密执行
         else:
             key_id = query.key_id
@@ -57,7 +57,7 @@ def getdepands(depend_list, depend_data):
                 Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                           headersOpt)
                 resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url, headers, send_body, files, isRedirect, showflag)
-                print(u"依赖接口返回信息： %s " % str(resp.text))
+                print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
             except Exception as e:
                 result = {"code": -1, "datas": "error"}
                 return result
