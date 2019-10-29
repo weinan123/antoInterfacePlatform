@@ -90,7 +90,7 @@ def getResp(id, dtime):
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]
-    print(u"请求体：%s ", send_body)
+    print u"请求体：%s "% (send_body)
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
