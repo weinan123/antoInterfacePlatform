@@ -92,9 +92,9 @@
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
                 <ul class="pagination">
-                    <li v-bind:class="disflag_left"><a @click="cutPage(pageNum)">&lt;</a></li>
+                    <li v-bind:class="disflag_left" style="cursor:pointer"><a @click="cutPage(pageNum)">&lt;</a></li>
                     <li><a>{! pageNum !}</a></li>
-                    <li v-bind:class="disflag_right"><a @click="addPage(pageNum)">&gt;</a></li>
+                    <li v-bind:class="disflag_right" style="cursor:pointer"><a @click="addPage(pageNum)">&gt;</a></li>
                 </ul>
             </div>
         </div>
