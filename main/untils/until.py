@@ -18,7 +18,7 @@ def my_login(func):
 
 def mul_bodyData(bodyinfor):
     body = {}
-    files={}
+    files = {}
     if bodyinfor == "" or str(bodyinfor) == "{}" :
         body = {}
         files = {}
@@ -27,8 +27,10 @@ def mul_bodyData(bodyinfor):
         paramsData = bodyinfor["datas"]
         showflag = bodyinfor["showflag"]
         if bodyinfor["showflag"] == 3:
-            body = paramsData[0]["paramValue"]
-
+            if str(paramsData[0]["paramValue"]) != "" or str(paramsData[0]["paramValue"]) != "{}":
+                body = json.loads(paramsData[0]["paramValue"])
+            else:
+                body = {}
         else:
             for i in range(0,len(paramsData)):
                 params_name = paramsData[i]["paramName"]
