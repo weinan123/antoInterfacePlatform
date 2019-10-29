@@ -110,4 +110,6 @@ def start_main(list, reportflag, exeuser):
     else:
         runner = unittest.TextTestRunner()
         result = runner.run(testSuite)
-        return result
+        return {"sNum": testSuite.countTestCases() - len(result.errors) - len(result.failures),
+                "fNum": len(result.failures),
+                "eNum": len(result.errors)}

@@ -26,15 +26,18 @@ def runCase(ismail):
     successNum = batchResult["sNum"]
     faileNum = batchResult["fNum"]
     errorNum = batchResult["eNum"]
-    reportPath = "\\"+batchResult["reportPath"]
-    exeuser = ""
-    endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    print reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath
-    sql = "insert into main_reports(report_runName,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,report_localName)" \
-          "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath)
-    mulSQL.mulSql().insertData(sql)
+    if(isreport=='Y'):
+        reportPath = "\\"+batchResult["reportPath"]
+        exeuser = ""
+        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        print reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath
+        sql = "insert into main_reports(report_runName,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,report_localName)" \
+              "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath)
+        mulSQL.mulSql().insertData(sql)
+    else:
+        pass
     if(ismail=="Y"):
-        getEamilData(successNum,faileNum,errorNum)
+        getEamilData(isreport,successNum,faileNum,errorNum)
 '''
 图表数据定时更新
 '''
@@ -53,7 +56,7 @@ def getCofigerData():
     localTime = sechdel_time.split("&")[1]
     print isreport,ismail
     return isreport,ismail,everyRounder,localTime
-def getEamilData(successNum,faileNum,errorNum):
+def getEamilData(isreport,successNum,faileNum,errorNum):
     conf = configerData.configerData()
     senderlist = conf.getItemData("configerinfor", "senderlist").split(",")
     senderList = []
@@ -63,13 +66,18 @@ def getEamilData(successNum,faileNum,errorNum):
     subject = '定时接口运行报告'
     content = '接口运行详情见附件'
     mailsender = sendmail_exchange.MailSender()
-    sql = "select report_localName from main_reports where id=(select MAX(id) from main_reports )"
-    reportname = mulSQL.mulSql().selectData(sql)
-    print str(reportname[0])
-    reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\"+ str(reportname[0])
+    if isreport=="Y":
+        sql = "select report_localName from main_reports where id=(select MAX(id) from main_reports )"
+        reportname = mulSQL.mulSql().selectData(sql)
+        print str(reportname[0])
+        reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\"+ str(reportname[0])
+    else:
+        reportpath=""
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath,successNum,faileNum,errorNum,'normal')
 if __name__ == '__main__':
+    runCase("Y")
+    '''
     schedule.every(3).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
@@ -80,6 +88,7 @@ if __name__ == '__main__':
         schedule.every(28).to(31).at(localTime).do(runCase)
     while True:
         schedule.run_pending()
+    '''
 
 
 
