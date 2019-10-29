@@ -57,8 +57,8 @@ class RunTest(unittest.TestCase):
         statusCode = resp.status_code
         text = resp.text
         responseText = text
-        print(u"返回数据:%s ", responseText)
-        print(u"断言数据:%s ", assertinfo)
+        print(u"返回数据：%s ", responseText)
+        print(u"断言数据：%s ", assertinfo)
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:

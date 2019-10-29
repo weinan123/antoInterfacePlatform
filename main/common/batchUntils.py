@@ -68,7 +68,7 @@ def getResp(id, dtime):
     depend_flag = query.depend_caseId
     dependData = []
     if depend_flag == "" or depend_flag is None:
-        print("dependency:not depend.")
+        print(u"关联数据：无")
     else:
         depend_list = json.loads(depend_flag)
         depend_data = query.depend_casedata
@@ -90,7 +90,7 @@ def getResp(id, dtime):
     if len(dependData) != 0:
         for dd in dependData:
             send_body[dd.keys()[0]] = dd.values()[0]
-    print(u"请求体: ", send_body)
+    print(u"请求体：%s ", send_body)
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
