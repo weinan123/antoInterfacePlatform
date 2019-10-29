@@ -61,7 +61,7 @@ class RunTest(unittest.TestCase):
         if assertinfo == "":
             print(u"断言数据：空")
         else:
-            print(u"断言数据：%s " % str(assertinfo))
+            print(u"断言数据：%s " % str(assertinfo).decode('raw_unicode_escape'))
         if assertinfo == "":
             datas = {"status_code": statusCode}
             if statusCode == 200:
