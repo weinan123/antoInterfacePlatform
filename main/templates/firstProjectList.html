@@ -150,9 +150,9 @@
                     .then(resp => {
                         this.list = resp.data.data;
                         spinner.spin();
-                        console.log(this.list);
+                        {#console.log(this.list);#}
                     }).catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                    {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                 })
             },
             methods: {
@@ -219,9 +219,9 @@
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
-                                            console.log(resp.data);
+                                            {#console.log(resp.data);#}
                                         }).catch(err => {
-                                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                                     });
                                 });
 
@@ -269,7 +269,7 @@
                                             self.list = resp.data.data;
                                             spinner.spin();
                                         }).catch(err => {
-                                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                                     });
                                 });
                         }

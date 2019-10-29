@@ -161,13 +161,14 @@
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
                     <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 " class="btn-delete"
-                            style="width: 74px;height: 36px;" onClick="delcfm()"
-                            @click="projectBatchDelete()">批量删除
+                            style="width: 74px;height: 36px;" @click="projectBatchDelete()">批量删除
                     </button>
 
                     <a href="/download/">
-                        <button class="downloadButton" style="float: right;text-align: center;margin: auto;letter-spacing: 0;">
-                            <span class="glyphicon glyphicon-download" style="font-size: 14px;float: left;margin-top: 2.3px;"></span>模版文件
+                        <button class="downloadButton"
+                                style="float: right;text-align: center;margin: auto;letter-spacing: 0;">
+                            <span class="glyphicon glyphicon-download"
+                                  style="font-size: 14px;float: left;margin-top: 2.3px;"></span>模版文件
                         </button>
                     </a>
 
@@ -338,16 +339,16 @@
                     .then(resp => {
                         this.list = resp.data.data;
                         spinner.spin();
-                        console.log(this.list);
+                        {#console.log(this.list);#}
                     }).catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                    {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                 })
             },
             methods: {
                 getparam(str) {
                     var argsstr = decodeURI(location.search.substr(1));
                     var param = {};
-                    console.log(argsstr);
+                    {#console.log(argsstr);#}
                     if (argsstr !== "") {
                         var strs = argsstr.split("&");
                         for (var i = 0; i < strs.length; i++) {
@@ -358,74 +359,116 @@
                 },
 
                 projectBatchDelete() {
-                    var target = document.getElementById("row");
-                    var spinner = Spinner({top: '3'}).spin(target);
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                            if (r) {
+                                var target = document.getElementById("row");
+                                var spinner = Spinner({top: '3'}).spin(target);
 
-                    console.log(projectBatchDelete);
-                    if (projectBatchDelete) {
-                        axios.post('/projectBatchDelete/', {
-                            params: {
-                                idDelete: this.checkedDelete
+                                axios.post('/projectBatchDelete/', {
+                                    params: {
+                                        idDelete: self.checkedDelete
+                                    }
+                                }).then(resp => {
+                                        if (resp.data.code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(resp.data.info);
+                                        } else {
+                                            alert(resp.data.info);
+                                        }
+                                    }
+                                ).then(
+                                    () => {
+                                        axios
+                                            .get('/projectListInfo?projectName=' + self.projectNameTitle)
+                                            .then(resp => {
+                                                self.list = resp.data.data;
+                                                spinner.spin();
+                                            }).catch(err => {
+                                            {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                                        });
+                                        self.checkedDelete = [];
+                                    });
                             }
-                        }).then(resp => {
-                                alert(resp.data.info);
-                            }
-                        ).then(
-                            () => {
-                                axios
-                                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                    .then(resp => {
-                                        this.list = resp.data.data;
-                                        spinner.spin();
-                                        console.log(resp.data);
-                                    }).catch(err => {
-                                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                                });
-                                this.checkedDelete = [];
-                            });
-                    } else {
-                        spinner.spin();
-                    }
+                        }
+                    )
                 },
 
                 projectDelete(id) {
-                    if (!confirm("确认要删除？")) {
-                        window.event.returnValue = false;
-                    } else {
-                        var target = document.getElementById("row");
-                        var spinner = Spinner({top: '3'}).spin(target);
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                        if (r) {
+                            var target = document.getElementById("row");
+                            var spinner = Spinner({top: '3'}).spin(target);
 
-                        axios.get('/projectDelete?id=' + id)
-                            .then(resp => {
-                                    alert(resp.data.info);
+                            axios.get('/projectDelete?id=' + id)
+                                .then(resp => {
+                                        let info = resp.data.info;
+                                        let code = resp.data.code;
+                                        if (code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(info);
+                                        } else {
+                                            alert(info);
+                                        }
+                                    }
+                                ).then(() => {
+                                    self.refresh();
                                 }
-                            ).then(() => {
-                                this.refresh();
-                            }
-                        ).then(
-                            () => {
-                                axios
-                                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
-                                    .then(resp => {
-                                        this.list = resp.data.data;
-                                        spinner.spin();
-                                        console.log(resp.data);
-                                    }).catch(err => {
-                                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                            ).then(
+                                () => {
+                                    axios
+                                        .get('/projectListInfo?projectName=' + this.projectNameTitle)
+                                        .then(resp => {
+                                            self.list = resp.data.data;
+                                            spinner.spin();
+                                            {#console.log(resp.data);#}
+                                        }).catch(err => {
+                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                                    });
+                                    self.checkedDelete = [];
                                 });
-                                this.checkedDelete = [];
-                            });
-                    }
-                },
+                        }
+                    })
+                }
+                ,
 
                 selectAll() {
                     axios
                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
-                            console.log(resp.data);
+                            {#console.log(resp.data);#}
                         }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                     });
                     this.checkedDelete = [];
                     temp = [];
@@ -434,23 +477,26 @@
                         this.checkedDelete.push(temp);
                         temp = [];
                     }
-                },
+                }
+                ,
 
                 selectNone() {
                     axios
                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
-                            console.log(resp.data);
+                            {#console.log(resp.data);#}
                         }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                     });
                     this.checkedDelete = [];
-                },
+                }
+                ,
 
                 getFile(event) {
                     this.file = event.target.files[0];
-                },
+                }
+                ,
 
                 refresh() {
                     let id = this.getparam('projectName');
@@ -462,11 +508,12 @@
                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
-                            console.log(this.list);
+                            {#console.log(this.list);#}
                         }).catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                     })
-                },
+                }
+                ,
 
                 submitForm(event) {
                     if (this.projectName === '' || this.moduleName === '' || this.file === '') {
@@ -493,7 +540,22 @@
                                     spinner.spin();
                                     {#设置为当模态框完全隐藏时，激活弹窗的功能#}
                                     if (resp.data.code === 0) {
-                                        alert(resp.data.info);
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.success(resp.data.info);
                                         {#$('#importProject').hide();#}
                                         {#$('.modal-backdrop').hide();#}
                                         $('#importProject').modal('hide');
@@ -516,9 +578,9 @@
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
-                                            console.log(resp.data);
+                                            {#console.log(resp.data);#}
                                         }).catch(err => {
-                                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                                     });
                                     this.checkedDelete = [];
                                 });
@@ -551,7 +613,22 @@
                                     spinner.spin();
                                     {#设置为当模态框完全隐藏时，激活弹窗的功能#}
                                     if (resp.data.code === 0) {
-                                        alert(resp.data.info);
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.success(resp.data.info);
                                         {#$('#importProject').hide();#}
                                         {#$('.modal-backdrop').hide();#}
                                         $('#newProject').modal('hide');
@@ -573,9 +650,9 @@
                                 .then(resp => {
                                     spinner2.spin();
                                     this.list = resp.data.data;
-                                    console.log(resp.data);
+                                    {#console.log(resp.data);#}
                                 }).catch(err => {
-                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                                {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                             });
                             this.checkedDelete = [];
                         });
@@ -613,7 +690,22 @@
                                     spinner.spin();
                                     {#设置为当模态框完全隐藏时，激活弹窗的功能#}
                                     if (resp.data.code === 0) {
-                                        alert(resp.data.info);
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.success(resp.data.info);
                                         {#$('#importProject').hide();#}
                                         {#$('.modal-backdrop').hide();#}
                                         $('#editProject' + idEdit).modal('hide');
@@ -633,9 +725,9 @@
                                         .then(resp => {
                                             spinner2.spin();
                                             this.list = resp.data.data;
-                                            console.log(resp.data);
+                                            {#console.log(resp.data);#}
                                         }).catch(err => {
-                                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                                     });
                                     this.checkedDelete = [];
                                 });
