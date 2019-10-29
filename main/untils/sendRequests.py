@@ -7,7 +7,7 @@ class sendRequest():
     def __init__(self):
         pass
     def mulBody(self,headerType,send_body,showflag):
-        if(headerType=="application/json" and showflag!=3 ):
+        if(headerType=="application/json"):
             postbody = json.dumps(send_body)
         #带文件传输的post请求key=value格式数据
         elif(headerType=="multipart/form-data"):
@@ -36,7 +36,7 @@ class sendRequest():
             except Exception as e:
                 headerType = ""
             postbody = self.mulBody(headerType, send_body,showflag)
-            #print postbody
+            print postbody
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect)
