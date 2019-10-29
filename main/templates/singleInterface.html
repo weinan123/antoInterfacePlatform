@@ -739,6 +739,35 @@ var vm = new Vue({
             var lengthBodyX = this.bodyXVals.length;
             var lengthBodyJ = this.bodyJVals.length;
             var lengthGet = this.getVals.length;
+            if(params===0&&lengthHeader===1){
+                this.headerVals = [{
+                type: "",
+                value: ""
+            }];
+            }else if(params===1&&params1===0&& lengthBodyF===1){
+                this.bodyFVals =[{
+                type: "",
+                name: "",
+                value: ""
+            }];
+            }else if(params===1&&params1===1&& lengthBodyJ===1){
+                this.bodyJVals = [{
+                type: "",
+                name: "",
+                value: ""
+            }];
+            }else if(params===1&&params1===2&& lengthBodyX===1){
+                this.bodyXVals = [{
+                type: "",
+                name: "",
+                value: ""
+            }];
+            }else if(params===2&&lengthGet===1){
+                this.getVals =[{
+                 name: "",
+                value: ""
+            }];
+            }
             if(params===0&&lengthHeader>1){
                 this.headerVals.splice(index, 1);
             }else if(params===1&&params1===0&& lengthBodyF>1){
