@@ -56,7 +56,7 @@
                 <button id="fat-btn" class="btn-save" data-loading-text="Loading..."
                 type="button" @click="sendQuest()">测试
                 </button>
-                <button id="fat-btn" class="btn-save" style="background:rgba(35,114,168,0.15);border: 1px solid rgba(35,114,168,0.15);color: #2372A8 " data-toggle="modal" data-target="#newcase"
+                <button id="fat-btn" class="btn-save" style="background:rgba(35,114,168,0.15);border: 1px solid rgba(35,114,168,0.15);color: #2372A8 " data-toggle="modal"
                 type="button" @click="getProjectList()">保存
                 </button>
             </div>
@@ -303,11 +303,7 @@
          </div>
          <div class="col-lg-6 form-group" >
                 <span class="projectnamesel">请求结果</span>
-                <div class="form-control"  style="height: 314px;margin-top: 10px">
-                <div  id="jsoneditor" style="height: 100%">
-                {% comment %}<textarea  v-model="result" class="form-control" rows="15"></textarea>{% endcomment %}
-                </div>
-                </div>
+                <pre id="out_pre" style="height: 314px;margin-top: 10px" class="form-control" rows="15"></pre>
          </div>
      </div>
     <!--模态窗口-->
@@ -571,6 +567,13 @@ var vm = new Vue({
         },
         //获取所有项目列表
         getProjectList(){
+            if(this.host==="" || this.method===""|| this.url===""){
+                $('#newcase').modal('hide');
+                //document.getElementById("#newcase").modal('hide');
+                alert("请求host,url,methods参数不能为空");
+
+            }else {
+                $('#newcase').modal('show');
                 axios.get("/getProjectList/", params = {}).then(response => {
                     //console.log(response.data);
                     var returnlist = [];
@@ -586,6 +589,7 @@ var vm = new Vue({
                 }).catch(err => {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
+            }
 
         },
         //获取项目对应模块名称
@@ -784,44 +788,56 @@ var vm = new Vue({
             this.method = params
         },
         sendQuest() {
-             this.mulData();
-             //console.log(this.data_to_send);
-             var hreader_str = JSON.stringify(this.data_to_send["headers"]);
-             var body_str = "";
-             if( JSON.stringify(this.data_to_send["bodyinfor"]) == '{}'){
-                 body_str = ""
-             }else {
-                 for (var c = 0; c < this.data_to_send["bodyinfor"]["datas"].length; c++) {
-                     body_str = body_str + JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
-                 }
-             }
-             //console.log(body_str);
-             var requestStr = "请求方式："+ this.data_to_send["methods"] +"\n" +"请求地址："+this.data_to_send["host"]+ this.data_to_send["url"]+"\n"+"请求头部："+hreader_str+
-                                "\n"+"请求参数："+body_str;
-             this.request_infor = requestStr;
-             axios.post('/sendRequest/',this.data_to_send)
-             .then(resp =>{
-                    //console.log(resp.data);
-                        this.getEdit(JSON.parse(resp.data))
-                    }).catch(err=>{
-                         toastr.options = {
-                             closeButton: false,
-                             debug: false,
-                             progressBar: false,
-                             positionClass: "toast-top-center",
-                             onclick: null,
-                             showDuration: "300",
-                             hideDuration: "1000",
-                             timeOut: "2000",
-                             extendedTimeOut: "1000",
-                             showEasing: "swing",
-                             hideEasing: "linear",
-                             showMethod: "fadeIn",
-                             hideMethod: "fadeOut"
-                         };
-                         toastr.error("请求失败，请检查请求数据");
-                         console.log('请求失败:'+err.status+','+err.statusText);
+            if(this.method==="" || this.url==="" || this.host===""){
+                alert("请求host,url,methods参数不能为空")
+            }else {
+                this.mulData();
+                //console.log(this.data_to_send);
+                var hreader_str = JSON.stringify(this.data_to_send["headers"]);
+                var body_str = "";
+                if (JSON.stringify(this.data_to_send["bodyinfor"]) == '{}') {
+                    body_str = ""
+                } else {
+                    for (var c = 0; c < this.data_to_send["bodyinfor"]["datas"].length; c++) {
+                        body_str = body_str + JSON.stringify(this.data_to_send["bodyinfor"]["datas"][c]);
+                    }
+                }
+                //console.log(body_str);
+                var requestStr = "请求方式：" + this.data_to_send["methods"] + "\n" + "请求地址：" + this.data_to_send["host"] + this.data_to_send["url"] + "\n" + "请求头部：" + hreader_str +
+                    "\n" + "请求参数：" + body_str;
+                this.request_infor = requestStr;
+                axios.post('/sendRequest/', this.data_to_send)
+                    .then(resp => {
+                        console.log(resp.data.data);
+                        if(resp.data.code===0){
+                            this.result = resp.data.data;
+                            var result = JSON.stringify( resp.data.data, null, 2);//将字符串转换成json对象
+                            document.getElementById('out_pre').innerText= result
+                        }else{
+                            alert(resp.data.msg);
+                            var result = JSON.stringify( resp.data.data, null, 2);//将字符串转换成json对象
+                            document.getElementById('out_pre').innerText= result
+                        }
+                    }).catch(err => {
+                    toastr.options = {
+                        closeButton: false,
+                        debug: false,
+                        progressBar: false,
+                        positionClass: "toast-top-center",
+                        onclick: null,
+                        showDuration: "300",
+                        hideDuration: "1000",
+                        timeOut: "2000",
+                        extendedTimeOut: "1000",
+                        showEasing: "swing",
+                        hideEasing: "linear",
+                        showMethod: "fadeIn",
+                        hideMethod: "fadeOut"
+                    };
+                    toastr.error("请求失败，请检查请求数据");
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
                 })
+            }
         },
         //数据整理
         mulData(){

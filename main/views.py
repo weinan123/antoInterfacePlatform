@@ -108,13 +108,34 @@ def sendRequest(request):
     isScreat = Screatinfor["isScreat"]
     key_id = Screatinfor["key_id"]
     secret_key = Screatinfor["secret_key"].encode("utf-8")
-    #非加密执行接口
-    if isScreat=="":
-        resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect,showflag)
-    #加密执行
-    else:
-        resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag)
-    return JsonResponse(resp.text,safe=False)
+    try:
+        #非加密执行接口
+        if isScreat=="":
+            resp = sendRequests.sendRequest().sendRequest(methods,url,headers,send_body,files,isRedirect,showflag)
+        #加密执行
+        else:
+            resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag)
+        try:
+            data = json.loads(resp.text)
+            response = {
+                "code":0,
+                "msg":"请求成功",
+                "data":data
+            }
+        except:
+            response = {
+                "code": 999,
+                "msg": "返回结果类型不是json类型数据",
+                "data":{}
+            }
+
+    except:
+        response = {
+            "code":-1,
+            "msg":"请求失败，请检查请求参数",
+            "data":{}
+        }
+    return JsonResponse(response,safe=False)
 def getProjectList(request):
     project_list = interfaceList.objects.filter().values("projectName").distinct()
     model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
