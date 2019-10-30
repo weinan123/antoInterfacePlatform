@@ -105,11 +105,16 @@ def start_main(list, reportflag, exeuser):
         runner = HTMLTestRunner1.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况', tester=str(exeuser))
         result = runner.run(testSuite)
         fp.close()
-        return {"reportPath": pathName, "reportname": reportname,"sNum": result.success_count, "fNum": result.failure_count,
+        return {"reportPath": pathName, "reportname": reportname, "sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}
     else:
-        runner = unittest.TextTestRunner()
-        result = runner.run(testSuite)
-        return {"sNum": testSuite.countTestCases() - len(result.errors) - len(result.failures),
-                "fNum": len(result.failures),
-                "eNum": len(result.errors)}
+        if len(list) == 0:
+            runner = unittest.TextTestRunner()
+            result = runner.run(testSuite)
+            return {"sNum": testSuite.countTestCases() - len(result.errors) - len(result.failures),
+                    "fNum": len(result.failures),
+                    "eNum": len(result.errors)}
+        else:
+            return {"sNum": 0,
+                    "fNum": 0,
+                    "eNum": 0}

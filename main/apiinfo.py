@@ -121,6 +121,9 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
+        if len(idlist)==0:
+            result = {"code": -1, "info": "执行列表为空"}
+            return JsonResponse(result)
         reportflag = req["reportflag"]
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
