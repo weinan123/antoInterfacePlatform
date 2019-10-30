@@ -811,11 +811,16 @@ var vm = new Vue({
                         console.log(resp.data.data);
                         if(resp.data.code===0){
                             this.result = resp.data.data;
-                            var result = JSON.stringify( resp.data.data, null, 2);//将字符串转换成json对象
-                            document.getElementById('out_pre').innerText= result
+                            try{
+                                JSON.parse(resp.data.data);
+                                var result = JSON.stringify(JSON.parse(resp.data.data) , null, 2);
+                                document.getElementById('out_pre').innerText= result
+                            }catch{
+                                var result = JSON.stringify(resp.data.data , null, 2);//将字符串转换成json对象
+                                document.getElementById('out_pre').innerText= result
+                            }
                         }else{
                             alert(resp.data.msg);
-                            var result = JSON.stringify( resp.data.data, null, 2);//将字符串转换成json对象
                             document.getElementById('out_pre').innerText= result
                         }
                     }).catch(err => {

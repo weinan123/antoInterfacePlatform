@@ -115,20 +115,11 @@ def sendRequest(request):
         #加密执行
         else:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag)
-        try:
-            data = json.loads(resp.text)
-            response = {
-                "code":0,
-                "msg":"请求成功",
-                "data":data
-            }
-        except:
-            response = {
-                "code": 999,
-                "msg": "返回结果类型不是json类型数据",
-                "data":{}
-            }
-
+        response = {
+            "code": 0,
+            "msg": "返回结果类型不是json类型数据",
+            "data":resp.text
+        }
     except:
         response = {
             "code":-1,
