@@ -142,7 +142,8 @@ def sendRequest(request):
         response = {
             "code":-1,
             "msg":"请求失败，请检查请求参数",
-            "data":{}
+            "data":{},
+            "assert": ""
         }
     return JsonResponse(response,safe=False)
 def getProjectList(request):

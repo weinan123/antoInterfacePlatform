@@ -835,7 +835,9 @@ var vm = new Vue({
                             }
                         }else{
                             alert(resp.data.msg);
+                            var result = JSON.stringify(resp.data.data , null, 2);
                             document.getElementById('out_pre').innerText= result
+                            this.assert = resp.data.assert
                         }
                     }).catch(err => {
                     toastr.options = {
