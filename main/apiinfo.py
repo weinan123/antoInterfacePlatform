@@ -258,7 +258,7 @@ def getapiInfos(request):
             else:
                 json_dict["body"] = []
             json_dict["url"] = query.url
-            json_dict["assert"] = query.assertinfo
+            json_dict["assert"] = query.assertinfo.replace(" ", "")
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
             listdata = interfaceList.objects.get(id=query.owningListID)

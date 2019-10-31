@@ -102,7 +102,7 @@ def getResp(id, dtime):
     key_id = query.key_id
     secret_key = query.secret_key
     timestamp = int(time.time())
-    assertinfo = str(query.assertinfo)
+    assertinfo = str(query.assertinfo.replace(" ", ""))
     dtime = dtime
     responseText = ""
     # 非加密执行接口
