@@ -92,5 +92,10 @@
     border: 1px solid #999898;
     background-color:#FFFFFF;
     resize: none;
-    margin-left: 5px;
+    margin: 5px;
+}
+.itemCSS{
+    margin: 5px;
+    vertical-align:top;
+    display: inline-block;
 }

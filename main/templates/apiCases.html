@@ -111,18 +111,18 @@
                     </div>
                     <div class="modal-body">
                          <div class="form-group form-inline">
-                             <p><label style="width: 15%;text-align: right;">host:</label><span style="margin: 8px;width:72%;">{! viewapiInfos.host !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">url:</label><span style="margin: 8px;width:72%;">{! viewapiInfos.url !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">method:</label><span style="margin: 8px;width:72%;">{! viewapiInfos.method !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">header:</label><span style="margin: 8px;width:72%;">{! headers !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">body:</label><span style="margin: 8px;word-break:break-all;width:72%;">{! bodys !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">assert:</label><span style="margin: 8px;width:72%;">{! viewapiInfos.assert !}</span></p>
-                             <p><label style="width: 15%;text-align: right;">response:</label>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">host:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.host !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">url:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.url !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">method:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.method !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">header:</label><span class="itemCSS" style="width:74%;">{! headers !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">body:</label><span class="itemCSS" style="word-break:break-all;width:74%;">{! bodys !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">assert:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.assert !}</span></div>
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">response:</label>
                                  <textarea id="responseCSS" readonly>{! responseText !}</textarea>
-                             </p>
+                             </div>
                          </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" style="margin-top: 0px;">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                         </button>
                     </div>
@@ -176,7 +176,11 @@
         },
         methods:{
             getPermission(){
-                axios.get('/getPermission/')
+                axios.get('/getPermission/',{
+                    params: {
+                        username: vm1.$data.username,
+                    }
+                    })
                     .then(resp =>{
                         {#console.log(resp.data);#}
                         this.permission = resp.data.permits;

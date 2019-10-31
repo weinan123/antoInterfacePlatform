@@ -14,12 +14,21 @@ def apiCases(request):
     return render(request, "apiCases.html")
 
 def getPermission(request):
-    username = request.session.get('username')
-    query = users.objects.get(username=username)
+    username = str(request.GET['username'])
+    # username = request.session.get('username')
+    try:
+        query = users.objects.get(username=username)
+    except Exception as e:
+        result = {
+            "code": -1,
+            "info": "get permission failed,username:" + username
+        }
+        return JsonResponse(result)
     permission_run = query.batch_run
     permission_del = query.batch_del
     permission_view = query.batch_check
     permission = {"code": 0,
+                  "username": username,
                   "permits": {
                       "permission_run": permission_run,
                       "permission_del": permission_del,
