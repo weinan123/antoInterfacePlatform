@@ -3,7 +3,7 @@ import unittest
 from libs import HTMLTestRunner1
 import batchUntils
 from main.models import apiInfoTable
-import time
+import time, re
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -55,16 +55,19 @@ class RunTest(unittest.TestCase):
             result = {"code": -1, "datas": respinfo}
             return result
         statusCode = resp.status_code
+        print(u"接口返回状态码：%s" % str(resp.status_code))
         text = resp.text
         responseText = text
-        print u"返回数据：%s " % str(responseText).decode('raw_unicode_escape')
+        # print u"返回数据：%s " % str(responseText).decode('raw_unicode_escape')
+        print u"返回数据：%s " % re.sub(r'(\\u[\s\S]{4})', lambda x: x.group(1).encode("utf-8").decode("unicode-escape"),
+                                   str(responseText))
         if assertinfo == "":
             print(u"断言数据：空")
         else:
             print(u"断言数据：%s " % str(assertinfo).decode('raw_unicode_escape'))
         if assertinfo == "":
             datas = {"status_code": statusCode}
-            if statusCode == 200:
+            if str(statusCode).startswith("2"):
                 apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:

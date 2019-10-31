@@ -94,12 +94,12 @@ def runsingle(request):
             text = resp.text
             responseText = text
         except AttributeError as e:
-            statusCode = -999
+            statusCode = 400
             text = "error!code: -999"
 
         if assertinfo == "":
             datas = {"status_code": statusCode}
-            if statusCode == 200:
+            if str(statusCode).startswith("2"):
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
