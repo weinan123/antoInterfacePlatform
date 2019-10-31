@@ -103,6 +103,7 @@ def sendRequest(request):
     host = data["host"]
     url = host+send_url
     Screatinfor = data["Screatinfor"]
+    assertData = data["assertData"].replace(" ", "")
     #处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     isScreat = Screatinfor["isScreat"]
@@ -115,11 +116,28 @@ def sendRequest(request):
         #加密执行
         else:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag)
-        response = {
-            "code": 0,
-            "msg": "返回结果类型不是json类型数据",
-            "data":resp.text
-        }
+        if assertData!="" and assertData!=None:
+            if assertData in resp.text:
+                response = {
+                    "code": 0,
+                    "msg": "请求成功",
+                    "data":resp.text,
+                    "assert":True
+                }
+            else:
+                response = {
+                    "code": 0,
+                    "msg": "请求成功",
+                    "data": resp.text,
+                    "assert": False
+                }
+        elif assertData=="":
+            response = {
+                "code": 0,
+                "msg": "请求成功",
+                "data": resp.text,
+                "assert": ""
+            }
     except:
         response = {
             "code":-1,
@@ -158,6 +176,7 @@ def newCase(request):
         creator = request.session.get('username')
         send_body = json.dumps(bodyinfor)
         flag = reqdata["flag"]
+        assertData = data["assertData"]
         #print flag
         if(flag == False):
             try:
@@ -165,7 +184,7 @@ def newCase(request):
                 owningListID = id[0]["id"]
                 #print id
                 apiInfoTable.objects.get_or_create(method=methods,headers = headers,host=host,url =url,body=send_body,
-                                                   apiName=caseName,owningListID=int(owningListID),creator=creator)
+                                                   assertinfo=assertData,apiName=caseName,owningListID=int(owningListID),creator=creator)
                 data = {
                     "code":0,
                     "msg":"保存成功"
@@ -182,7 +201,7 @@ def newCase(request):
                 proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 #print("---------------id:-------", proid)
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
-                                                              headers=headers,
+                                                              headers=headers,assertinfo=assertData,
                                                               body=send_body,owningListID=proid[0]["id"])
             except Exception as e:
                 data = {

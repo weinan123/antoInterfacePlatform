@@ -295,14 +295,25 @@
         </form>
     </div>
             </div>
+    <div class="row" style="width: 70%;margin-left: 25px" >
+         <div class="col-lg-12 form-group">
+             <div style="float: left;width: 100%">
+                 <span class="projectnamesel" style="width: 10%;float: left">断言数据：</span>
+                 <p v-if="assert === true" class="assertMessage">断言成功</p>
+                 <p v-if="assert === false" class="assertMessage" style="color: red">断言失败</p>
+             </div>
+                <textarea style="margin-top: 10px;height: 150px;resize: none" v-model="assertData" class="form-control" rows="15">
+                </textarea>
+         </div>
+     </div>
 
     <div class="row" style="width: 70%;margin-left: 25px" >
          <div class="col-lg-6 form-group">
-                <span class="projectnamesel">请求数据</span>
+                <span class="projectnamesel">请求数据：</span>
                 <textarea style="margin-top: 10px;height: 314px;resize: none" v-model="request_infor" class="form-control" rows="15"></textarea>
          </div>
          <div class="col-lg-6 form-group" >
-                <span class="projectnamesel">请求结果</span>
+                <span class="projectnamesel">请求结果：</span>
                 <pre id="out_pre" style="height: 314px;margin-top: 10px" class="form-control" rows="15"></pre>
          </div>
      </div>
@@ -400,6 +411,7 @@ var vm = new Vue({
             //样式选中互斥
             isRediret: "",
             isScreat:"",
+            assertData:"",
             aid:0,
             pid:0,
             initflag:false,
@@ -463,6 +475,7 @@ var vm = new Vue({
             key_id:"",
             Authorization:"",
             headerText:"",
+            assert:""
 
     },
 
@@ -811,14 +824,14 @@ var vm = new Vue({
                     .then(resp => {
                         console.log(resp.data.data);
                         if(resp.data.code===0){
-                            this.result = resp.data.data;
                             try{
-                                JSON.parse(resp.data.data);
-                                var result = JSON.stringify(JSON.parse(resp.data.data) , null, 2);
-                                document.getElementById('out_pre').innerText= result
+                                var result = JSON.stringify(JSON.parse(resp.data.data) , null, 2);//将字符串转换成json对象
+                                document.getElementById('out_pre').innerText= result;JSON.parse(resp.data.data);
+                                this.assert = resp.data.assert
                             }catch(e){
                                 var result = JSON.stringify(resp.data.data , null, 2);//将字符串转换成json对象
-                                document.getElementById('out_pre').innerText= result
+                                document.getElementById('out_pre').innerText= result;
+                                this.assert = resp.data.assert
                             }
                         }else{
                             alert(resp.data.msg);
@@ -933,6 +946,7 @@ var vm = new Vue({
                 url:posturl,
                 headers:headerinfor,
                 bodyinfor:bodysData,
+                assertData:this.assertData,
                 Screatinfor:Screatinfor,
                 isRediret:this.isRediret,
             };

@@ -5,6 +5,9 @@
     margin-top: 20px;
     text-align: center;
 }
+.assertMessage{
+    width: 20%;float: left;font-size: 15px;color: #F5A623;
+}
 .tablediv{
 width: 70%;
     margin-left: 34px;
@@ -22,3 +25,4 @@ width: 70%;
     color: #F5A623;
      letter-spacing: 0;
 }
+/*断言提示*/
