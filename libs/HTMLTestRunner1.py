@@ -620,7 +620,7 @@ class HTMLTestRunner(Template_mixin):
             try:
                 self.passrate = str("%.2f%%" % (float(result.success_count) / float(
                     result.success_count + result.failure_count + result.error_count) * 100))
-            except ZeroDivisionError as e:
+            except Exception as e:
                 self.passrate = "0"
         else:
             status = 'none'
