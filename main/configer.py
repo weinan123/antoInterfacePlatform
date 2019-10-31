@@ -89,9 +89,9 @@ def saveConfigData(request):
         reqdata = json.loads(request.body)
         #print reqdata
         #print reqdata.items
-        reqdata["senderList"] = ", ".join(reqdata["senderList"])
+        reqdata["senderList"] = ",".join(reqdata["senderList"])
         reqdata["runcase"] =list(set(reqdata["runcase"]))
-        reqdata["runcase"]= ", ".join(reqdata["runcase"])
+        reqdata["runcase"]= ",".join(reqdata["runcase"])
         conf = configerData.configerData()
         try:
             conf.saveData("configerinfor",reqdata)
