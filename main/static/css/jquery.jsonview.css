@@ -1,7 +1,7 @@
 @charset "UTF-8";
 .jsonview {
-  font-family: monospace;
-  font-size: 1.1em;
+  /*font-family: monospace;*/
+  /*font-size: 1.1em;*/
   white-space: pre-wrap; }
   .jsonview .prop {
     font-weight: bold;
@@ -24,7 +24,8 @@
   .jsonview .collapser {
     position: absolute;
     left: -1em;
-    cursor: pointer; }
+    cursor: pointer;
+    color: orange;}
   .jsonview .collapsible {
     transition: height 1.2s;
     transition: width 1.2s; }
