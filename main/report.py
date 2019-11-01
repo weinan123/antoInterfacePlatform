@@ -11,7 +11,6 @@ def batchReports(request):
 def getReportList(request):
     result = {}
     if request.method == 'GET':
-
         # 根据分页获取数据
         pagenum = request.GET["pageNum"]
         count = request.GET["pageCount"]
