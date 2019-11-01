@@ -96,7 +96,11 @@ var vmRs = new Vue({
     },
     methods: {
         getPermission(){
-            axios.get('/getPermission/')
+            axios.get('/getPermission/',{
+                    params: {
+                        username: vm1.$data.username,
+                    }
+                    })
                 .then(resp =>{
                     {#console.log(resp.data);#}
                     this.permission = resp.data.permits;
