@@ -65,13 +65,13 @@
                                 <a class="tooltip-test iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" @mouseenter="enter()" v-if="permission_view" href="#" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑" @mouseenter="enter()" data-toggle="tooltip">
+                                <a class="tooltip-test iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑" @mouseenter="enter()" data-toggle="modal">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" @click="runsingle(info.id)" href="#" title="执行" @mouseenter="enter()" data-toggle="tooltip">
+                                <a class="tooltip-test iconlink" @click="runsingle(info.id)" href="#" title="执行" @mouseenter="enter()" data-toggle="modal">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" @click="delapi(result.data[index].id)" href="#" title="删除" @mouseenter="enter()" data-toggle="tooltip">
+                                <a class="tooltip-test iconlink" data-toggle="modal" @click="delapi(result.data[index].id)" href="#" title="删除" @mouseenter="enter()">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -336,7 +336,6 @@
                 })
             },
             enter(){
-                $("[data-toggle='tooltip']").tooltip();
                 $("[data-toggle='modal']").tooltip();
             },
             selectAllBtn(e){

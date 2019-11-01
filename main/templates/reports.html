@@ -263,46 +263,48 @@ var vmRs = new Vue({
                 dellist.push(this.casesSel_list[j][0]);
             }
             let self = this;
-            zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
-                if (r) {
-                    axios.post('/reportbatchdel/', {
-                        params: {
-                            idList: dellist,
-                        },
-                    })
-                        .then(resp => {
-                            {#console.log(resp.data);#}
-                            let code = resp.data.code;
-                            let info = resp.data.info;
-                            if (code === 0) {
-                                alert("删除成功，结果：" + info);
-                                self.totalCount = self.totalCount - resp.data.successNum;
-                                self.getreportList();
-                            } else {
-                                toastr.options = {
-                                    closeButton: false,
-                                    debug: false,
-                                    progressBar: false,
-                                    positionClass: "toast-top-center",
-                                    onclick: null,
-                                    showDuration: "300",
-                                    hideDuration: "1000",
-                                    timeOut: "2000",
-                                    extendedTimeOut: "1000",
-                                    showEasing: "swing",
-                                    hideEasing: "linear",
-                                    showMethod: "fadeIn",
-                                    hideMethod: "fadeOut"
-                                };
-                                toastr.error("删除失败");
-                                self.getreportList();
-                            }
+            if (dellist.length !== 0) {
+                zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
+                    if (r) {
+                        axios.post('/reportbatchdel/', {
+                            params: {
+                                idList: dellist,
+                            },
                         })
-                        .catch(err => {
-                            console.log('请求失败:' + err.status + ',' + err.statusText);
-                        })
-                }
-            })
+                            .then(resp => {
+                                {#console.log(resp.data);#}
+                                let code = resp.data.code;
+                                let info = resp.data.info;
+                                if (code === 0) {
+                                    alert("删除成功，结果：" + info);
+                                    self.totalCount = self.totalCount - resp.data.successNum;
+                                    self.getreportList();
+                                } else {
+                                    toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
+                                    toastr.error("删除失败");
+                                    self.getreportList();
+                                }
+                            })
+                            .catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText);
+                            })
+                    }
+                })
+            }
         },
         addPage(num){
                 this.pageNum = num +1;
