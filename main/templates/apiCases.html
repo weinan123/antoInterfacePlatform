@@ -276,10 +276,11 @@
                             let allModules = this.allModules;
                             for(let q=0;q<allModules.length;q++){
                                 let pname = allModules[q]["projectName"];
-                                if(this.projectName===pname) {
-                                    if(allModules[q]["moduleName"] !== ""){
+                                if(this.projectName.toString() === pname.toString()) {
+                                    if((allModules[q]["moduleName"]) !== "" && (this.moduleList.indexOf(allModules[q]["moduleName"]) === -1)){
                                         this.moduleList.push(allModules[q]["moduleName"]);
                                     }
+                                    {#console.log("***7***",this.moduleList);#}
                                 }
                             }
                             this.moduleName = params["moduleName"];
