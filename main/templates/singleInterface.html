@@ -310,7 +310,7 @@
     <div class="row" style="width: 70%;margin-left: 25px" >
          <div class="col-lg-6 form-group">
                 <span class="projectnamesel">请求数据：</span>
-                <textarea style="margin-top: 10px;height: 314px;resize: none" v-model="request_infor" class="form-control" rows="15"></textarea>
+                <textarea  style="margin-top: 10px;height: 314px;resize: none" v-model="request_infor" class="form-control" rows="15"></textarea>
          </div>
          <div class="col-lg-6 form-group" >
                 <span class="projectnamesel">请求结果：</span>
@@ -826,8 +826,9 @@ var vm = new Vue({
                         console.log(resp.data.data);
                         if(resp.data.code===0){
                             try{
-                                var result = JSON.stringify(JSON.parse(resp.data.data) , null, 2);//将字符串转换成json对象
-                                document.getElementById('out_pre').innerText= result;JSON.parse(resp.data.data);
+                                //var result = JSON.stringify(JSON.parse(resp.data.data) , null, 2);//将字符串转换成json对象
+                                //document.getElementById('out_pre').innerText= result;JSON.parse(resp.data.data);
+                                $('#out_pre').JSONView(JSON.parse(resp.data.data));
                                 this.assert = resp.data.assert
                             }catch(e){
                                 var result = JSON.stringify(resp.data.data , null, 2);//将字符串转换成json对象
@@ -837,7 +838,7 @@ var vm = new Vue({
                         }else{
                             alert(resp.data.msg);
                             var result = JSON.stringify(resp.data.data , null, 2);
-                            document.getElementById('out_pre').innerText= result
+                            document.getElementById('out_pre').innerText= result;
                             this.assert = resp.data.assert
                         }
                     }).catch(err => {
