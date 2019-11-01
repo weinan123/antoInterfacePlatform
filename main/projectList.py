@@ -484,6 +484,16 @@ def projectImport(request):
                             info = '当前批量导入文件的header列存在数据不符合json规范！'
                             verification = False
                             break
+                    if (depend_casedata is None) or (depend_casedata == ''):
+                        verification = True
+                    else:
+                        try:
+                            json.loads(depend_casedata)
+                        except ValueError:
+                            code = -10
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
+                            verification = False
+                            break
                     if (depend_caseId is None) or (depend_caseId == ''):
                         verification = True
                     else:
