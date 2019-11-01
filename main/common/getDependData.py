@@ -39,8 +39,14 @@ def getdepands(depend_list, depend_data):
         isRedirect = query.isRedirect
         isScreat = query.isScreat
         if isScreat == False or isScreat == "":
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
-            print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
+            try:
+                resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
+                # print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
+                print(u"依赖接口返回信息： %s " % re.sub(r'(\\u[\s\S]{4})', lambda x: x.group(1).encode("utf-8").decode("unicode-escape"),
+                       str(resp.text)))
+            except Exception as e:
+                result = {"code": -1, "datas": "error"}
+                return result
         # 加密执行
         else:
             key_id = query.key_id

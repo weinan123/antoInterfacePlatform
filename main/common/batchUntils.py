@@ -110,7 +110,7 @@ def getResp(id, dtime):
         try:
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
         except Exception as e:
-            infos = {"status_code": -999, "error": str(e)}
+            infos = {"status_code": 400, "error": str(e)}
             apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
             result = {"code": -1, "info": "run error:" + str(infos)}
             return result
@@ -131,7 +131,7 @@ def getResp(id, dtime):
                                                                 send_url, headers, send_body, files, isRedirect,
                                                                 showflag)
         except Exception as e:
-            infos = {"status_code": -999, "error": str(e)}
+            infos = {"status_code": 400, "error": str(e)}
             apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
             result = {"code": -1, "info": "run error:" + str(infos)}
             return result
