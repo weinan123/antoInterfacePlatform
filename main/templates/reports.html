@@ -37,13 +37,13 @@
                             <td>{! info.errorNum !}</td>
                             <td>{! info.executor !}</td>
                             <td>
-                                <a class="iconlink" :href="['/viewreport/?report='+info.report_localName]" target="_blank" title="查看">
+                                <a class="tooltip-test iconlink" @mouseenter="enter()" :href="['/viewreport/?report='+info.report_localName]" target="_blank" data-toggle="tooltip" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <a class="iconlink" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" title="下载">
+                                <a class="tooltip-test iconlink" @mouseenter="enter()" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" data-toggle="tooltip" title="下载">
                                     <span class="glyphicon glyphicon-download"></span>
                                 </a>
-                                <a class="iconlink" @click="delreport(info.id)" href="#" title="删除">
+                                <a class="tooltip-test iconlink" @mouseenter="enter()" @click="delreport(info.id)" href="#" data-toggle="tooltip" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -95,6 +95,9 @@ var vmRs = new Vue({
         this.getreportList();
     },
     methods: {
+        enter(){
+            $("[data-toggle='tooltip']").tooltip();
+        },
         getPermission(){
             axios.get('/getPermission/',{
                     params: {
