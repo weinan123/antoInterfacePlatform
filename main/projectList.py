@@ -456,7 +456,7 @@ def projectImport(request):
                         seen.add(apiname)
                     else:
                         code = -4
-                        info = '当前批量导入文件的模块名称中存在重复！'
+                        info = '当前批量导入文件的用例名称中存在重复！'
                         verification = False
                         break
                     if (t_id is None) or (t_id == ""):
@@ -537,10 +537,6 @@ def projectImport(request):
                     'code': code,
                     'info': info
                 }
-            # 通过数据校验，导入数据
-            # verification = False
-            # code = '0'
-            # info = 'test'
             if (verification):
                 inter = interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
 
@@ -592,7 +588,7 @@ def projectImport(request):
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
                     else:
-                        #body_data = json.loads(body_data)
+                        # body_data = json.loads(body_data)
                         body["datas"] = []
                         body["showflag"] = 3
                         body["datas"].append({"paramValue": str(body_data)})
@@ -649,13 +645,244 @@ def projectImport(request):
                         info = 'sql error！'
                 code = 0
                 info = '导入成功！'
+
+            # 通过数据校验，导入数据
+            # verification = False
+            # code = '0'
+            # info = 'test'
         else:
-            code = -5
-            info = '同一项目下不可包含相同名称的模块！'
-            result = {
-                'code': code,
-                'info': info
-            }
+            f = request.FILES['file']
+            filename = f.name.split('.')[-1]
+            if (filename == 'xlsx' or filename == 'xls'):
+                # 将上传的xlsx表格先保存下来
+                with open('main/postfiles/file.xlsx', 'wb+') as destination:
+                    for chunk in f.chunks():
+                        destination.write(chunk)
+                # 打开excel文件
+                data = xlrd.open_workbook(r'main/postfiles/file.xlsx')
+                # 获取第一张工作表（通过索引的方式）
+                table = data.sheets()[0]
+                # 获取第一张工作表有效的行数
+                nrows = table.nrows
+                # 开始读取的行数
+                srows = 8
+                # 数据校验
+                verification = True
+                for i in range(srows, nrows):
+                    # data_list用来存放数据
+                    data_list = []
+                    # 将table中第一行的数据读取并添加到data_list中
+                    data_list.extend(table.row_values(i))
+                    apiname = data_list[0]
+                    method = data_list[1]
+                    host = data_list[2]
+                    url = data_list[3]
+                    headers = data_list[4]
+                    body = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    isSecret = data_list[10]
+                    key_id = data_list[11]
+                    secret_key = data_list[12]
+                    isRedirect = data_list[13]
+                    if (apiname is None) or (apiname == ""):
+                        code = -2
+                        info = '名称不能为空！'
+                        verification = False
+                        break
+                    if (method != 'GET') and (method != 'POST'):
+                        code = -12
+                        info = '当前批量导入文件的method列存在数据不为GET或POST！'
+                        verification = False
+                        break
+                    seen = set()
+                    if apiname not in seen:
+                        seen.add(apiname)
+                    else:
+                        code = -4
+                        info = '当前批量导入文件的用例名称中存在重复！'
+                        verification = False
+                        break
+                    if (t_id is None) or (t_id == ""):
+                        verification = True
+                    elif apiInfoTable.objects.filter(t_id=t_id).count() != 0:
+                        code = -10
+                        info = '当前批量导入文件的t_id与同一项目下已存在的t_id重复！'
+                        verification = False
+                        break
+                    seen = set()
+                    if t_id not in seen:
+                        seen.add(t_id)
+                    else:
+                        code = -11
+                        info = '当前批量导入文件的t_id中存在重复！'
+                        verification = False
+                        break
+                    if (headers is None) or (headers == ''):
+                        verification = True
+                    else:
+                        try:
+                            json.loads(headers)
+                        except ValueError:
+                            code = -6
+                            info = '当前批量导入文件的header列存在数据不符合json规范！'
+                            verification = False
+                            break
+                    if (depend_casedata is None) or (depend_casedata == ''):
+                        verification = True
+                    else:
+                        try:
+                            json.loads(depend_casedata)
+                        except ValueError:
+                            code = -10
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
+                            verification = False
+                            break
+                    if (depend_caseId is None) or (depend_caseId == ''):
+                        verification = True
+                    else:
+                        try:
+                            list(depend_caseId)
+                        except ValueError:
+                            code = -9
+                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            verification = False
+                            break
+                    if (body is None) or (body == ''):
+                        verification = True
+                    else:
+                        try:
+                            json.loads(body)
+                        except ValueError:
+                            code = -7
+                            info = '当前批量导入文件的body列存在数据不符合json规范！'
+                            verification = False
+                            break
+                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                        verification = True
+                    else:
+                        code = -6
+                        info = '当前批量导入文件的isSecret列存在数据不为0或1！'
+                        # print isSecret
+                        verification = False
+                        break
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
+                        verification = True
+                    else:
+                        code = -7
+                        info = '当前批量导入文件的isRedirect列存在数据不为0或1！'
+                        verification = False
+                        break
+            else:
+                code = -8
+                verification = False
+                info = '不支持.' + filename + '格式，请上传.xls或.xlsx格式的文件'
+                result = {
+                    'code': code,
+                    'info': info
+                }
+            if (verification):
+                listid = \
+                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                        "id")[0]['id']
+                for i in range(srows, nrows):
+                    # data_list用来存放数据
+                    data_list = []
+                    # 将table中第一行的数据读取并添加到data_list中
+                    data_list.extend(table.row_values(i))
+                    apiname = data_list[0]
+                    method = data_list[1]
+                    host = data_list[2]
+                    url = data_list[3]
+                    headers = data_list[4]
+                    body_data = data_list[5]
+                    t_id = data_list[6]
+                    depend_caseId = data_list[7]
+                    depend_casedata = data_list[8]
+                    statuscode = data_list[9]
+                    isSecret = data_list[10]
+                    key_id = data_list[11]
+                    secret_key = data_list[12]
+                    isRedirect = data_list[13]
+
+                    # print statuscode
+                    user = request.session.get('username')
+                    content_type = ""
+                    # print("****headers***", headers)
+                    if (headers is None) or (headers == '') or (headers == '{}'):
+                        headers = '{}'
+                    else:
+                        headers = json.loads(headers)
+                        try:
+                            content_type = headers["Content-Type"]
+                        except Exception as e:
+                            content_type = ""
+                        headers = json.dumps(headers)
+
+                    body = {}
+                    if (body_data is None) or (body_data == '') or (body_data == '{}'):
+                        body = '{}'
+                    else:
+                        # body_data = json.loads(body_data)
+                        body["datas"] = []
+                        body["showflag"] = 3
+                        body["datas"].append({"paramValue": str(body_data)})
+                        body = json.dumps(body)
+                    # print("****body***", body)
+                    if (t_id is None) or (t_id == ''):
+                        api_infos = {
+                            'apiName': apiname,
+                            'method': method,
+                            'host': host,
+                            'url': url,
+                            'headers': headers,
+                            'body': body,
+                            'lastRunResult': 0,
+                            'lastRunTime': None,
+                            'creator': user,
+                            'owningListID': int(listid),
+                            'assertinfo': statuscode,
+                            'secret_key': secret_key,
+                            'key_id': key_id,
+                            'isScreat': bool(isSecret),
+                            'isRedirect': bool(isRedirect),
+                            'depend_caseId': depend_caseId,
+                            'depend_casedata': depend_casedata,
+                        }
+                    else:
+                        api_infos = {
+                            'apiName': apiname,
+                            'method': method,
+                            'host': host,
+                            'url': url,
+                            'headers': headers,
+                            'body': body,
+                            'lastRunResult': 0,
+                            'lastRunTime': None,
+                            'creator': user,
+                            'owningListID': int(listid),
+                            'assertinfo': statuscode,
+                            'secret_key': secret_key,
+                            'key_id': key_id,
+                            'isScreat': bool(isSecret),
+                            'isRedirect': bool(isRedirect),
+                            't_id': t_id,
+                            'depend_caseId': depend_caseId,
+                            'depend_casedata': depend_casedata,
+                        }
+
+                    try:
+                        s = apiInfoTable.objects.create(**api_infos)
+                        s.save()
+                    except BaseException as e:
+                        # print(" SQL Error: %s" % e)
+                        code = -1
+                        info = 'sql error！'
+                code = 0
+                info = '导入成功！'
+
     result = {
         'code': code,
         'info': info
