@@ -64,7 +64,7 @@
 	</form>
      </div>
  </div>
-    <div class="formContent">
+    <div class="formContent" style="height: 100%">
         <div style="margin-left: 10%;" >
         <div class="pageheader">
         <div v-for="navtabName,index in navtabList" class="projectCss" style="height: 0px;cursor:pointer" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="makeFrom(index)">{! navtabName.name !}</a>
@@ -582,7 +582,7 @@ var vm = new Vue({
         },
         //获取所有项目列表
         getProjectList(){
-            if(this.host==="" || this.method===""|| this.url===""){
+            if(this.host==="" || this.method==="请求方式"|| this.url===""|| this.method===""){
                 $('#newcase').modal('hide');
                 //document.getElementById("#newcase").modal('hide');
                 alert("请求host,url,methods参数不能为空");
@@ -803,7 +803,7 @@ var vm = new Vue({
             this.method = params
         },
         sendQuest() {
-            if(this.method==="" || this.url==="" || this.host===""){
+            if(this.method==="" || this.url==="" || this.host==="" || this.method==="请求方式"){
                 alert("请求host,url,methods参数不能为空")
             }else {
                 this.mulData();
