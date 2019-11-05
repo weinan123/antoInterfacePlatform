@@ -422,6 +422,14 @@ def projectImport(request):
                 srows = 8
                 # 数据校验
                 verification = True
+                #获取host存入host表
+                ncols = table.ncols
+                hostsList =  table.col_values(2, start_rowx=srows, end_rowx=nrows)
+                print hostsList
+                interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
+                for i in hostsList:
+                    hostTags.objects.get_or_create(qa=i)
+
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -441,11 +449,6 @@ def projectImport(request):
                     key_id = data_list[11]
                     secret_key = data_list[12]
                     isRedirect = data_list[13]
-                    if (apiname is None) or (apiname == ""):
-                        code = -2
-                        info = '名称不能为空！'
-                        verification = False
-                        break
                     if (method != 'GET') and (method != 'POST'):
                         code = -12
                         info = '当前批量导入文件的method列存在数据不为GET或POST！'
@@ -538,18 +541,18 @@ def projectImport(request):
                     'info': info
                 }
             if (verification):
-                inter = interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
+                inter = interfaceList.objects.get_or_create(projectName=projectName, moduleName=moduleName)
 
-                counttable = countCase.objects.create(projectName=projectName,
+                counttable = countCase.objects.get_or_create(projectName=projectName,
                                                       moduleName=moduleName)
-                counttable.save()
-                inter.save()
+                #counttable.save()
+                #inter.save()
                 interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
                                                                                                     createTime=dtime)
 
-                listid = \
-                    interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                listid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
                         "id")[0]['id']
+                print listid
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -557,7 +560,9 @@ def projectImport(request):
                     data_list.extend(table.row_values(i))
                     apiname = data_list[0]
                     method = data_list[1]
-                    host = data_list[2]
+                    tablehost = data_list[2]
+                    host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
+                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]
@@ -637,8 +642,8 @@ def projectImport(request):
                         }
 
                     try:
-                        s = apiInfoTable.objects.create(**api_infos)
-                        s.save()
+                        apiInfoTable.objects.get_or_create(**api_infos)
+
                     except BaseException as e:
                         # print(" SQL Error: %s" % e)
                         code = -1
@@ -794,7 +799,9 @@ def projectImport(request):
                     data_list.extend(table.row_values(i))
                     apiname = data_list[0]
                     method = data_list[1]
-                    host = data_list[2]
+                    tablehost = data_list[2]
+                    host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
+                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]
@@ -806,8 +813,6 @@ def projectImport(request):
                     key_id = data_list[11]
                     secret_key = data_list[12]
                     isRedirect = data_list[13]
-
-                    # print statuscode
                     user = request.session.get('username')
                     content_type = ""
                     # print("****headers***", headers)
@@ -874,8 +879,7 @@ def projectImport(request):
                         }
 
                     try:
-                        s = apiInfoTable.objects.create(**api_infos)
-                        s.save()
+                        apiInfoTable.objects.get_or_create(**api_infos)
                     except BaseException as e:
                         # print(" SQL Error: %s" % e)
                         code = -1
@@ -889,3 +893,4 @@ def projectImport(request):
     }
 
     return JsonResponse(result, safe=False)
+

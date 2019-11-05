@@ -8,14 +8,14 @@
                 <input type="text" class="form-control" name="search" v-model="searchinfo"
                             placeholder="请输入搜索接口名称的文本" @change="search()">
             </div>
-            <label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
+            <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                 <select class="form-control" v-model="projectName" @change="selectPro($event)">
                     <option selected value="">请选择</option>
                     <option  v-for="item in projectList" :value="item">{! item !}</option>
                 </select>
             </div>
-            <label class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择模块：</label>
+            <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择模块：</label>
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                 <select class="form-control" v-model="moduleName" @change="selectModu($event)">
                     <option selected value="">请选择</option>
@@ -27,6 +27,15 @@
                     <button type="button" class="btn btn-primary" style="background-color: #2372A8">新建用例</button>
                 </a>
             </div>
+           <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">环境切换：</label>
+            <div class="col-lg-1 col-md-2 col-sm-2 col-xs-2">
+                <select class="form-control" v-model="environment">
+                    <option selected value="QA">QA</option>
+                    <option  value="Stage">Stage</option>
+                    <option  value="Live">Live</option>
+                    <option  value="Dev">Dev</option>
+                </select>
+            </div>
         </div>
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
@@ -36,8 +45,10 @@
                     <tr>
                         <th>序号</th>
                         <th>接口名称</th>
-                        <th>上一次执行结果</th>
-                        <th>上一次执行时间</th>
+                        <th>t_id</th>
+                        <th>dependT_id</th>
+                        <th>执行结果</th>
+                        <th>执行时间</th>
                         <th>创建者</th>
                         <th style="width: 16%">操作</th>
                     </tr>
@@ -51,6 +62,9 @@
                                 {! info.isCheck !}
                             </td>
                             <td>{! info.name !}</td>
+                            <td>{! info.t_id !}</td>
+                            <td>{! info.depend_caseId !}</td>
+
                             <td>
                                 <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>
@@ -62,16 +76,16 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="tooltip-test iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" @mouseenter="enter()" v-if="permission_view" href="#" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑" @mouseenter="enter()" data-toggle="modal">
+                                <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" @click="runsingle(info.id)" href="#" title="执行" @mouseenter="enter()" data-toggle="modal">
+                                <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
                                     <span class="glyphicon glyphicon-expand"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" data-toggle="modal" @click="delapi(result.data[index].id)" href="#" title="删除" @mouseenter="enter()">
+                                <a class="iconlink" @click="delapi(result.data[index].id)" href="#" title="删除">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                             </td>
@@ -138,6 +152,7 @@
         delimiters: ['{!', '!}'],
         el:"#apiCases",
         data:{
+            environment:"QA",
             result:'',
             dlist:[],
             projectList:[],
@@ -335,9 +350,7 @@
                     }
                 })
             },
-            enter(){
-                $("[data-toggle='modal']").tooltip();
-            },
+
             selectAllBtn(e){
                 let checked = e.target.checked;
                 if(checked){
@@ -444,6 +457,8 @@
                 {#console.log(datas);#}
                 let method = "";
                 let url = "";
+                let environment = this.environment;
+                console.log(environment);
                 for(let d=0;d<datas.length;d++) {
                     let did = datas[d].id;
                     if (id === did) {
@@ -457,6 +472,7 @@
                     axios.post('/runsingle/', {
                         params: {
                             id: id,
+                            environment:environment
                         },
                     })
                         .then(resp => {
