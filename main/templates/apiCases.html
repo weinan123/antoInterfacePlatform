@@ -512,6 +512,7 @@
             batchrun(){
                 let runlist = [];
                 let self = this;
+                 let environment = this.environment;
                 for(let j=0;j<self.casesSel_list.length;j++){
                     runlist.push(self.casesSel_list[j][0]);
                 }
@@ -521,6 +522,7 @@
                         if (r) {
                             axios.post('/batchrun/', {
                                 params: {
+                                    environment:environment,
                                     idList: runlist,
                                     pmName: "批量执行",
                                     reportflag: self.reportflag,

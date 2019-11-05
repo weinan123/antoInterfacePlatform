@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'auto_interface.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'monitor',
-        'USER': 'monitor',
-        'PASSWORD': 'monitor123',
-        'HOST': '10.9.8.20',
+        'NAME': 'my_web',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS':{'init_command':"SET sql_mode='STRICT_TRANS_TABLES'"},
         'AUTOCOMMIT':True,

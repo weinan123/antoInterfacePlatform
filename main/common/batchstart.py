@@ -15,14 +15,14 @@ class RunTest(unittest.TestCase):
     def setUpClass(cls):
         print("batch run start....")
 
-    def actions(self, arg1, arg2):
+    def actions(self, arg1, arg2,environment):
         # 获取元素的方式
         caseID = arg1
         state = False
         caseName = arg2
         print(u"\n用例名称:%s." % caseName)  # 报告输出中使用，请勿删除
         print(u"用例id:%s." % caseID)  # 报告输出中使用，请勿删除
-        singleResult = self.singleRun(caseID)
+        singleResult = self.singleRun(caseID,environment)
         if singleResult["code"] == 0:
             state = True
             print (u"执行结果：case (%s:%s) 执行成功." % (caseID, caseName))
@@ -33,19 +33,19 @@ class RunTest(unittest.TestCase):
 
     # 闭包函数
     @staticmethod
-    def getTestFunc(arg1, arg2):
+    def getTestFunc(arg1, arg2,environment):
         def func(self):
-            self.actions(arg1, arg2)
+            self.actions(arg1, arg2,environment)
         return func
 
     @classmethod
     def tearDownClass(cls):
         print("batch run end....")
 
-    def singleRun(self,caseID):
+    def singleRun(self,caseID,environment):
         id = caseID
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        respResult = batchUntils.getResp(id, dtime)
+        respResult = batchUntils.getResp(id,environment,dtime)
         code = respResult["code"]
         if code == 0:
             resp = respResult["response"]
@@ -83,7 +83,7 @@ class RunTest(unittest.TestCase):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
 
-def _getTestcase(list):
+def _getTestcase(list,environment):
     testlist = list
     for attr in dir(RunTest):
         if str(attr).startswith("test_func_"):
@@ -94,12 +94,12 @@ def _getTestcase(list):
         except Exception as e:
             print("用例ID:%s, 不存在，跳过执行..." % str(args))
             continue
-        fun = RunTest.getTestFunc(args, caseName)
+        fun = RunTest.getTestFunc(args, caseName,environment)
         setattr(RunTest, 'test_func_%s_%s' % (args, caseName), fun)
 
 
-def start_main(list, reportflag, exeuser):
-    _getTestcase(list)
+def start_main(list,environment, reportflag, exeuser):
+    _getTestcase(list,environment)
     testSuite = batchUntils.getTestSuite(RunTest)
     # print("testSuite: %s" % str(testSuite))
     if reportflag == "Y":

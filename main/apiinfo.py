@@ -131,6 +131,7 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
+        environment = req["environment"]
         if len(idlist)==0:
             result = {"code": -1, "info": "执行列表为空"}
             return JsonResponse(result)
@@ -151,7 +152,7 @@ def batchrun(request):
                 result = {"code": -1, "datas": "method或url不能为空"}
                 return JsonResponse(result)
 
-        batchResult = batchstart.start_main(idlist, reflag, exeuser)
+        batchResult = batchstart.start_main(idlist,environment, reflag, exeuser)
         # print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]

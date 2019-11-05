@@ -64,6 +64,7 @@ def getEamilData(isreport,successNum,faileNum,errorNum):
     for i in senderlist:
         if (i != ""):
             senderList.append(i)
+    print senderList
     subject = '定时接口运行报告'
     content = '接口运行详情见附件'
     mailsender = sendmail_exchange.MailSender()
@@ -77,7 +78,8 @@ def getEamilData(isreport,successNum,faileNum,errorNum):
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath,successNum,faileNum,errorNum,'normal')
 if __name__ == '__main__':
-    schedule.every(3).minutes.do(runChart)
+    runCase("Y")
+    #schedule.every(3).minutes.do(runChart)
     isreport, ismail,everyRounder,localTime = getCofigerData()
     if everyRounder =="每天":
         schedule.every().day.at(localTime).do(runCase,ismail)
