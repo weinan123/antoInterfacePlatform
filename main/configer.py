@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList
+from models import apiInfoTable, projectList
 from untils import configerData
 import json,os
 import re
@@ -16,13 +16,13 @@ def getAllcase(request):
         "data":[]
     }
     projectList = []
-    projectName = interfaceList.objects.filter().values("projectName").distinct()
+    projectName = projectList.objects.filter().values("projectName").distinct()
     for s in projectName:
         projectList.append(s["projectName"])
     returndata["projectList"] =projectList
     '''
 
-    caseinfor = interfaceList.objects.filter().values_list("projectName","moduleName")
+    caseinfor = projectList.objects.filter().values_list("projectName","moduleName")
     for i in caseinfor:
         if i[1]=="":
             continue
@@ -31,7 +31,7 @@ def getAllcase(request):
         }
         cases["projectName"]=i[0]
         cases["moduleName"] = i[1]
-        id = interfaceList.objects.filter(projectName=i[0], moduleName=i[1]).values("id")
+        id = projectList.objects.filter(projectName=i[0], moduleName=i[1]).values("id")
         owningListID= id[0]["id"]
         allcase = apiInfoTable.objects.filter(owningListID=int(owningListID)).values("apiID","apiName")
         print id,allcase
@@ -53,7 +53,7 @@ def getprojectCase(request):
         }
         try:
             projectName = request.GET['initProjectName']
-            caseinfor = interfaceList.objects.filter(projectName=projectName).values("id","moduleName")
+            caseinfor = projectList.objects.filter(projectName=projectName).values("id","moduleName")
             print caseinfor
             for i in caseinfor:
                 if i["moduleName"]=="":
@@ -63,7 +63,7 @@ def getprojectCase(request):
                         "allcase": []
                     }
                     cases["moduleName"] = i["moduleName"]
-                    #id = interfaceList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
+                    #id = projectList.objects.filter(projectName=projectName, moduleName=i["moduleName"],).values("id")
                     #owningListID = id[0]["id"]
                     allcase = apiInfoTable.objects.filter(owningListID=int(i["id"])).values("apiID", "apiName")
                     #print id, allcase

@@ -148,8 +148,8 @@ def sendRequest(request):
         }
     return JsonResponse(response,safe=False)
 def getProjectList(request):
-    project_list = interfaceList.objects.filter().values("projectName").distinct()
-    model_list = interfaceList.objects.filter().values("projectName","moduleName").distinct()
+    project_list = projectList.objects.filter().values("projectName").distinct()
+    model_list = projectList.objects.filter().values("projectName","moduleName").distinct()
     #print project_list,model_list
     returnData = {
         "project_list":[],
@@ -183,7 +183,7 @@ def newCase(request):
         if(flag == False):
             try:
                 hostTags.objects.get_or_create(qa=host)
-                id = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
+                id = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
                 hoststr = hostTags.objects.filter(qa=host).values("id")
                 hostid = hoststr[0]["id"]
@@ -203,7 +203,7 @@ def newCase(request):
             try:
 
                 id1 = int(reqdata["apiId"])
-                proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
+                proid = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 #hoststr = hostTags.objects.filter(qa=host).values("id")
                 #hostid = hoststr[0]["id"]
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
@@ -248,7 +248,7 @@ def returnAuthorization(request):
 def getchartData(request):
     dataList=[]
     projectList = []
-    projectName = interfaceList.objects.filter().values("projectName").distinct()
+    projectName = projectList.objects.filter().values("projectName").distinct()
     for s in projectName:
         projectList.append(s["projectName"])
     alldata = countCase.objects.all().values()

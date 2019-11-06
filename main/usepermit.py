@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList,users,department
+from models import apiInfoTable, projectList,users,department
 from untils import configerData
 import json,os
 import re

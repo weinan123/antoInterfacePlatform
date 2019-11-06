@@ -39,10 +39,10 @@
                             <td>{! info.errorNum !}</td>
                             <td>{! info.executor !}</td>
                             <td>
-                                <a class="tooltip-test iconlink" @mouseenter="enter()" :href="['/viewreport/?report='+info.report_localName]" target="_blank" data-toggle="tooltip" title="查看">
+                                <a class="tooltip-test iconlink" @mouseenter="enter()" data-trigger="hover" :href="['/viewreport/?report='+info.report_localName]" target="_blank" data-toggle="tooltip" title="查看">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <a class="tooltip-test iconlink" @mouseenter="enter()" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" data-toggle="tooltip" title="下载">
+                                <a class="tooltip-test iconlink" @mouseenter="enter()" data-trigger="hover" :href="['/viewreport/?report='+info.report_localName]" v-bind:download="info.report_runName" data-toggle="tooltip" title="下载">
                                     <span class="glyphicon glyphicon-download"></span>
                                 </a>
                                 <a class="tooltip-test iconlink" @mouseenter="enter()" @click="delreport(info.id)" href="#" data-toggle="tooltip" title="删除">

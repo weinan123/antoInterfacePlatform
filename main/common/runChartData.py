@@ -33,7 +33,7 @@ class getChartData():
             self.cursor.execute(updataCount)
             self.conn.commit()
     def nullmodel(self):
-        sql = " select id,projectName,moduleName from main_interfaceList "
+        sql = " select id,projectName,moduleName from main_projectList "
         self.cursor.execute(sql)
         # 获取所有记录列表
         results = self.cursor.fetchall()

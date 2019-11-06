@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, interfaceList,reports, users
+from models import apiInfoTable, projectList,reports, users
 import time
 import json
 from django.http.response import JsonResponse
@@ -273,11 +273,11 @@ def getapiInfos(request):
             json_dict["assert"] = query.assertinfo.replace(" ", "")
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
-            listdata = interfaceList.objects.get(id=query.owningListID)
+            listdata = projectList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
             json_dict["host"] = query.host
-            modulelist = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
+            modulelist = projectList.objects.filter().values("projectName", "moduleName").distinct()
             # print modulelist
             for module in modulelist:
                 if module["projectName"] == json_dict["projectName"]:
@@ -300,9 +300,9 @@ def getAllCases(request):
     pidList = []
     if projectName != "" or moduleName != "":
         if moduleName != "":
-            query_projId = interfaceList.objects.filter(projectName=projectName).filter(moduleName=moduleName).values("id")
+            query_projId = projectList.objects.filter(projectName=projectName).filter(moduleName=moduleName).values("id")
         else:
-            query_projId = interfaceList.objects.filter(projectName=projectName).values("id")
+            query_projId = projectList.objects.filter(projectName=projectName).values("id")
         for pj in query_projId:
             pidList.append(pj["id"])
     if len(pidList) == 0:
@@ -346,11 +346,19 @@ def getAllCases(request):
 def getProjInfos(request):
     result = {}
     if request.method == 'GET':
+        try:
+            id = request.GET["pid"]
+            query = projectList.objects.get(id=id)
+            projName = query.projectName
+            moduName = query.moduleName
+        except Exception as e:
+            projName = ""
+            moduName = ""
         projectLists = []
         allModuleList = []
         try:
-            projInfos = interfaceList.objects.filter().values("projectName").distinct()
-            modInfos = interfaceList.objects.filter().values("projectName", "moduleName").distinct()
+            projInfos = projectList.objects.filter().values("projectName").distinct()
+            modInfos = projectList.objects.filter().values("projectName", "moduleName").distinct()
         except Exception as e:
             result = {'code': -1, 'info': 'sql error:' + str(e)}
             return JsonResponse(result)
@@ -358,7 +366,12 @@ def getProjInfos(request):
             projectLists.append(pro["projectName"])
         for mod in modInfos:
             allModuleList.append(mod)
-        result = {'code': 0, 'info': 'query success', 'data': {"allProjList": projectLists, "allModuleList": allModuleList}}
+        result = {'code': 0,
+                  'info': 'query success',
+                  'data': {"allProjList": projectLists,
+                           "allModuleList": allModuleList,
+                           "projName": projName,
+                           "moduName": moduName}}
     return JsonResponse(result)
 
 def getProjectInfos(request):
@@ -367,7 +380,7 @@ def getProjectInfos(request):
     projectName = ""
     moduleName = ""
     try:
-        pmInfos = interfaceList.objects.filter(id=proid).values("projectName", "moduleName").distinct()
+        pmInfos = projectList.objects.filter(id=proid).values("projectName", "moduleName").distinct()
     except Exception as e:
         result = {'code': -1, 'info': 'sql error:' + str(e)}
         return JsonResponse(result)
