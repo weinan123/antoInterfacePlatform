@@ -238,16 +238,21 @@ def firstProjectList(request):
 
 
 def download(request):
-    file = open('main/postfiles/template.xlsx', 'rb')
-    response = FileResponse(file)
-    response['Content-Type'] = 'application/octet-stream'
-    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
-    return response
-
- def uploadCase(request):
      file = open('main/postfiles/template.xlsx', 'rb')
-
-
+     response = FileResponse(file)
+     response['Content-Type'] = 'application/octet-stream'
+     response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
+     return  response
+'''
+ def uploadCase(request):
+     import xlwt
+     if request.method == 'GET':
+         id = request.GET.get('id')
+         caseList = apiInfoTable.objects.filter(owningListID=id).values()
+         myWorkbook = xlwt.Workbook()
+         mySheet = myWorkbook.add_sheet('A Test Sheet')
+         #写入数据
+'''
 
 
 def projectView(request):
