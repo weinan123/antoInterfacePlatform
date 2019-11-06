@@ -236,13 +236,6 @@ def download(request):
     return response
 
 
-def projectView(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        # print id
-    return HttpResponseRedirect('/projectList/')
-
-
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
@@ -318,8 +311,8 @@ def projectEdit(request):
         id = request.POST.get('id')
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
-        resp = projectList.objects.filter(id=id).values("projectName", "moduleName")
-        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName):
+        resp = moduleList.objects.filter(id=id).values("moduleName")
+        if (resp[0]['moduleName'] == moduleName):
             code = -1
             info = '未做任何修改！'
             result = {
@@ -328,11 +321,9 @@ def projectEdit(request):
             }
             return JsonResponse(result, safe=False)
         else:
-            countCase.objects.filter(projectName=resp[0]['projectName'],
-                                     moduleName=resp[0]['moduleName']).update(projectName=projectName,
-                                                                              moduleName=moduleName)
-            edit = projectList.objects.get(id=id)
-            edit.projectName = projectName
+            countCase.objects.filter(projectName=projectName,
+                                     moduleName=resp[0]['moduleName']).update(moduleName=moduleName)
+            edit = moduleList.objects.get(id=id)
             edit.moduleName = moduleName
             edit.save()
             code = 0
