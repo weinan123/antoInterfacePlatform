@@ -422,9 +422,9 @@ def projectImport(request):
                 srows = 8
                 # 数据校验
                 verification = True
-                #获取host存入host表
+                # 获取host存入host表
                 ncols = table.ncols
-                hostsList =  table.col_values(2, start_rowx=srows, end_rowx=nrows)
+                hostsList = table.col_values(2, start_rowx=srows, end_rowx=nrows)
                 print hostsList
                 interfaceList.objects.create(projectName=projectName, moduleName=moduleName)
                 for i in hostsList:
@@ -525,7 +525,7 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (isRedirect == 1.0):
                         verification = True
                     else:
                         code = -7
@@ -544,14 +544,14 @@ def projectImport(request):
                 inter = interfaceList.objects.get_or_create(projectName=projectName, moduleName=moduleName)
 
                 counttable = countCase.objects.get_or_create(projectName=projectName,
-                                                      moduleName=moduleName)
-                #counttable.save()
-                #inter.save()
+                                                             moduleName=moduleName)
+                # counttable.save()
+                # inter.save()
                 interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
                                                                                                     createTime=dtime)
 
                 listid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values(
-                        "id")[0]['id']
+                    "id")[0]['id']
                 print listid
                 for i in range(srows, nrows):
                     # data_list用来存放数据
@@ -893,4 +893,3 @@ def projectImport(request):
     }
 
     return JsonResponse(result, safe=False)
-
