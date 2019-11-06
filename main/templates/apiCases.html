@@ -10,9 +10,9 @@
             </div>
             <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <select class="form-control" v-model="projectName" @change="selectPro($event)">
+                <select class="form-control" v-model="projectID" @change="selectPro($event)">
                     <option selected value="">请选择</option>
-                    <option  v-for="item in projectList" :value="item">{! item !}</option>
+                    <option  v-for="item in projectList" :value="item.id">{! item.projectName !}</option>
                 </select>
             </div>
             <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择模块：</label>
@@ -156,7 +156,7 @@
             result:'',
             dlist:[],
             projectList:[],
-            projectName:"",
+            projectID:"",
             moduleList:[],
             moduleName:"",
             searchinfo : "",
@@ -229,13 +229,13 @@
                     params:{
                         searchinfo:this.searchinfo,
                         moduleName: this.moduleName,
-                        projectName: this.projectName,
+                        projectID: this.projectID,
                         pageNum: pagenumber,
                         pageCount:this.pageCount,
                     }
                 })
                     .then(resp =>{
-                        {#console.log(resp.data);#}
+                        console.log(resp.data);
                         this.result = resp.data;
                         this.cases_list = [];
                         this.current_pageCount = resp.data.currentPageCount;
@@ -285,6 +285,7 @@
                 if(params["id"] === undefined){
                     axios.get('/projectInfos/')
                     .then(resp =>{
+                        console.log("**1**",resp.data.data);
                         this.projectList = resp.data.data.allProjList;
                         this.allModules = resp.data.data.allModuleList;
                         this.getlist(1);
@@ -579,14 +580,16 @@
             },
             selectPro(e){
                 let selProj = e.target.value;
+                console.log("****2****", selProj);
                 let allModules = this.allModules;
                 if(this.moduleList.length!==0){
                     this.moduleList = [];
                     this.moduleName = "";
                 }
                 for(let q=0;q<allModules.length;q++){
-                    let pname = allModules[q]["projectName"];
-                    if(selProj===pname) {
+                    let pid = allModules[q]["owningListID"];
+                    console.log("****3****", pid);
+                    if(selProj.toString()===pid.toString()) {
                         if(allModules[q]["moduleName"] !== ""){
                             this.moduleList.push(allModules[q]["moduleName"]);
                         }

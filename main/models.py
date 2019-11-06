@@ -31,6 +31,9 @@ class hostTags(models.Model):
     live = models.CharField(max_length=50, verbose_name='live')
     dev = models.CharField(max_length=50, verbose_name='DEV')
 class apiInfoTable(models.Model):
+    """
+    接口用例详情
+    """
     apiID = models.AutoField(max_length=4, primary_key=True)
     apiName = models.CharField(max_length=100, null=False, error_messages={'required': '名称不能为空'})
     lastRunResult = models.IntegerField(null=True, blank=True,default=0)
