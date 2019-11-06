@@ -773,7 +773,7 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == '0.0') or (isRedirect == '1.0'):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (isRedirect == 1.0):
                         verification = True
                     else:
                         code = -7
