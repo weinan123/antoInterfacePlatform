@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from main.models import reports,apiInfoTable,interfaceList
+from main.models import reports,apiInfoTable,projectList
 from main.untils.until import mul_bodyData
 from main.untils import sendRequests
 import authService, batchUntils
@@ -30,7 +30,7 @@ def getdepands(depend_caseid, depend_data):
         bodyinfor = json.loads(bodyinfor)
         showflag = bodyinfor["showflag"]
     listid = query.owningListID
-    querylist = interfaceList.objects.get(id=listid)
+    querylist = projectList.objects.get(id=listid)
     url = str(host) + str(send_url)
     # 处理数据类型的方法
     send_body, files, showflag1 = mul_bodyData(bodyinfor)
