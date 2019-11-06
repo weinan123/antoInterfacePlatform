@@ -60,6 +60,8 @@ def getHost(id,environment):
     if (match1 != None) or (match2 != None) or (match3 != None):
         if environment=="QA":
                 hoststr = hostqa.replace('qa', str(environment).lower())
+                hoststr = hoststr.replace('stage', str(environment).lower())
+                hoststr = hoststr.replace('dev', str(environment).lower())
                 hostTags.objects.filter(id=id).update(qa=hoststr)
                 host = hostdict[0]["qa"]
         elif environment=="Stage" :
