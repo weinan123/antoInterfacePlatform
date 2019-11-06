@@ -39,7 +39,7 @@
         </div>
 
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="tableContent">
-            <div  class="tableStyles" style="min-height: 565px;">
+            <div  class="tableStyles" style="min-height: 580px;">
                 <table style="width: 100%">
                     <thead>
                     <tr>
@@ -92,8 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            <div ref="selall" style="margin: 10px;">
+                <div ref="selall" style="margin: 10px;">
                     <label class="form-check-label">
                         <input type="checkbox" id="selAllBtn" class="selAllBtn"  v-model="isSelectAll" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
@@ -103,6 +102,7 @@
                     <label class="form-check-label">
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
                     </label><span> 批量执行是否生成报告</span></span>
+                </div>
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
                 <ul class="pagination">
@@ -282,28 +282,41 @@
                 }
             },
             getProinfo(params){
-                axios.get('/projectInfos/')
+                if(params["id"] === undefined){
+                    axios.get('/projectInfos/')
                     .then(resp =>{
                         this.projectList = resp.data.data.allProjList;
                         this.allModules = resp.data.data.allModuleList;
-                        if(params["projectName"] !== undefined){
-                            this.projectName = params["projectName"];
-                            let allModules = this.allModules;
-                            for(let q=0;q<allModules.length;q++){
-                                let pname = allModules[q]["projectName"];
-                                if(this.projectName.toString() === pname.toString()) {
-                                    if((allModules[q]["moduleName"]) !== "" && (this.moduleList.indexOf(allModules[q]["moduleName"]) === -1)){
-                                        this.moduleList.push(allModules[q]["moduleName"]);
-                                    }
-                                    {#console.log("***7***",this.moduleList);#}
-                                }
-                            }
-                            this.moduleName = params["moduleName"];
-                        }
                         this.getlist(1);
                     }).catch(err=> {
                     console.log('请求失败:' + err.status + ',' + err.statusText);
                 });
+                }else{
+                    axios.get('/projectInfos/',{
+                        params: {
+                                    pid: params.id,
+                                }
+                    })
+                    .then(resp =>{
+                        this.projectList = resp.data.data.allProjList;
+                        this.allModules = resp.data.data.allModuleList;
+                        this.projectName = resp.data.data.projName;
+                        let allModules = this.allModules;
+                        for(let q=0;q<allModules.length;q++){
+                            let pname = allModules[q]["projectName"];
+                            if(this.projectName.toString() === pname.toString()) {
+                                if((allModules[q]["moduleName"]) !== "" && (this.moduleList.indexOf(allModules[q]["moduleName"]) === -1)){
+                                    this.moduleList.push(allModules[q]["moduleName"]);
+                                }
+                                {#console.log("***7***",this.moduleList);#}
+                            }
+                        }
+                        this.moduleName = resp.data.data.moduName;
+                        this.getlist(1);
+                    }).catch(err=> {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                });
+                }
 
             },
             delapi(id) {

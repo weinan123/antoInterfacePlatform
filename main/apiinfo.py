@@ -345,6 +345,14 @@ def getAllCases(request):
 def getProjInfos(request):
     result = {}
     if request.method == 'GET':
+        try:
+            id = request.GET["pid"]
+            query = interfaceList.objects.get(id=id)
+            projName = query.projectName
+            moduName = query.moduleName
+        except Exception as e:
+            projName = ""
+            moduName = ""
         projectLists = []
         allModuleList = []
         try:
@@ -357,7 +365,12 @@ def getProjInfos(request):
             projectLists.append(pro["projectName"])
         for mod in modInfos:
             allModuleList.append(mod)
-        result = {'code': 0, 'info': 'query success', 'data': {"allProjList": projectLists, "allModuleList": allModuleList}}
+        result = {'code': 0,
+                  'info': 'query success',
+                  'data': {"allProjList": projectLists,
+                           "allModuleList": allModuleList,
+                           "projName": projName,
+                           "moduName": moduName}}
     return JsonResponse(result)
 
 def getProjectInfos(request):
