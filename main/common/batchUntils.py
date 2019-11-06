@@ -1,13 +1,13 @@
 # coding=utf-8
 import unittest
 import sys,os
-from main.models import apiInfoTable, interfaceList
+from main.models import apiInfoTable, interfaceList,hostTags
 import time
 import json
 from main.untils.until import mul_bodyData
 from main.untils import sendRequests
 from main.common import authService,getDependData
-import sys
+import sys,re
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -44,8 +44,45 @@ def create():
     return report_path, relpath, reportname
 
 
+'''
+根据环境查询host，如果为空，则正则创建
+'''
+def getHost(id,environment):
+    hostdict = hostTags.objects.filter(id=id).values()
+    hostqa = hostdict[0]["qa"]
+    hoststage = hostdict[0]["stage"]
+    hostlive = hostdict[0]["live"]
+    hostdev = hostdict[0]["dev"]
+    match1 = re.search('qa', hostqa)
+    match2 = re.search('dev', hostqa)
+    match3 = re.search('stage', hostqa)
+    host = ""
+    if (match1 != None) or (match2 != None) or (match3 != None):
+        if environment=="QA":
+                hoststr = hostqa.replace('qa', str(environment).lower())
+                hostTags.objects.filter(id=id).update(qa=hoststr)
+                host = hostdict[0]["qa"]
+        elif environment=="Stage" :
+            if hoststage=="":
+                hoststr = hostqa.replace("qa", str(environment).lower())
+                hostTags.objects.filter(id=id).update(stage=hoststr)
+            host = hostdict[0]["stage"]
+        elif environment == "Live":
+            if hostlive == "":
+                hoststr = hostqa.replace("-qa", "")
+                hostTags.objects.filter(id=id).update(live=hoststr)
+            host = hostdict[0]["live"]
+        elif environment=="Dev" :
+            if hostdev=="":
+                hoststr = hostqa.replace("qa", str(environment).lower())
+                hostTags.objects.filter(id=id).update(dev=hoststr)
+            host = hostdict[0]["dev"]
+    else:
+        hostTags.objects.filter(id=id).update(dev=hostqa,live=hostqa,stage=hostqa)
+        host = hostdict[0][str(environment).lower()]
+    return  host
 '''执行用例'''
-def getResp(id, dtime):
+def getResp(id,environment, dtime):
     try:
         query = apiInfoTable.objects.get(apiID=id)
     except Exception as e:
@@ -76,7 +113,8 @@ def getResp(id, dtime):
     querylist = interfaceList.objects.get(id=listid)
     print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
     print u"请求方法：%s" % (methods)
-    host = query.host
+    host = getHost(int(query.host),environment)
+    print host
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
     Cookie = ""

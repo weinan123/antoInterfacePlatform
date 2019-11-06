@@ -32,11 +32,11 @@ def login(request):
                 response = requests.post(url,data = data)
                 #print response.text
                 if response.text == 'pass':
-                    #response = redirect('index/', {'username': username})
+                    response = redirect('/index/', {'username': username})
                     request.session['username'] = username
                     request.session['password'] = password
-                    #response.set_cookie('username', username, 3600)
-                    #response.set_cookie('password', password, 3600)
+                    response.set_cookie('username', username, 3600)
+                    response.set_cookie('password', password, 3600)
                     users.objects.get_or_create(username=username)
                     returndata = {"status": "success", "message": "login success", "username": username}
                     return HttpResponse(json.dumps(returndata), content_type="'application/javascript")
@@ -116,6 +116,7 @@ def sendRequest(request):
         #加密执行
         else:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag)
+        print resp.text
         if assertData!="" and assertData!=None:
             if assertData in resp.text:
                 response = {
@@ -181,10 +182,12 @@ def newCase(request):
         #print flag
         if(flag == False):
             try:
+                hostTags.objects.get_or_create(qa=host)
                 id = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 owningListID = id[0]["id"]
-                #print id
-                apiInfoTable.objects.get_or_create(method=methods,headers = headers,host=host,url =url,body=send_body,
+                hoststr = hostTags.objects.filter(qa=host).values("id")
+                hostid = hoststr[0]["id"]
+                apiInfoTable.objects.get_or_create(method=methods,headers = headers,host=hostid,url =url,body=send_body,
                                                    assertinfo=assertData,apiName=caseName,owningListID=int(owningListID),creator=creator)
                 data = {
                     "code":0,
@@ -198,9 +201,11 @@ def newCase(request):
                     }
         else:
             try:
+
                 id1 = int(reqdata["apiId"])
                 proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
-                #print("---------------id:-------", proid)
+                #hoststr = hostTags.objects.filter(qa=host).values("id")
+                #hostid = hoststr[0]["id"]
                 apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
                                                               headers=headers,assertinfo=assertData,
                                                               body=send_body,owningListID=proid[0]["id"])

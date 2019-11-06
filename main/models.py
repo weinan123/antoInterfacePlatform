@@ -26,8 +26,15 @@ class interfaceList(models.Model):
     class Meta:
         verbose_name = '项目'
         verbose_name_plural = '项目'
+class hostTags(models.Model):
+    """
+    host
+    """
 
-
+    qa = models.CharField(max_length=50, verbose_name='QA')
+    stage = models.CharField(max_length=50, verbose_name='STAGE')
+    live = models.CharField(max_length=50, verbose_name='live')
+    dev = models.CharField(max_length=50, verbose_name='DEV')
 class apiInfoTable(models.Model):
     apiID = models.AutoField(max_length=4, primary_key=True)
     apiName = models.CharField(max_length=100, null=False, error_messages={'required': '名称不能为空'})

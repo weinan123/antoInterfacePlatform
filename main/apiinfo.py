@@ -87,8 +87,9 @@ def runsingle(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         id = req["id"]
+        environment = req["environment"]
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        respResult = batchUntils.getResp(id, dtime)
+        respResult = batchUntils.getResp(id,environment, dtime)
         code = respResult["code"]
         responseText = ""
         if code == 0:
@@ -130,6 +131,7 @@ def batchrun(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idlist = req['idList']
+        environment = req["environment"]
         if len(idlist)==0:
             result = {"code": -1, "info": "执行列表为空"}
             return JsonResponse(result)
@@ -150,7 +152,7 @@ def batchrun(request):
                 result = {"code": -1, "datas": "method或url不能为空"}
                 return JsonResponse(result)
 
-        batchResult = batchstart.start_main(idlist, reflag, exeuser)
+        batchResult = batchstart.start_main(idlist,environment, reflag, exeuser)
         # print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]
@@ -327,6 +329,8 @@ def getAllCases(request):
         json_dict["listid"] = i.owningListID
         json_dict["method"] = i.method
         json_dict["url"] = i.url
+        json_dict["t_id"] = i.t_id
+        json_dict["depend_caseId"] = i.depend_caseId
         json_list.append(json_dict)
     result = {
         'data': json_list,
