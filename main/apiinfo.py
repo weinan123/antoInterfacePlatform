@@ -191,6 +191,7 @@ def getapiInfos(request):
     result = {}
     if request.method == 'GET':
         id = request.GET['apiid']
+        environment = request.GET["environment"]
         try:
             query = apiInfoTable.objects.get(apiID=id)
         except BaseException as e:
@@ -276,7 +277,7 @@ def getapiInfos(request):
             listdata = projectList.objects.get(id=query.owningListID)
             json_dict["projectName"] = listdata.projectName
             json_dict["moduleName"] = listdata.moduleName
-            json_dict["host"] = query.host
+            json_dict["host"] = batchUntils.getHost(int(query.host),environment)
             modulelist = projectList.objects.filter().values("projectName", "moduleName").distinct()
             # print modulelist
             for module in modulelist:

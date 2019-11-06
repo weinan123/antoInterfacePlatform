@@ -531,6 +531,7 @@ var vm = new Vue({
             axios.get('/getapiInfos/',{
                     params: {
                         apiid:id,
+                        environment:"QA",
                     }
                 })
                 .then(resp =>{
@@ -966,15 +967,7 @@ var vm = new Vue({
              this.data_to_send["caseName"] = caseName;
              this.data_to_send["creator"] = vm.$data.login_user;
              console.log(this.data_to_send);
-             if (this.initflag === false) {
-                 axios.post('/newCase/', {
-                     params: {
-                         data_to_send: this.data_to_send,
-                         flag: this.initflag,
-                     }
-                 })
-                     .then(resp => {
-                         toastr.options = {
+             toastr.options = {
                              closeButton: false,
                              debug: false,
                              progressBar: false,
@@ -989,6 +982,14 @@ var vm = new Vue({
                              showMethod: "fadeIn",
                              hideMethod: "fadeOut"
                          };
+             if (this.initflag === false) {
+                 axios.post('/newCase/', {
+                     params: {
+                         data_to_send: this.data_to_send,
+                         flag: this.initflag,
+                     }
+                 })
+                     .then(resp => {
                          //console.log(resp.data);
                          if (resp.data.code === 0) {
                              toastr.success(resp.data.msg);
@@ -1011,7 +1012,9 @@ var vm = new Vue({
                          let code = resp.data.code;
                          console.log(code);
                          if (code === 0) {
-                             alert("更新成功");
+                             toastr.success("更新成功");
+                         }else{
+                             toastr.error("更新失败");
                          }
                      })
                      .catch(err => {
