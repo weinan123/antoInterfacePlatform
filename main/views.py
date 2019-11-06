@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from .models import *
 from .untils.until import my_login,mul_bodyData
 from untils import sendRequests
-from common import authService
+from common import authService, batchUntils
 from django.core import serializers
 @my_login
 def index(request):
@@ -206,7 +206,11 @@ def newCase(request):
                 proid = interfaceList.objects.filter(projectName=projectName, moduleName=moduleName).values("id")
                 #hoststr = hostTags.objects.filter(qa=host).values("id")
                 #hostid = hoststr[0]["id"]
-                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods,host=host, url=url,
+                hoststr = apiInfoTable.objects.filter(apiID=id1).values("host")
+                hostid = hoststr[0]["host"]
+                hostTags.objects.filter(id=int(hostid)).update(qa=host)
+                batchUntils.getHost(hostid, "QA")
+                apiInfoTable.objects.filter(apiID=id1).update(apiName=caseName, method=methods, url=url,
                                                               headers=headers,assertinfo=assertData,
                                                               body=send_body,owningListID=proid[0]["id"])
             except Exception as e:

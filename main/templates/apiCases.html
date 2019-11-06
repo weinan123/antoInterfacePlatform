@@ -611,6 +611,7 @@
                 axios.get('/viewapiInfos/', {
                     params: {
                         apiid: id,
+                        environment: this.environment,
                     },
                     })
                     .then(resp => {
