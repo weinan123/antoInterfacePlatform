@@ -2,8 +2,8 @@
 eviorment = Qa
 isreport = Y
 ismail = Y
-senderlist = nan.wei@yff.com, ruru.yang@yff.com
-runcase = 24, 25, 38, 48, 49, 46, 47, 44, 45, 37, 43, 35, 36, 1, 5, 53, 6, 50, 52, 29, 51
+senderlist = nan.wei@yff.com,ruru.yang@yff.com
+runcase = 
 sechdel_time = 每天&19:00
 selectall = True
 
@@ -13,4 +13,5 @@ smtp_host = smtp.163.com
 smtp_port = 465
 sendaddr = 18740394057@163.com
 password = weinan394057
-recipientaddrs =
+recipientaddrs = 
+

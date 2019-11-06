@@ -236,9 +236,6 @@ def firstProjectList(request):
     return render(request, 'firstProjectList.html')
 
 
-def firstProjectList(request):
-    return render(request, 'firstProjectList.html')
-
 
 def download(request):
     file = open('main/postfiles/template.xlsx', 'rb')
@@ -246,6 +243,11 @@ def download(request):
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
     return response
+
+ def uploadCase(request):
+     file = open('main/postfiles/template.xlsx', 'rb')
+
+
 
 
 def projectView(request):

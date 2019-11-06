@@ -8,9 +8,39 @@
 {% block content %}
     <div class="content" id="projectList" style="width: 100%;height: 100%;position: relative;">
         <div class="pageheader">
+            <p class="titlecss">cookie管理</p>
+        </div>
+        <div class="formContent">
+            <div class="formContent">
+                <form role="form" class="form-horizontal" style="padding: 20px">
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-2">cookie生成url:</label>
+                               <div class="col-sm-4">
+                               <input  class="form-control"  v-model="secret_key" >
+                               </input>
+                               </div>
+                                <div class="col-sm-4"></div>
+                            </div>
+                            <div class="form-group">
+                               <label  for="version" class="col-sm-2">cookie生成参数:</label>
+                               <div class="col-sm-4">
+                                   <input  class="form-control"  v-model="key_id" >
+                               </div>
+                                <div class="col-sm-4"><button  type="button" class="btn-save" style="background-color: #03BABF;border: 1px solid #03BABF;" @click="returnAuthorization()">生成</button></div>
+                            </div>
+
+                            <div class="form-group">
+                                 <label  for="version" class="col-lg-2">Cookies:</label>
+                               <div class="col-lg-5">
+                                   <textarea  class="form-control"  v-model="Authorization" rows="4" ></textarea>
+                               </div>
+                        </div>
+                        </form>
+            </div>
+        </div>
+        <div class="pageheader">
             <p class="titlecss">{! projectNameTitle !}</p>
         </div>
-
         <div class="formContent" style="background-color: white;padding-top: 15px;width: 75%;" id="row">
             <div class="col-md-4" style="width:90%;padding-right: 0px;">
                 <div class="btn-group" style="width:100%;padding: 15px;height: 70px;margin: auto;padding-right: 0px;">
@@ -283,6 +313,10 @@
 
                                 <a>
                                     <button type="button" class="btn-delete" @click="projectDelete(item.id)">删除
+                                    </button>
+                                </a>
+                                <a>
+                                    <button type="button" class="btn-delete" :href="['/uploadCase/?modelid = item.id ]" v-bind:download="info.report_runName" >导出
                                     </button>
                                 </a>
 
@@ -683,6 +717,7 @@
                     }
                 }
                 ,
+
 
             }
         })

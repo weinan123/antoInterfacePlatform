@@ -171,6 +171,7 @@ class Template_mixin(object):
     DEFAULT_TITLE = '接口测试报告'
     DEFAULT_DESCRIPTION = ''
     DEFAULT_TESTER = 'QA'
+    DEFAULT_EVIROMENT = "QA"
 
     # ------------------------------------------------------------------------
     # HTML Template
@@ -477,6 +478,7 @@ class _TestResult(TestResult):
         self.failure_count = 0
         self.error_count = 0
         self.verbosity = verbosity
+        self.environment = ""
 
         # result is a list of result in 4 tuple
         # (
@@ -561,7 +563,7 @@ class HTMLTestRunner(Template_mixin):
     """
     """
 
-    def __init__(self, stream=sys.stdout, verbosity=1, title=None, description=None, tester=None):
+    def __init__(self, stream=sys.stdout, verbosity=1, title=None, description=None, tester=None,environment=None):
         self.stream = stream
         self.verbosity = verbosity
         if title is None:
@@ -576,6 +578,10 @@ class HTMLTestRunner(Template_mixin):
             self.tester = self.DEFAULT_TESTER
         else:
             self.tester = tester
+        if environment is None:
+            self.environment = self.DEFAULT_EVIROMENT
+        else:
+            self.environment = environment
 
         self.startTime = datetime.datetime.now()
 
@@ -625,6 +631,7 @@ class HTMLTestRunner(Template_mixin):
         else:
             status = 'none'
         return [
+            (u'测试环境', self.environment),
             (u'测试人员', self.tester),
             (u'开始时间', startTime),
             (u'合计耗时', duration),
@@ -633,6 +640,7 @@ class HTMLTestRunner(Template_mixin):
 
     def generateReport(self, test, result):
         report_attrs = self.getReportAttributes(result)
+        print report_attrs
         generator = 'HTMLTestRunner %s' % __version__
         stylesheet = self._generate_stylesheet()
         heading = self._generate_heading(report_attrs)
@@ -661,6 +669,7 @@ class HTMLTestRunner(Template_mixin):
             )
             a_lines.append(line)
         heading = self.HEADING_TMPL % dict(
+            environment = saxutils.escape(self.environment),
             title=saxutils.escape(self.title),
             parameters=''.join(a_lines),
             description=saxutils.escape(self.description),

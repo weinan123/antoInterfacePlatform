@@ -12,6 +12,7 @@
                     <tr>
                         <th style="width: 6%">序号</th>
                         <th>报告名称</th>
+                        <th>执行环境</th>
                         <th>开始时间</th>
                         <th>结束时间</th>
                         <th style="width: 10%">用例总数</th>
@@ -29,6 +30,7 @@
                                 </label>
                                 {! index+ pageCount*(pageNum-1) +1 !}
                             <td>{! info.report_runName !}</td>
+                            <td>{! info.environment !}</td>
                             <td>{! info.startTime !}</td>
                             <td>{! info.endTime !}</td>
                             <td>{! info.totalNum !}</td>

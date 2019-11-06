@@ -105,7 +105,7 @@ def start_main(list,environment, reportflag, exeuser):
     if reportflag == "Y":
         reportFile, pathName, reportname= batchUntils.create()
         fp = open(reportFile, "wb")
-        runner = HTMLTestRunner1.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况', tester=str(exeuser))
+        runner = HTMLTestRunner1.HTMLTestRunner(stream=fp, title=u'测试报告', description=u'用例执行情况', tester=str(exeuser),environment=str(environment))
         result = runner.run(testSuite)
         fp.close()
         return {"reportPath": pathName, "reportname": reportname, "sNum": result.success_count, "fNum": result.failure_count,

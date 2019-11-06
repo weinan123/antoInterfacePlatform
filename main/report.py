@@ -31,6 +31,7 @@ def getReportList(request):
             json_dict["failNum"] = i.failNum
             json_dict["errorNum"] = i.errorNum
             json_dict["executor"] = i.executor
+            json_dict["environment"] = i.environment
             json_dict["report_localName"] = i.report_localName
             json_list.append(json_dict)
         result = {
