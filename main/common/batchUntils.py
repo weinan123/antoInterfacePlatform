@@ -68,20 +68,10 @@ def getResp(id, dtime):
     depend_flag = query.depend_caseId
     dependData = []
     if depend_flag == "" or depend_flag is None:
-        print(u"是否关联：否")
+        print(u"是否有关联：否")
     else:
-        depend_list = json.loads(depend_flag)
-        depend_data = query.depend_casedata
-        print u"关联用例集：%s" % (depend_list)
-        if depend_data != "" or depend_data != "{}":
-            dependRes = getDependData.getdepands(depend_list, depend_data)
-            if dependRes["code"] == 0:
-                dependData = dependRes["dependdata"]
-                print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
-            else:
-                dependData = []
-        else:
-            print(u"关联数据：无")
+        dependData_list = query.depend_casedata
+        dependData = isDependency(depend_flag, dependData_list)
     listid = query.owningListID
     querylist = interfaceList.objects.get(id=listid)
     print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
@@ -89,13 +79,17 @@ def getResp(id, dtime):
     host = query.host
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
+    Cookie = ""
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     # print json.dumps(dependData)
     if len(dependData) != 0:
         for dd in dependData:
             for key, value in dd.items():
-                send_body[key.decode('raw_unicode_escape')] = value
+                if key == "Cookie":
+                    Cookie = value
+                else:
+                    send_body[key.decode('raw_unicode_escape')] = value
     print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
@@ -108,7 +102,7 @@ def getResp(id, dtime):
     # 非加密执行接口
     if isScreat == False or isScreat == "":
         try:
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag)
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
             apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -129,7 +123,7 @@ def getResp(id, dtime):
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
                                                                 send_url, headers, send_body, files, isRedirect,
-                                                                showflag)
+                                                                showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
             apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -137,3 +131,21 @@ def getResp(id, dtime):
             return result
     result = {"code": 0, "info": "success", "response": resp, "assert": assertinfo}
     return result
+
+
+def isDependency(depend_flag, depend_data):
+    depend_caseid = depend_flag
+    depend_data = depend_data
+    print u"关联用例t_id：%s" % (depend_caseid)
+    if depend_data != "" or depend_data != "[]":
+        dependRes = getDependData.getdepands(depend_caseid, depend_data)
+        if dependRes["code"] == 0:
+            dependData = dependRes["dependdata"]
+            print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
+        else:
+            dependData = []
+            print(u"关联数据：无")
+    else:
+        dependData = []
+        print(u"关联数据：无")
+    return dependData
