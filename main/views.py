@@ -202,15 +202,16 @@ def newCase(request):
         if (flag == False):
             try:
                 hostTags.objects.get_or_create(qa=host)
-                id = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                pid = projectList.objects.filter(projectName=projectName).values(
                     "id")
-                owningListID = id[0]["id"]
+                owningListID = pid[0]["id"]
+                mid = moduleList.objects.get(owningListID=owningListID, moduleName=moduleName).id
                 hoststr = hostTags.objects.filter(qa=host).values("id")
                 hostid = hoststr[0]["id"]
                 apiInfoTable.objects.get_or_create(method=methods, headers=headers, host=hostid, url=url,
                                                    body=send_body,
                                                    assertinfo=assertData, apiName=caseName,
-                                                   owningListID=int(owningListID), creator=creator)
+                                                   owningListID=int(mid), creator=creator)
                 data = {
                     "code": 0,
                     "msg": "保存成功"
