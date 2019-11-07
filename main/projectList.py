@@ -28,17 +28,17 @@ def addProjectList(request):
             #     return
             dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             if (projectList.objects.filter(projectName=form.cleaned_data['projectName'],
-                                             moduleName=form.cleaned_data['moduleName']).count() == 0):
+                                           moduleName=form.cleaned_data['moduleName']).count() == 0):
                 inter = projectList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                     moduleName=form.cleaned_data['moduleName'])
+                                                   moduleName=form.cleaned_data['moduleName'])
 
                 counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
                                                       moduleName=form.cleaned_data['moduleName'], )
                 counttable.save()
                 inter.save()
                 projectList.objects.filter(projectName=form.cleaned_data['projectName'],
-                                             moduleName=form.cleaned_data['moduleName']).update(updateTime=dtime,
-                                                                                                createTime=dtime)
+                                           moduleName=form.cleaned_data['moduleName']).update(updateTime=dtime,
+                                                                                              createTime=dtime)
                 code = 0
                 info = '新建成功！'
                 result = {
@@ -81,7 +81,7 @@ def addProject(request):
                 inter = projectList.objects.create(projectName=form.cleaned_data['projectName'])
                 inter.save()
                 projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(updateTime=dtime,
-                                                                                                  createTime=dtime)
+                                                                                                createTime=dtime)
                 code = 0
                 info = '新建成功！'
                 result = {
@@ -123,21 +123,21 @@ def projectListInfo(request):
     }
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        resp = projectList.objects.filter(projectName=projectName).values("id", "projectName", "moduleName",
-                                                                            "updateTime", "createTime")
+        resp2 = projectList.objects.filter(projectName=projectName).values("id", "projectName")
+        owningListID = resp2[0]['id']
+        projectName = resp2[0]['projectName']
+        resp = moduleList.objects.filter(owningListID=owningListID).values("id", "moduleName", "updateTime",
+                                                                           "createTime")
         respList = list(resp)
         for i in range(len(respList)):
-            if (respList[i]['moduleName'] == ''):
-                del respList[i]
-                break
-        for i in range(len(respList)):
+            respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
-            CaseInfo = countCase.objects.filter(projectName=respList[i]['projectName'],
-                                                moduleName=respList[i]['moduleName']).values("allcaseNum",
-                                                                                             "passcaseNum",
-                                                                                             "failcaseNum",
-                                                                                             "blockvaseNum")
+            CaseInfo = countCase.objects.filter(projectName=projectName, moduleName=respList[i]['moduleName']).values(
+                "allcaseNum",
+                "passcaseNum",
+                "failcaseNum",
+                "blockvaseNum")
             if (CaseInfo.count() == 0):
                 allcaseNum = 0
                 passcaseNum = 0
@@ -196,28 +196,28 @@ def firstProjectListInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        resp = projectList.objects.values("projectName", "moduleName", "createTime", "updateTime")
+        resp = projectList.objects.values("id", "projectName", "createTime", "updateTime")
         json_list = []
         respList = list(resp)
-        seen = set()
         for i in range(len(respList)):
             json_dict = {}
             projectName = respList[i]['projectName']
-            moduleName = respList[i]['moduleName']
             createTime = str(respList[i]['createTime']).split('.')[0]
-            # updateTime = str(respList[i]['updateTime']).split('.')[0]
-            totalModule = projectList.objects.filter(projectName=projectName).count()
+            updateTime = str(respList[i]['updateTime']).split('.')[0]
+            owningListID = respList[i]['id']
+            totalModule = moduleList.objects.filter(owningListID=owningListID).count()
             # updateTime = projectList.objects.filter(projectName=projectName).order_by('updateTime')[0]['updateTime']
-            updateTime = str(
-                projectList.objects.filter(projectName=projectName).order_by('-updateTime').values("updateTime")[0][
-                    'updateTime']).split('.')[0]
-            if (moduleName == ''):
-                seen.add(projectName)
-                json_dict["projectName"] = projectName
-                json_dict["createTime"] = createTime
-                json_dict["updateTime"] = updateTime
-                json_dict["totalModule"] = totalModule - 1  # 去除一条作为表示项目的，moduleName为空的记录
-                json_list.append(json_dict)
+            #
+            if (moduleList.objects.filter(owningListID=owningListID).count() > 0):
+                updateTime = str(
+                    moduleList.objects.filter(owningListID=owningListID).order_by('-updateTime').values("updateTime")[
+                        0][
+                        'updateTime']).split('.')[0]
+            json_dict["projectName"] = projectName
+            json_dict["createTime"] = createTime
+            json_dict["updateTime"] = updateTime
+            json_dict["totalModule"] = totalModule
+            json_list.append(json_dict)
         result = {
             'data': json_list,
             'code': 0,
@@ -226,7 +226,7 @@ def firstProjectListInfo(request):
     return JsonResponse(result, safe=False)
 
 
-def projectList(request):
+def projectListView(request):
     # form = projectForm()
     # return render(request, 'projectList.html', {'form': form})
     return render(request, 'projectList.html')
@@ -555,7 +555,7 @@ def projectImport(request):
                 # counttable.save()
                 # inter.save()
                 projectList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
-                                                                                                    createTime=dtime)
+                                                                                                  createTime=dtime)
 
                 listid = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
                     "id")[0]['id']

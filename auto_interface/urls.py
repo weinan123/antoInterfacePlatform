@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^index/$', main.index),
     url(r'^login/$', main.login),
     url(r'^logout/$', main.logout, ),
-    url(r'^projectList/$', projectList.projectList),
+    url(r'^projectList/$', projectList.projectListView),
     url(r'^firstProjectList/$', projectList.firstProjectList),
     url(r'^addProjectList/$', projectList.addProjectList),
     url(r'^addProject/$', projectList.addProject),
