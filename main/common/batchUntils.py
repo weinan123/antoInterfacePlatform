@@ -1,7 +1,7 @@
 # coding=utf-8
 import unittest
 import sys,os
-from main.models import apiInfoTable, projectList,hostTags
+from main.models import apiInfoTable, projectList,hostTags,moduleList
 import time
 import json
 from main.untils.until import mul_bodyData
@@ -112,8 +112,9 @@ def getResp(id,environment, dtime):
         dependData_list = query.depend_casedata
         dependData = isDependency(depend_flag, dependData_list)
     listid = query.owningListID
-    querylist = projectList.objects.get(id=listid)
-    print("所属项目-模块：%s - %s" % (querylist.projectName, querylist.moduleName))
+    querylist = moduleList.objects.get(id=int(listid))
+    proList = projectList.objects.get(id=int(querylist.owningListID))
+    print("所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
     print u"请求方法：%s" % (methods)
     host = getHost(int(query.host),environment)
     print host
