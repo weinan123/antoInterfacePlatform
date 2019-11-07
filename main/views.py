@@ -165,21 +165,21 @@ def sendRequest(request):
 
 def getProjectList(request):
     project_list = projectList.objects.filter().values("projectName").distinct()
-    modellist = moduleList.objects.filter().values("owningListID","moduleName").distinct()
-    #print project_list,model_list
+    modellist = moduleList.objects.filter().values("owningListID", "moduleName").distinct()
+    # print project_list,model_list
     returnData = {
-        "project_list":[],
-        "model_list":[]
+        "project_list": [],
+        "model_list": []
     }
     # print("***project_list,modellist**",project_list,modellist)
-    for i in range(0,len(project_list)):
+    for i in range(0, len(project_list)):
         returnData["project_list"].append(project_list[i])
     for j in modellist:
         projectName = projectList.objects.get(id=int(j["owningListID"])).projectName
         moduleName = j["moduleName"]
         returnData["model_list"].append({"projectName": projectName, "moduleName": moduleName})
     print returnData
-    return JsonResponse(returnData,safe=False)
+    return JsonResponse(returnData, safe=False)
 
 
 def newCase(request):
@@ -202,9 +202,11 @@ def newCase(request):
         if (flag == False):
             try:
                 hostTags.objects.get_or_create(qa=host)
-                id = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
-                    "id")
-                owningListID = id[0]["id"]
+
+                resp = projectList.objects.filter(projectName=projectName).values("id")
+                id = resp[0]["id"]
+                owningListID = \
+                moduleList.objects.filter(owningListID=id, moduleName=moduleName).values("id")[0]['id']
                 hoststr = hostTags.objects.filter(qa=host).values("id")
                 hostid = hoststr[0]["id"]
                 apiInfoTable.objects.get_or_create(method=methods, headers=headers, host=hostid, url=url,
@@ -225,8 +227,11 @@ def newCase(request):
             try:
 
                 id1 = int(reqdata["apiId"])
-                proid = projectList.objects.filter(projectName=projectName,
-                                                   moduleName=moduleName).values("id")
+                resp = projectList.objects.filter(projectName=projectName).values("id")
+                id = resp[0]["id"]
+                proid = \
+                moduleList.objects.filter(owningListID=id, moduleName=moduleName).values("id")[0]['id']
+
                 # hoststr = hostTags.objects.filter(qa=host).values("id")
                 # hostid = hoststr[0]["id"]
                 hoststr = apiInfoTable.objects.filter(apiID=id1).values("host")
