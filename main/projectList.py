@@ -27,18 +27,20 @@ def addProjectList(request):
             # if ():
             #     return
             dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-            if (projectList.objects.filter(projectName=form.cleaned_data['projectName'],
-                                           moduleName=form.cleaned_data['moduleName']).count() == 0):
-                inter = projectList.objects.create(projectName=form.cleaned_data['projectName'],
-                                                   moduleName=form.cleaned_data['moduleName'])
-
+            resp2 = projectList.objects.filter(projectName=form.cleaned_data['projectName']).values("id")
+            owningListID = resp2[0]['id']
+            if (moduleList.objects.filter(owningListID=owningListID,
+                                          moduleName=form.cleaned_data['moduleName']).count() == 0):
+                inter = moduleList.objects.create(owningListID=owningListID,
+                                                  moduleName=form.cleaned_data['moduleName'])
                 counttable = countCase.objects.create(projectName=form.cleaned_data['projectName'],
                                                       moduleName=form.cleaned_data['moduleName'], )
                 counttable.save()
                 inter.save()
-                projectList.objects.filter(projectName=form.cleaned_data['projectName'],
-                                           moduleName=form.cleaned_data['moduleName']).update(updateTime=dtime,
-                                                                                              createTime=dtime)
+                moduleList.objects.filter(owningListID=owningListID,
+                                          moduleName=form.cleaned_data['moduleName']).update(
+                    updateTime=dtime,
+                    createTime=dtime)
                 code = 0
                 info = '新建成功！'
                 result = {
@@ -80,8 +82,9 @@ def addProject(request):
             if (projectList.objects.filter(projectName=form.cleaned_data['projectName']).count() == 0):
                 inter = projectList.objects.create(projectName=form.cleaned_data['projectName'])
                 inter.save()
-                projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(updateTime=dtime,
-                                                                                                createTime=dtime)
+                projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(
+                    updateTime=dtime,
+                    createTime=dtime)
                 code = 0
                 info = '新建成功！'
                 result = {
@@ -105,35 +108,24 @@ def addProject(request):
 
 
 def projectListInfo(request):
-    # resp = projectList.objects.values("id", "projectName", "host", "moduleName", "updateTime", "createTime")
-    # respList = list(resp)
-    # for i in range(len(respList)):
-    #     respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
-    # for i in range(len(respList)):
-    #     respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
-    # result = {
-    #     'data': respList,
-    #     'code': 0,
-    #     'info': 'success'
-    # }
-    #
     result = {
         'code': -1,
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        resp2 = projectList.objects.filter(projectName=projectName).values("id", "projectName")
+        resp2 = projectList.objects.filter(projectName=projectName).values("id")
         owningListID = resp2[0]['id']
-        projectName = resp2[0]['projectName']
-        resp = moduleList.objects.filter(owningListID=owningListID).values("id", "moduleName", "updateTime",
+        resp = moduleList.objects.filter(owningListID=owningListID).values("id", "moduleName",
+                                                                           "updateTime",
                                                                            "createTime")
         respList = list(resp)
         for i in range(len(respList)):
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
-            CaseInfo = countCase.objects.filter(projectName=projectName, moduleName=respList[i]['moduleName']).values(
+            CaseInfo = countCase.objects.filter(projectName=projectName,
+                                                moduleName=respList[i]['moduleName']).values(
                 "allcaseNum",
                 "passcaseNum",
                 "failcaseNum",
@@ -206,11 +198,10 @@ def firstProjectListInfo(request):
             updateTime = str(respList[i]['updateTime']).split('.')[0]
             owningListID = respList[i]['id']
             totalModule = moduleList.objects.filter(owningListID=owningListID).count()
-            # updateTime = projectList.objects.filter(projectName=projectName).order_by('updateTime')[0]['updateTime']
-            #
             if (moduleList.objects.filter(owningListID=owningListID).count() > 0):
                 updateTime = str(
-                    moduleList.objects.filter(owningListID=owningListID).order_by('-updateTime').values("updateTime")[
+                    moduleList.objects.filter(owningListID=owningListID).order_by('-updateTime').values(
+                        "updateTime")[
                         0][
                         'updateTime']).split('.')[0]
             json_dict["projectName"] = projectName
@@ -236,39 +227,25 @@ def firstProjectList(request):
     return render(request, 'firstProjectList.html')
 
 
-
 def download(request):
-     file = open('main/postfiles/template.xlsx', 'rb')
-     response = FileResponse(file)
-     response['Content-Type'] = 'application/octet-stream'
-     response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
-     return  response
-'''
- def uploadCase(request):
-     import xlwt
-     if request.method == 'GET':
-         id = request.GET.get('id')
-         caseList = apiInfoTable.objects.filter(owningListID=id).values()
-         myWorkbook = xlwt.Workbook()
-         mySheet = myWorkbook.add_sheet('A Test Sheet')
-         #写入数据
-'''
-
-
-def projectView(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        # print id
-    return HttpResponseRedirect('/projectList/')
+    file = open('main/postfiles/template.xlsx', 'rb')
+    response = FileResponse(file)
+    response['Content-Type'] = 'application/octet-stream'
+    response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
+    return response
 
 
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
         if (apiInfoTable.objects.filter(owningListID=id).count() == 0):
-            sss = projectList.objects.filter(id=id).values_list("projectName", "moduleName")
-            countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
-            projectList.objects.filter(id=id).delete()
+            resp2 = moduleList.objects.filter(id=id).values("owningListID", "moduleName")
+            projectID = resp2[0]['owningListID']
+            moduleName = resp2[0]['moduleName']
+            resp = projectList.objects.filter(id=projectID).values("projectName")
+            projectName = resp[0]['projectName']
+            countCase.objects.filter(projectName=projectName, moduleName=moduleName).delete()
+            moduleList.objects.filter(id=id).delete()
             code = 0
             info = '删除成功！'
         else:
@@ -312,9 +289,13 @@ def projectBatchDelete(request):
                 info = '所选模块中还存在用例，请先删除用例，再删除模块！'
         if (flag):
             for x in idDelete:
-                sss = projectList.objects.filter(id=x[0]).values_list("projectName", "moduleName")
-                countCase.objects.filter(projectName=sss[0][0], moduleName=sss[0][1]).delete()
-                projectList.objects.filter(id=x[0]).delete()
+                r1 = moduleList.objects.filter(id=x[0]).values("moduleName", "owningListID")
+                owningListID = r1[0]['owningListID']
+                moduleName = r1[0]['moduleName']
+                r2 = projectList.objects.filter(id=owningListID).values("projectName")
+                projectName = r2[0]['projectName']
+                countCase.objects.filter(projectName=projectName, moduleName=moduleName).delete()
+                moduleList.objects.filter(id=x[0]).delete()
                 code = 0
                 info = '删除成功！'
         result = {
@@ -329,8 +310,8 @@ def projectEdit(request):
         id = request.POST.get('id')
         projectName = request.POST.get('projectName')
         moduleName = request.POST.get('moduleName')
-        resp = projectList.objects.filter(id=id).values("projectName", "moduleName")
-        if (resp[0]['projectName'] == projectName and resp[0]['moduleName'] == moduleName):
+        resp = moduleList.objects.filter(id=id).values("moduleName")
+        if (resp[0]['moduleName'] == moduleName):
             code = -1
             info = '未做任何修改！'
             result = {
@@ -339,11 +320,9 @@ def projectEdit(request):
             }
             return JsonResponse(result, safe=False)
         else:
-            countCase.objects.filter(projectName=resp[0]['projectName'],
-                                     moduleName=resp[0]['moduleName']).update(projectName=projectName,
-                                                                              moduleName=moduleName)
-            edit = projectList.objects.get(id=id)
-            edit.projectName = projectName
+            countCase.objects.filter(projectName=projectName,
+                                     moduleName=resp[0]['moduleName']).update(moduleName=moduleName)
+            edit = moduleList.objects.get(id=id)
             edit.moduleName = moduleName
             edit.save()
             code = 0
@@ -409,9 +388,11 @@ def projectImport(request):
               'info': info}
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
+        resp2 = projectList.objects.filter(projectName=projectName).values("id")
+        owningListID = resp2[0]['id']
         moduleName = request.POST.get('moduleName')
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        if (projectList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
+        if (moduleList.objects.filter(owningListID=owningListID, moduleName=moduleName).count() == 0):
             f = request.FILES['file']
             filename = f.name.split('.')[-1]
             if (filename == 'xlsx' or filename == 'xls'):
@@ -432,8 +413,6 @@ def projectImport(request):
                 # 获取host存入host表
                 ncols = table.ncols
                 hostsList = table.col_values(2, start_rowx=srows, end_rowx=nrows)
-                print hostsList
-                projectList.objects.create(projectName=projectName, moduleName=moduleName)
                 for i in hostsList:
                     hostTags.objects.get_or_create(qa=i)
 
@@ -532,7 +511,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
+                            isRedirect == 1.0):
                         verification = True
                     else:
                         code = -7
@@ -548,18 +528,19 @@ def projectImport(request):
                     'info': info
                 }
             if (verification):
-                inter = projectList.objects.get_or_create(projectName=projectName, moduleName=moduleName)
+                inter = moduleList.objects.get_or_create(owningListID=owningListID,
+                                                         moduleName=moduleName)
 
                 counttable = countCase.objects.get_or_create(projectName=projectName,
                                                              moduleName=moduleName)
-                # counttable.save()
-                # inter.save()
-                projectList.objects.filter(projectName=projectName, moduleName=moduleName).update(updateTime=dtime,
-                                                                                                  createTime=dtime)
+                moduleList.objects.filter(owningListID=owningListID, moduleName=moduleName).update(
+                    updateTime=dtime,
+                    createTime=dtime)
 
-                listid = projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
-                    "id")[0]['id']
-                print listid
+                listid = \
+                    moduleList.objects.filter(owningListID=owningListID,
+                                              moduleName=moduleName).values(
+                        "id")[0]['id']
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -569,7 +550,6 @@ def projectImport(request):
                     method = data_list[1]
                     tablehost = data_list[2]
                     host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
-                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]
@@ -680,6 +660,12 @@ def projectImport(request):
                 srows = 8
                 # 数据校验
                 verification = True
+                # 获取host存入host表
+                ncols = table.ncols
+                hostsList = table.col_values(2, start_rowx=srows, end_rowx=nrows)
+                for i in hostsList:
+                    hostTags.objects.get_or_create(qa=i)
+
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -780,7 +766,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
+                            isRedirect == 1.0):
                         verification = True
                     else:
                         code = -7
@@ -797,7 +784,8 @@ def projectImport(request):
                 }
             if (verification):
                 listid = \
-                    projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                    moduleList.objects.filter(owningListID=owningListID,
+                                               moduleName=moduleName).values(
                         "id")[0]['id']
                 for i in range(srows, nrows):
                     # data_list用来存放数据
@@ -808,7 +796,6 @@ def projectImport(request):
                     method = data_list[1]
                     tablehost = data_list[2]
                     host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
-                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]

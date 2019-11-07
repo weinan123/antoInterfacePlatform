@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, projectList,reports, users
+from models import apiInfoTable, projectList,moduleList,reports, users
 import time
 import json
 from django.http.response import JsonResponse
@@ -274,16 +274,15 @@ def getapiInfos(request):
             json_dict["assert"] = query.assertinfo.replace(" ", "")
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
-            listdata = projectList.objects.get(id=query.owningListID)
-            json_dict["projectName"] = listdata.projectName
+            listdata = moduleList.objects.get(id=int(query.owningListID))
             json_dict["moduleName"] = listdata.moduleName
+            pid = listdata.owningListID
+            json_dict["projectName"] = projectList.objects.get(id=int(pid)).projectName
             json_dict["host"] = batchUntils.getHost(int(query.host),environment)
-            modulelist = projectList.objects.filter().values("projectName", "moduleName").distinct()
-            # print modulelist
+            modulelist = moduleList.objects.filter(owningListID=int(pid)).values("moduleName").distinct()
             for module in modulelist:
-                if module["projectName"] == json_dict["projectName"]:
-                    if module["moduleName"] != "":
-                        module_list.append(module["moduleName"])
+                module_list.append(module["moduleName"])
+            # print "*******modulelist*******", module_list
             result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list,"showbody":showbodyState}
     return JsonResponse(result)
 
@@ -296,15 +295,16 @@ def getAllCases(request):
     endidx = int(pagenum) * int(count)
     # print(startidx, endidx)
     sear = request.GET['searchinfo']
-    projectName = request.GET["projectName"]
+    projectID = request.GET["projectID"]
     moduleName = request.GET["moduleName"]
+    print("***11*",projectID,moduleName,sear)
     pidList = []
-    if projectName != "" or moduleName != "":
-        if moduleName != "":
-            query_projId = projectList.objects.filter(projectName=projectName).filter(moduleName=moduleName).values("id")
-        else:
-            query_projId = projectList.objects.filter(projectName=projectName).values("id")
-        for pj in query_projId:
+    if projectID != "" and moduleName != "":
+        moduleID = moduleList.objects.get(owningListID=projectID , moduleName=moduleName).id
+        pidList.append(moduleID)
+    elif projectID != "":
+        moduleID = moduleList.objects.filter(owningListID=projectID).values("id")
+        for pj in moduleID:
             pidList.append(pj["id"])
     if len(pidList) == 0:
         apilist2 = apiInfoTable.objects.filter(apiName__contains=sear).order_by("apiID")[startidx:endidx]
@@ -358,13 +358,13 @@ def getProjInfos(request):
         projectLists = []
         allModuleList = []
         try:
-            projInfos = projectList.objects.filter().values("projectName").distinct()
-            modInfos = projectList.objects.filter().values("projectName", "moduleName").distinct()
+            projInfos = projectList.objects.filter().values("id", "projectName").distinct()
+            modInfos = moduleList.objects.filter().values("owningListID", "moduleName").distinct()
         except Exception as e:
             result = {'code': -1, 'info': 'sql error:' + str(e)}
             return JsonResponse(result)
         for pro in projInfos:
-            projectLists.append(pro["projectName"])
+            projectLists.append(pro)
         for mod in modInfos:
             allModuleList.append(mod)
         result = {'code': 0,
