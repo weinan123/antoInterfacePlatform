@@ -660,6 +660,12 @@ def projectImport(request):
                 srows = 8
                 # 数据校验
                 verification = True
+                # 获取host存入host表
+                ncols = table.ncols
+                hostsList = table.col_values(2, start_rowx=srows, end_rowx=nrows)
+                for i in hostsList:
+                    hostTags.objects.get_or_create(qa=i)
+
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
