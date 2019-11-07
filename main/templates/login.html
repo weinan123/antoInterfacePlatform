@@ -134,6 +134,7 @@ var vm0 = new Vue({
                             this.setCookie("usename",this.username,0.1);
                             console.log(resp.data);
                             window.location.href="/index/";
+
                         }else{
                             console.log(resp.data);
                             this.login_error = resp.data.message;

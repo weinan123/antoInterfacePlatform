@@ -164,6 +164,7 @@ def batchrun(request):
             endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             result_infos = {
                 "report_runName": report_runName,
+                "environment":environment,
                 "startTime": starttime,
                 "endTime": endtime,
                 "totalNum": totalNum,

@@ -5,6 +5,7 @@ import json, time
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, FileResponse
 from main.models import *
 from forms import UserForm, projectForm, firstProjectForm
+from common import mulExcel
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django import forms
@@ -228,13 +229,56 @@ def firstProjectList(request):
 
 
 def download(request):
+
     file = open('main/postfiles/template.xlsx', 'rb')
     response = FileResponse(file)
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
     return response
-
-
+def uploadCase(request):
+     if request.method == 'GET':
+         id = request.GET["modelid"]
+         modelname = moduleList.objects.filter(id = id).values_list("moduleName")[0][0]
+         print modelname
+         caseList = apiInfoTable.objects.filter(owningListID=id).values()
+         if(len(caseList)>0):
+            for i in range(0,len(caseList)):
+             casename = caseList[i]["apiName"]
+             method = caseList[i]["method"]
+             host = caseList[i]["host"]
+             url = caseList[i]["url"]
+             headers = caseList[i]["headers"]
+             body =caseList[i]["body"]
+             t_id =caseList[i] ["t_id"]
+             depend_caseId=caseList[i] ["depend_caseId"]
+             depend_casedata=caseList[i]["depend_casedata"]
+             assertinfo=caseList[i]["assertinfo"]
+             isScreat=caseList[i]["isScreat"]
+             isRedirect=caseList[i]["isRedirect"]
+             caselist = [casename,method,host ,url ,headers ,body ,t_id ,depend_caseId,
+                         depend_casedata, assertinfo,isScreat,isRedirect]
+             print caseList
+             filepath = r"main/postfiles/template.xls"
+             saveexcel = mulExcel.mulExcel(filepath,0)
+             saveexcel.writeRowData(i+8,caselist,modelname)
+         else:
+             caselist = []
+             print caseList
+             filepath = r"main/postfiles/template.xls"
+             saveexcel = mulExcel.mulExcel(filepath, 0)
+             saveexcel.writeRowData(8, caselist, modelname)
+         file = open('main/postfiles/'+ modelname+'.xls', 'rb')
+         print file
+         print modelname
+         response = FileResponse(file)
+         response['Content-Type'] = 'application/octet-stream'
+         response['Content-Disposition'] = 'attachment;filename="%s"'%(modelname)
+         return response
+def projectView(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        # print id
+    return HttpResponseRedirect('/projectList/')
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
@@ -334,53 +378,7 @@ def projectEdit(request):
             return JsonResponse(result, safe=False)
 
 
-# def projectSort(request):
-#     if request.method == 'GET':
-#         id = request.GET.get('id')
-#         projectList.objects.filter(id=id).delete()
-#     return HttpResponseRedirect('/projectList/')
 
-
-# def projectImport(request):
-#     Flag = Flag2 = True
-#     if request.method == 'POST':
-#         f = request.FILES['file']
-#         for line in f.readlines():  # 依次读取每行
-#             line = line.strip()  # 去掉每行头尾空白
-#             if not len(line) or line.startswith('#'):  # 判断是否是空行或注释行
-#                 continue  # 跳过
-#             matchObj = re.match(r'(GET|POST) (https|http)://(.*?)/(.*) ', line, re.M | re.I)
-#             if matchObj:
-#                 if (Flag):
-#                     Flag = False
-#                     method = matchObj.group(1)
-#                     protocol = matchObj.group(2)
-#                     host = matchObj.group(2) + r'://' + matchObj.group(3)
-#                     url = r'/' + matchObj.group(4)
-#                     print "method : ", method
-#                     print "protocol : ", protocol
-#                     print "host : ", host
-#                     print "url : ", url
-#             matchObj2 = re.match(r'Content-Type: (.*?);(.*)', line, re.M | re.I)
-#             if matchObj2:
-#                 if (Flag2):
-#                     Flag2 = False
-#                     header = '{"Content-Type": "' + matchObj2.group(1) + '"}'  # {"Content-Type": "application/json"}
-#                     print "header : ", header
-#             matchObj3 = re.finditer(r'".+?":".+?"', line, re.M | re.I)
-#             if matchObj3:
-#                 for match in matchObj3:
-#                     print (match.group())
-#                     json = re.finditer(r'".+?"', match.group())
-#                     for jsonMatch in json:
-#                         print jsonMatch.group()
-#
-#         # with open('main/upload/file.txt', 'wb+') as destination:
-#         #     for chunk in f.chunks():
-#         #         destination.write(chunk)
-#     return HttpResponseRedirect('/projectList/')
-
-# 导入Excel表格数据
 def projectImport(request):
     code = -100
     info = '未知错误！'
@@ -887,3 +885,4 @@ def projectImport(request):
     }
 
     return JsonResponse(result, safe=False)
+

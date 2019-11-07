@@ -75,6 +75,7 @@ class reports(models.Model):
     failNum = models.IntegerField()
     errorNum = models.IntegerField()
     executor = models.CharField(max_length=50)
+    environment = models.CharField(max_length=50)
     report_localName = models.CharField(max_length=200)
 
 class users(models.Model):
@@ -86,6 +87,17 @@ class users(models.Model):
     batch_run = models.BooleanField(default=False)
     batch_del = models.BooleanField(default=False)
     configer_permit = models.BooleanField(default=False)
+
+class usersCookies(models.Model):
+    username = models.CharField(max_length=200,null=True,blank=True)
+    projectId = models.IntegerField(null=True,blank=True)
+    url = models.CharField(max_length=100,null=True,blank=True)
+    methods = models.CharField(max_length=50,null=True,blank=True)
+    body = models.CharField(max_length=100,null=True,blank=True)
+    cookies = models.CharField(max_length=200,blank=True,null=True)
+    updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
+    createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+
 
 class department(models.Model):
     depart_lever = models.IntegerField()
