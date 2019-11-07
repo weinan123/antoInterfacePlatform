@@ -22,13 +22,13 @@ class sendRequest():
         else:
             redirect = True
         return redirect
-    def sendRequest(self,methods,url,headers,send_body,files,isRedirect,showflag):
+    def sendRequest(self,methods,url,headers,send_body,files,isRedirect,showflag,Cookie=None):
         #print files
         s = requests.Session()
         response = ""
         if (methods == "GET"):
             redirect = self.isRedirect(isRedirect)
-            response = s.get(url, headers=headers, params=send_body, verify=False, allow_redirects=redirect)
+            response = s.get(url, headers=headers, params=send_body, verify=False, allow_redirects=redirect, cookies=Cookie)
             resp = response.text
         elif (methods == "POST"):
             try:
@@ -39,10 +39,10 @@ class sendRequest():
             print postbody
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
-                              allow_redirects=redirect)
+                              allow_redirects=redirect,cookies=Cookie)
             # resp = response.text
         return response
-    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag):
+    def sendSecretRequest(self,key_id,secret_key,Authorization,methods,url,send_url,headers,send_body,files,isRedirect,showflag,Cookie):
         headerType = headers["Content-Type"]
         postbody = self.mulBody(headerType, send_body,showflag)
         redirect = self.isRedirect(isRedirect)
@@ -66,9 +66,9 @@ class sendRequest():
             #print body
             body = authService.aes_encrypt(body)
         if (methods == "GET"):
-            response = requests.get(url, headers=headers, params=body, verify=False,allow_redirects=redirect)
+            response = requests.get(url, headers=headers, params=body, verify=False,allow_redirects=redirect,cookies=Cookie)
         elif (methods == "POST"):
-            response = requests.post(url, headers=headers,files=files, data=body, verify=False,allow_redirects=redirect)
+            response = requests.post(url, headers=headers,files=files, data=body, verify=False,allow_redirects=redirect,cookies=Cookie)
         resp = response.text
         if headers.get('X-encryptflag') != '1':
             pass
