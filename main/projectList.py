@@ -114,9 +114,8 @@ def projectListInfo(request):
     }
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        resp2 = projectList.objects.filter(projectName=projectName).values("id", "projectName")
+        resp2 = projectList.objects.filter(projectName=projectName).values("id")
         owningListID = resp2[0]['id']
-        projectName = resp2[0]['projectName']
         resp = moduleList.objects.filter(owningListID=owningListID).values("id", "moduleName",
                                                                            "updateTime",
                                                                            "createTime")
@@ -389,9 +388,11 @@ def projectImport(request):
               'info': info}
     if request.method == 'POST':
         projectName = request.POST.get('projectName')
+        resp2 = projectList.objects.filter(projectName=projectName).values("id")
+        owningListID = resp2[0]['id']
         moduleName = request.POST.get('moduleName')
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        if (projectList.objects.filter(projectName=projectName, moduleName=moduleName).count() == 0):
+        if (moduleList.objects.filter(owningListID=owningListID, moduleName=moduleName).count() == 0):
             f = request.FILES['file']
             filename = f.name.split('.')[-1]
             if (filename == 'xlsx' or filename == 'xls'):
@@ -412,8 +413,6 @@ def projectImport(request):
                 # 获取host存入host表
                 ncols = table.ncols
                 hostsList = table.col_values(2, start_rowx=srows, end_rowx=nrows)
-                print hostsList
-                projectList.objects.create(projectName=projectName, moduleName=moduleName)
                 for i in hostsList:
                     hostTags.objects.get_or_create(qa=i)
 
@@ -529,20 +528,19 @@ def projectImport(request):
                     'info': info
                 }
             if (verification):
-                inter = projectList.objects.get_or_create(projectName=projectName, moduleName=moduleName)
+                inter = moduleList.objects.get_or_create(owningListID=owningListID,
+                                                         moduleName=moduleName)
 
                 counttable = countCase.objects.get_or_create(projectName=projectName,
                                                              moduleName=moduleName)
-                # counttable.save()
-                # inter.save()
-                projectList.objects.filter(projectName=projectName, moduleName=moduleName).update(
+                moduleList.objects.filter(owningListID=owningListID, moduleName=moduleName).update(
                     updateTime=dtime,
                     createTime=dtime)
 
                 listid = \
-                    projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                    moduleList.objects.filter(owningListID=owningListID,
+                                              moduleName=moduleName).values(
                         "id")[0]['id']
-                print listid
                 for i in range(srows, nrows):
                     # data_list用来存放数据
                     data_list = []
@@ -552,7 +550,6 @@ def projectImport(request):
                     method = data_list[1]
                     tablehost = data_list[2]
                     host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
-                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]
@@ -781,7 +778,8 @@ def projectImport(request):
                 }
             if (verification):
                 listid = \
-                    projectList.objects.filter(projectName=projectName, moduleName=moduleName).values(
+                    moduleList.objects.filter(owningListID=owningListID,
+                                               moduleName=moduleName).values(
                         "id")[0]['id']
                 for i in range(srows, nrows):
                     # data_list用来存放数据
@@ -792,7 +790,6 @@ def projectImport(request):
                     method = data_list[1]
                     tablehost = data_list[2]
                     host = hostTags.objects.filter(qa=tablehost).values("id")[0]['id']
-                    print host
                     url = data_list[3]
                     headers = data_list[4]
                     body_data = data_list[5]
