@@ -14,3 +14,4 @@ class projectForm(forms.Form):
 
 class firstProjectForm(forms.Form):
     projectName = forms.CharField(max_length=50, label='项目名称')
+    cookieFlag = forms.IntegerField(min_value=0, max_value=3, label='登陆接口')
