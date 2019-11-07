@@ -273,16 +273,15 @@ def getapiInfos(request):
             json_dict["assert"] = query.assertinfo.replace(" ", "")
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
-            listdata = projectList.objects.get(id=query.owningListID)
-            json_dict["projectName"] = listdata.projectName
+            listdata = moduleList.objects.get(id=int(query.owningListID))
             json_dict["moduleName"] = listdata.moduleName
+            pid = listdata.owningListID
+            json_dict["projectName"] = projectList.objects.get(id=int(pid)).projectName
             json_dict["host"] = batchUntils.getHost(int(query.host),environment)
-            modulelist = projectList.objects.filter().values("projectName", "moduleName").distinct()
-            # print modulelist
+            modulelist = moduleList.objects.filter(owningListID=int(pid)).values("moduleName").distinct()
             for module in modulelist:
-                if module["projectName"] == json_dict["projectName"]:
-                    if module["moduleName"] != "":
-                        module_list.append(module["moduleName"])
+                module_list.append(module["moduleName"])
+            # print "*******modulelist*******", module_list
             result = {'code': 0, 'datas': json_dict, 'info': 'success',"module_list": module_list,"showbody":showbodyState}
     return JsonResponse(result)
 

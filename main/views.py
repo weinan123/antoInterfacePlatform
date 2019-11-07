@@ -149,17 +149,20 @@ def sendRequest(request):
     return JsonResponse(response,safe=False)
 def getProjectList(request):
     project_list = projectList.objects.filter().values("projectName").distinct()
-    model_list = projectList.objects.filter().values("projectName","moduleName").distinct()
+    modellist = moduleList.objects.filter().values("owningListID","moduleName").distinct()
     #print project_list,model_list
     returnData = {
         "project_list":[],
         "model_list":[]
     }
+    # print("***project_list,modellist**",project_list,modellist)
     for i in range(0,len(project_list)):
         returnData["project_list"].append(project_list[i])
-    for j in range(0,len(model_list)):
-        returnData["model_list"].append(model_list[j])
-    #print returnData
+    for j in modellist:
+        projectName = projectList.objects.get(id=int(j["owningListID"])).projectName
+        moduleName = j["moduleName"]
+        returnData["model_list"].append({"projectName": projectName, "moduleName": moduleName})
+    print returnData
     return JsonResponse(returnData,safe=False)
 
 
