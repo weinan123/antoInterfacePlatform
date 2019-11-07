@@ -4,46 +4,23 @@
 {% endblock %}
 {% block script %}
     <link href="/static/css/project.css" rel="stylesheet">
+    <link href="/static/css/myindex.css" rel="stylesheet">
+    <link href="/static/css/singleInterface.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="content" id="projectList" style="width: 100%;height: 100%;position: relative;">
-        <div class="pageheader">
-            <p class="titlecss">cookie管理</p>
-        </div>
-        <div class="formContent">
-            <div class="formContent">
-                <form role="form" class="form-horizontal" style="padding: 20px">
-                            <div class="form-group">
-                               <label  for="version" class="col-sm-2">cookie生成url:</label>
-                               <div class="col-sm-4">
-                               <input  class="form-control"  v-model="secret_key" >
-                               </input>
-                               </div>
-                                <div class="col-sm-4"></div>
-                            </div>
-                            <div class="form-group">
-                               <label  for="version" class="col-sm-2">cookie生成参数:</label>
-                               <div class="col-sm-4">
-                                   <input  class="form-control"  v-model="key_id" >
-                               </div>
-                                <div class="col-sm-4"><button  type="button" class="btn-save" style="background-color: #03BABF;border: 1px solid #03BABF;" @click="returnAuthorization()">生成</button></div>
-                            </div>
-
-                            <div class="form-group">
-                                 <label  for="version" class="col-lg-2">Cookies:</label>
-                               <div class="col-lg-5">
-                                   <textarea  class="form-control"  v-model="Authorization" rows="4" ></textarea>
-                               </div>
-                        </div>
-                        </form>
-            </div>
-        </div>
-        <div class="pageheader">
+    <div class="content" >
+        <div class="pageheader" id="projectname">
             <p class="titlecss">{! projectNameTitle !}</p>
         </div>
-        <div class="formContent" style="background-color: white;padding-top: 15px;width: 75%;" id="row">
+        <div class="pageheader" id="modelname">
+            <div v-for="tabName,index in tabNameList" class="projectCss" style="cursor:pointer" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="changemodel(index)">{! tabName !}</a>
+        <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
+        </div>
+        </div>
+        {% comment %}/**项目详情model**/{% endcomment %}
+        <div v-show="currentSort===0" class="formContent" id="projectList">
             <div class="col-md-4" style="width:90%;padding-right: 0px;">
-                <div class="btn-group" style="width:100%;padding: 15px;height: 70px;margin: auto;padding-right: 0px;">
+                <div class="btn-group" style="width:100%;height: 70px;margin: auto;padding-right: 0px;">
                     <!-- 新建按钮触发模态框 -->
 
                     <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
@@ -250,8 +227,6 @@
                                         编辑
                                     </button>
                                 </a>
-
-
                                 <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
                                      role="dialog"
                                      aria-labelledby="myModalLabel"
@@ -315,12 +290,10 @@
                                     <button type="button" class="btn-delete" @click="projectDelete(item.id)">删除
                                     </button>
                                 </a>
-                                <a>
-                                    <button type="button" class="btn-delete" :href="['/uploadCase/?modelid = item.id ]" v-bind:download="info.report_runName" >导出
+                                <a v-bind:href="['/uploadCase/?modelid='+item.id]" v-bind:download="item.moduleName+'.xls'">
+                                    <button type="button" class="btn-delete" >导出
                                     </button>
                                 </a>
-
-
                             </div>
                         </td>
                     </tr>
@@ -328,6 +301,62 @@
                 </table>
             </div>
         </div>
+        {% comment %}/**用例详情model**/{% endcomment %}
+        <div v-show="currentSort===1" class="formContent" id = "cases">weinannan</div>
+        {% comment %}/**cookie详情model**/{% endcomment %}
+        <div v-show="currentSort===2" class="formContent" style="padding: 20px" id="cookies">
+           <div style="padding-top: 50px;padding-left: 50px">
+            <span class="projectnamesel">baseCookie：</span>
+                    <table class="table table-bordered"style="width: 85%">
+                    <thead>
+            <tr>
+                <th>cookieName</th>
+              <th>用户名</th>
+              <th>密码</th>
+              <th>生成</th>
+              <th>cookies</th>
+              <th>是否有效</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td col-xs-1>basiccookie</td>
+             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名" ></td>
+             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码" ></td>
+                <td col-xs-2><button class="btn-save">生成</button></td>
+                <td col-xs-4><input type="text" class="form-control" id="name"  ></td>
+                <td col-xs-1>有效</td>
+            </tr>
+          </tbody>
+    </table>
+           </div>
+            <div style="padding-left: 50px">
+              <span class="projectnamesel" >caseCookies：</span>
+                    <table class="table table-bordered" style="width: 85%">
+                    <thead>
+            <tr>
+                <th>cookieName</th>
+              <th>用户名</th>
+              <th>密码</th>
+              <th>生成</th>
+              <th>cookies</th>
+              <th>是否有效</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="cookie,index in caseCookieList">
+              <td col-xs-1>{! cookie.cookiename !}</td>
+             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名" >{! cookie.username !}</td>
+             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码" >{! cookie.password !}</td>
+                <td col-xs-2><button class="btn-save">生成</button></td>
+                <td col-xs-4><input type="text" class="form-control" id="name">{! cookie.cookies !}</td>
+                <td col-xs-1>{! cookie.iseffective !}</td>
+            </tr>
+          </tbody>
+    </table>
+            </div>
+            </div>
+
     </div>
     <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>
 {% endblock %}
@@ -336,28 +365,15 @@
 <div class="col-md-4"></div>
 
 {% block vuejs %}
-
+    <!-- titlevue -->
     <script type="text/javascript">
-        var pro = "";
-        var vm2 = new Vue({
+        var vm3 = new Vue({
             delimiters: ['{!', '!}'],
-            el: '#projectList',
-
+            el: '#projectname',
             data() {
-                projectBatchDelete = true;
                 return {
                     projectNameTitle: '',
-                    projectName: '',
-                    moduleName: '',
-                    projectNameNew: '',
-                    moduleNameNew: '',
-                    file: '',
-                    list: [],
-                    checkedDelete: [],
                 };
-            },
-            created() {
-                vm1.$data.currentSort = 2;
             },
             mounted() {
                 let id = this.getparam('projectName');
@@ -391,7 +407,65 @@
                     }
                     return param[str];
                 },
-
+            } ,
+        })
+    </script>
+    <!-- modelvue -->
+    <script type="text/javascript">
+        var vm3 = new Vue({
+            delimiters: ['{!', '!}'],
+            el: '#modelname',
+            data() {
+                return {
+                    tabNameList:["项目接口详情","项目用例管理","cookie管理"],
+                    currentSort:0,
+                };
+            },
+            methods: {
+                changemodel(index){
+                    this.currentSort=index;
+                    if(index===0){
+                        projectmodel.$data.currentSort=0;
+                         casemodel.$data.currentSort="";
+                        cookiemodel.$data.currentSort=""
+                    }else if(index===1){
+                         casemodel.$data.currentSort=1;
+                         projectmodel.$data.currentSort="";
+                         cookiemodel.$data.currentSort=""
+                    }
+                    else if(index===2){
+                         cookiemodel.$data.currentSort=2;
+                         projectmodel.$data.currentSort="";
+                         casemodel.$data.currentSort=""
+                    }
+                },
+            } ,
+        })
+    </script>
+    <!-- projectmodel -->
+    <script type="text/javascript">
+        var pro = "";
+        var projectmodel = new Vue({
+            delimiters: ['{!', '!}'],
+            el: '#projectList',
+            data() {
+                projectBatchDelete = true;
+                return {
+                    currentSort:0,
+                    projectNameTitle: '',
+                    projectName: '',
+                    moduleName: '',
+                    projectNameNew: '',
+                    moduleNameNew: '',
+                    file: '',
+                    list: [],
+                    checkedDelete: [],
+                };
+            },
+            created() {
+                vm1.$data.currentSort = 2;
+            },
+            methods: {
                 projectBatchDelete() {
                     let self = this;
                     zdconfirm("确认要删除吗？", function (r) {
@@ -481,8 +555,7 @@
                             );
                         }
                     })
-                }
-                ,
+                },
 
                 selectAll() {
                     axios
@@ -500,8 +573,7 @@
                         this.checkedDelete.push(temp);
                         temp = [];
                     }
-                }
-                ,
+                },
 
                 selectNone() {
                     axios
@@ -513,13 +585,11 @@
                         {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                     });
                     this.checkedDelete = [];
-                }
-                ,
+                },
 
                 getFile(event) {
                     this.file = event.target.files[0];
-                }
-                ,
+                },
 
                 refresh() {
                     let id = this.getparam('projectName');
@@ -535,8 +605,7 @@
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
-                }
-                ,
+                },
 
                 submitForm(event) {
                     if (this.projectName === '' || this.moduleName === '' || this.file === '') {
@@ -717,12 +786,57 @@
                     }
                 }
                 ,
-
+                uploadcase(){}
 
             }
         })
     </script>
+    <!-- casemodel -->
+    <script type="text/javascript">
+        var casemodel = new Vue({
+            delimiters: ['{!', '!}'],
+            el: '#cases',
+            data() {
+                return {
+                    currentSort:0,
+                };
+            },
+            methods: {} ,
+        })
+    </script>
+    <!-- cookiemodel -->
+    <script type="text/javascript">
+        var cookiemodel = new Vue({
+            delimiters: ['{!', '!}'],
+            el: '#cookies',
+            data() {
+                return {
+                    currentSort:0,
+                    caseCookieList:[{
+                        cookiename:"cookie1",
+                        username:"",
+                        password:"",
+                        cookies:"",
+                        iseffective:false
+                    },{
+                        cookiename:"cookie2",
+                        username:"",
+                        password:"",
+                        cookies:"",
+                        iseffective:false
+                    },{
+                        cookiename:"cookie3",
+                        username:"",
+                        password:"",
+                        cookies:"",
+                        iseffective:false
+                    }]
 
+                };
+            },
+            methods: {} ,
+        })
+    </script>
     <script language="javascript">
         function checkType() {
             //得到上传文件的值

@@ -35,11 +35,12 @@ class mulExcel():
             writesheet.write(colnum,i,list[i])
         newWorkbook.save("newexcel.xls")
     #写入某行数据
-    def writeRowData(self,rownum, list):
+    def writeRowData(self,rownum, list,modelname):
         newWorkbook, writesheet = self.createExcel()
         for i in range(0,len(list)):
             writesheet.write(rownum,i,list[i])
-        newWorkbook.save("newexcel.xls")
+        filepath = r"main/postfiles/"+modelname+".xls"
+        newWorkbook.save(filepath)
 if __name__=='__main__':
     filepath = r"D:\project\auto_interface\antoInterfacePlatform\main\postfiles\template.xls"
     mulExcel = mulExcel(filepath,0)
