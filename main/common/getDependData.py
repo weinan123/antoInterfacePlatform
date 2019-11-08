@@ -6,8 +6,8 @@ from main.untils import sendRequests
 import authService, batchUntils
 import json,time,re
 
+
 def getdepands(depend_caseid, depend_data, environment):
-    dpdatas = []
     dependCase = str(depend_caseid)
     dependDataKeys = json.loads(depend_data)
     try:
@@ -15,16 +15,25 @@ def getdepands(depend_caseid, depend_data, environment):
     except Exception as e:
         result = {"code": -1, "info": "依赖用例不存在"}
         return result
+    # 判断是否有关联用例
+    depend_flag = query.depend_caseId
+    dependData = {}
+    if depend_flag == "" or depend_flag is None:
+        print(u"接口%s是否有关联：否" % dependCase)
+    else:
+        dependData_list = query.depend_casedata
+        dependData = batchUntils.isDependency(depend_flag, dependData_list, environment)
     methods = query.method
-    send_url = query.url
+    send_url = batchUntils.replaceParam(dependData, query.url)
     host = batchUntils.getHost(int(query.host), environment)
+    host = batchUntils.replaceParam(dependData, host)
     if methods == "" or send_url == "" or host == "":
         result = {"code": -1, "info": "相关参数不能为空"}
         return result
-    headers = query.headers
+    headers = batchUntils.replaceParam(dependData, query.headers)
     if headers != "":
         headers = json.loads(headers)
-    bodyinfor = query.body
+    bodyinfor = batchUntils.replaceParam(dependData, query.body)
     showflag = ""
     if bodyinfor != "" and str(bodyinfor) != "{}":
         bodyinfor = json.loads(bodyinfor)
@@ -37,22 +46,14 @@ def getdepands(depend_caseid, depend_data, environment):
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     Cookie = ""
-    # 判断是否有关联用例
-    depend_flag = query.depend_caseId
-    dependData = []
-    if depend_flag == "" or depend_flag is None:
-        print(u"接口%s是否有关联：否" % dependCase)
-    else:
-        dependData_list = query.depend_casedata
-        dependData = batchUntils.isDependency(depend_flag, dependData_list, environment)
-    # 写入获取的依赖数据
-    if len(dependData) != 0:
-        for dd in dependData:
-            for key, value in dd.items():
-                if key == "Cookie":
-                    Cookie = value
-                else:
-                    send_body[key.decode('raw_unicode_escape')] = value
+    # # 写入获取的依赖数据
+    # if len(dependData) != 0:
+    #     for dd in dependData:
+    #         for key, value in dd.items():
+    #             if key == "Cookie":
+    #                 Cookie = value
+    #             else:
+    #                 send_body[key.decode('raw_unicode_escape')] = value
     if isScreat == False or isScreat == "":
         try:
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag, Cookie)
@@ -84,32 +85,35 @@ def getdepands(depend_caseid, depend_data, environment):
             result = {"code": -1, "info": "error"}
             return result
     # 获取对应的值
+    data_dict = {}
     for k in dependDataKeys:
-        data_dict = {}
-        keyv = k
-        if keyv == "Cookie":
-            responseCookice = resp.cookies
-            print(u"依赖接口的Cookie信息： %s", str(responseCookice))
-            value = responseCookice.get_dict()
-            data_dict[keyv] = value
-            dpdatas.append(data_dict)
-        else:
-            value = ""
-            responseText = json.loads(resp.text)
-            if "dict" in str(type(responseText["data"])):
-                for v in responseText["data"]:
-                    if keyv == v:
-                        value = responseText[k][v]
-                        break
-            else:
-                for v in responseText["data"]:
-                    for j in v:
-                        if keyv == j:
-                            value = v[j]
-                            break
-                    if value != "":
-                        break
-            data_dict[keyv] = value
-            dpdatas.append(data_dict)
-    result = {"code": 0, "info": "success", "dependdata": dpdatas}
+        responseText = json.loads(resp.text)
+        value = getdependValue(k, responseText)
+        data_dict = dict(data_dict, **value)
+    result = {"code": 0, "info": "success", "dependdata": data_dict}
     return result
+
+def getdependValue(k, respText):
+    k_key = k.split("=")[0]
+    keyv = k.split("=")[1]
+    keyv = keyv.replace("$", "respText")
+    listflag = False
+    if keyv.find("[") != -1:
+        listflag = True
+        keyv = keyv.replace("[", ".")
+        keyv = keyv.replace("]", "")
+    # print keyv
+    # print(keyv.split("."))
+    keyv1 = keyv.split(".")
+    aa = ""
+    for i in range(len(keyv1)):
+        if i == 0:
+            aa = keyv1[0]
+        elif i == len(keyv1) - 2 and listflag is True:
+            aa = aa + '[' + keyv1[len(keyv1) - 1] + ']' + '["' + keyv1[i] + '"]'
+        elif i == len(keyv1) - 1 and listflag is True:
+            break
+        else:
+            aa = aa + '["' + keyv1[i] + '"]'
+    value = {k_key: eval(aa)}
+    return value

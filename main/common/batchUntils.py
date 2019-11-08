@@ -90,54 +90,50 @@ def getResp(id,environment, dtime):
     except Exception as e:
         result = {"code": -1, "info": "执行用例不存在，" + str(e)}
         return result
-    methods = query.method
-    send_url = query.url
-    if methods == "" or send_url == "":
-        result = {"code": -1, "info": "参数不能为空"}
-        return result
-    headers = query.headers
-    if headers != "":
-        headers = json.loads(headers)
-    bodyinfor = query.body
-    showflag = ""
-    if bodyinfor != "" and str(bodyinfor) != "{}":
-        bodyinfor = json.loads(bodyinfor)
-        showflag = bodyinfor["showflag"]
     # 判断是否有关联用例
     depend_flag = query.depend_caseId
-    dependData = []
+    dependData = {}
     if depend_flag == "" or depend_flag is None:
         print(u"是否有关联：否")
     else:
         dependData_list = query.depend_casedata
-        dependData = isDependency(depend_flag, dependData_list,environment)
+        dependData = isDependency(depend_flag, dependData_list, environment)
+    #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
+    methods = query.method
+    send_url = replaceParam(dependData, query.url)
+    if methods == "" or send_url == "":
+        result = {"code": -1, "info": "参数不能为空"}
+        return result
+    headers = replaceParam(dependData, query.headers)
+    if headers != "":
+        headers = json.loads(headers)
+    bodyinfor = replaceParam(dependData, query.body)
+    showflag = ""
+    if bodyinfor != "" and str(bodyinfor) != "{}":
+        bodyinfor = json.loads(bodyinfor)
+        showflag = bodyinfor["showflag"]
+
     listid = query.owningListID
     querylist = moduleList.objects.get(id=int(listid))
     proList = projectList.objects.get(id=int(querylist.owningListID))
     print("所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
     print u"请求方法：%s" % (methods)
     host = getHost(int(query.host),environment)
-    print host
+    host = replaceParam(dependData, host)
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
     Cookie = ""
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     # print json.dumps(dependData)
-    if len(dependData) != 0:
-        for dd in dependData:
-            for key, value in dd.items():
-                if key == "Cookie":
-                    Cookie = value
-                else:
-                    send_body[key.decode('raw_unicode_escape')] = value
     print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
+    print(u"请求头： %s" % str(headers))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
     secret_key = query.secret_key
     timestamp = int(time.time())
-    assertinfo = str(query.assertinfo.replace(" ", ""))
+    assertinfo = replaceParam(dependData, str(query.assertinfo.replace(" ", "")))
     dtime = dtime
     responseText = ""
     # 非加密执行接口
@@ -184,9 +180,23 @@ def isDependency(depend_flag, depend_data, environment):
             dependData = dependRes["dependdata"]
             print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
         else:
-            dependData = []
+            dependData = {}
             print(u"关联数据：无")
     else:
-        dependData = []
+        dependData = {}
         print(u"关联数据：无")
     return dependData
+
+
+def replaceParam(dependdata_dict, stringValue):
+    strValue = str(stringValue)
+    if strValue.find("${") != -1:
+        param_key = re.findall(r"\${(.*?)}", strValue)[0]
+        if param_key != "" and (param_key in dependdata_dict.keys()):
+            # print("___dependdata_dict___",strValue,type(strValue),dependdata_dict,dependdata_dict[param_key])
+            strValue = strValue.replace("${"+param_key+"}", str(dependdata_dict[param_key]))
+            print(u"使用值：%s替换参数${%s}" % (dependdata_dict[param_key], param_key))
+        else:
+            strValue = strValue.replace("${"+param_key+"}", "")
+            print(u"使用值：''替换参数${%s}" % param_key)
+    return strValue

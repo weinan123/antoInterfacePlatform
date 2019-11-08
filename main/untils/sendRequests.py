@@ -36,7 +36,7 @@ class sendRequest():
             except Exception as e:
                 headerType = ""
             postbody = self.mulBody(headerType, send_body,showflag)
-            print postbody
+            # print postbody
             redirect = self.isRedirect(isRedirect)
             response = s.post(url, headers=headers, files=files, data=postbody, verify=False,
                               allow_redirects=redirect,cookies=Cookie)
