@@ -302,7 +302,35 @@
             </div>
         </div>
         {% comment %}/**用例详情model**/{% endcomment %}
-        <div v-show="currentSort===1" class="formContent" id = "cases">weinannan</div>
+        <div v-show="currentSort===1" class="formContent" id = "cases">
+             <table class="table table-bordered"style="width: 85%">
+                    <thead>
+            <tr>
+                <th>用例id</th>
+              <th>用例名</th>
+              <th>依赖接口</th>
+              <th>依赖cookie</th>
+              <th>执行结果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td col-xs-1>1</td>
+             <td col-xs-2>登录</td>
+             <td col-xs-2>1.登录检查接口 2.登录是否需要验证码接口 3.登录是否成功接口</td>
+                <td col-xs-2>cookie1</td>
+                <td col-xs-4>成功</td>
+            </tr>
+          <tr>
+              <td col-xs-1>2</td>
+             <td col-xs-2>下单</td>
+             <td col-xs-2>1.获取股票信息 2.下单 </td>
+                <td col-xs-2>cookie1</td>
+                <td col-xs-4>成功</td>
+            </tr>
+          </tbody>
+    </table>
+        </div>
         {% comment %}/**cookie详情model**/{% endcomment %}
         <div v-show="currentSort===2" class="formContent" style="padding: 20px" id="cookies">
            <div style="padding-top: 50px;padding-left: 50px">
@@ -417,7 +445,7 @@
             el: '#modelname',
             data() {
                 return {
-                    tabNameList:["项目接口详情","项目用例管理","cookie管理"],
+                    tabNameList:["项目接口详情","业务场景回归用例","cookie管理"],
                     currentSort:0,
                 };
             },
