@@ -8,14 +8,17 @@
     <link href="/static/css/singleInterface.css" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="content" >
+    <div class="content">
         <div class="pageheader" id="projectname">
             <p class="titlecss">{! projectNameTitle !}</p>
         </div>
         <div class="pageheader" id="modelname">
-            <div v-for="tabName,index in tabNameList" class="projectCss" style="cursor:pointer" ><a :class="{'projectnamesel':currentSort==index}" class="projectname"  @click="changemodel(index)">{! tabName !}</a>
-        <div :class="{'isshow':currentSort!==index}" style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
-        </div>
+            <div v-for="tabName,index in tabNameList" class="projectCss" style="cursor:pointer"><a
+                    :class="{'projectnamesel':currentSort==index}" class="projectname"
+                    @click="changemodel(index)">{! tabName !}</a>
+                <div :class="{'isshow':currentSort!==index}"
+                     style="height: 4px;background-color: #2372A8;margin-top: 10px;margin-left:5px;margin-right:5px;text-align: center "></div>
+            </div>
         </div>
         {% comment %}/**项目详情model**/{% endcomment %}
         <div v-show="currentSort===0" class="formContent" id="projectList">
@@ -31,7 +34,8 @@
                         <div class="modal-dialog" id="newProjectRow">
                             <div class="modal-content" style="width: 450px;margin: 75px auto;">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">
                                         &times;
                                     </button>
                                     <label class="modal-title" id="myModalLabel">新建项目</label>
@@ -41,7 +45,8 @@
                                         <div class="form-group">
                                             <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
                                             <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="projectName"
+                                                <input class="form-control" type="text"
+                                                       name="projectName"
                                                        required id="id_projectName" maxlength="50"
                                                        v-model="projectNameNew" readonly="readonly"
                                                        placeholder="请输入项目名称"/>
@@ -51,7 +56,8 @@
                                             <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
                                             <div class="col-sm-9">
                                                 <input class="form-control" type="text" name="moduleName"
-                                                       required id="id_moduleName" v-model="moduleNameNew"
+                                                       required id="id_moduleName"
+                                                       v-model="moduleNameNew"
                                                        maxlength="50" placeholder="请输入模块名称"/>
                                             </div>
                                         </div>
@@ -91,7 +97,8 @@
                         <div class="modal-dialog" id="importProjectRow">
                             <div class="modal-content" style="width: 450px;margin: 75px auto;">
                                 <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">
                                         &times;
                                     </button>
                                     <label class="modal-title" id="myModalLabel">导入</label>
@@ -103,9 +110,11 @@
                                         <div class="form-group">
                                             <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
                                             <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="projectName"
+                                                <input class="form-control" type="text"
+                                                       name="projectName"
                                                        v-model="projectName" required id="id_projectName"
-                                                       maxlength="50" placeholder="请输入项目名称" readonly="readonly">
+                                                       maxlength="50" placeholder="请输入项目名称"
+                                                       readonly="readonly">
                                             </div>
                                         </div>
 
@@ -118,7 +127,8 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="uploadFile" class="col-sm-3 control-label">选择文件：</label>
+                                            <label for="uploadFile"
+                                                   class="col-sm-3 control-label">选择文件：</label>
                                             <div class="col-sm-9">
                                                 <input type="file" id="uploadFile" ref="inputFile"
                                                        @change="getFile($event)" class="form-control"
@@ -167,7 +177,8 @@
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
-                    <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 " class="btn-delete"
+                    <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 "
+                            class="btn-delete"
                             style="width: 74px;height: 36px;" @click="projectBatchDelete()">批量删除
                     </button>
 
@@ -232,7 +243,8 @@
                                      aria-labelledby="myModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
-                                        <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                                        <div class="modal-content"
+                                             style="width: 450px;margin: 75px auto;">
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal"
                                                         aria-hidden="true">
@@ -287,11 +299,13 @@
                                 </div>
 
                                 <a>
-                                    <button type="button" class="btn-delete" @click="projectDelete(item.id)">删除
+                                    <button type="button" class="btn-delete"
+                                            @click="projectDelete(item.id)">删除
                                     </button>
                                 </a>
-                                <a v-bind:href="['/uploadCase/?modelid='+item.id]" v-bind:download="item.moduleName+'.xls'">
-                                    <button type="button" class="btn-delete" >导出
+                                <a v-bind:href="['/uploadCase/?modelid='+item.id]"
+                                   v-bind:download="item.moduleName+'.xls'">
+                                    <button type="button" class="btn-delete">导出
                                     </button>
                                 </a>
                             </div>
@@ -302,60 +316,72 @@
             </div>
         </div>
         {% comment %}/**用例详情model**/{% endcomment %}
-        <div v-show="currentSort===1" class="formContent" id = "cases">weinannan</div>
+        <div v-show="currentSort===1" class="formContent" id="cases">weinannan</div>
         {% comment %}/**cookie详情model**/{% endcomment %}
         <div v-show="currentSort===2" class="formContent" style="padding: 20px" id="cookies">
-           <div style="padding-top: 50px;padding-left: 50px">
-            <span class="projectnamesel">baseCookie：</span>
-                    <table class="table table-bordered"style="width: 85%">
+            <div style="padding-top: 50px;padding-left: 50px">
+                <span class="projectnamesel">baseCookie：</span>
+                <table class="table table-bordered" style="width: 85%">
                     <thead>
-            <tr>
-                <th>cookieName</th>
-              <th>用户名</th>
-              <th>密码</th>
-              <th>生成</th>
-              <th>cookies</th>
-              <th>是否有效</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td col-xs-1>basiccookie</td>
-             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名" ></td>
-             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码" ></td>
-                <td col-xs-2><button class="btn-save">生成</button></td>
-                <td col-xs-4><input type="text" class="form-control" id="name"  ></td>
-                <td col-xs-1>有效</td>
-            </tr>
-          </tbody>
-    </table>
-           </div>
+                    <tr>
+                        <th>cookieName</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>生成</th>
+                        <th>cookies</th>
+                        <th>是否有效</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td col-xs-1>basiccookie</td>
+                        <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名">
+                        </td>
+                        <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码">
+                        </td>
+                        <td col-xs-2>
+                            <button class="btn-save">生成</button>
+                        </td>
+                        <td col-xs-4><input type="text" class="form-control" id="name"></td>
+                        <td col-xs-1>有效</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <div style="padding-left: 50px">
-              <span class="projectnamesel" >caseCookies：</span>
-                    <table class="table table-bordered" style="width: 85%">
+                <span class="projectnamesel">caseCookies：</span>
+                <table class="table table-bordered" style="width: 85%">
                     <thead>
-            <tr>
-                <th>cookieName</th>
-              <th>用户名</th>
-              <th>密码</th>
-              <th>生成</th>
-              <th>cookies</th>
-              <th>是否有效</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="cookie,index in caseCookieList">
-              <td col-xs-1>{! cookie.cookiename !}</td>
-             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名" >{! cookie.username !}</td>
-             <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码" >{! cookie.password !}</td>
-                <td col-xs-2><button class="btn-save">生成</button></td>
-                <td col-xs-4><input type="text" class="form-control" id="name">{! cookie.cookies !}</td>
-                <td col-xs-1>{! cookie.iseffective !}</td>
-            </tr>
-          </tbody>
-    </table>
+                    <tr>
+                        <th>cookieName</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>生成</th>
+                        <th>cookies</th>
+                        <th>是否有效</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="cookie,index in caseCookieList">
+                        <td col-xs-1>{! cookie.cookiename !}</td>
+                        <td col-xs-2><input type="text" class="form-control" id="name" placeholder="用户名">{!
+                            cookie.username !}
+                        </td>
+                        <td col-xs-2><input type="text" class="form-control" id="name" placeholder="密码">{!
+                            cookie.password !}
+                        </td>
+                        <td col-xs-2>
+                            <button class="btn-save">生成</button>
+                        </td>
+                        <td col-xs-4><input type="text" class="form-control" id="name">{! cookie.cookies
+                            !}
+                        </td>
+                        <td col-xs-1>{! cookie.iseffective !}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            </div>
+        </div>
 
     </div>
     <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>
@@ -407,7 +433,7 @@
                     }
                     return param[str];
                 },
-            } ,
+            },
         })
     </script>
     <!-- modelvue -->
@@ -417,29 +443,28 @@
             el: '#modelname',
             data() {
                 return {
-                    tabNameList:["项目接口详情","项目用例管理","cookie管理"],
-                    currentSort:0,
+                    tabNameList: ["项目接口详情", "项目用例管理", "cookie管理"],
+                    currentSort: 0,
                 };
             },
             methods: {
-                changemodel(index){
-                    this.currentSort=index;
-                    if(index===0){
-                        projectmodel.$data.currentSort=0;
-                         casemodel.$data.currentSort="";
-                        cookiemodel.$data.currentSort=""
-                    }else if(index===1){
-                         casemodel.$data.currentSort=1;
-                         projectmodel.$data.currentSort="";
-                         cookiemodel.$data.currentSort=""
-                    }
-                    else if(index===2){
-                         cookiemodel.$data.currentSort=2;
-                         projectmodel.$data.currentSort="";
-                         casemodel.$data.currentSort=""
+                changemodel(index) {
+                    this.currentSort = index;
+                    if (index === 0) {
+                        projectmodel.$data.currentSort = 0;
+                        casemodel.$data.currentSort = "";
+                        cookiemodel.$data.currentSort = ""
+                    } else if (index === 1) {
+                        casemodel.$data.currentSort = 1;
+                        projectmodel.$data.currentSort = "";
+                        cookiemodel.$data.currentSort = ""
+                    } else if (index === 2) {
+                        cookiemodel.$data.currentSort = 2;
+                        projectmodel.$data.currentSort = "";
+                        casemodel.$data.currentSort = ""
                     }
                 },
-            } ,
+            },
         })
     </script>
     <!-- projectmodel -->
@@ -451,7 +476,7 @@
             data() {
                 projectBatchDelete = true;
                 return {
-                    currentSort:0,
+                    currentSort: 0,
                     projectNameTitle: '',
                     projectName: '',
                     moduleName: '',
@@ -462,6 +487,26 @@
                     checkedDelete: [],
                 };
             },
+            mounted() {
+                let id = this.getparam('projectName');
+                pro = id;
+                this.projectNameTitle = pro;
+                this.projectNameNew = this.projectNameTitle;
+                this.projectName = this.projectNameTitle;
+
+                var target = document.getElementById("mounted");
+                var spinner = Spinner({top: '3'}).spin(target);
+                axios
+                    .get('/projectListInfo?projectName=' + this.projectNameTitle)
+                    .then(resp => {
+                        this.list = resp.data.data;
+                        spinner.spin();
+                        {#console.log(this.list);#}
+                    }).catch(err => {
+                    {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                })
+            },
+
             created() {
                 vm1.$data.currentSort = 2;
             },
@@ -786,7 +831,22 @@
                     }
                 }
                 ,
-                uploadcase(){}
+
+                getparam(str) {
+                    var argsstr = decodeURI(location.search.substr(1));
+                    var param = {};
+                    {#console.log(argsstr);#}
+                    if (argsstr !== "") {
+                        var strs = argsstr.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            param[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    return param[str];
+                },
+
+                uploadcase() {
+                }
 
             }
         })
@@ -798,10 +858,10 @@
             el: '#cases',
             data() {
                 return {
-                    currentSort:0,
+                    currentSort: 0,
                 };
             },
-            methods: {} ,
+            methods: {},
         })
     </script>
     <!-- cookiemodel -->
@@ -811,30 +871,30 @@
             el: '#cookies',
             data() {
                 return {
-                    currentSort:0,
-                    caseCookieList:[{
-                        cookiename:"cookie1",
-                        username:"",
-                        password:"",
-                        cookies:"",
-                        iseffective:false
-                    },{
-                        cookiename:"cookie2",
-                        username:"",
-                        password:"",
-                        cookies:"",
-                        iseffective:false
-                    },{
-                        cookiename:"cookie3",
-                        username:"",
-                        password:"",
-                        cookies:"",
-                        iseffective:false
+                    currentSort: 0,
+                    caseCookieList: [{
+                        cookiename: "cookie1",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffective: false
+                    }, {
+                        cookiename: "cookie2",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffective: false
+                    }, {
+                        cookiename: "cookie3",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffective: false
                     }]
 
                 };
             },
-            methods: {} ,
+            methods: {},
         })
     </script>
     <script language="javascript">
