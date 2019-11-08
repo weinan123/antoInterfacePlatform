@@ -110,7 +110,7 @@ def getResp(id,environment, dtime):
         print(u"是否有关联：否")
     else:
         dependData_list = query.depend_casedata
-        dependData = isDependency(depend_flag, dependData_list)
+        dependData = isDependency(depend_flag, dependData_list,environment)
     listid = query.owningListID
     querylist = moduleList.objects.get(id=int(listid))
     proList = projectList.objects.get(id=int(querylist.owningListID))
@@ -174,12 +174,12 @@ def getResp(id,environment, dtime):
     return result
 
 
-def isDependency(depend_flag, depend_data):
+def isDependency(depend_flag, depend_data, environment):
     depend_caseid = depend_flag
     depend_data = depend_data
     print u"关联用例t_id：%s" % (depend_caseid)
     if depend_data != "" or depend_data != "[]":
-        dependRes = getDependData.getdepands(depend_caseid, depend_data)
+        dependRes = getDependData.getdepands(depend_caseid, depend_data, environment)
         if dependRes["code"] == 0:
             dependData = dependRes["dependdata"]
             print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))

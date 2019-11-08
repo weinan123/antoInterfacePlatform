@@ -6,7 +6,7 @@ from main.untils import sendRequests
 import authService, batchUntils
 import json,time,re
 
-def getdepands(depend_caseid, depend_data):
+def getdepands(depend_caseid, depend_data, environment):
     dpdatas = []
     dependCase = str(depend_caseid)
     dependDataKeys = json.loads(depend_data)
@@ -17,7 +17,7 @@ def getdepands(depend_caseid, depend_data):
         return result
     methods = query.method
     send_url = query.url
-    host = query.host
+    host = batchUntils.getHost(int(query.host), environment)
     if methods == "" or send_url == "" or host == "":
         result = {"code": -1, "info": "相关参数不能为空"}
         return result
@@ -44,7 +44,7 @@ def getdepands(depend_caseid, depend_data):
         print(u"接口%s是否有关联：否" % dependCase)
     else:
         dependData_list = query.depend_casedata
-        dependData = batchUntils.isDependency(depend_flag, dependData_list)
+        dependData = batchUntils.isDependency(depend_flag, dependData_list, environment)
     # 写入获取的依赖数据
     if len(dependData) != 0:
         for dd in dependData:

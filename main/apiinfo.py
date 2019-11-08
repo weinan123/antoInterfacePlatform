@@ -333,6 +333,7 @@ def getAllCases(request):
         json_dict["url"] = i.url
         json_dict["t_id"] = i.t_id
         json_dict["depend_caseId"] = i.depend_caseId
+        json_dict["depend_data"] = i.depend_casedata
         json_list.append(json_dict)
     result = {
         'data': json_list,

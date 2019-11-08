@@ -45,8 +45,9 @@
                     <tr>
                         <th>序号</th>
                         <th>接口名称</th>
-                        <th>t_id</th>
-                        <th>dependT_id</th>
+                        <th>标记ID</th>
+                        <th>依赖用例</th>
+                        <th>依赖数据</th>
                         <th>执行结果</th>
                         <th>执行时间</th>
                         <th>创建者</th>
@@ -64,7 +65,7 @@
                             <td>{! info.name !}</td>
                             <td>{! info.t_id !}</td>
                             <td>{! info.depend_caseId !}</td>
-
+                            <td>{! info.depend_data !}</td>
                             <td>
                                 <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>
