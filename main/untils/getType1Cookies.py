@@ -2,12 +2,19 @@ import sendRequests
 import json,requests
 from jpype import *
 import jpype
-class getCookies():
-    def __init__(self,username,password):
+class getCookies1():
+    typecookie1 = {
+        "qa":["https://uc-qa.youyu.cn/v1/users/check","https://sso-qa.youyu.cn/v1/services/login"],
+        "stage":["https://uc-stage.youyu.cn/v1/users/check","https://sso-stage.youyu.cn/v1/services/login"],
+        "live":["https://uc.youyu.cn/v1/users/check","https://sso.youyu.cn/v1/services/login"],
+    }
+    def __init__(self, evirment,username,password):
         self.username = username
         self.password = password
+        self.evirment = evirment
     def getsalt(self):
-        url = "https://uc-qa.youyu.cn/v1/users/check"
+        #url = "https://uc-qa.youyu.cn/v1/users/check"
+        url = self.typecookie1.get(self.evirment)[0]
         body = {"type": "mobile", "value": self.username, "aver": 1}
         methods = "POST"
         headers = {"Content-Type": "application/json"}
@@ -31,7 +38,8 @@ class getCookies():
         jpype.shutdownJVM()
         return auth
     def servirce(self):
-        url = "https://sso-qa.youyu.cn/v1/services/login"
+        #url = "https://sso-qa.youyu.cn/v1/services/login"
+        url = self.typecookie1.get(self.evirment)[0]
         uin,loginid,salt = self.getsalt()
         auth = self.getauth()
         body = {"uin":uin,"loginid":loginid,"auth":auth,"autoLogin":False,"verification":{"verificationKey":self.username,"verificationCode":"1234","type":4}}
@@ -43,7 +51,5 @@ class getCookies():
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,body,files,isRedirect,showflag)
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
         return cookies
-
-
 if __name__ == "__main__":
-    cookies = getCookies("+8610111112276","1234qwer").servirce()
+    cookies = getCookies1("+8610111112276","1234qwer").servirce()

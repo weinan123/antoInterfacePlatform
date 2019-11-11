@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
 from toretrunData import toType
-from main import models
-import configerData
-import re
+import getType1Cookies,getType2Cookies
 import time,os,sched,subprocess
 import json
 def my_login(func):
@@ -48,21 +46,14 @@ def mul_bodyData(bodyinfor):
                     body[params_name] = getvalue
     return body,files,showflag
 
-import time,os
-def re_exe(cmd,inc = 60):
-  while True:
-      try:
-          subprocess.Popen(cmd, shell=True)
-          subprocess.call(cmd, shell=True)
-          time.sleep(inc)
-      except Exception as e:
-          print e
-def run():
-    cmd1="cd\\"
-    cmd2="d:"
-    cmd3 = "cd D:/project/auto_interface/antoInterfacePlatform/main/common"
-    cmd4 = "python runChartData.py "
-    cmd = cmd1 + " && " + cmd2+ " && " + cmd3+ " && " + cmd4
-    re_exe(cmd,5)
+def getcookies(cookieFlag,evirment,username,password):
+    if int(cookieFlag==1):
+        cookies = getType1Cookies.getCookies1(evirment, username, password).servirce()
+    elif int(cookieFlag==3):
+        cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
+    return cookies
+
+
+
 
 

@@ -96,13 +96,15 @@ class users(models.Model):
     configer_permit = models.BooleanField(default=False)
 
 
-class usersCookies(models.Model):
+class userCookies(models.Model):
+    user = models.CharField(max_length=50,null=True, blank=True)
+    cookiename =  models.CharField(max_length=50,null=True, blank=True)
     username = models.CharField(max_length=200, null=True, blank=True)
-    projectId = models.IntegerField(null=True, blank=True)
-    url = models.CharField(max_length=100, null=True, blank=True)
-    methods = models.CharField(max_length=50, null=True, blank=True)
-    body = models.CharField(max_length=100, null=True, blank=True)
+    password = models.CharField(max_length=200, null=True, blank=True)
+    projectname = models.CharField(max_length=100,null=True, blank=True)
+    evirment = models.CharField(max_length=100, null=True, blank=True)
     cookies = models.CharField(max_length=200, blank=True, null=True)
+    iseffect = models.IntegerField(blank=True, null=True,)
     updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
