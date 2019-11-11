@@ -81,7 +81,8 @@ def addProject(request):
             #     return
             dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             if (projectList.objects.filter(projectName=form.cleaned_data['projectName']).count() == 0):
-                inter = projectList.objects.create(projectName=form.cleaned_data['projectName'])
+                inter = projectList.objects.create(projectName=form.cleaned_data['projectName'],
+                                                   cookieFlag=form.cleaned_data['cookieFlag'])
                 inter.save()
                 projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(
                     updateTime=dtime,
@@ -229,56 +230,61 @@ def firstProjectList(request):
 
 
 def download(request):
-
     file = open('main/postfiles/template.xlsx', 'rb')
     response = FileResponse(file)
     response['Content-Type'] = 'application/octet-stream'
     response['Content-Disposition'] = 'attachment;filename="接口模板.xlsx"'
     return response
+
+
 def uploadCase(request):
-     if request.method == 'GET':
-         id = request.GET["modelid"]
-         modelname = moduleList.objects.filter(id = id).values_list("moduleName")[0][0]
-         print modelname
-         caseList = apiInfoTable.objects.filter(owningListID=id).values()
-         if(len(caseList)>0):
-            for i in range(0,len(caseList)):
-             casename = caseList[i]["apiName"]
-             method = caseList[i]["method"]
-             host = caseList[i]["host"]
-             url = caseList[i]["url"]
-             headers = caseList[i]["headers"]
-             body =caseList[i]["body"]
-             t_id =caseList[i] ["t_id"]
-             depend_caseId=caseList[i] ["depend_caseId"]
-             depend_casedata=caseList[i]["depend_casedata"]
-             assertinfo=caseList[i]["assertinfo"]
-             isScreat=caseList[i]["isScreat"]
-             isRedirect=caseList[i]["isRedirect"]
-             caselist = [casename,method,host ,url ,headers ,body ,t_id ,depend_caseId,
-                         depend_casedata, assertinfo,isScreat,isRedirect]
-             print caseList
-             filepath = r"main/postfiles/template.xls"
-             saveexcel = mulExcel.mulExcel(filepath,0)
-             saveexcel.writeRowData(i+8,caselist,modelname)
-         else:
-             caselist = []
-             print caseList
-             filepath = r"main/postfiles/template.xls"
-             saveexcel = mulExcel.mulExcel(filepath, 0)
-             saveexcel.writeRowData(8, caselist, modelname)
-         file = open('main/postfiles/'+ modelname+'.xls', 'rb')
-         print file
-         print modelname
-         response = FileResponse(file)
-         response['Content-Type'] = 'application/octet-stream'
-         response['Content-Disposition'] = 'attachment;filename="%s"'%(modelname)
-         return response
+    if request.method == 'GET':
+        id = request.GET["modelid"]
+        modelname = moduleList.objects.filter(id=id).values_list("moduleName")[0][0]
+        print modelname
+        caseList = apiInfoTable.objects.filter(owningListID=id).values()
+        if (len(caseList) > 0):
+            for i in range(0, len(caseList)):
+                casename = caseList[i]["apiName"]
+                method = caseList[i]["method"]
+                host = caseList[i]["host"]
+                url = caseList[i]["url"]
+                headers = caseList[i]["headers"]
+                body = caseList[i]["body"]
+                t_id = caseList[i]["t_id"]
+                depend_caseId = caseList[i]["depend_caseId"]
+                depend_casedata = caseList[i]["depend_casedata"]
+                assertinfo = caseList[i]["assertinfo"]
+                isScreat = caseList[i]["isScreat"]
+                isRedirect = caseList[i]["isRedirect"]
+                caselist = [casename, method, host, url, headers, body, t_id, depend_caseId,
+                            depend_casedata, assertinfo, isScreat, isRedirect]
+                print caseList
+                filepath = r"main/postfiles/template.xls"
+                saveexcel = mulExcel.mulExcel(filepath, 0)
+                saveexcel.writeRowData(i + 8, caselist, modelname)
+        else:
+            caselist = []
+            print caseList
+            filepath = r"main/postfiles/template.xls"
+            saveexcel = mulExcel.mulExcel(filepath, 0)
+            saveexcel.writeRowData(8, caselist, modelname)
+        file = open('main/postfiles/' + modelname + '.xls', 'rb')
+        print file
+        print modelname
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="%s"' % (modelname)
+        return response
+
+
 def projectView(request):
     if request.method == 'GET':
         id = request.GET.get('id')
         # print id
     return HttpResponseRedirect('/projectList/')
+
+
 def projectDelete(request):
     if request.method == 'GET':
         id = request.GET.get('id')
@@ -376,7 +382,6 @@ def projectEdit(request):
                 'info': info
             }
             return JsonResponse(result, safe=False)
-
 
 
 def projectImport(request):
@@ -783,7 +788,7 @@ def projectImport(request):
             if (verification):
                 listid = \
                     moduleList.objects.filter(owningListID=owningListID,
-                                               moduleName=moduleName).values(
+                                              moduleName=moduleName).values(
                         "id")[0]['id']
                 for i in range(srows, nrows):
                     # data_list用来存放数据
@@ -885,4 +890,3 @@ def projectImport(request):
     }
 
     return JsonResponse(result, safe=False)
-

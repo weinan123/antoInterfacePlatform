@@ -106,9 +106,11 @@
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
                 <ul class="pagination">
-                    <li v-bind:class="disflag_left" style="cursor:pointer"><a @click="cutPage(pageNum)">&lt;</a></li>
-                    <li><a>{! pageNum !}</a></li>
-                    <li v-bind:class="disflag_right" style="cursor:pointer"><a @click="addPage(pageNum)">&gt;</a></li>
+                    <li v-bind:class="disflag_left" style="cursor:pointer"><a @click="fristPage(pageNum)">首页</a></li>
+                    <li v-bind:class="disflag_left" style="cursor:pointer"><a @click="cutPage(pageNum)">上一页</a></li>
+                    <li><a style="background-color: #428bca;color: #FFFFFF;border-top: 1px solid #428bca;border-bottom: 1px solid #428bca;">{! pageNum !}</a></li>
+                    <li v-bind:class="disflag_right" style="cursor:pointer"><a @click="addPage(pageNum)">下一页</a></li>
+                    <li v-bind:class="disflag_right" style="cursor:pointer"><a @click="lastPage(pageNum)">末页</a></li>
                 </ul>
             </div>
         </div>
@@ -674,6 +676,24 @@
                 if(this.pageNum < totalNums){
                     this.disflag_right = "";
                 }
+                this.result = "";
+                this.dlist = [];
+                this.getlist(this.pageNum);
+            },
+            fristPage(num){
+                this.pageNum = 1;
+                this.disflag_left = "disabled";
+                let totalNums = this.totalCount / this.pageCount;
+                this.disflag_right = "";
+                this.result = "";
+                this.dlist = [];
+                this.getlist(this.pageNum);
+            },
+            lastPage(num){
+                let totalNums = Math.ceil(this.totalCount / this.pageCount);
+                this.pageNum = totalNums;
+                this.disflag_left = "";
+                this.disflag_right = "disabled";
                 this.result = "";
                 this.dlist = [];
                 this.getlist(this.pageNum);

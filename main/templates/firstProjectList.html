@@ -1,6 +1,7 @@
 {% extends 'newindex.html' %}
 {% block title %}
-    <title xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"> 项目信息 </title>
+    <title xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+        项目信息 </title>
 {% endblock %}
 {% block script %}
     <link href="/static/css/project.css" rel="stylesheet">
@@ -42,10 +43,12 @@
                                     </td>
                                 </tr>
                             </table>
-                            <button class="firstViewButton" type="button" @click="moduleInfo(item.projectName)">
+                            <button class="firstViewButton" type="button"
+                                    @click="moduleInfo(item.projectName)">
                                 查看详情
                             </button>
-                            <button class="firstDeleteButton" type="button" @click="projectDelete(item.projectName)">删除
+                            <button class="firstDeleteButton" type="button"
+                                    @click="projectDelete(item.projectName)">删除
                             </button>
                             {% comment %}<ul class="list-group">
                             <li class="list-group-item" >
@@ -71,35 +74,53 @@
                             <p class="panel-title" style="font-weight:bold;">新增</p>
                         </div>
                         <div class="panel-body" style="text-align: center;height: 221px;">
-                            <button type="button" class="addButton" data-toggle="modal" data-target="#newProject">
+                            <button type="button" class="addButton" data-toggle="modal"
+                                    data-target="#newProject">
                                 <div>
-                                    <span class="glyphicon glyphicon-plus" style="font-size: 80px;"></span>
+                                    <span class="glyphicon glyphicon-plus"
+                                          style="font-size: 80px;"></span>
                                 </div>
-                                <div style="margin-top: 5px;"><label style="font-size: 15px;">点击新增项目</label></div>
+                                <div style="margin-top: 5px;"><label
+                                        style="font-size: 15px;">点击新增项目</label></div>
                             </button>
 
                         </div>
                     </div>
                 </div>
                 <!-- 新建模态框（Modal） -->
-                <div class="modal fade" id="newProject" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                <div class="modal fade" id="newProject" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel"
                      aria-hidden="true">
                     <div class="modal-dialog" id="newProjectRow">
                         <div class="modal-content" style="width: 450px;margin: 75px auto;">
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">&times;
                                 </button>
                                 <label class="modal-title" id="myModalLabel">新建项目</label>
                             </div>
                             <div class="modal-body">
                                 <form style="text-align: center" class="form-horizontal">
                                     <div class="form-group">
-                                        <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
+                                        <label for="id_projectName"
+                                               class="col-sm-3 control-label">项目名称:</label>
                                         <div class="col-sm-9">
                                             <input class="form-control" type="text" name="projectName"
                                                    required id="id_projectName" maxlength="50"
                                                    v-model="projectNameNew"
                                                    placeholder="请输入项目名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cookieFlag"
+                                               class="col-sm-3 control-label">登录接口:</label>
+                                        <div class="col-sm-9">
+                                            <select name="cookieFlag" class="form-control"
+                                                    required id="cookieFlag" v-model="cookieFlag">
+                                                <option value="1">有鱼智投</option>
+                                                <option value="2">有鱼股票</option>
+                                                <option value="3">smart/connect</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -134,6 +155,7 @@
             data() {
                 return {
                     projectNameNew: '',
+                    cookieFlag: '',
                     file: '',
                     list: [],
                 };
@@ -161,7 +183,7 @@
                 },
 
                 submitFormNew(event) {
-                    if (this.projectNameNew === '') {
+                    if (this.projectNameNew === '' || this.cookieFlag === '') {
                         alert('请输入所有字段！');
 
                     } else {
@@ -171,6 +193,7 @@
                         event.preventDefault();
                         let formData = new FormData();
                         formData.append('projectName', this.projectNameNew);
+                        formData.append('cookieFlag', this.cookieFlag);
 
                         let config = {
                             headers: {
@@ -204,6 +227,7 @@
                                         {#$('.modal-backdrop').hide();#}
                                         $('#newProject').modal('hide');
                                         this.projectNameNew = '';
+                                        this.cookieFlag = '';
                                     } else {
                                         alert(resp.data.info);
                                     }

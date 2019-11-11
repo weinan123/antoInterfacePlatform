@@ -124,12 +124,12 @@ def sendRequest(request):
         # 非加密执行接口
         if isScreat == "":
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files,
-                                                          isRedirect, showflag)
+                                                          isRedirect, showflag,Cookie=None)
         # 加密执行
         else:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization,
                                                                 methods, url, send_url, headers,
-                                                                send_body, files, isRedirect, showflag)
+                                                                send_body, files, isRedirect, showflag,Cookie=None)
         print resp.text
         if assertData != "" and assertData != None:
             if assertData in resp.text:
