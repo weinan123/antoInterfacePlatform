@@ -70,7 +70,7 @@
                                     <option  v-for="item in result.data" :value="item.id">{! item.name !}</option>
                                 </select>
                             </td>
-                            <td>{! info.depend_data !}</td>
+                            <td><input type="text" class="form-control" :value="info.depend_data" @change="changeDependData($event,info.id)"></td>
                             <td>
                                 <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>
@@ -703,6 +703,49 @@
                 this.result = "";
                 this.dlist = [];
                 this.getlist(this.pageNum);
+            },
+            changeDependData(e,id){
+                var value = e.target.value;
+                var pattern = new RegExp("[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
+                var rs = value.replace(pattern, '');
+                toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                };
+                if(rs.length === value.length){
+                axios.post('/updataDependdata/', {
+                params: {
+                    apiid: id,
+                    dependValue: rs,
+                },
+                })
+                .then(resp => {
+                    var code = resp.data.code;
+                    var info = resp.data.info;
+                    {#console.log("111:",resp.data);#}
+                    if(code === 0){
+                        toastr.success("更新成功");
+                    }else{
+                        alert("更新失败：",info);
+                    }
+                })
+                .catch(err => {
+                    console.log('请求失败:' + err.status + ',' + err.statusText);
+                })
+                }else{
+                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+                }
             },
         }
     }).$mount('#apiCases');
