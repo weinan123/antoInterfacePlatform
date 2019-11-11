@@ -333,6 +333,13 @@ def getAllCases(request):
         json_dict["url"] = i.url
         json_dict["t_id"] = i.t_id
         json_dict["depend_caseId"] = i.depend_caseId
+        # print("****i.depend_caseId****",i.depend_caseId)
+        if i.depend_caseId != "" and i.depend_caseId is not None:
+            json_dict["tid_id"] = apiInfoTable.objects.get(t_id=i.depend_caseId).apiID  #tid_id表示tid不为空的用例所依赖用例的id
+        else:
+            json_dict["tid_id"] = ""
+        # print("****json_dict[tid_id]****",json_dict["tid_id"])
+        json_dict["depend_data"] = i.depend_casedata
         json_list.append(json_dict)
     result = {
         'data': json_list,
