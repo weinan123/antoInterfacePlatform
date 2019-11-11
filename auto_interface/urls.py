@@ -72,4 +72,5 @@ urlpatterns = [
     url(r'^getPermission/$', apiinfo.getPermission),
     url(r'^getProjectInfos/$', apiinfo.getProjectInfos),
     url(r'^uploadCase/$', projectList.uploadCase),
+    url(r'^updataDependdata/$', apiinfo.updataDependdata),
 ]

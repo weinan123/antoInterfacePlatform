@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from models import apiInfoTable, projectList,moduleList,reports, users
-import time
+import time, re
 import json
 from django.http.response import JsonResponse
 from common import batchstart, batchUntils
@@ -339,7 +339,15 @@ def getAllCases(request):
         else:
             json_dict["tid_id"] = ""
         # print("****json_dict[tid_id]****",json_dict["tid_id"])
-        json_dict["depend_data"] = i.depend_casedata
+        depend_casedata = i.depend_casedata
+        # print("******dependcasedata******", depend_casedata)
+        depend_datas = ""
+        if depend_casedata != "" and depend_casedata is not None:
+            for ii in json.loads(depend_casedata):
+                depend_datas = depend_datas + ii + ','
+            depend_datas = depend_datas[:-1]
+        print("******dependdatas******", depend_datas)
+        json_dict["depend_data"] = depend_datas
         json_list.append(json_dict)
     result = {
         'data': json_list,
@@ -398,3 +406,37 @@ def getProjectInfos(request):
     result = {'code': 0, 'info': 'query success',
                   'data': {"projectName": projectName, "moduleName": moduleName}}
     return JsonResponse(result)
+
+
+def updataDependdata(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        apiID = req["apiid"]
+        checkresult = checkFormat(req["dependValue"])
+        if checkresult["code"] == 0:
+            updataData = checkresult["data"]
+            # print("updataData: ",updataData)
+            try:
+                updataData = json.dumps(updataData)
+                apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=updataData)
+            except Exception as e:
+                result = {"code": -1, "info": "updata failed"}
+                return JsonResponse(result)
+            result = {"code": 0, "info": "updata success"}
+        else:
+            result = {"code": -1, "info": "数据格式有误"}
+    return JsonResponse(result)
+
+
+def checkFormat(dataValue):
+    updataData = []
+    update_dependdata = str(dataValue).replace(" ", "")
+    for sdata in update_dependdata.split(","):
+        if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
+            updataData.append(sdata)
+        else:
+            result = {"code": -1, "info": "输入数据格式有误"}
+            return result
+    result = {"code": 0, "data": updataData}
+    return result
