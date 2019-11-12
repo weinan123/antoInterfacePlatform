@@ -92,7 +92,7 @@ def _getTestcase(list,environment):
         try:
             caseName = apiInfoTable.objects.get(apiID=args).apiName
         except Exception as e:
-            print("用例ID:%s, 不存在，跳过执行..." % str(args))
+            print("用例ID:%s, 不存在，跳过执行...,报错：%s" % (str(args), str(e)))
             continue
         fun = RunTest.getTestFunc(args, caseName,environment)
         setattr(RunTest, 'test_func_%s_%s' % (args, caseName), fun)
