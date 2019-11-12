@@ -151,8 +151,8 @@ def batchrun(request):
             if query.method == "" or query.url == "":
                 result = {"code": -1, "datas": "method或url不能为空"}
                 return JsonResponse(result)
-
-        batchResult = batchstart.start_main(idlist,environment, reflag, exeuser)
+        batchrun_list = [{"sname": "批量执行", "list": idlist}]
+        batchResult = batchstart.start_main(batchrun_list, environment, reflag, exeuser)
         # print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]
