@@ -337,7 +337,7 @@ def getAllCases(request):
         if i.depend_caseId != "" and i.depend_caseId is not None:
             json_dict["tid_id"] = apiInfoTable.objects.get(t_id=i.depend_caseId).apiID  #tid_id表示tid不为空的用例所依赖用例的id
         else:
-            json_dict["tid_id"] = ""
+            json_dict["tid_id"] = 0
         # print("****json_dict[tid_id]****",json_dict["tid_id"])
         depend_casedata = i.depend_casedata
         # print("******dependcasedata******", depend_casedata)
@@ -414,12 +414,16 @@ def updataDependdata(request):
         req = json.loads(request.body)["params"]
         apiID = req["apiid"]
         checkresult = checkFormat(req["dependValue"])
+        print("3...checkresult: ", checkresult)
         if checkresult["code"] == 0:
             updataData = checkresult["data"]
-            # print("updataData: ",updataData)
+            print("2...updataData: ",updataData)
             try:
-                updataData = json.dumps(updataData)
-                apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=updataData)
+                if len(updataData) == 0:
+                    apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=None)
+                else:
+                    updataData = json.dumps(updataData)
+                    apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=updataData)
             except Exception as e:
                 result = {"code": -1, "info": "updata failed"}
                 return JsonResponse(result)
@@ -430,13 +434,56 @@ def updataDependdata(request):
 
 
 def checkFormat(dataValue):
-    updataData = []
-    update_dependdata = str(dataValue).replace(" ", "")
-    for sdata in update_dependdata.split(","):
-        if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
-            updataData.append(sdata)
-        else:
-            result = {"code": -1, "info": "输入数据格式有误"}
-            return result
+    print("1...dataValue: ",dataValue)
+    if dataValue == "":
+        updataData = []
+    else:
+        updataData = []
+        update_dependdata = str(dataValue).replace(" ", "")
+        for sdata in update_dependdata.split(","):
+            if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
+                updataData.append(sdata)
+            else:
+                result = {"code": -1, "info": "输入数据格式有误"}
+                return result
     result = {"code": 0, "data": updataData}
     return result
+
+
+def updataDependID(request):
+    result = {}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        apiID = int(req["apiid"])
+        dependID = int(req["dependid"])
+        if dependID == 0:
+            apiInfoTable.objects.filter(apiID=apiID).update(depend_caseId=None)
+        else:
+            # print("1: ", apiID, dependID)
+            #判断用例之间是否构成相互依赖
+            flag = batchUntils.checkDepend(apiID, dependID)
+            # print("2: ", flag)
+            if flag == True:
+                result = {"code": -1, "info": "所选接口已与当前用例建立依赖，请重新选择"}
+                return JsonResponse(result)
+            try:
+                dependcaset_id = apiInfoTable.objects.get(apiID=dependID).t_id  #查询到依赖用例的t_id
+            except Exception as e:
+                result = {"code":-1, "info": str(e)}
+                return JsonResponse(result)
+            if dependcaset_id == "" or dependcaset_id is None:
+                t_id = "d" + str(dependID)
+                try:
+                    apiInfoTable.objects.filter(apiID=dependID).update(t_id=t_id)
+                    apiInfoTable.objects.filter(apiID=apiID).update(depend_caseId=t_id)
+                except Exception as e:
+                    result = {"code": -1, "info": "更新失败：" + str(e)}
+                    return JsonResponse(result)
+            else:
+                try:
+                    apiInfoTable.objects.filter(apiID=apiID).update(depend_caseId=dependcaset_id)
+                except Exception as e:
+                    result = {"code": -1, "info": "更新失败：" + str(e)}
+                    return JsonResponse(result)
+        result = {"code": 0, "info": "更新成功"}
+    return JsonResponse(result)

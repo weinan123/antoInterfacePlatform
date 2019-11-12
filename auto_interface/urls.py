@@ -76,4 +76,5 @@ urlpatterns = [
     url(r'^getCookies/$', cookiesManage.getCookies),
     url(r'^getCookieList/$', cookiesManage.getCookieList),
     url(r'^delCookies/$', cookiesManage.delCookies),
+    url(r'^updataDependID/$', apiinfo.updataDependID),
 ]

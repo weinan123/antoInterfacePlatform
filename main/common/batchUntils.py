@@ -200,3 +200,15 @@ def replaceParam(dependdata_dict, stringValue):
             strValue = strValue.replace("${"+param_key+"}", "")
             print(u"使用值：''替换参数${%s}" % param_key)
     return strValue
+
+
+def checkDepend(apiID, dependID):
+    flag = False
+    # 查询当前选择用例所依赖用例的depend_caseId
+    now_dependcaseID = apiInfoTable.objects.get(apiID=dependID).depend_caseId
+    # 查看当前选择用例的t_id
+    dependID_dependcaseID = apiInfoTable.objects.get(apiID=apiID).t_id
+    # print("3**now_dependcaseID: ", now_dependcaseID, apiID, dependID, dependID_dependcaseID)
+    if now_dependcaseID == dependID_dependcaseID:
+        flag = True
+    return flag

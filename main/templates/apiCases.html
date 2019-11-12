@@ -65,8 +65,8 @@
                             <td>{! info.name !}</td>
                             <td>{! info.t_id !}</td>
                             <td>
-                                <select class="form-control" v-model="info.tid_id">
-                                    <option selected value="">无</option>
+                                <select class="form-control" v-model="info.tid_id" @change="changeDependCaseID($event,info.id)">
+                                    <option selected value=0>无</option>
                                     <option  v-for="item in result.data" :value="item.id">{! item.name !}</option>
                                 </select>
                             </td>
@@ -723,29 +723,73 @@
                                             showMethod: "fadeIn",
                                             hideMethod: "fadeOut"
                 };
+                console.log("rs:",rs);
                 if(rs.length === value.length){
-                axios.post('/updataDependdata/', {
-                params: {
-                    apiid: id,
-                    dependValue: rs,
-                },
-                })
-                .then(resp => {
-                    var code = resp.data.code;
-                    var info = resp.data.info;
-                    {#console.log("111:",resp.data);#}
-                    if(code === 0){
-                        toastr.success("更新成功");
-                    }else{
-                        alert("更新失败：",info);
-                    }
-                })
-                .catch(err => {
-                    console.log('请求失败:' + err.status + ',' + err.statusText);
-                })
+                    axios.post('/updataDependdata/', {
+                    params: {
+                        apiid: id,
+                        dependValue: rs,
+                    },
+                    })
+                    .then(resp => {
+                        var code = resp.data.code;
+                        var info = resp.data.info;
+                        {#console.log("111:",resp.data);#}
+                        if(code === 0){
+                            toastr.success("更新成功");
+                            this.getlist(this.pageNum);
+                        }else{
+                            alert("更新失败：" + info);
+                            this.getlist(this.pageNum);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
                 }else{
                     alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
                 }
+            },
+            changeDependCaseID(e, id){
+                var valueID = e.target.value;
+                var apiID = id;
+                toastr.options = {
+                                    closeButton: false,
+                                    debug: false,
+                                    progressBar: false,
+                                    positionClass: "toast-top-center",
+                                    onclick: null,
+                                    showDuration: "300",
+                                    hideDuration: "1000",
+                                    timeOut: "2000",
+                                    extendedTimeOut: "1000",
+                                    showEasing: "swing",
+                                    hideEasing: "linear",
+                                    showMethod: "fadeIn",
+                                    hideMethod: "fadeOut"
+                };
+                console.log("111Value:",valueID,apiID);
+                axios.post('/updataDependID/', {
+                    params: {
+                        apiid: apiID,
+                        dependid: valueID,
+                    },
+                    })
+                    .then(resp => {
+                        var code = resp.data.code;
+                        var info = resp.data.info;
+                        console.log("222resp:",resp.data);
+                        if(code === 0){
+                            toastr.success("更新成功");
+                            this.getlist(this.pageNum);
+                        }else{
+                            alert("更新失败：" + info);
+                            this.getlist(this.pageNum);
+                        }
+                    })
+                    .catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
             },
         }
     }).$mount('#apiCases');
