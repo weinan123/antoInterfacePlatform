@@ -83,6 +83,7 @@ class RunTest(unittest.TestCase):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         return result
 
+
 def _getTestcase(list,environment):
     testlist = list
     for attr in dir(RunTest):

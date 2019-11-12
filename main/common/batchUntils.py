@@ -20,6 +20,7 @@ def getTestSuite(*classes):
     valid_types = (unittest.TestSuite, unittest.TestCase)
     suite = unittest.TestSuite()
     for cls in classes:
+        print("6***cls: ", cls)
         if isinstance(cls, str):
             if cls in sys.modules:
                 suite.addTest(unittest.findTestCases(sys.modules[cls]))
@@ -82,7 +83,9 @@ def getHost(id,environment):
     else:
         hostTags.objects.filter(id=id).update(dev=hostqa,live=hostqa,stage=hostqa)
         host = hostdict[0][str(environment).lower()]
-    return  host
+    return host
+
+
 '''执行用例'''
 def getResp(id,environment, dtime):
     try:
@@ -92,11 +95,17 @@ def getResp(id,environment, dtime):
         return result
     # 判断是否有关联用例
     depend_flag = query.depend_caseId
+    dependData_list = query.depend_casedata
     dependData = {}
     if depend_flag == "" or depend_flag is None:
-        print(u"是否有关联：否")
+        print(u"是否有关联接口：否")
+        if dependData_list == "" or dependData_list is None:
+            print(u"接口是否有自定义参数：否")
+        else:
+            defindData = getDefindData(dependData_list)
+            dependData = defindData
+            print(u"接口自定义参数：%s" % str(dependData))
     else:
-        dependData_list = query.depend_casedata
         dependData = isDependency(depend_flag, dependData_list, environment)
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
@@ -116,7 +125,7 @@ def getResp(id,environment, dtime):
     listid = query.owningListID
     querylist = moduleList.objects.get(id=int(listid))
     proList = projectList.objects.get(id=int(querylist.owningListID))
-    print("所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
+    print(u"所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
     print u"请求方法：%s" % (methods)
     host = getHost(int(query.host),environment)
     host = replaceParam(dependData, host)
@@ -174,7 +183,7 @@ def isDependency(depend_flag, depend_data, environment):
     depend_caseid = depend_flag
     depend_data = depend_data
     print u"关联用例t_id：%s" % (depend_caseid)
-    if depend_data != "" or depend_data != "[]":
+    if depend_data != "" and depend_data != "[]" and depend_data is not None:
         dependRes = getDependData.getdepands(depend_caseid, depend_data, environment)
         if dependRes["code"] == 0:
             dependData = dependRes["dependdata"]
@@ -212,3 +221,12 @@ def checkDepend(apiID, dependID):
     if now_dependcaseID == dependID_dependcaseID:
         flag = True
     return flag
+
+
+def getDefindData(datas_list):
+    datas_list = json.loads(datas_list)
+    data_dict = {}
+    for listvalue in datas_list:
+        a = str(listvalue).split("=")
+        data_dict[a[0]] = a[1]
+    return data_dict
