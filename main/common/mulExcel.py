@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import xlrd
+import xlrd,os,xlwt
 from xlutils.copy import copy
 class mulExcel():
     def __init__(self,filepath,sheetindex):
@@ -24,25 +24,28 @@ class mulExcel():
         return colValues
 
     # 生成新execel表格
-    def createExcel(self):
+    def createExcel(self,):
         newWorkbook = copy(self.workbook)
         newsheet = newWorkbook.get_sheet(0)
-        return newWorkbook, newsheet
+        return newWorkbook,newsheet
     #写入某列数据
     def writeColData(self,colnum,list):
         newWorkbook,writesheet = self.createExcel()
         for i in range(0,len(list)):
             writesheet.write(colnum,i,list[i])
-        newWorkbook.save("newexcel.xls")
+            newWorkbook.save("newexcel.xls")
     #写入某行数据
-    def writeRowData(self,rownum, list,modelname):
-        newWorkbook, writesheet = self.createExcel()
+    def writeRowData(self,newWorkbook,writesheet,rownum, list,modelname):
         for i in range(0,len(list)):
             writesheet.write(rownum,i,list[i])
-        filepath = r"main/postfiles/"+modelname+".xls"
+        filepath = os.path.dirname(os.path.dirname(__file__)) + "\\postfiles\\" + modelname + ".xls"
         newWorkbook.save(filepath)
 if __name__=='__main__':
     filepath = r"D:\project\auto_interface\antoInterfacePlatform\main\postfiles\template.xls"
     mulExcel = mulExcel(filepath,0)
-    mulExcel.writeColData(10,["weinannan","nihaoya"])
+    newWorkbook, newsheet = mulExcel.createExcel()
+    data = [[1,1,1],[2,2,2],[3,3,3],[4,4,4]]
+    for i in range(0,len(data)):
+        mulExcel.writeRowData(newsheet,i+8,data[i],"weinan")
+
 

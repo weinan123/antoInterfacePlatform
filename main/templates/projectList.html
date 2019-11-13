@@ -983,7 +983,7 @@
                     });
                 },
                 getCookieList() {
-                    axios.get('/getCookieList/',)
+                    axios.get('/getCookieList/',{params:{"projectname":projecttitle.$data.projectNameTitle}})
                         .then(resp => {
                             console.log(resp.data);
                             lenqa = resp.data.data.qa.length;

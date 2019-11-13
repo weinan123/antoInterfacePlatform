@@ -6,10 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, FileRe
 from main.models import *
 from forms import UserForm, projectForm, firstProjectForm
 from common import mulExcel
-from django.contrib import auth
-from django.contrib.auth.models import User
-from django import forms
-import re
+from untils import until
 
 
 def addProjectList(request):
@@ -243,26 +240,29 @@ def uploadCase(request):
         modelname = moduleList.objects.filter(id=id).values_list("moduleName")[0][0]
         print modelname
         caseList = apiInfoTable.objects.filter(owningListID=id).values()
+        filepath = r"main/postfiles/template.xls"
+        saveexcel = mulExcel.mulExcel(filepath, 0)
+        newWorkbook, newsheet = saveexcel.createExcel()
         if (len(caseList) > 0):
             for i in range(0, len(caseList)):
                 casename = caseList[i]["apiName"]
                 method = caseList[i]["method"]
                 host = caseList[i]["host"]
+                realhost = hostTags.objects.filter(id =int(host)).values_list("qa")[0][0]
                 url = caseList[i]["url"]
                 headers = caseList[i]["headers"]
                 body = caseList[i]["body"]
+                bodys, files, showflag = until.mul_bodyData(json.loads(body))
                 t_id = caseList[i]["t_id"]
                 depend_caseId = caseList[i]["depend_caseId"]
                 depend_casedata = caseList[i]["depend_casedata"]
                 assertinfo = caseList[i]["assertinfo"]
                 isScreat = caseList[i]["isScreat"]
                 isRedirect = caseList[i]["isRedirect"]
-                caselist = [casename, method, host, url, headers, body, t_id, depend_caseId,
+                caselist = [casename, method, realhost, url, headers, json.dumps(bodys), t_id, depend_caseId,
                             depend_casedata, assertinfo, isScreat, isRedirect]
-                print caseList
-                filepath = r"main/postfiles/template.xls"
-                saveexcel = mulExcel.mulExcel(filepath, 0)
-                saveexcel.writeRowData(i + 8, caselist, modelname)
+                print caselist
+                saveexcel.writeRowData(newWorkbook,newsheet,i + 8, caselist, modelname)
         else:
             caselist = []
             print caseList

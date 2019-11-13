@@ -59,7 +59,8 @@ def getCookies(request):
         return JsonResponse(response, safe=False)
 def getCookieList(request):
     if request.method == 'GET':
-        cookieList = userCookies.objects.filter(user=request.session['username']).values()
+        projectname = request.GET["projectname"]
+        cookieList = userCookies.objects.filter(user=request.session['username'],projectname=projectname).values()
         qaList = []
         stageList = []
         liveList = []
