@@ -240,7 +240,7 @@ def checkFormat(dataValue):
         updataData = []
         update_dependdata = str(dataValue).replace(" ", "")
         for sdata in update_dependdata.split(","):
-            if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
+            if re.match(r'^[a-zA-Z](.*?)=(.+?)$', sdata):
                 updataData.append(sdata)
             else:
                 result = {"code": -1, "info": "输入数据格式有误"}
