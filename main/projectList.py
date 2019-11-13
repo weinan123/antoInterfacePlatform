@@ -7,6 +7,7 @@ from main.models import *
 from forms import UserForm, projectForm, firstProjectForm
 from common import mulExcel
 from untils import until
+from common.batchUntils import checkFormat
 
 
 def addProjectList(request):
@@ -480,21 +481,11 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         verification = True
                     else:
-                        try:
-                            json.loads(depend_casedata)
-                        except ValueError:
+                        checkCode = checkFormat(depend_casedata)["code"]
+                        print checkFormat(depend_casedata)
+                        if (checkCode != 0):
                             code = -10
-                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
-                            verification = False
-                            break
-                    if (depend_caseId is None) or (depend_caseId == ''):
-                        verification = True
-                    else:
-                        try:
-                            list(depend_caseId)
-                        except ValueError:
-                            code = -9
-                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合规范！'
                             verification = False
                             break
                     if (body is None) or (body == ''):
@@ -582,6 +573,11 @@ def projectImport(request):
                         headers = json.dumps(headers)
 
                     body = {}
+                    if (depend_casedata is None) or (depend_casedata == ''):
+                        body = {}
+                    else:
+                        depend_casedata = checkFormat(depend_casedata)["data"]
+
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
                     else:
@@ -736,21 +732,10 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         verification = True
                     else:
-                        try:
-                            json.loads(depend_casedata)
-                        except ValueError:
+                        checkCode = checkFormat(depend_casedata)["code"]
+                        if (checkCode != 0):
                             code = -10
-                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
-                            verification = False
-                            break
-                    if (depend_caseId is None) or (depend_caseId == ''):
-                        verification = True
-                    else:
-                        try:
-                            list(depend_caseId)
-                        except ValueError:
-                            code = -9
-                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合规范！'
                             verification = False
                             break
                     if (body is None) or (body == ''):
@@ -827,6 +812,11 @@ def projectImport(request):
                         headers = json.dumps(headers)
 
                     body = {}
+                    if (depend_casedata is None) or (depend_casedata == ''):
+                        body = {}
+                    else:
+                        depend_casedata = checkFormat(depend_casedata)["data"]
+
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
                     else:
