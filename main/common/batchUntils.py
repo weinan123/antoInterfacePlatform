@@ -218,7 +218,7 @@ def checkDepend(apiID, dependID):
     # 查看当前选择用例的t_id
     dependID_dependcaseID = apiInfoTable.objects.get(apiID=apiID).t_id
     # print("3**now_dependcaseID: ", now_dependcaseID, apiID, dependID, dependID_dependcaseID)
-    if now_dependcaseID == dependID_dependcaseID:
+    if now_dependcaseID == dependID_dependcaseID and now_dependcaseID is not None:
         flag = True
     return flag
 
