@@ -576,7 +576,8 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         body = {}
                     else:
-                        depend_casedata = checkFormat(depend_casedata)["data"]
+                        updataData = checkFormat(depend_casedata)["data"]
+                        depend_casedata = json.dumps(updataData)
 
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
@@ -815,7 +816,8 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         body = {}
                     else:
-                        depend_casedata = checkFormat(depend_casedata)["data"]
+                        updataData = checkFormat(depend_casedata)["data"]
+                        depend_casedata = json.dumps(updataData)
 
                     if (body_data is None) or (body_data == '') or (body_data == '{}'):
                         body = '{}'
