@@ -748,7 +748,7 @@
             },
             changeDependData(e,id){
                 var value = e.target.value;
-                var pattern = new RegExp("[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
+                var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
                 var rs = value.replace(pattern, '');
                 toastr.options = {
                                             closeButton: false,
@@ -789,7 +789,7 @@
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
                 }else{
-                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
                 }
             },
             changeDependCaseID(e, id){
