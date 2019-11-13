@@ -248,7 +248,7 @@ def uploadCase(request):
                 casename = caseList[i]["apiName"]
                 method = caseList[i]["method"]
                 host = caseList[i]["host"]
-                realhost = hostTags.objects.filter(id =int(host)).values_list("qa")[0][0]
+                realhost = hostTags.objects.filter(id=int(host)).values_list("qa")[0][0]
                 url = caseList[i]["url"]
                 headers = caseList[i]["headers"]
                 body = caseList[i]["body"]
@@ -259,10 +259,11 @@ def uploadCase(request):
                 assertinfo = caseList[i]["assertinfo"]
                 isScreat = caseList[i]["isScreat"]
                 isRedirect = caseList[i]["isRedirect"]
-                caselist = [casename, method, realhost, url, headers, json.dumps(bodys), t_id, depend_caseId,
+                caselist = [casename, method, realhost, url, headers, json.dumps(bodys), t_id,
+                            depend_caseId,
                             depend_casedata, assertinfo, isScreat, isRedirect]
                 print caselist
-                saveexcel.writeRowData(newWorkbook,newsheet,i + 8, caselist, modelname)
+                saveexcel.writeRowData(newWorkbook, newsheet, i + 8, caselist, modelname)
         else:
             caselist = []
             print caseList
@@ -506,7 +507,8 @@ def projectImport(request):
                             info = '当前批量导入文件的body列存在数据不符合json规范！'
                             verification = False
                             break
-                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                    if (isSecret is None) or (isSecret == '') or (isSecret == False) or (
+                            isSecret == True):
                         verification = True
                     else:
                         code = -6
@@ -514,8 +516,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
-                            isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == False) or (
+                            isRedirect == True):
                         verification = True
                     else:
                         code = -7
@@ -761,7 +763,8 @@ def projectImport(request):
                             info = '当前批量导入文件的body列存在数据不符合json规范！'
                             verification = False
                             break
-                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                    if (isSecret is None) or (isSecret == '') or (isSecret == False) or (
+                            isSecret == True):
                         verification = True
                     else:
                         code = -6
@@ -769,8 +772,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
-                            isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == False) or (
+                            isRedirect == True):
                         verification = True
                     else:
                         code = -7
