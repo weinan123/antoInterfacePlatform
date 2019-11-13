@@ -97,23 +97,18 @@ def getdependValue(k, respText):
     k_key = k.split("=")[0]
     keyv = k.split("=")[1]
     keyv = keyv.replace("$", "respText")
-    listflag = False
-    if keyv.find("[") != -1:
-        listflag = True
-        keyv = keyv.replace("[", ".")
-        keyv = keyv.replace("]", "")
-    # print keyv
-    # print(keyv.split("."))
     keyv1 = keyv.split(".")
     aa = ""
     for i in range(len(keyv1)):
         if i == 0:
             aa = keyv1[0]
-        elif i == len(keyv1) - 2 and listflag is True:
-            aa = aa + '[' + keyv1[len(keyv1) - 1] + ']' + '["' + keyv1[i] + '"]'
-        elif i == len(keyv1) - 1 and listflag is True:
-            break
+        elif str(i).find("[") != -1:
+            inx = str(i).split("[")
+            aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
         else:
             aa = aa + '["' + keyv1[i] + '"]'
-    value = {k_key: eval(aa)}
+    try:
+        value = {k_key: eval(aa)}
+    except Exception as e:
+        value = {k_key: ""}
     return value
