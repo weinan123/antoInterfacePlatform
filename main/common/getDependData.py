@@ -102,8 +102,8 @@ def getdependValue(k, respText):
     for i in range(len(keyv1)):
         if i == 0:
             aa = keyv1[0]
-        elif str(i).find("[") != -1:
-            inx = str(i).split("[")
+        elif str(keyv1[i]).find("[") != -1:
+            inx = str(keyv1[i]).split("[")
             aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
         else:
             aa = aa + '["' + keyv1[i] + '"]'
