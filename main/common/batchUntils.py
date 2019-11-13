@@ -230,3 +230,20 @@ def getDefindData(datas_list):
         a = str(listvalue).split("=")
         data_dict[a[0]] = a[1]
     return data_dict
+
+
+def checkFormat(dataValue):
+    # print("1...dataValue: ",dataValue)
+    if dataValue == "":
+        updataData = []
+    else:
+        updataData = []
+        update_dependdata = str(dataValue).replace(" ", "")
+        for sdata in update_dependdata.split(","):
+            if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
+                updataData.append(sdata)
+            else:
+                result = {"code": -1, "info": "输入数据格式有误"}
+                return result
+    result = {"code": 0, "data": updataData}
+    return result
