@@ -28,6 +28,7 @@ class caseList(models.Model):
     """
     用例表
     """
+    owningProject = models.CharField(max_length=50, verbose_name='项目名称', default='')
     caseName = models.CharField(max_length=50, verbose_name='用例名称')
     includeAPI = models.CharField(max_length=200, null=True, blank=True, verbose_name='包含接口')
     creator = models.CharField(max_length=50, null=False, verbose_name='创建者')
