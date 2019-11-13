@@ -417,11 +417,11 @@ def updataDependdata(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         apiID = req["apiid"]
-        checkresult = checkFormat(req["dependValue"])
-        print("3...checkresult: ", checkresult)
+        checkresult = batchUntils.checkFormat(req["dependValue"])
+        # print("3...checkresult: ", checkresult)
         if checkresult["code"] == 0:
             updataData = checkresult["data"]
-            print("2...updataData: ",updataData)
+            # print("2...updataData: ",updataData)
             try:
                 if len(updataData) == 0:
                     apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=None)
@@ -435,23 +435,6 @@ def updataDependdata(request):
         else:
             result = {"code": -1, "info": "数据格式有误"}
     return JsonResponse(result)
-
-
-def checkFormat(dataValue):
-    print("1...dataValue: ",dataValue)
-    if dataValue == "":
-        updataData = []
-    else:
-        updataData = []
-        update_dependdata = str(dataValue).replace(" ", "")
-        for sdata in update_dependdata.split(","):
-            if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
-                updataData.append(sdata)
-            else:
-                result = {"code": -1, "info": "输入数据格式有误"}
-                return result
-    result = {"code": 0, "data": updataData}
-    return result
 
 
 def updataDependID(request):
