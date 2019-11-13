@@ -24,6 +24,19 @@ class moduleList(models.Model):
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
 
+class caseList(models.Model):
+    """
+    用例表
+    """
+    caseName = models.CharField(max_length=50, verbose_name='用例名称')
+    includeAPI = models.CharField(max_length=200, null=True, blank=True, verbose_name='包含接口')
+    creator = models.CharField(max_length=50, null=False, verbose_name='创建者')
+    executor = models.CharField(max_length=50, verbose_name='最近执行者')
+    updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
+    createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    runResult = models.TextField(null=True, blank=True, verbose_name='运行结果')
+
+
 class hostTags(models.Model):
     """
     host
@@ -97,14 +110,14 @@ class users(models.Model):
 
 
 class userCookies(models.Model):
-    user = models.CharField(max_length=50,null=True, blank=True)
-    cookiename =  models.CharField(max_length=50,null=True, blank=True)
+    user = models.CharField(max_length=50, null=True, blank=True)
+    cookiename = models.CharField(max_length=50, null=True, blank=True)
     username = models.CharField(max_length=200, null=True, blank=True)
     password = models.CharField(max_length=200, null=True, blank=True)
-    projectname = models.CharField(max_length=100,null=True, blank=True)
+    projectname = models.CharField(max_length=100, null=True, blank=True)
     evirment = models.CharField(max_length=100, null=True, blank=True)
     cookies = models.CharField(max_length=200, blank=True, null=True)
-    iseffect = models.IntegerField(blank=True, null=True,)
+    iseffect = models.IntegerField(blank=True, null=True, )
     updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
