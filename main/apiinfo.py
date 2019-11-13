@@ -363,11 +363,14 @@ def getProjInfos(request):
     result = {}
     if request.method == 'GET':
         try:
-            id = request.GET["pid"]
-            query = projectList.objects.get(id=id)
-            projName = query.projectName
+            id = int(request.GET["pid"])
+            query = moduleList.objects.get(id=id)
             moduName = query.moduleName
+            pid = query.owningListID
+            projName = projectList.objects.get(id=int(pid)).projectName
+            # print(id, projName, moduName)
         except Exception as e:
+            # print("4******: ", str(e))
             projName = ""
             moduName = ""
         projectLists = []
@@ -389,6 +392,7 @@ def getProjInfos(request):
                            "projName": projName,
                            "moduName": moduName}}
     return JsonResponse(result)
+
 
 def getProjectInfos(request):
     result = {}

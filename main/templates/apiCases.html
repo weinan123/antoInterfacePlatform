@@ -290,10 +290,11 @@
                 }
             },
             getProinfo(params){
+                console.log("**1params**",params);
                 if(params["id"] === undefined){
                     axios.get('/projectInfos/')
                     .then(resp =>{
-                        console.log("**1**",resp.data.data);
+                        {#console.log("**1**",resp.data.data);#}
                         this.projectList = resp.data.data.allProjList;
                         this.allModules = resp.data.data.allModuleList;
                         this.getlist(1);
@@ -303,22 +304,29 @@
                 }else{
                     axios.get('/projectInfos/',{
                         params: {
-                                    pid: params.id,
+                                    pid: params["id"],
                                 }
                     })
                     .then(resp =>{
+                        console.log("**2**",resp.data.data);
+                        this.moduleList = [];
+                        this.projectList = [];
                         this.projectList = resp.data.data.allProjList;
                         this.allModules = resp.data.data.allModuleList;
                         this.projectName = resp.data.data.projName;
+                        for(let i=0;i<this.projectList.length;i++){
+                            let pname = this.projectList[i]["projectName"];
+                            if(pname === this.projectName){
+                                this.projectID = this.projectList[i]["id"];
+                            }
+                        }
                         let allModules = this.allModules;
                         for(let q=0;q<allModules.length;q++){
-                            let pname = allModules[q]["projectName"];
-                            if(this.projectName.toString() === pname.toString()) {
-                                if((allModules[q]["moduleName"]) !== "" && (this.moduleList.indexOf(allModules[q]["moduleName"]) === -1)){
-                                    this.moduleList.push(allModules[q]["moduleName"]);
-                                }
-                                {#console.log("***7***",this.moduleList);#}
+                            let pid = allModules[q]["owningListID"];
+                            if(this.projectID === pid) {
+                                this.moduleList.push(allModules[q]["moduleName"]);
                             }
+                            {#console.log("***7***",this.moduleList);#}
                         }
                         this.moduleName = resp.data.data.moduName;
                         this.getlist(1);
