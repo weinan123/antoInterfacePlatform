@@ -297,7 +297,7 @@ def getAllCases(request):
     sear = request.GET['searchinfo']
     projectID = request.GET["projectID"]
     moduleName = request.GET["moduleName"]
-    print("***11*",projectID,moduleName,sear)
+    # print("***11*",projectID,moduleName,sear)
     pidList = []
     if projectID != "" and moduleName != "":
         moduleID = moduleList.objects.get(owningListID=projectID , moduleName=moduleName).id
@@ -346,7 +346,7 @@ def getAllCases(request):
             for ii in json.loads(depend_casedata):
                 depend_datas = depend_datas + ii + ','
             depend_datas = depend_datas[:-1]
-        print("******dependdatas******", depend_datas)
+        # print("******dependdatas******", depend_datas)
         json_dict["depend_data"] = depend_datas
         json_list.append(json_dict)
     result = {
