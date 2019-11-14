@@ -56,3 +56,37 @@ def addCase(request):
             }
 
     return JsonResponse(result, safe=False)
+
+
+def caseInfo(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用GET方法查询！'
+    }
+    if request.method == 'GET':
+        projectName = request.GET.get('projectName')
+        resp = caseList.objects.filter(owningProject=projectName).values("id", "caseName", "includeAPI",
+                                                                         "creator", "executor",
+                                                                         "updateTime", "createTime",
+                                                                         "runResult", "lastRunTime")
+        respList = list(resp)
+        for i in range(len(respList)):
+            respList[i]['projectName'] = projectName
+            respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
+            respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+            count=0
+            for x in list(respList[i]['includeAPI']):
+                respList[i]['includeAPI'] = x[0]
+                count = count + 1
+            if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
+                respList[i]['executor'] = '暂未执行'
+            if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
+                respList[i]['runResult'] = '暂未执行'
+            if (respList[i]['lastRunTime'] is None) or (respList[i]['lastRunTime'] == ''):
+                respList[i]['lastRunTime'] = '暂未执行'
+        result = {
+            'data': respList,
+            'code': 0,
+            'info': 'success'
+        }
+        return JsonResponse(result, safe=False)

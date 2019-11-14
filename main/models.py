@@ -32,9 +32,10 @@ class caseList(models.Model):
     caseName = models.CharField(max_length=50, verbose_name='用例名称')
     includeAPI = models.CharField(max_length=200, null=True, blank=True, verbose_name='包含接口')
     creator = models.CharField(max_length=50, null=False, verbose_name='创建者')
-    executor = models.CharField(max_length=50, verbose_name='最近执行者')
+    executor = models.CharField(max_length=50, null=True, blank=True, verbose_name='最近执行者')
     updateTime = models.DateTimeField(auto_now=True, verbose_name='最近修改时间')
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    lastRunTime = models.DateTimeField(null=True, blank=True, verbose_name='最后运行时间')
     runResult = models.TextField(null=True, blank=True, verbose_name='运行结果')
 
 

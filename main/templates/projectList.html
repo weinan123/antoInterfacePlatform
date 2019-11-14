@@ -377,98 +377,6 @@
                     <button class="viewButton" @click="selectNone()">全不选</button>
 
 
-                    <!-- 导入按钮触发模态框 -->
-                    <button class="uploadbtn" data-toggle="modal" data-target="#importProject"
-                            style="width: 74px;height: 36px;"><span
-                            class="glyphicon glyphicon-cloud-download"
-                            style="color:#F5A623 "></span>&nbsp&nbsp
-                        <span class="uploadbtn_font">导入</span></button>
-
-
-                    <!-- 导入模态框（Modal） -->
-                    <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" id="importProjectRow">
-                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal"
-                                            aria-hidden="true">
-                                        &times;
-                                    </button>
-                                    <label class="modal-title" id="myModalLabel">导入</label>
-                                </div>
-                                <div class="modal-body">
-                                    {#                                    新版本#}
-                                    <form style="text-align: center" class="form-horizontal">
-
-                                        <div class="form-group">
-                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text"
-                                                       name="projectName"
-                                                       v-model="projectName" required id="id_projectName"
-                                                       maxlength="50" placeholder="请输入项目名称"
-                                                       readonly="readonly">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="moduleName"
-                                                       required id="id_moduleName" v-model="moduleName"
-                                                       maxlength="50" placeholder="请输入模块名称"/>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="uploadFile"
-                                                   class="col-sm-3 control-label">选择文件：</label>
-                                            <div class="col-sm-9">
-                                                <input type="file" id="uploadFile" ref="inputFile"
-                                                       @change="getFile($event)" class="form-control"
-                                                       name="uploadFile"
-                                                       required/>
-                                            </div>
-                                        </div>
-                                        {#                                        <div class="modal-footer" style="text-align: center">#}
-                                        <div class="form-group">
-                                            <div class="col-sm-6">
-                                                <button class="viewButton" @click="submitForm($event)">
-                                                    提交
-                                                </button>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <button type="button" class="viewButton"
-                                                        data-dismiss="modal">
-                                                    关闭
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                    {#                                    <form>#}
-                                    {#                                        <input type="text" value="" v-model="name" placeholder="请输入用户名">#}
-                                    {#                                        <input type="text" value="" v-model="age" placeholder="请输入年龄">#}
-                                    {#                                        <input type="file" @change="getFile($event)">#}
-                                    {#                                        <button @click="submitForm($event)">提交</button>#}
-                                    {#                                    </form>#}
-
-
-                                    {#                                    旧版本#}
-                                    {#                                    <form enctype="multipart/form-data" method="post" action="/projectImport/">#}
-                                    {#                                        <input type="file" name="file"/>#}
-                                    {#                                        <div class="modal-footer" style="text-align: center">#}
-                                    {#                                            <button type="submit" class="btn btn-primary">提交文件</button>#}
-                                    {#                                            <button type="button" class="btn btn-primary" data-dismiss="modal">关闭#}
-                                    {#                                            </button>#}
-                                    {#                                        </div>#}
-                                    {#                                    </form>#}
-                                </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal -->
-                    </div>
-
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
@@ -477,14 +385,6 @@
                             style="width: 74px;height: 36px;" @click="projectBatchDelete()">批量删除
                     </button>
 
-                    <a href="/download/">
-                        <button class="downloadButton"
-                                style="float: right;text-align: center;margin: auto;letter-spacing: 0;">
-                            <span class="glyphicon glyphicon-download"
-                                  style="font-size: 14px;float: left;margin-top: 2.3px;"></span>模版文件
-                        </button>
-                    </a>
-
 
                 </div>
             </div>
@@ -492,14 +392,15 @@
                 <table style="width: 90%">
                     <thead>
                     <tr>
-                        <th>批量删除</th>
-                        <th>模块名称</th>
-                        <th>更新时间</th>
+                        <th>批量执行</th>
+                        <th>用例名称</th>
                         <th>创建时间</th>
-                        <th>总用例数</th>
-                        <th>通过用例数</th>
-                        <th>失败用例数</th>
-                        <th>未执行用例数</th>
+                        <th>更新时间</th>
+                        <th>包含接口</th>
+                        <th>创建者</th>
+                        <th>执行者</th>
+                        <th>最后运行时间</th>
+                        <th>执行结果</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -518,6 +419,7 @@
                         <td>{! item.allcaseNum !}</td>
                         <td>{! item.passcaseNum !}</td>
                         <td>{! item.failcaseNum !}</td>
+                        <td>{! item.blockcaseNum !}</td>
                         <td>{! item.blockcaseNum !}</td>
                         <td style="margin: auto">
                             <div class="btn-group" style="margin: auto">
@@ -1235,11 +1137,77 @@
             delimiters: ['{!', '!}'],
             el: '#cases',
             data() {
+                projectBatchDelete = true;
                 return {
                     currentSort: 0,
+                    projectNameTitle: '',
+                    projectName: '',
+                    caseName: '',
+                    list: [],
+                    checkedDelete: [],
                 };
             },
-            methods: {},
+            methods: {
+                submitCase(event) {
+                    if (this.projectNameNew === '' || this.moduleNameNew === '') {
+                        alert('请输入所有字段！');
+
+                    } else {
+                        var target = document.getElementById("newProjectRow");
+                        var spinner = Spinner().spin(target);
+
+                        event.preventDefault();
+                        let formData = new FormData();
+                        formData.append('projectName', this.projectNameNew);
+                        formData.append('moduleName', this.moduleNameNew);
+
+                        let config = {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        };
+
+                        axios
+                            .post('/addProjectList/', formData, config)
+                            .then(resp => {
+                                    spinner.spin();
+                                    {#设置为当模态框完全隐藏时，激活弹窗的功能#}
+                                    if (resp.data.code === 0) {
+                                        toastr.options = {
+                                            closeButton: false,
+                                            debug: false,
+                                            progressBar: false,
+                                            positionClass: "toast-top-center",
+                                            onclick: null,
+                                            showDuration: "300",
+                                            hideDuration: "1000",
+                                            timeOut: "2000",
+                                            extendedTimeOut: "1000",
+                                            showEasing: "swing",
+                                            hideEasing: "linear",
+                                            showMethod: "fadeIn",
+                                            hideMethod: "fadeOut"
+                                        };
+                                        toastr.success(resp.data.info);
+                                        {#$('#importProject').hide();#}
+                                        {#$('.modal-backdrop').hide();#}
+                                        $('#newProject').modal('hide');
+                                        Object.assign(this.$data, this.$options.data());
+                                        this.$refs.inputFile.value = '';
+                                    } else {
+                                        alert(resp.data.info);
+                                    }
+                                }
+                            ).then(() => {
+                                this.refresh();
+                            }
+                        );
+
+                    }
+                }
+                ,
+
+            },
         })
     </script>
     <!-- cookiemodel -->
