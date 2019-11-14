@@ -157,7 +157,7 @@ def batchrun(request):
         # print batchResult
         if reportflag == True:
             report_localName = batchResult["reportPath"]
-            report_runName = req["pmName"] +"_" + batchResult["reportname"]
+            report_runName = req["pmName"]        #  +"_" + batchResult["reportname"]
             successNum = batchResult["sNum"]
             failNum = batchResult["fNum"]
             errorNum = batchResult["eNum"]
