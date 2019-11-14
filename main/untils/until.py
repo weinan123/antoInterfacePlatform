@@ -47,8 +47,13 @@ def mul_bodyData(bodyinfor):
     return body,files,showflag
 
 def getcookies(cookieFlag,evirment,username,password):
+    cookies = {}
     if int(cookieFlag==1):
         cookies = getType1Cookies.getCookies1(evirment, username, password).servirce()
+    elif int(cookieFlag==2):
+        cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
+    elif int(cookieFlag==3):
+        cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
     elif int(cookieFlag==3):
         cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
     return cookies

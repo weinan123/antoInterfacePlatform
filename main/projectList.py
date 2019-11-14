@@ -274,7 +274,7 @@ def uploadCase(request):
         print modelname
         response = FileResponse(file)
         response['Content-Type'] = 'application/octet-stream'
-        response['Content-Disposition'] = 'attachment;filename="%s"' % (modelname)
+        response['Content-Disposition'] = 'attachment;filename="%s.xls"' % (modelname)
         return response
 
 

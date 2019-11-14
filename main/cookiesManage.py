@@ -86,7 +86,7 @@ def getCookieList(request):
                     "iseffect": i["iseffect"],
                 }
                 stageList.append(data)
-            elif evirment=="stage":
+            elif evirment=="live":
                 data = {
                     "id": i["id"],
                     "cookiename": i["cookiename"],
