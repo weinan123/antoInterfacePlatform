@@ -117,7 +117,8 @@ def runsingle(request):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": str(assertinfo)}
-            if str(assertinfo) in str(text):
+            assertResult = batchUntils.checkAssertinfo(str(assertinfo), str(text))
+            if assertResult:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
@@ -271,7 +272,7 @@ def getapiInfos(request):
             else:
                 json_dict["body"] = []
             json_dict["url"] = query.url
-            json_dict["assert"] = query.assertinfo.replace(" ", "")
+            json_dict["assert"] = query.assertinfo
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
             listdata = moduleList.objects.get(id=int(query.owningListID))

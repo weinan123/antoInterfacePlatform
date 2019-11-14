@@ -142,7 +142,7 @@ def getResp(id,environment, dtime):
     key_id = query.key_id
     secret_key = query.secret_key
     timestamp = int(time.time())
-    assertinfo = replaceParam(dependData, str(query.assertinfo.replace(" ", "")))
+    assertinfo = replaceParam(dependData, str(query.assertinfo))
     dtime = dtime
     responseText = ""
     # 非加密执行接口
@@ -246,4 +246,22 @@ def checkFormat(dataValue):
                 result = {"code": -1, "info": "输入数据格式有误"}
                 return result
     result = {"code": 0, "data": updataData}
+    return result
+
+
+def checkAssertinfo(assertinfo, respText):
+    result = False
+    # print("assertinfo: %s, respText: %s" % (assertinfo, respText))
+    assertinfo = assertinfo.replace(" ", "")
+    assertinfo_list = assertinfo.split(",")
+    respText = respText.replace(" ", "")
+    # print("assertinfo: %s, respText: %s" % (assertinfo, respText))
+    for item in assertinfo_list:
+        if item == "":
+            continue
+        if item in respText:
+            result = True
+        else:
+            result = False
+    # print("result: %s" % result)
     return result
