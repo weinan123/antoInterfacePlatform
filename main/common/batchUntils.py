@@ -95,18 +95,18 @@ def getResp(id,environment, dtime):
         return result
     # 判断是否有关联用例
     depend_flag = query.depend_caseId
-    dependData_list = query.depend_casedata
+    dependData_str = query.depend_casedata
     dependData = {}
     if depend_flag == "" or depend_flag is None:
         print(u"是否有关联接口：否")
-        if dependData_list == "" or dependData_list is None:
+        if dependData_str == "" or dependData_str is None:
             print(u"接口是否有自定义参数：否")
         else:
-            defindData = getDefindData(dependData_list)
+            defindData = getDefindData(dependData_str)
             dependData = defindData
             print(u"接口自定义参数：%s" % str(dependData))
     else:
-        dependData = isDependency(depend_flag, dependData_list, environment)
+        dependData = isDependency(depend_flag, dependData_str, environment)
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
     send_url = replaceParam(dependData, query.url)
@@ -183,7 +183,7 @@ def isDependency(depend_flag, depend_data, environment):
     depend_caseid = depend_flag
     depend_data = depend_data
     print u"关联用例t_id：%s" % (depend_caseid)
-    if depend_data != "" and depend_data != "[]" and depend_data is not None:
+    if depend_data != "" and depend_data is not None:
         dependRes = getDependData.getdepands(depend_caseid, depend_data, environment)
         if dependRes["code"] == 0:
             dependData = dependRes["dependdata"]
@@ -223,8 +223,8 @@ def checkDepend(apiID, dependID):
     return flag
 
 
-def getDefindData(datas_list):
-    datas_list = json.loads(datas_list)
+def getDefindData(datas_str):
+    datas_list = (str(datas_str).replace(" ", "")).split(",")
     data_dict = {}
     for listvalue in datas_list:
         a = str(listvalue).split("=")
@@ -235,16 +235,17 @@ def getDefindData(datas_list):
 def checkFormat(dataValue):
     # print("1...dataValue: ",dataValue)
     if dataValue == "":
-        updataData = []
+        updataData = ""
     else:
-        updataData = []
+        updataData = ""
         update_dependdata = str(dataValue).replace(" ", "")
         for sdata in update_dependdata.split(","):
             if re.match(r'^[a-zA-Z](.*?)=(.+?)$', sdata):
-                updataData.append(sdata)
+                updataData = updataData + str(sdata) + ","
             else:
                 result = {"code": -1, "info": "输入数据格式有误"}
                 return result
+        updataData = updataData[:-1]
     result = {"code": 0, "data": updataData}
     return result
 
