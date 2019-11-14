@@ -117,7 +117,8 @@ def runsingle(request):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": str(assertinfo)}
-            if str(assertinfo) in str(text):
+            assertResult = batchUntils.checkAssertinfo(str(assertinfo), str(text))
+            if assertResult:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
@@ -271,7 +272,7 @@ def getapiInfos(request):
             else:
                 json_dict["body"] = []
             json_dict["url"] = query.url
-            json_dict["assert"] = query.assertinfo.replace(" ", "")
+            json_dict["assert"] = query.assertinfo
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
             listdata = moduleList.objects.get(id=int(query.owningListID))
@@ -297,7 +298,7 @@ def getAllCases(request):
     sear = request.GET['searchinfo']
     projectID = request.GET["projectID"]
     moduleName = request.GET["moduleName"]
-    print("***11*",projectID,moduleName,sear)
+    # print("***11*",projectID,moduleName,sear)
     pidList = []
     if projectID != "" and moduleName != "":
         moduleID = moduleList.objects.get(owningListID=projectID , moduleName=moduleName).id
@@ -341,13 +342,13 @@ def getAllCases(request):
         # print("****json_dict[tid_id]****",json_dict["tid_id"])
         depend_casedata = i.depend_casedata
         # print("******dependcasedata******", depend_casedata)
-        depend_datas = ""
-        if depend_casedata != "" and depend_casedata is not None:
-            for ii in json.loads(depend_casedata):
-                depend_datas = depend_datas + ii + ','
-            depend_datas = depend_datas[:-1]
-        print("******dependdatas******", depend_datas)
-        json_dict["depend_data"] = depend_datas
+        # depend_datas = ""
+        # if depend_casedata != "" and depend_casedata is not None:
+        #     for ii in json.loads(depend_casedata):
+        #         depend_datas = depend_datas + ii + ','
+        #     depend_datas = depend_datas[:-1]
+        # print("******dependdatas******", depend_datas)
+        json_dict["depend_data"] = depend_casedata
         json_list.append(json_dict)
     result = {
         'data': json_list,
@@ -417,16 +418,15 @@ def updataDependdata(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         apiID = req["apiid"]
-        checkresult = checkFormat(req["dependValue"])
-        print("3...checkresult: ", checkresult)
+        checkresult = batchUntils.checkFormat(req["dependValue"])
+        # print("3...checkresult: ", checkresult)
         if checkresult["code"] == 0:
             updataData = checkresult["data"]
-            print("2...updataData: ",updataData)
+            # print("2...updataData: ",updataData)
             try:
-                if len(updataData) == 0:
+                if updataData == "":
                     apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=None)
                 else:
-                    updataData = json.dumps(updataData)
                     apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=updataData)
             except Exception as e:
                 result = {"code": -1, "info": "updata failed"}
@@ -435,23 +435,6 @@ def updataDependdata(request):
         else:
             result = {"code": -1, "info": "数据格式有误"}
     return JsonResponse(result)
-
-
-def checkFormat(dataValue):
-    print("1...dataValue: ",dataValue)
-    if dataValue == "":
-        updataData = []
-    else:
-        updataData = []
-        update_dependdata = str(dataValue).replace(" ", "")
-        for sdata in update_dependdata.split(","):
-            if re.match(r'^[a-zA-Z](\w.*)=(.+?)$', sdata):
-                updataData.append(sdata)
-            else:
-                result = {"code": -1, "info": "输入数据格式有误"}
-                return result
-    result = {"code": 0, "data": updataData}
-    return result
 
 
 def updataDependID(request):

@@ -7,6 +7,7 @@ from main.models import *
 from forms import UserForm, projectForm, firstProjectForm
 from common import mulExcel
 from untils import until
+from common.batchUntils import checkFormat
 
 
 def addProjectList(request):
@@ -248,7 +249,7 @@ def uploadCase(request):
                 casename = caseList[i]["apiName"]
                 method = caseList[i]["method"]
                 host = caseList[i]["host"]
-                realhost = hostTags.objects.filter(id =int(host)).values_list("qa")[0][0]
+                realhost = hostTags.objects.filter(id=int(host)).values_list("qa")[0][0]
                 url = caseList[i]["url"]
                 headers = caseList[i]["headers"]
                 body = caseList[i]["body"]
@@ -259,10 +260,11 @@ def uploadCase(request):
                 assertinfo = caseList[i]["assertinfo"]
                 isScreat = caseList[i]["isScreat"]
                 isRedirect = caseList[i]["isRedirect"]
-                caselist = [casename, method, realhost, url, headers, json.dumps(bodys), t_id, depend_caseId,
+                caselist = [casename, method, realhost, url, headers, json.dumps(bodys), t_id,
+                            depend_caseId,
                             depend_casedata, assertinfo, isScreat, isRedirect]
                 print caselist
-                saveexcel.writeRowData(newWorkbook,newsheet,i + 8, caselist, modelname)
+                saveexcel.writeRowData(newWorkbook, newsheet, i + 8, caselist, modelname)
         else:
             caselist = []
             print caseList
@@ -479,21 +481,11 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         verification = True
                     else:
-                        try:
-                            json.loads(depend_casedata)
-                        except ValueError:
+                        checkCode = checkFormat(depend_casedata)["code"]
+                        print checkFormat(depend_casedata)
+                        if (checkCode != 0):
                             code = -10
-                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
-                            verification = False
-                            break
-                    if (depend_caseId is None) or (depend_caseId == ''):
-                        verification = True
-                    else:
-                        try:
-                            list(depend_caseId)
-                        except ValueError:
-                            code = -9
-                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合规范！'
                             verification = False
                             break
                     if (body is None) or (body == ''):
@@ -506,7 +498,8 @@ def projectImport(request):
                             info = '当前批量导入文件的body列存在数据不符合json规范！'
                             verification = False
                             break
-                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                    if (isSecret is None) or (isSecret == '') or (isSecret == False) or (
+                            isSecret == True):
                         verification = True
                     else:
                         code = -6
@@ -514,8 +507,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
-                            isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == False) or (
+                            isRedirect == True):
                         verification = True
                     else:
                         code = -7
@@ -734,21 +727,10 @@ def projectImport(request):
                     if (depend_casedata is None) or (depend_casedata == ''):
                         verification = True
                     else:
-                        try:
-                            json.loads(depend_casedata)
-                        except ValueError:
+                        checkCode = checkFormat(depend_casedata)["code"]
+                        if (checkCode != 0):
                             code = -10
-                            info = '当前批量导入文件的depend_casedata列存在数据不符合json规范！'
-                            verification = False
-                            break
-                    if (depend_caseId is None) or (depend_caseId == ''):
-                        verification = True
-                    else:
-                        try:
-                            list(depend_caseId)
-                        except ValueError:
-                            code = -9
-                            info = '当前批量导入文件的depend_caseId列存在数据不符合list规范！'
+                            info = '当前批量导入文件的depend_casedata列存在数据不符合规范！'
                             verification = False
                             break
                     if (body is None) or (body == ''):
@@ -761,7 +743,8 @@ def projectImport(request):
                             info = '当前批量导入文件的body列存在数据不符合json规范！'
                             verification = False
                             break
-                    if (isSecret is None) or (isSecret == '') or (isSecret == 0.0) or (isSecret == 1.0):
+                    if (isSecret is None) or (isSecret == '') or (isSecret == False) or (
+                            isSecret == True):
                         verification = True
                     else:
                         code = -6
@@ -769,8 +752,8 @@ def projectImport(request):
                         # print isSecret
                         verification = False
                         break
-                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == 0.0) or (
-                            isRedirect == 1.0):
+                    if (isRedirect is None) or (isRedirect == '') or (isRedirect == False) or (
+                            isRedirect == True):
                         verification = True
                     else:
                         code = -7

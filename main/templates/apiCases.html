@@ -45,7 +45,7 @@
                     <tr>
                         <th>序号</th>
                         <th>接口名称</th>
-                        <th>标记ID</th>
+{#                        <th>标记ID</th>#}
                         <th>依赖用例</th>
                         <th>依赖数据</th>
                         <th>执行结果</th>
@@ -63,7 +63,7 @@
                                 {! info.isCheck !}
                             </td>
                             <td>{! info.name !}</td>
-                            <td>{! info.t_id !}</td>
+{#                            <td>{! info.t_id !}</td>#}
                             <td>
                                 <select class="form-control" v-model="info.tid_id" @change="changeDependCaseID($event,info.id)">
                                     <option selected value=0>无</option>
@@ -103,11 +103,12 @@
                         <input type="checkbox" id="selAllBtn" class="selAllBtn"  v-model="isSelectAll" @click="selectAllBtn($event)">
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
-                    <button type="button" class="btn btn-default btn-sm" id="batchexe"  @click="batchrun()" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
+                    <button type="button" class="btn btn-default btn-sm" id="batchexe" data-toggle="modal" data-target="#reportName" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
                     <span v-if="permission_run">
                     <label class="form-check-label">
                         <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
-                    </label><span> 批量执行是否生成报告</span></span>
+                    </label><span> 批量执行是否生成报告</span>
+                    </span>
                 </div>
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
@@ -151,6 +152,34 @@
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
+        <!-- 点击批量执行时，输入报告名称弹框 -->
+        <div class="modal fade" id="reportName" tabindex="-1" role="dialog" aria-labelledby="reportNameLabel" aria-hidden="true" style="margin-top: 0px;">
+            <div class="modal-dialog" style="width: 500px;margin: 75px auto;max-height: 650px;">
+                <div class="modal-content" id="Names">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="reportNameLabel">
+                            报告名称
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                         <div class="form-group form-inline">
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">名称:</label>
+                                 <input type="text" class="form-control" name="reportName" v-model="reportName"
+                            placeholder="请输入报告名称" style="width:70%;">
+                                 <span v-if="!reportName" style="color: red">*</span>
+                             </div>
+                         </div>
+                    </div>
+                    <div class="modal-footer" style="margin-top: 0px;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <input type="submit" value="执行" class="btn btn-primary" @click="batchrun()" data-dismiss="modal" :disabled="!reportName"/>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
     </div>
 {% endblock %}
 
@@ -188,6 +217,7 @@
             casesSel_list: [],
             current_pageCount:10,
             responseText:"",
+            reportName:"",
         },
         created() {
             vm1.$data.currentSort = 3;
@@ -479,6 +509,8 @@
                                 })
                         }
                     });
+                }else{
+                    alert("请先选择用例")
                 }
             },
             runsingle(id){
@@ -554,7 +586,7 @@
                                 params: {
                                     environment:environment,
                                     idList: runlist,
-                                    pmName: "批量执行",
+                                    pmName: self.reportName,
                                     reportflag: self.reportflag,
                                 },
                             })
@@ -589,6 +621,8 @@
                                 })
                         }
                     });
+                }else{
+                    alert("请先选择用例");
                 }
             },
             search(){
@@ -714,7 +748,7 @@
             },
             changeDependData(e,id){
                 var value = e.target.value;
-                var pattern = new RegExp("[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
+                var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
                 var rs = value.replace(pattern, '');
                 toastr.options = {
                                             closeButton: false,
@@ -755,7 +789,7 @@
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
                 }else{
-                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
                 }
             },
             changeDependCaseID(e, id){
