@@ -117,7 +117,8 @@ def runsingle(request):
                 result = {"code": 1, "info": "run fail", "datas": str(datas)}
         else:
             datas = {"status_code": statusCode, "responseText": str(text), "assert": str(assertinfo)}
-            if str(assertinfo) in str(text):
+            assertResult = batchUntils.checkAssertinfo(str(assertinfo), str(text))
+            if assertResult:
                 apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
                 result = {"code": 0, "info": "run success", "datas": str(datas)}
             else:
@@ -271,7 +272,7 @@ def getapiInfos(request):
             else:
                 json_dict["body"] = []
             json_dict["url"] = query.url
-            json_dict["assert"] = query.assertinfo.replace(" ", "")
+            json_dict["assert"] = query.assertinfo
             json_dict["listid"] = query.owningListID
             json_dict["response"] = query.response
             listdata = moduleList.objects.get(id=int(query.owningListID))
@@ -341,13 +342,13 @@ def getAllCases(request):
         # print("****json_dict[tid_id]****",json_dict["tid_id"])
         depend_casedata = i.depend_casedata
         # print("******dependcasedata******", depend_casedata)
-        depend_datas = ""
-        if depend_casedata != "" and depend_casedata is not None:
-            for ii in json.loads(depend_casedata):
-                depend_datas = depend_datas + ii + ','
-            depend_datas = depend_datas[:-1]
+        # depend_datas = ""
+        # if depend_casedata != "" and depend_casedata is not None:
+        #     for ii in json.loads(depend_casedata):
+        #         depend_datas = depend_datas + ii + ','
+        #     depend_datas = depend_datas[:-1]
         # print("******dependdatas******", depend_datas)
-        json_dict["depend_data"] = depend_datas
+        json_dict["depend_data"] = depend_casedata
         json_list.append(json_dict)
     result = {
         'data': json_list,
@@ -423,10 +424,9 @@ def updataDependdata(request):
             updataData = checkresult["data"]
             # print("2...updataData: ",updataData)
             try:
-                if len(updataData) == 0:
+                if updataData == "":
                     apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=None)
                 else:
-                    updataData = json.dumps(updataData)
                     apiInfoTable.objects.filter(apiID=apiID).update(depend_casedata=updataData)
             except Exception as e:
                 result = {"code": -1, "info": "updata failed"}

@@ -9,7 +9,8 @@ import json,time,re
 
 def getdepands(depend_caseid, depend_data, environment):
     dependCase = str(depend_caseid)
-    dependDataKeys = json.loads(depend_data)
+    dependDataKeys = (str(depend_data).replace(" ", "")).split(",")
+    print("dependDataKeys list: %s " % str(dependDataKeys))
     try:
         query = apiInfoTable.objects.get(t_id=dependCase)
     except Exception as e:
@@ -17,12 +18,18 @@ def getdepands(depend_caseid, depend_data, environment):
         return result
     # 判断是否有关联用例
     depend_flag = query.depend_caseId
+    dependData_str = query.depend_casedata
     dependData = {}
     if depend_flag == "" or depend_flag is None:
-        print(u"接口%s是否有关联：否" % dependCase)
+        print(u"依赖接口%s是否有关联接口：否" % dependCase)
+        if dependData_str == "" or dependData_str is None:
+            print(u"依赖接口是否有自定义参数：否")
+        else:
+            defindData = batchUntils.getDefindData(dependData_str)
+            dependData = defindData
+            print(u"依赖接口自定义参数：%s" % str(dependData))
     else:
-        dependData_list = query.depend_casedata
-        dependData = batchUntils.isDependency(depend_flag, dependData_list, environment)
+        dependData = batchUntils.isDependency(depend_flag, dependData_str, environment)
     methods = query.method
     send_url = batchUntils.replaceParam(dependData, query.url)
     host = batchUntils.getHost(int(query.host), environment)
@@ -96,18 +103,18 @@ def getdepands(depend_caseid, depend_data, environment):
 def getdependValue(k, respText):
     k_key = k.split("=")[0]
     keyv = k.split("=")[1]
-    keyv = keyv.replace("$", "respText")
-    keyv1 = keyv.split(".")
-    aa = ""
-    for i in range(len(keyv1)):
-        if i == 0:
-            aa = keyv1[0]
-        elif str(keyv1[i]).find("[") != -1:
-            inx = str(keyv1[i]).split("[")
-            aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
-        else:
-            aa = aa + '["' + keyv1[i] + '"]'
     try:
+        keyv = keyv.replace("$", "respText")
+        keyv1 = keyv.split(".")
+        aa = ""
+        for i in range(len(keyv1)):
+            if i == 0:
+                aa = keyv1[0]
+            elif str(keyv1[i]).find("[") != -1:
+                inx = str(keyv1[i]).split("[")
+                aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
+            else:
+                aa = aa + '["' + keyv1[i] + '"]'
         value = {k_key: eval(aa)}
     except Exception as e:
         value = {k_key: ""}

@@ -76,7 +76,8 @@ def singleRun(self, caseID, environment):
             result = {"code": 1, "info": "run fail", "datas": str(datas)}
     else:
         datas = {"status_code": statusCode, "responseText": str(text), "assert": assertinfo}
-        if str(assertinfo) in str(text):
+        assertResult = batchUntils.checkAssertinfo(str(assertinfo), str(text))
+        if assertResult:
             apiInfoTable.objects.filter(apiID=caseID).update(lastRunTime=dtime, lastRunResult=1, response=responseText)
             result = {"code": 0, "info": "run success", "datas": str(datas)}
         else:
