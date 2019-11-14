@@ -103,18 +103,18 @@ def getdepands(depend_caseid, depend_data, environment):
 def getdependValue(k, respText):
     k_key = k.split("=")[0]
     keyv = k.split("=")[1]
-    keyv = keyv.replace("$", "respText")
-    keyv1 = keyv.split(".")
-    aa = ""
-    for i in range(len(keyv1)):
-        if i == 0:
-            aa = keyv1[0]
-        elif str(keyv1[i]).find("[") != -1:
-            inx = str(keyv1[i]).split("[")
-            aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
-        else:
-            aa = aa + '["' + keyv1[i] + '"]'
     try:
+        keyv = keyv.replace("$", "respText")
+        keyv1 = keyv.split(".")
+        aa = ""
+        for i in range(len(keyv1)):
+            if i == 0:
+                aa = keyv1[0]
+            elif str(keyv1[i]).find("[") != -1:
+                inx = str(keyv1[i]).split("[")
+                aa = aa + '["' + inx[0] + '"]' + '[' + inx[1]
+            else:
+                aa = aa + '["' + keyv1[i] + '"]'
         value = {k_key: eval(aa)}
     except Exception as e:
         value = {k_key: ""}
