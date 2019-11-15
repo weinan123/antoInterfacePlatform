@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
 from toretrunData import toType
-import getType1Cookies,getType2Cookies
+import getType1Cookies,getType2Cookies,getType3Cookies
 import time,os,sched,subprocess
 import json
 def my_login(func):
@@ -53,9 +53,9 @@ def getcookies(cookieFlag,evirment,username,password):
     elif int(cookieFlag==2):
         cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
     elif int(cookieFlag==3):
-        cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
+        cookies = getType3Cookies.getCookies3(evirment, username, password).servirce(cookieFlag)
     elif int(cookieFlag==3):
-        cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
+        cookies = getType3Cookies.getCookies3(evirment, username, password).servirce(cookieFlag)
     return cookies
 
 
