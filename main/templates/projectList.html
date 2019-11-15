@@ -409,12 +409,12 @@
                             style="width: 74px;height: 36px;" @click="caseBatchRun()">批量执行
                     </button>
                     <div class="col-sm-2" style="float: right;">
-                        <select class="form-control" v-model="environment"
+                        <select class="form-control" v-model="environment" @change="getUserCookieList()"
                                 id="environment" style="float: right;">
-                            <option selected value="QA">QA</option>
+                            <option value="QA">QA</option>
                             <option value="Stage">Stage</option>
                             <option value="Live">Live</option>
-                            <option value="Dev">Dev</option>
+                            <option value="Dev"">Dev</option>
                         </select>
                     </div>
 
