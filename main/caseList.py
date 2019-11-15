@@ -112,6 +112,27 @@ def caseAPIInfo(request):
     return JsonResponse(result, safe=False)
 
 
+def getUserCookieList(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用POST方法查询！'
+    }
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        user = request.session.get('username')
+        projectName = req['projectName']
+        environment = req['environment']
+        resp = userCookies.objects.filter(user=user, projectname=projectName,
+                                          evirment=environment).values('id', 'cookiename')
+        respList = list(resp)
+        result = {
+            'data': respList,
+            'code': 0,
+            'info': 'success'
+        }
+    return JsonResponse(result, safe=False)
+
+
 def submitAPI(request):
     result = {
         'code': -1,

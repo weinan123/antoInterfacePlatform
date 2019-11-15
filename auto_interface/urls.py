@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from main import views as main
 from main import apiinfo, report
-from main import projectList, configer, usepermit, cookiesManage, caseList,projectConf
+from main import projectList, configer, usepermit, cookiesManage, caseList, projectConf
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^submitAPI/$', caseList.submitAPI),
     url(r'^caseDelete/$', caseList.caseDelete),
     url(r'^caseBatchDelete/$', caseList.caseBatchDelete),
+    url(r'^getUserCookieList/$', caseList.getUserCookieList),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^download/$', projectList.download),
@@ -78,11 +79,10 @@ urlpatterns = [
     url(r'^getPermission/$', apiinfo.getPermission),
     url(r'^getProjectInfos/$', apiinfo.getProjectInfos),
     url(r'^uploadCase/$', projectList.uploadCase),
-    url(r'^updataDependdata/$', apiinfo.updataDependdata),
     url(r'^getCookies/$', cookiesManage.getCookies),
     url(r'^getCookieList/$', cookiesManage.getCookieList),
     url(r'^delCookies/$', cookiesManage.delCookies),
-    url(r'^updataDependID/$', apiinfo.updataDependID),
+    url(r'^saveOrUpdateData/$', apiinfo.saveOrUpdateData),
     url(r'^projectconfiger/$', projectConf.projectconfiger),
     url(r'^getScheduleinitData/$', projectConf.getScheduleinitData),
 ]

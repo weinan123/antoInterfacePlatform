@@ -63,14 +63,8 @@
                                 {! info.isCheck !}
                             </td>
                             <td>{! info.name !}</td>
-{#                            <td>{! info.t_id !}</td>#}
-                            <td>
-                                <select class="form-control" v-model="info.tid_id" @change="changeDependCaseID($event,info.id)">
-                                    <option selected value=0>无</option>
-                                    <option  v-for="item in result.data" :value="item.id">{! item.name !}</option>
-                                </select>
-                            </td>
-                            <td><input contenteditable="true" type="text" class="form-control" :value="info.depend_data" @change="changeDependData($event,info.id)"></input></td>
+                            <td>{! info.tid_apiName !}</td>
+                            <td>{! info.depend_data !}</td>
                             <td>
                                 <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>
@@ -82,10 +76,10 @@
                             </td>
                             <td>{! info.owing !}</td>
                             <td>
-                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看">
+                                <a class="iconlink" data-toggle="modal" data-target="#viewinfos" @click="viewapi(info.id)" v-if="permission_view" href="#" title="查看编辑">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
-                                <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="编辑">
+                                <a class="iconlink" v-bind:href="['/singleInterface/editor/?id='+info.id]" title="单接口编辑">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
                                 <a class="iconlink" @click="runsingle(info.id)" href="#" title="执行">
@@ -122,7 +116,7 @@
             </div>
         </div>
         <div class="modal fade" id="viewinfos" tabindex="-1" role="dialog" aria-labelledby="viewinfosLabel" aria-hidden="true" style="margin-top: 0px;">
-            <div class="modal-dialog" style="width: 500px;margin: 75px auto;max-height: 650px;">
+            <div class="modal-dialog" style="width: 48%;margin: 75px auto;max-height: 600px;">
                 <div class="modal-content" id="infos">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -132,22 +126,58 @@
                             用例详细信息
                         </h4>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="font-size: 12px;">
                          <div class="form-group form-inline">
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">host:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.host !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">url:</label><span class="itemCSS" style="width:74%;word-break:break-all;">{! viewapiInfos.url !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">method:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.method !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">header:</label><span class="itemCSS" style="width:74%;word-break:break-all;">{! headers !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">body:</label><span class="itemCSS" style="word-break:break-all;width:74%;">{! bodys !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">assert:</label><span class="itemCSS" style="width:74%;">{! viewapiInfos.assert !}</span></div>
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">response:</label>
+                             <div>
+                                 <label class="itemCSS1" style="width: 10%;text-align: right;">接口名称:</label>
+                                 <span class="itemCSS" style="width:35%;word-break:break-all;">
+                                     <input type="text" class="form-control" v-model="viewapiInfos.name" style="width: 100%"/></span>
+                                 </span>
+                                 <label class="itemCSS1" style="width: 10%;text-align: right;">method:</label>
+                                 <span class="itemCSS" style="width:10%;">
+                                     <select class="form-control" v-model="viewapiInfos.method">
+                                        <option value="POST" selected>POST</option>
+                                        <option value="GET">GET</option>
+                                     </select>
+                                 </span>
+                             </div>
+                             <div><label class="itemCSS1" style="width: 10%;text-align: right;">host:</label>
+                                 <span class="itemCSS" style="width:35%;">
+                                    <input type="text" class="form-control" v-model="viewapiInfos.host" style="width: 100%"/>
+                                 </span>
+                                 <label class="itemCSS1" style="width: 10%;text-align: right;">url:</label>
+                                 <span class="itemCSS" style="width:35%;word-break:break-all;">
+                                     <input type="text" class="form-control" v-model="viewapiInfos.url" style="width: 100%"/>
+                                 </span>
+                             </div>
+                             <div>
+                                 <label class="itemCSS1" style="width: 10%;text-align: right;">依赖用例:</label>
+                                 <span class="itemCSS" style="width:35%;">
+                                     <select class="form-control" style="width: 100%" v-model="viewapiInfos.dependCaseId_apiid">
+                                        <option selected value=0>无</option>
+                                        <option v-for="item in viewapiInfos.depend_list" :value="item.apiID">{! item.apiName !}</option>
+                                     </select>
+                                 </span>
+                                <label class="itemCSS1" style="width: 10%;text-align: right;">依赖数据:</label>
+                                <span class="itemCSS" style="width:35%;">
+                                    <input type="text" class="form-control" style="width: 100%" v-model="viewapiInfos.depend_data"/>
+                                </span>
+                             </div>
+                             <div><label class="itemCSS" style="width: 10%;text-align: right;">header:</label>
+                                 <textarea id="responseCSS" v-model="headers"></textarea>
+                                 <label class="itemCSS" style="width: 10%;text-align: right;">body:</label>
+                                 <textarea id="responseCSS" v-model="bodys"></textarea>
+                             </div>
+                             <div><label class="itemCSS" style="width: 10%;text-align: right;">assert:</label>
+                                 <textarea id="responseCSS" v-model="viewapiInfos.assert">{! viewapiInfos.assert !}</textarea>
+                                 <label class="itemCSS" style="width: 10%;text-align: right;">response:</label>
                                  <textarea id="responseCSS" readonly>{! responseText !}</textarea>
                              </div>
                          </div>
                     </div>
                     <div class="modal-footer" style="margin-top: 0px;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <input type="submit" value="保存" class="btn btn-primary" @click="saveAll(viewapiInfos.id)" data-dismiss="modal"/>
                     </div>
                 </div>
             </div><!-- /.modal-content -->
@@ -200,8 +230,8 @@
             allModules:"",
             reportflag: true,
             viewapiInfos: "",
-            headers: {},
-            bodys: {},
+            headers: "",
+            bodys: "",
             permission:{},
             permission_run:false,
             permission_del:false,
@@ -218,6 +248,7 @@
             current_pageCount:10,
             responseText:"",
             reportName:"",
+            sendData:{},
         },
         created() {
             vm1.$data.currentSort = 3;
@@ -673,21 +704,24 @@
                         let viewHeaders = resp.data.datas.header;
                         let viewBodys = resp.data.datas.body;
                         let showflag = parseInt(resp.data.showbody);
-                        this.headers = {};
+                        this.headers = "";
+                        let header_data={};
                         if(viewHeaders.length > 0){
                             for(let i=0;i<viewHeaders.length;i++){
-                                {#console.log("view_header:", viewHeaders[i]["type"], viewHeaders[i]["value"]);#}
-                                this.headers[viewHeaders[i]["type"]] = viewHeaders[i]["value"];
+                                header_data[viewHeaders[i]["type"]] = viewHeaders[i]["value"];
                             }
                         }
-                        this.bodys = {};
+                        this.headers = JSON.stringify(header_data);
+                        this.bodys = "";
+                        let body_data={};
                         if(viewBodys.length > 0){
                             if(showflag === 3){
                                 this.bodys = viewBodys[0].value;
                             }else{
                                 for(let i=0;i<viewBodys.length;i++){
-                                    this.bodys[viewBodys[i]["name"]] = viewBodys[i].value;
+                                    body_data[viewBodys[i]["name"]] = viewBodys[i].value;
                                 }
+                                this.bodys = JSON.stringify(body_data);
                             }
                         }
                         {#console.log("header:", this.headers);#}
@@ -746,55 +780,7 @@
                 this.dlist = [];
                 this.getlist(this.pageNum);
             },
-            changeDependData(e,id){
-                var value = e.target.value;
-                var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]", 'g');
-                var rs = value.replace(pattern, '');
-                toastr.options = {
-                                            closeButton: false,
-                                            debug: false,
-                                            progressBar: false,
-                                            positionClass: "toast-top-center",
-                                            onclick: null,
-                                            showDuration: "300",
-                                            hideDuration: "1000",
-                                            timeOut: "2000",
-                                            extendedTimeOut: "1000",
-                                            showEasing: "swing",
-                                            hideEasing: "linear",
-                                            showMethod: "fadeIn",
-                                            hideMethod: "fadeOut"
-                };
-                console.log("rs:",rs);
-                if(rs.length === value.length){
-                    axios.post('/updataDependdata/', {
-                    params: {
-                        apiid: id,
-                        dependValue: rs,
-                    },
-                    })
-                    .then(resp => {
-                        var code = resp.data.code;
-                        var info = resp.data.info;
-                        {#console.log("111:",resp.data);#}
-                        if(code === 0){
-                            toastr.success("更新成功");
-                            this.getlist(this.pageNum);
-                        }else{
-                            alert("更新失败：" + info);
-                            this.getlist(this.pageNum);
-                        }
-                    })
-                    .catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
-                }else{
-                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
-                }
-            },
-            changeDependCaseID(e, id){
-                var valueID = e.target.value;
-                var apiID = id;
+            saveAll(id){
                 toastr.options = {
                                     closeButton: false,
                                     debug: false,
@@ -810,28 +796,51 @@
                                     showMethod: "fadeIn",
                                     hideMethod: "fadeOut"
                 };
-                console.log("111Value:",valueID,apiID);
-                axios.post('/updataDependID/', {
-                    params: {
-                        apiid: apiID,
-                        dependid: valueID,
-                    },
+                var dependdata = this.viewapiInfos.depend_data;
+                var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]", 'g');
+                var rs = dependdata.replace(pattern, '');
+                if(rs.length === dependdata.length) {
+                    this.getSendData();
+                    {#console.log("sendData: ", this.sendData);#}
+                    axios.post('/saveOrUpdateData/', {
+                        params: {
+                            apiid: id,
+                            sendData: this.sendData,
+                        },
                     })
-                    .then(resp => {
-                        var code = resp.data.code;
-                        var info = resp.data.info;
-                        console.log("222resp:",resp.data);
-                        if(code === 0){
-                            toastr.success("更新成功");
-                            this.getlist(this.pageNum);
-                        }else{
-                            alert("更新失败：" + info);
-                            this.getlist(this.pageNum);
-                        }
-                    })
-                    .catch(err => {
-                        console.log('请求失败:' + err.status + ',' + err.statusText);
-                    })
+                        .then(resp => {
+                            var code = resp.data.code;
+                            var info = resp.data.info;
+                            console.log("222resp:", resp.data);
+                            if (code === 0) {
+                                toastr.success("更新成功");
+                                this.getlist(this.pageNum);
+                            } else {
+                                alert("更新失败：" + info);
+                                this.getlist(this.pageNum);
+                            }
+                        })
+                        .catch(err => {
+                            console.log('请求失败:' + err.status + ',' + err.statusText);
+                        })
+                }else{
+                    alert("依赖参数不能包含特殊字符：[`~!@#^&*()|{}':;'<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+                }
+            },
+            getSendData(){
+                this.sendData = {
+                    "apiName":this.viewapiInfos.name,
+                    "method":this.viewapiInfos.method,
+                    "host":this.viewapiInfos.host,
+                    "url":this.viewapiInfos.url,
+                    "dependcase_apiID":this.viewapiInfos.dependCaseId_apiid,
+                    "dependData":this.viewapiInfos.depend_data,
+                    "header":this.headers,
+                    "bodys":this.bodys,
+                    "assert":this.viewapiInfos.assert,
+                    "environment":this.environment,
+                    "user":vm1.$data.username,
+                };
             },
         }
     }).$mount('#apiCases');
