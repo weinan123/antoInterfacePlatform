@@ -135,7 +135,7 @@ def getResp(id,environment, dtime):
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     # print json.dumps(dependData)
-    print u"请求体：%s "% (str(send_body).decode('raw_unicode_escape'))
+    print u"请求体：%s " % (str(send_body).decode('raw_unicode_escape'))
     print(u"请求头： %s" % str(headers))
     isRedirect = query.isRedirect
     isScreat = query.isScreat

@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^addProjectList/$', projectList.addProjectList),
     url(r'^addProject/$', projectList.addProject),
     url(r'^addCase/$', caseList.addCase),
+    url(r'^caseAPIInfo/$', caseList.caseAPIInfo),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^download/$', projectList.download),

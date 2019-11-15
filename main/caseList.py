@@ -74,10 +74,18 @@ def caseInfo(request):
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
-            count=0
-            for x in list(respList[i]['includeAPI']):
-                respList[i]['includeAPI'] = x[0]
-                count = count + 1
+            APIID = str(respList[i]['includeAPI']).split(',')
+            num = 1
+            respList[i]['describe'] = ''
+            describe = []
+            strAPI = ''
+            for x in APIID:
+                strAPI = '第' + str(num) + '个API：' + \
+                         apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
+                             'apiName']
+                describe.append(strAPI)
+                respList[i]['describe'] = describe
+                num = num + 1
             if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
                 respList[i]['executor'] = '暂未执行'
             if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
@@ -89,4 +97,27 @@ def caseInfo(request):
             'code': 0,
             'info': 'success'
         }
-        return JsonResponse(result, safe=False)
+    return JsonResponse(result, safe=False)
+
+
+def caseAPIInfo(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用GET方法查询！'
+    }
+    if request.method == 'GET':
+        projectName = request.GET.get('projectName')
+        projectID = projectList.objects.filter(projectName=projectName).values('id')[0]['id']
+        resp2 = moduleList.objects.filter(owningListID=projectID).values('id')
+        respList2 = list(resp2)
+        respList = []
+        for i in range(len(respList2)):
+            resp = apiInfoTable.objects.filter(owningListID=respList2[i]['id']).values("apiID",
+                                                                                       "apiName")
+            respList = respList + list(resp)
+        result = {
+            'data': respList,
+            'code': 0,
+            'info': 'success'
+        }
+    return JsonResponse(result, safe=False)
