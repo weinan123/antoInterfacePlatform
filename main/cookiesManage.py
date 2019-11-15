@@ -4,6 +4,7 @@ from models import *
 from untils import getType1Cookies,getType2Cookies,until
 import json, time
 import re
+import jpype
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -23,17 +24,22 @@ def getCookies(request):
         print cookieFlag,id
         try:
             cookies = until.getcookies(cookieFlag, evirment, username, password)
-            print cookies
+            if cookies=={}:
+                response = {
+                "code": -2,
+                "msg": "获取cookie为空",
+                }
+                return JsonResponse(response, safe=False)
         except Exception as e:
             response = {
                 "code":-1,
-                "msg":"获取cookie失败",
+                "msg":"获取cookie失败,请输入正确用户名,密码",
                 "error":str(e)
             }
             return JsonResponse(response, safe=False)
         cookies = json.dumps(cookies)
-        if id=="":
-            userCookies.objects.get_or_create(user=request.session['username'],username=username,password=password,
+        if id == "":
+            userCookies.objects.create(user=request.session['username'],username=username,password=password,
                                        projectname=projectname,cookiename=cookiename,
                                        evirment=evirment,cookies=cookies,iseffect=1,createTime=starttime)
             response = {
@@ -86,7 +92,7 @@ def getCookieList(request):
                     "iseffect": i["iseffect"],
                 }
                 stageList.append(data)
-            elif evirment=="stage":
+            elif evirment=="live":
                 data = {
                     "id": i["id"],
                     "cookiename": i["cookiename"],

@@ -1,0 +1,102 @@
+{% extends 'newindex.html' %}
+{% block title %}<title> 接口配置</title> {% endblock %}
+{% block script %}
+<link href="/static/css/myindex.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="content" id ="projectconfiger">
+    <div class="pageheader">
+        <p class="titlecss">项目信息配置</p>
+        {% comment %}<div style="padding-right: 30px;padding-top:5px;float: right"  >
+          <button type="submit" class="btnsave" @click="saveData()">保存</button>
+        </div>{% endcomment %}
+    </div>
+    <div class="formContent">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="spinner"
+             style="float: left;width: 78%;position: absolute;padding-left: 31px;padding-right: 31px;margin-top: 1%">
+            <div class="form-horizontal" role="form"
+                 style="overflow: hidden;padding-top: 15px;width: 100%;background-color: white;">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="panel panel-primary" style="border-color: #dbe0eb;">
+                        <div class="panel-heading"
+                             style="color: #347daf;border-bottom-color:#ebf3f9;background-color: #ebf3f9;background-image:-webkit-linear-gradient(top, #ebf3f9 0%, #ebf3f9 0%)">
+                            <p class="panel-title" style="font-weight:bold;">新增</p>
+                        </div>
+                        <div class="panel-body tableStyles" style="text-align: center;">
+                                <div class="form-horizontal" role="form">
+                                    <span class="col-sm-4">执行环境：</span>
+                                    <div class="col-sm-8">
+                                    <select class="form-control">
+                                        <option>Qa</option>
+                                        <option>Stage</option>
+                                        <option>Live</option></select>
+                                    </div>
+                                </div>
+                               <div class="form-horizontal" role="form">
+                                    <span class="col-sm-4">执行用例：</span>
+                                    <div class="col-sm-8">
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >登录</span>
+                                        </div>
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >注册</span>
+                                        </div>
+                                       <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >买入股票</span>
+                                        </div>
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >卖出股票</span>
+                                        </div>
+                                    </div></div>
+                               <div class="form-horizontal" role="form">
+                                    <span class="col-sm-4">收件人：</span>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" >
+                                    </div>
+                                </li>
+                               <div class="form-horizontal" role="form">
+                                    <span class="col-sm-4">执行时间：</span>
+                                    <div class="col-sm-8">
+                                    <select class="form-control">
+                                        <option>Qa</option>
+                                        <option>Stage</option>
+                                        <option>Live</option></select>
+                                    </div>
+                               </div>
+
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+{% block vuejs%}
+    <script type="text/javascript">
+var vm = new Vue({
+    delimiters: ['{!', '!}'],
+    el:'#projectconfiger',
+    data:{
+
+     },
+    created(){
+        vm1.$data.currentSort = 7;
+
+    },
+     mounted:function() {
+
+
+    },
+    methods:{
+
+    }
+})
+</script>
+{% endblock %}

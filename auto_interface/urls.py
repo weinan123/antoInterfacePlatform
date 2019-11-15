@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from main import views as main
 from main import apiinfo, report
-from main import projectList, configer, usepermit, cookiesManage, caseList
+from main import projectList, configer, usepermit, cookiesManage, caseList,projectConf
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -81,4 +81,6 @@ urlpatterns = [
     url(r'^getCookieList/$', cookiesManage.getCookieList),
     url(r'^delCookies/$', cookiesManage.delCookies),
     url(r'^updataDependID/$', apiinfo.updataDependID),
+    url(r'^projectconfiger/$', projectConf.projectconfiger),
+
 ]
