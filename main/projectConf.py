@@ -23,34 +23,40 @@ def getScheduleinitData(request):
                 singleProject["projectname"] = i["projectname"]
                 print i["projectname"]
                 allprojectcase = caseList.objects.filter(owningProject=i["projectname"]).values("id","caseName")
-                print allprojectcase
                 singleProject["runcaseId"] = i["runcaseId"]
+                ss = (i["runcaseId"]).encode('unicode-escape').decode('string_escape')
+                checklist = ss.split(",")
+                print checklist
+                allcaselist = []
                 singleProject["runcaseinfor"] = []
-                for s in allprojectcase:
-                    for w in list(i["runcaseId"]):
-                        if s["id"] == int(w):
+                print len(allprojectcase)
+                if len(allprojectcase)>0:
+                    for s in allprojectcase:
                             cases = {
-                                "id":w,
-                                "casename":s[1],
-                                "checkd":True
+                                "id":int(s["id"]),
+                                "casename":s["caseName"],
+                                "checked":False
                             }
-                        else:
-                            cases = {
-                                "id": w,
-                                "casename": s[1],
-                                "checkd": False
-                            }
-                        singleProject["runcaseinfor"].append(cases)
-                singleProject["evirment"] = i["evirment"]
-                singleProject["reporter"] = i["reporter"]
-                singleProject["timeDay"] = i["timeDay"]
-                singleProject["timeTime"] = i["timeTime"]
-                responseData["data"].append(singleProject)
+                            allcaselist.append(cases)
+                    print allcaselist
+                    for w in checklist:
+                        for s in allcaselist:
+                            if int(w)==s["id"]:
+                                s["checked"]=True
+                    singleProject["runcaseinfor"] = allcaselist
+                    singleProject["evirment"] = i["evirment"]
+                    singleProject["reporter"] = i["reporter"]
+                    singleProject["timeDay"] = i["timeDay"]
+                    singleProject["timeTime"] = i["timeTime"]
+                    responseData["data"].append(singleProject)
+                else:
+                    responseData["data"].append(singleProject)
         except Exception as e:
             responseData = {
                 "code": -1,
                 "data": [],
                 "msg": e
             }
+        print responseData
         return JsonResponse(responseData, safe=False)
 

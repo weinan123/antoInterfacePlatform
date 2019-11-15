@@ -82,9 +82,12 @@ def addProject(request):
                 inter = projectList.objects.create(projectName=form.cleaned_data['projectName'],
                                                    cookieFlag=form.cleaned_data['cookieFlag'])
                 inter.save()
+                scheduledata = schedule.objects.create(projectname=form.cleaned_data['projectName'])
+                scheduledata.save()
                 projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(
                     updateTime=dtime,
                     createTime=dtime)
+                schedule.objects.create()
                 code = 0
                 info = '新建成功！'
                 result = {

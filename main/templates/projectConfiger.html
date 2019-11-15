@@ -37,22 +37,13 @@
                                <div class="form-horizontal" role="form" style="margin-top: 8px">
                                     <span class="col-sm-3">执行用例：</span>
                                     <div class="col-sm-8">
+                                        <template v-for="caseinfor,index in project.runcaseinfor">
                                         <div style="width: 100%;float: left;text-align: left">
-                                    <input  type="checkbox">
-                                    <span >登录</span>
+                                    <input  type="checkbox" :checked = caseinfor.checked>
+                                    <span >{! caseinfor.casename !}</span>
                                         </div>
-                                        <div style="width: 100%;float: left;text-align: left">
-                                    <input  type="checkbox">
-                                    <span >注册</span>
-                                        </div>
-                                       <div style="width: 100%;float: left;text-align: left">
-                                    <input  type="checkbox">
-                                    <span >买入股票</span>
-                                        </div>
-                                        <div style="width: 100%;float: left;text-align: left">
-                                    <input  type="checkbox">
-                                    <span >卖出股票</span>
-                                        </div>
+                                        </template>
+
                                     </div>
                                </div>
                                <div class="form-horizontal" role="form" style="margin-top: 8px">
