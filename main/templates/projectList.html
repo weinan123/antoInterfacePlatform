@@ -320,6 +320,77 @@
             <div class="col-md-4" style="width:90%;padding-right: 0px;padding-top: 15px;">
                 <div class="btn-group" style="width:100%;height: 70px;margin: auto;padding-right: 0px;">
                     <!-- 新建模态框（Modal） -->
+                    <button class="viewButton" data-toggle="modal" data-target="#createCase">新建</button>
+
+                    <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" id="newProjectRow" style="width: 60%;height: 50%">
+                            <div class="modal-content"
+                                 style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"
+                                            aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <label class="modal-title" id="myModalLabel">选择接口</label>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="projectName"
+                                           class="col-sm-2 control-label">项目名称:</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" type="text" name="projectName"
+                                               v-model="projectNameTitle" readonly="readonly"
+                                               maxlength="50" placeholder="请输入项目名称"/>
+                                    </div>
+                                    <label for="caseName"
+                                           class="col-sm-2 control-label">用例名称:</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" type="text" name="caseName"
+                                               id="caseName" v-model="caseName"
+                                               maxlength="50" placeholder="请输入用例名称"/>
+                                    </div>
+
+                                    <div style="margin-top: 50px;margin-bottom: 10px;">
+                                        <div v-for="item in apiList" class="col-sm-3">
+                                            <input class="custom-checkbox"
+                                                   v-bind:id="['checkboxDelete'+item.apiID]"
+                                                   type="checkbox"
+                                                   v-bind:value="[item.apiID]" v-model="selectAPI">
+                                            <label v-bind:for="['checkboxDelete'+item.apiID]">{!
+                                                item.apiName
+                                                !}</label>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn-local" @click="submitAPI()">
+                                                选择这些接口
+                                            </button>
+                                        </div>
+
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                    <label class="col-sm-12">所选结果，请确认：</label>
+                                    <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p>
+
+                                    <div class="col-sm-12"
+                                         style="align-items: center;text-align: center">
+                                        <div class="col-sm-6">
+                                            <input type="button" class="viewButton"
+                                                   @click="addCase()" value="新建"/>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="viewButton"
+                                                    data-dismiss="modal">
+                                                关闭
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+
                     <button class="viewButton" @click="selectAll()">全选</button>
                     <button class="viewButton" @click="selectNone()">全不选</button>
 
@@ -337,77 +408,23 @@
                             class="btn-delete"
                             style="width: 74px;height: 36px;" @click="caseBatchRun()">批量执行
                     </button>
+                    <div class="col-sm-2" style="float: right;">
+                        <select class="form-control" v-model="environment"
+                                id="environment" style="float: right;">
+                            <option selected value="QA">QA</option>
+                            <option value="Stage">Stage</option>
+                            <option value="Live">Live</option>
+                            <option value="Dev">Dev</option>
+                        </select>
+                    </div>
+
+                    <label for="environment" class="col-sm-1 control-label"
+                           style="margin-top: 5px;float: right;">环境切换：</label>
 
 
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
-                <form style="width: 90%;margin-right: 30px;">
-                    <div class="form-group">
-                        <label for="id_moduleName" class="col-sm-2 control-label">用例名称:</label>
-                        <div class="col-sm-4">
-                            <input class="form-control" type="text" name="moduleName"
-                                   id="id_moduleName" v-model="caseName"
-                                   maxlength="50" placeholder="请输入用例名称"/>
-                        </div>
-                        <div class="col-sm-4" data-toggle="modal" data-target="#createCase">
-                            <p v-if="selectAPI.length < 1">点击此处选择API</p>
-                            <p v-for="x in selectDisplay">{! x !}</p>
-                        </div>
-                        <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
-                             aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" id="newProjectRow" style="width: 60%;height: 50%">
-                                <div class="modal-content"
-                                     style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal"
-                                                aria-hidden="true">
-                                            &times;
-                                        </button>
-                                        <label class="modal-title" id="myModalLabel">选择接口</label>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div v-for="item in apiList" class="col-sm-3">
-                                            <input class="custom-checkbox"
-                                                   v-bind:id="['checkboxDelete'+item.apiID]"
-                                                   type="checkbox"
-                                                   v-bind:value="[item.apiID]" v-model="selectAPI">
-                                            <label v-bind:for="['checkboxDelete'+item.apiID]">{!
-                                                item.apiName
-                                                !}</label>
-                                        </div>
-                                        <div class="col-sm-12"
-                                             style="align-items: center;text-align: center">
-                                            <div class="col-sm-6">
-                                                <input type="button" class="viewButton"
-                                                       data-dismiss="modal"
-                                                       @click="submitAPI()" value="确定"/>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <button type="button" class="viewButton"
-                                                        data-dismiss="modal">
-                                                    关闭
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="clear:both;"></div>
-                                </div><!-- /.modal-content -->
-                            </div><!-- /.modal -->
-                        </div>
-
-
-                        <div class="col-sm-2">
-                            <button type="button" class="btn-local" @click="addCase()">
-                                新建
-                            </button>
-                        </div>
-                        <div style="clear:both;"></div>
-
-                    </div>
-
-                </form>
-
                 <table style="width: 90%;margin-right: 30px;">
                     <thead>
                     <tr>
@@ -433,7 +450,14 @@
                         <td>
                             <p v-for="x in item['describe']">{! x !}</p>
                         </td>
-                        <td>Cookie</td>
+                        <td>
+                            <select class="form-control" v-bind:id="['cookie'+item.id]">
+                                <option v-for="x in cookieList" v-bind:value="[x.id]">{! x.cookiename
+                                    !}
+                                </option>
+                            </select>
+
+                        </td>
                         <td>{! item.lastRunTime !}</td>
                         <td>{! item.runResult !}</td>
                         <td style="margin: auto">
@@ -1162,6 +1186,8 @@
                     apiList: [],
                     selectAPI: [],
                     selectDisplay: [],
+                    cookieList: [],
+                    environment: 'QA',
                 }
                     ;
             },
@@ -1188,7 +1214,8 @@
                         {#console.log(this.list);#}
                     }).catch(err => {
                     {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                })
+                });
+                this.getUserCookieList();
             },
 
             methods: {
@@ -1228,8 +1255,8 @@
                             {#console.log(this.list);#}
                         }).catch(err => {
                         {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
-                    })
-
+                    });
+                    this.getUserCookieList();
                 },
 
                 selectAll() {
@@ -1265,6 +1292,8 @@
                 addCase() {
                     if (this.projectNameTitle === '' || this.caseName === '' || this.selectAPI.length < 1) {
                         alert('请输入所有字段！');
+                    } else if (this.selectDisplay.length < 1) {
+                        alert('请先点击“选择这些接口”按钮进行接口顺序的确认！');
                     } else {
                         var target = document.getElementById("cases");
                         var spinner = Spinner({top: '3'}).spin(target);
@@ -1295,6 +1324,7 @@
                                         hideMethod: "fadeOut"
                                     };
                                     toastr.success(resp.data.info);
+                                    $('#createCase').modal('hide');
                                     this.caseName = "";
                                     this.selectAPI = [];
                                     this.selectDisplay = [];
@@ -1410,6 +1440,23 @@
                 },
 
                 caseBatchRun() {
+                },
+
+                getUserCookieList() {
+                    axios
+                        .post('/getUserCookieList/', {
+                            params: {
+                                environment: this.environment,
+                                projectName: this.projectNameTitle,
+                            }
+                        })
+                        .then(resp => {
+                            this.cookieList = resp.data.data;
+                            {#console.log(this.list);#}
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
+
                 },
 
             },

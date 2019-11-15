@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^submitAPI/$', caseList.submitAPI),
     url(r'^caseDelete/$', caseList.caseDelete),
     url(r'^caseBatchDelete/$', caseList.caseBatchDelete),
+    url(r'^getUserCookieList/$', caseList.getUserCookieList),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^download/$', projectList.download),
