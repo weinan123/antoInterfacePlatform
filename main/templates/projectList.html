@@ -319,27 +319,7 @@
         <div v-show="currentSort===1" class="formContent" id="cases">
             <div class="col-md-4" style="width:90%;padding-right: 0px;padding-top: 15px;">
                 <div class="btn-group" style="width:100%;height: 70px;margin: auto;padding-right: 0px;">
-                    <!-- 新建按钮触发模态框 -->
-
-                    <button class="viewButton" data-toggle="modal" data-target="#createCase">新建</button>
                     <!-- 新建模态框（Modal） -->
-                    <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" id="newProjectRow">
-                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal"
-                                            aria-hidden="true">
-                                        &times;
-                                    </button>
-                                    <label class="modal-title" id="myModalLabel">新建用例</label>
-                                </div>
-                                <div class="modal-body">
-                                </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal -->
-                    </div>
                     <button class="viewButton" @click="selectAll()">全选</button>
                     <button class="viewButton" @click="selectNone()">全不选</button>
 
@@ -371,9 +351,53 @@
                                    v-model="moduleNameNew"
                                    maxlength="50" placeholder="请输入用例名称"/>
                         </div>
-                        <div class="col-sm-4">
-                            {! selectAPI !}
+                        <div class="col-sm-4" data-toggle="modal" data-target="#createCase">
+                            <p v-if="selectAPI.length < 1">点击此处选择API</p>
+                            <p v-for="x in selectDisplay">{! x !}</p>
                         </div>
+                        <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" id="newProjectRow" style="width: 60%;height: 50%">
+                                <div class="modal-content"
+                                     style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-hidden="true">
+                                            &times;
+                                        </button>
+                                        <label class="modal-title" id="myModalLabel">选择接口</label>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div v-for="item in apiList" class="col-sm-3">
+                                            <input class="custom-checkbox"
+                                                   v-bind:id="['checkboxDelete'+item.apiID]"
+                                                   type="checkbox"
+                                                   v-bind:value="[item.apiID]" v-model="selectAPI">
+                                            <label v-bind:for="['checkboxDelete'+item.apiID]">{!
+                                                item.apiName
+                                                !}</label>
+                                        </div>
+                                        <div class="col-sm-12"
+                                             style="align-items: center;text-align: center">
+                                            <div class="col-sm-6">
+                                                <input type="button" class="viewButton"
+                                                       data-dismiss="modal"
+                                                       @click="submitAPI()" value="确定"/>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="button" class="viewButton"
+                                                        data-dismiss="modal">
+                                                    关闭
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal -->
+                        </div>
+
+
                         <div class="col-sm-2">
                             <button type="button" class="btn-local">
                                 新建
@@ -1145,6 +1169,7 @@
                     checkedList: [],
                     apiList: [],
                     selectAPI: [],
+                    selectDisplay: [],
                 }
                     ;
             },
@@ -1237,7 +1262,7 @@
                     this.checkedDelete = [];
                 },
 
-                submitCase(event) {
+                submitCase() {
                     if (this.projectNameNew === '' || this.moduleNameNew === '') {
                         alert('请输入所有字段！');
 
@@ -1293,6 +1318,27 @@
                         );
 
                     }
+                },
+
+                submitAPI() {
+                    let self = this;
+                    let formData = new FormData();
+                    formData.append('projectName', this.projectNameNew);
+                    formData.append('moduleName', this.moduleNameNew);
+
+                    axios.post('/submitAPI/', {
+                        params: {
+                            selectAPI: self.selectAPI
+                        }
+                    }).then(resp => {
+                        if (resp.data.code === 0) {
+                            self.selectDisplay = resp.data.data;
+                        } else {
+                            alert(resp.data.info);
+                        }
+                    });
+
+
                 },
 
             },

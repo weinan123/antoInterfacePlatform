@@ -334,7 +334,6 @@ def projectBatchDelete(request):
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
         idDelete = req['idDelete']
-        print idDelete
         for x in idDelete:
             if (apiInfoTable.objects.filter(owningListID=x[0]).count() != 0):
                 flag = False

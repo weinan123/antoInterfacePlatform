@@ -121,3 +121,31 @@ def caseAPIInfo(request):
             'info': 'success'
         }
     return JsonResponse(result, safe=False)
+
+
+def submitAPI(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用POST方法查询！'
+    }
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        selectAPI = req['selectAPI']
+        respList = []
+        num = 1
+        describe = []
+        for x in selectAPI:
+            strAPI = '第' + str(num) + '个API：' + \
+                     apiInfoTable.objects.filter(apiID=int(x[0])).values('apiName')[0][
+                         'apiName']
+            describe.append(strAPI)
+            respList = list(describe)
+            num = num + 1
+        code = 0
+        info = '删除成功！'
+    result = {
+        'data': respList,
+        'code': code,
+        'info': info
+    }
+    return JsonResponse(result, safe=False)
