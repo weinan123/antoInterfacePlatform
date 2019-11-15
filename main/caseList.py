@@ -138,3 +138,35 @@ def submitAPI(request):
         'info': info
     }
     return JsonResponse(result, safe=False)
+
+
+def caseDelete(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        caseList.objects.filter(id=id).delete()
+        code = 0
+        info = '删除成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
+
+
+def caseBatchDelete(request):
+    result = {
+        'code': -1,
+        'info': '未知错误！'
+    }
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        idDelete = req['idDelete']
+        for x in idDelete:
+            caseList.objects.filter(id=x[0]).delete()
+        code = 0
+        info = '删除成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)

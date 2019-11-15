@@ -30,6 +30,8 @@ urlpatterns = [
     url(r'^addCase/$', caseList.addCase),
     url(r'^caseAPIInfo/$', caseList.caseAPIInfo),
     url(r'^submitAPI/$', caseList.submitAPI),
+    url(r'^caseDelete/$', caseList.caseDelete),
+    url(r'^caseBatchDelete/$', caseList.caseBatchDelete),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^download/$', projectList.download),

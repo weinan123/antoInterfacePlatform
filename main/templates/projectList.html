@@ -512,12 +512,12 @@
 
                                 <a>
                                     <button type="button" class="btn-delete"
-                                            @click="projectDelete(item.id)">删除
+                                            @click="caseDelete(item.id)">删除
                                     </button>
                                 </a>
-                                <a v-bind:href="['/uploadCase/?modelid='+item.id]"
-                                   v-bind:download="item.moduleName+'.xls'">
-                                    <button type="button" class="btn-delete">执行
+                                <a>
+                                    <button type="button" class="btn-delete"
+                                            @click="runCase(item.id)">执行
                                     </button>
                                 </a>
                             </div>
@@ -1267,7 +1267,7 @@
                         alert('请输入所有字段！');
                     } else {
                         var target = document.getElementById("cases");
-                        var spinner = Spinner().spin(target);
+                        var spinner = Spinner({top: '3'}).spin(target);
 
                         axios.post('/addCase/', {
                             params: {
@@ -1324,6 +1324,92 @@
                     });
 
 
+                },
+
+                caseDelete(id) {
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                        if (r) {
+                            axios.get('/caseDelete?id=' + id)
+                                .then(resp => {
+                                        let info = resp.data.info;
+                                        let code = resp.data.code;
+                                        if (code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(info);
+                                        } else {
+                                            alert(info);
+                                        }
+                                    }
+                                ).then(() => {
+                                    self.refresh();
+                                }
+                            );
+                        }
+                    })
+
+                },
+
+                runCase() {
+
+                },
+
+                caseBatchDelete() {
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                            if (r) {
+                                axios.post('/caseBatchDelete/', {
+                                    params: {
+                                        idDelete: self.checkedList
+                                    }
+                                }).then(resp => {
+                                        if (resp.data.code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(resp.data.info);
+                                            self.checkedList = [];
+                                        } else {
+                                            alert(resp.data.info);
+                                        }
+                                    }
+                                ).then(
+                                    () => {
+                                        self.refresh();
+                                    });
+                            }
+                        }
+                    )
+
+                },
+
+                caseBatchRun() {
                 },
 
             },
