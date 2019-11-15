@@ -74,9 +74,8 @@ urlpatterns = [
     url(r'^getPermission/$', apiinfo.getPermission),
     url(r'^getProjectInfos/$', apiinfo.getProjectInfos),
     url(r'^uploadCase/$', projectList.uploadCase),
-    url(r'^updataDependdata/$', apiinfo.updataDependdata),
     url(r'^getCookies/$', cookiesManage.getCookies),
     url(r'^getCookieList/$', cookiesManage.getCookieList),
     url(r'^delCookies/$', cookiesManage.delCookies),
-    url(r'^updataDependID/$', apiinfo.updataDependID),
+    url(r'^saveOrUpdateData/$', apiinfo.saveOrUpdateData),
 ]
