@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from main import views as main
 from main import apiinfo, report
-from main import projectList, configer, usepermit, cookiesManage, caseList
+from main import projectList, configer, usepermit, cookiesManage, caseList,projectConf
 
 urlpatterns = [
     url(r'^$', main.index),
@@ -28,6 +28,11 @@ urlpatterns = [
     url(r'^addProjectList/$', projectList.addProjectList),
     url(r'^addProject/$', projectList.addProject),
     url(r'^addCase/$', caseList.addCase),
+    url(r'^caseAPIInfo/$', caseList.caseAPIInfo),
+    url(r'^submitAPI/$', caseList.submitAPI),
+    url(r'^caseDelete/$', caseList.caseDelete),
+    url(r'^caseBatchDelete/$', caseList.caseBatchDelete),
+    url(r'^getUserCookieList/$', caseList.getUserCookieList),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),
     url(r'^download/$', projectList.download),
@@ -78,4 +83,6 @@ urlpatterns = [
     url(r'^getCookieList/$', cookiesManage.getCookieList),
     url(r'^delCookies/$', cookiesManage.delCookies),
     url(r'^saveOrUpdateData/$', apiinfo.saveOrUpdateData),
+    url(r'^projectconfiger/$', projectConf.projectconfiger),
+    url(r'^getScheduleinitData/$', projectConf.getScheduleinitData),
 ]

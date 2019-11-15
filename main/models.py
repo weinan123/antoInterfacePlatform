@@ -127,3 +127,11 @@ class userCookies(models.Model):
 class department(models.Model):
     depart_lever = models.IntegerField()
     depart_name = models.CharField(max_length=50)
+
+class schedule(models.Model):
+    projectname = models.CharField(max_length=50,null=True, blank=True)
+    runcaseId =  models.CharField(max_length=50,null=True, blank=True)
+    evirment =  models.CharField(max_length=50,null=True, blank=True)
+    reporter =  models.CharField(max_length=50,null=True, blank=True)
+    timeDay =  models.CharField(max_length=50,null=True, blank=True)
+    timeTime = models.CharField(max_length=50,null=True, blank=True)

@@ -304,7 +304,7 @@
                                     </button>
                                 </a>
                                 <a v-bind:href="['/uploadCase/?modelid='+item.id]"
-                                   v-bind:download="item.moduleName+'.xls'">
+                                   v-bind:download="item.moduleName">
                                     <button type="button" class="btn-delete">导出
                                     </button>
                                 </a>
@@ -319,60 +319,78 @@
         <div v-show="currentSort===1" class="formContent" id="cases">
             <div class="col-md-4" style="width:90%;padding-right: 0px;padding-top: 15px;">
                 <div class="btn-group" style="width:100%;height: 70px;margin: auto;padding-right: 0px;">
-                    <!-- 新建按钮触发模态框 -->
-
-                    <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
                     <!-- 新建模态框（Modal） -->
-                    <div class="modal fade" id="newProject" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog" id="newProjectRow">
-                            <div class="modal-content" style="width: 450px;margin: 75px auto;">
+                    <button class="viewButton" data-toggle="modal" data-target="#createCase">新建</button>
+
+                    <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" id="newProjectRow" style="width: 60%;height: 50%">
+                            <div class="modal-content"
+                                 style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal"
                                             aria-hidden="true">
                                         &times;
                                     </button>
-                                    <label class="modal-title" id="myModalLabel">新建项目</label>
+                                    <label class="modal-title" id="myModalLabel">选择接口</label>
                                 </div>
                                 <div class="modal-body">
-                                    <form style="text-align: center" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label for="id_projectName" class="col-sm-3 control-label">项目名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text"
-                                                       name="projectName"
-                                                       required id="id_projectName" maxlength="50"
-                                                       v-model="projectNameNew" readonly="readonly"
-                                                       placeholder="请输入项目名称"/>
-                                            </div>
+                                    <label for="projectName"
+                                           class="col-sm-2 control-label">项目名称:</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" type="text" name="projectName"
+                                               v-model="projectNameTitle" readonly="readonly"
+                                               maxlength="50" placeholder="请输入项目名称"/>
+                                    </div>
+                                    <label for="caseName"
+                                           class="col-sm-2 control-label">用例名称:</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" type="text" name="caseName"
+                                               id="caseName" v-model="caseName"
+                                               maxlength="50" placeholder="请输入用例名称"/>
+                                    </div>
+
+                                    <div style="margin-top: 50px;margin-bottom: 10px;">
+                                        <div v-for="item in apiList" class="col-sm-3">
+                                            <input class="custom-checkbox"
+                                                   v-bind:id="['checkboxDelete'+item.apiID]"
+                                                   type="checkbox"
+                                                   v-bind:value="[item.apiID]" v-model="selectAPI">
+                                            <label v-bind:for="['checkboxDelete'+item.apiID]">{!
+                                                item.apiName
+                                                !}</label>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="id_moduleName" class="col-sm-3 control-label">模块名称:</label>
-                                            <div class="col-sm-9">
-                                                <input class="form-control" type="text" name="moduleName"
-                                                       required id="id_moduleName"
-                                                       v-model="moduleNameNew"
-                                                       maxlength="50" placeholder="请输入模块名称"/>
-                                            </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn-local" @click="submitAPI()">
+                                                选择这些接口
+                                            </button>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-6">
-                                                <input type="submit" class="viewButton"
-                                                       @click="submitFormNew($event)" value="新建"/>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <button type="button" class="viewButton"
-                                                        data-dismiss="modal">
-                                                    关闭
-                                                </button>
-                                            </div>
+
+                                        <div style="clear:both;"></div>
+                                    </div>
+                                    <label class="col-sm-12">所选结果，请确认：</label>
+                                    <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p>
+
+                                    <div class="col-sm-12"
+                                         style="align-items: center;text-align: center">
+                                        <div class="col-sm-6">
+                                            <input type="button" class="viewButton"
+                                                   @click="addCase()" value="新建"/>
                                         </div>
-                                    </form>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="viewButton"
+                                                    data-dismiss="modal">
+                                                关闭
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div style="clear:both;"></div>
                             </div><!-- /.modal-content -->
                         </div><!-- /.modal -->
                     </div>
+
+
                     <button class="viewButton" @click="selectAll()">全选</button>
                     <button class="viewButton" @click="selectNone()">全不选</button>
 
@@ -380,25 +398,40 @@
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
-                    <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 "
+                    <button v-if="checkedList !== undefined && checkedList.length > 0 "
                             class="btn-delete"
-                            style="width: 74px;height: 36px;" @click="projectBatchDelete()">批量删除
+                            style="width: 74px;height: 36px;" @click="caseBatchDelete()">批量删除
                     </button>
+
+
+                    <button v-if="checkedList !== undefined && checkedList.length > 0 "
+                            class="btn-delete"
+                            style="width: 74px;height: 36px;" @click="caseBatchRun()">批量执行
+                    </button>
+                    <div class="col-sm-2" style="float: right;">
+                        <select class="form-control" v-model="environment" @change="getUserCookieList()"
+                                id="environment" style="float: right;">
+                            <option value="QA">QA</option>
+                            <option value="Stage">Stage</option>
+                            <option value="Live">Live</option>
+                            <option value="Dev"">Dev</option>
+                        </select>
+                    </div>
+
+                    <label for="environment" class="col-sm-1 control-label"
+                           style="margin-top: 5px;float: right;">环境切换：</label>
 
 
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
-                <table style="width: 90%">
+                <table style="width: 90%;margin-right: 30px;">
                     <thead>
                     <tr>
-                        <th>批量执行</th>
+                        <th>批量操作</th>
                         <th>用例名称</th>
-                        <th>创建时间</th>
-                        <th>更新时间</th>
                         <th>包含接口</th>
-                        <th>创建者</th>
-                        <th>执行者</th>
+                        <th>所需Cookie</th>
                         <th>最后运行时间</th>
                         <th>执行结果</th>
                         <th>操作</th>
@@ -408,19 +441,25 @@
                     <tr v-for="item in list">
                         <td>
                             <div>
-                                <input class="custom-checkbox" id="checkboxDelete" type="checkbox"
+                                <input class="custom-checkbox" id="checkedList" type="checkbox"
                                        v-bind:value="[item.id]"
-                                       v-model="checkedDelete">
+                                       v-model="checkedList">
                             </div>
                         </td>
-                        <td>{! item.moduleName !}</td>
-                        <td>{! item.updateTime !}</td>
-                        <td>{! item.createTime !}</td>
-                        <td>{! item.allcaseNum !}</td>
-                        <td>{! item.passcaseNum !}</td>
-                        <td>{! item.failcaseNum !}</td>
-                        <td>{! item.blockcaseNum !}</td>
-                        <td>{! item.blockcaseNum !}</td>
+                        <td>{! item.caseName !}</td>
+                        <td>
+                            <p v-for="x in item['describe']">{! x !}</p>
+                        </td>
+                        <td>
+                            <select class="form-control" v-bind:id="['cookie'+item.id]">
+                                <option v-for="x in cookieList" v-bind:value="[x.id]">{! x.cookiename
+                                    !}
+                                </option>
+                            </select>
+
+                        </td>
+                        <td>{! item.lastRunTime !}</td>
+                        <td>{! item.runResult !}</td>
                         <td style="margin: auto">
                             <div class="btn-group" style="margin: auto">
                                 <a v-bind:href="['/apiCases?id='+item.id]">
@@ -497,12 +536,12 @@
 
                                 <a>
                                     <button type="button" class="btn-delete"
-                                            @click="projectDelete(item.id)">删除
+                                            @click="caseDelete(item.id)">删除
                                     </button>
                                 </a>
-                                <a v-bind:href="['/uploadCase/?modelid='+item.id]"
-                                   v-bind:download="item.moduleName+'.xls'">
-                                    <button type="button" class="btn-delete">导出
+                                <a>
+                                    <button type="button" class="btn-delete"
+                                            @click="runCase(item.id)">执行
                                     </button>
                                 </a>
                             </div>
@@ -1141,71 +1180,284 @@
                 return {
                     currentSort: 0,
                     projectNameTitle: '',
-                    projectName: '',
                     caseName: '',
                     list: [],
-                    checkedDelete: [],
-                };
+                    checkedList: [],
+                    apiList: [],
+                    selectAPI: [],
+                    selectDisplay: [],
+                    cookieList: [],
+                    environment: 'QA',
+                }
+                    ;
             },
+            mounted() {
+                let id = this.getparam('projectName');
+                pro = id;
+                this.projectNameTitle = pro;
+                var target = document.getElementById("case");
+                var spinner = Spinner({top: '3'}).spin(target);
+                axios
+                    .get('/caseInfo?projectName=' + this.projectNameTitle)
+                    .then(resp => {
+                        this.list = resp.data.data;
+                        spinner.spin();
+                        {#console.log(this.list);#}
+                    }).catch(err => {
+                    {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                });
+                axios
+                    .get('/caseAPIInfo?projectName=' + this.projectNameTitle)
+                    .then(resp => {
+                        this.apiList = resp.data.data;
+                        spinner.spin();
+                        {#console.log(this.list);#}
+                    }).catch(err => {
+                    {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                });
+                this.getUserCookieList();
+            },
+
             methods: {
-                submitCase(event) {
-                    if (this.projectNameNew === '' || this.moduleNameNew === '') {
+                getparam(str) {
+                    var argsstr = decodeURI(location.search.substr(1));
+                    var param = {};
+                    {#console.log(argsstr);#}
+                    if (argsstr !== "") {
+                        var strs = argsstr.split("&");
+                        for (var i = 0; i < strs.length; i++) {
+                            param[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                        }
+                    }
+                    return param[str];
+                },
+
+                refresh() {
+                    let id = this.getparam('projectName');
+                    pro = id;
+                    this.projectNameTitle = pro;
+                    var target = document.getElementById("case");
+                    var spinner = Spinner({top: '3'}).spin(target);
+
+                    axios
+                        .get('/caseInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.list = resp.data.data;
+                            {#console.log(this.list);#}
+                        }).catch(err => {
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                    });
+                    axios
+                        .get('/caseAPIInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.apiList = resp.data.data;
+                            spinner.spin();
+                            {#console.log(this.list);#}
+                        }).catch(err => {
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                    });
+                    this.getUserCookieList();
+                },
+
+                selectAll() {
+                    axios
+                        .get('/caseInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.list = resp.data.data;
+                            {#console.log(resp.data);#}
+                        }).catch(err => {
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                    });
+                    this.checkedList = [];
+                    temp = [];
+                    for (x in this.list) {
+                        temp.push(this.list[x].id);
+                        this.checkedList.push(temp);
+                        temp = [];
+                    }
+                },
+
+                selectNone() {
+                    axios
+                        .get('/caseInfo?projectName=' + this.projectNameTitle)
+                        .then(resp => {
+                            this.list = resp.data.data;
+                            {#console.log(resp.data);#}
+                        }).catch(err => {
+                        {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
+                    });
+                    this.checkedList = [];
+                },
+
+                addCase() {
+                    if (this.projectNameTitle === '' || this.caseName === '' || this.selectAPI.length < 1) {
                         alert('请输入所有字段！');
-
+                    } else if (this.selectDisplay.length < 1) {
+                        alert('请先点击“选择这些接口”按钮进行接口顺序的确认！');
                     } else {
-                        var target = document.getElementById("newProjectRow");
-                        var spinner = Spinner().spin(target);
+                        var target = document.getElementById("cases");
+                        var spinner = Spinner({top: '3'}).spin(target);
 
-                        event.preventDefault();
-                        let formData = new FormData();
-                        formData.append('projectName', this.projectNameNew);
-                        formData.append('moduleName', this.moduleNameNew);
-
-                        let config = {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
+                        axios.post('/addCase/', {
+                            params: {
+                                owningProject: this.projectNameTitle,
+                                caseName: this.caseName,
+                                selectAPI: this.selectAPI,
                             }
-                        };
-
-                        axios
-                            .post('/addProjectList/', formData, config)
-                            .then(resp => {
-                                    spinner.spin();
-                                    {#设置为当模态框完全隐藏时，激活弹窗的功能#}
-                                    if (resp.data.code === 0) {
-                                        toastr.options = {
-                                            closeButton: false,
-                                            debug: false,
-                                            progressBar: false,
-                                            positionClass: "toast-top-center",
-                                            onclick: null,
-                                            showDuration: "300",
-                                            hideDuration: "1000",
-                                            timeOut: "2000",
-                                            extendedTimeOut: "1000",
-                                            showEasing: "swing",
-                                            hideEasing: "linear",
-                                            showMethod: "fadeIn",
-                                            hideMethod: "fadeOut"
-                                        };
-                                        toastr.success(resp.data.info);
-                                        {#$('#importProject').hide();#}
-                                        {#$('.modal-backdrop').hide();#}
-                                        $('#newProject').modal('hide');
-                                        Object.assign(this.$data, this.$options.data());
-                                        this.$refs.inputFile.value = '';
-                                    } else {
-                                        alert(resp.data.info);
-                                    }
+                        }).then(resp => {
+                                spinner.spin();
+                                {#设置为当模态框完全隐藏时，激活弹窗的功能#}
+                                if (resp.data.code === 0) {
+                                    toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
+                                    toastr.success(resp.data.info);
+                                    $('#createCase').modal('hide');
+                                    this.caseName = "";
+                                    this.selectAPI = [];
+                                    this.selectDisplay = [];
+                                } else {
+                                    alert(resp.data.info);
                                 }
-                            ).then(() => {
+                            }
+                        ).then(() => {
                                 this.refresh();
                             }
                         );
-
                     }
-                }
-                ,
+                },
+
+                submitAPI() {
+                    let self = this;
+                    axios.post('/submitAPI/', {
+                        params: {
+                            selectAPI: self.selectAPI
+                        }
+                    }).then(resp => {
+                        if (resp.data.code === 0) {
+                            self.selectDisplay = resp.data.data;
+                        } else {
+                            alert(resp.data.info);
+                        }
+                    });
+
+
+                },
+
+                caseDelete(id) {
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                        if (r) {
+                            axios.get('/caseDelete?id=' + id)
+                                .then(resp => {
+                                        let info = resp.data.info;
+                                        let code = resp.data.code;
+                                        if (code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(info);
+                                        } else {
+                                            alert(info);
+                                        }
+                                    }
+                                ).then(() => {
+                                    self.refresh();
+                                }
+                            );
+                        }
+                    })
+
+                },
+
+                runCase() {
+
+                },
+
+                caseBatchDelete() {
+                    let self = this;
+                    zdconfirm("确认要删除吗？", function (r) {
+                            if (r) {
+                                axios.post('/caseBatchDelete/', {
+                                    params: {
+                                        idDelete: self.checkedList
+                                    }
+                                }).then(resp => {
+                                        if (resp.data.code === 0) {
+                                            toastr.options = {
+                                                closeButton: false,
+                                                debug: false,
+                                                progressBar: false,
+                                                positionClass: "toast-top-center",
+                                                onclick: null,
+                                                showDuration: "300",
+                                                hideDuration: "1000",
+                                                timeOut: "2000",
+                                                extendedTimeOut: "1000",
+                                                showEasing: "swing",
+                                                hideEasing: "linear",
+                                                showMethod: "fadeIn",
+                                                hideMethod: "fadeOut"
+                                            };
+                                            toastr.success(resp.data.info);
+                                            self.checkedList = [];
+                                        } else {
+                                            alert(resp.data.info);
+                                        }
+                                    }
+                                ).then(
+                                    () => {
+                                        self.refresh();
+                                    });
+                            }
+                        }
+                    )
+
+                },
+
+                caseBatchRun() {
+                },
+
+                getUserCookieList() {
+                    axios
+                        .post('/getUserCookieList/', {
+                            params: {
+                                environment: this.environment,
+                                projectName: this.projectNameTitle,
+                            }
+                        })
+                        .then(resp => {
+                            this.cookieList = resp.data.data;
+                            {#console.log(this.list);#}
+                        }).catch(err => {
+                        console.log('请求失败:' + err.status + ',' + err.statusText);
+                    })
+
+                },
 
             },
         })
@@ -1270,8 +1522,6 @@
                             } else {
                                 alert(resp.data.msg)
                             }
-
-
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText)
                     });

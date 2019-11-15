@@ -700,7 +700,6 @@
                     })
                     .then(resp => {
                         spinner1.spin();
-                        console.log("header:", resp.data);
                         this.viewapiInfos = resp.data.datas;
                         let viewHeaders = resp.data.datas.header;
                         let viewBodys = resp.data.datas.body;

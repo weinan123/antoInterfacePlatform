@@ -1,0 +1,126 @@
+{% extends 'newindex.html' %}
+{% block title %}<title> 接口配置</title> {% endblock %}
+{% block script %}
+<link href="/static/css/myindex.css" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="content" id ="projectconfiger">
+    <div class="pageheader">
+        <p class="titlecss">项目信息配置</p>
+        {% comment %}<div style="padding-right: 30px;padding-top:5px;float: right"  >
+          <button type="submit" class="btnsave" @click="saveData()">保存</button>
+        </div>{% endcomment %}
+    </div>
+    <div class="formContent">
+        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="spinner"
+             style="float: left;width: 78%;position: absolute;padding-left: 31px;padding-right: 31px;margin-top: 1%">
+            <div class="form-horizontal" role="form"
+                 style="overflow: hidden;padding-top: 15px;width: 100%;background-color: white;">
+                <template v-for="project,index in projectSchedule ">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="panel panel-primary" style="border-color: #dbe0eb;">
+                        <div class="panel-heading"
+                             style="color: #347daf;border-bottom-color:#ebf3f9;background-color: #ebf3f9;background-image:-webkit-linear-gradient(top, #ebf3f9 0%, #ebf3f9 0%)">
+                            <p class="panel-title" style="font-weight:bold;">{! project.projectname !}</p>
+                        </div>
+                        <div class="panel-body tableStyles" style="text-align: center;">
+                                <div class="form-horizontal" role="form" style="margin-top: 8px">
+                                    <span class="col-sm-3">执行环境：</span>
+                                    <div class="col-sm-8">
+                                    <select class="form-control" :value="project.evirment">
+                                        <option value="">请选择</option>
+                                        <option value="qa">Qa</option>
+                                        <option value="stage">Stage</option>
+                                        <option value="live">Live</option></select>
+                                    </div>
+                                </div>
+                               <div class="form-horizontal" role="form" style="margin-top: 8px">
+                                    <span class="col-sm-3">执行用例：</span>
+                                    <div class="col-sm-8">
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >登录</span>
+                                        </div>
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >注册</span>
+                                        </div>
+                                       <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >买入股票</span>
+                                        </div>
+                                        <div style="width: 100%;float: left;text-align: left">
+                                    <input  type="checkbox">
+                                    <span >卖出股票</span>
+                                        </div>
+                                    </div>
+                               </div>
+                               <div class="form-horizontal" role="form" style="margin-top: 8px">
+                                    <span class="col-sm-3">收件人：</span>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" :value="project.reporter" >
+                                    </div>
+                               </div>
+
+                               <div class="form-horizontal" role="form" style="margin-top: 8px">
+                                    <span class="col-sm-3" style="margin-top: 10px">执行时间：</span>
+                                    <div class="col-sm-4" style="margin-top: 10px">
+                                    <select class="form-control" :value="project.timeDay">
+                                        <option value="">请选择</option>
+                                        <option value="每天">每天</option>
+                                        <option value="每周">每周</option>
+                                        <option value="每月">每月</option></select>
+                                    </div>
+                                   <div class="col-sm-4" style="margin-top: 10px">
+                                    <select class="form-control" :value="project.timeTime">
+                                        <option value="">请选择</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="19:00">19:00</option>
+                                    </select>
+                                    </div>
+                               </div>
+                            <button class="btn-save" style="margin-top: 10px;float: right">保存设置</button>
+                        </div>
+                </div>
+            </div>
+                </template>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block vuejs%}
+    <script type="text/javascript">
+var vm = new Vue({
+    delimiters: ['{!', '!}'],
+    el: '#projectconfiger',
+    data: {
+        projectSchedule :[]
+    },
+    created() {
+        vm1.$data.currentSort = 7;
+
+    },
+    mounted: function () {
+        this.initData()
+    },
+    methods: {
+        initData(){
+             axios.get('/getScheduleinitData/')
+                .then(resp =>{
+                    console.log(resp.data);
+                    if(resp.data.code===0){
+                        this.projectSchedule = resp.data.data
+                    }
+                    }).catch(err=>{
+                        console.log('请求失败:'+err.status+','+err.statusText);
+                })
+
+        }
+    }
+})
+</script>
+{% endblock %}
