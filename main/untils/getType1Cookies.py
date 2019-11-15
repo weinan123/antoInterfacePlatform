@@ -3,7 +3,7 @@ import sendRequests
 import json,requests
 import multiprocessing
 from jpype import *
-import jpype
+import jpype,os
 class getCookies1():
     typecookie1 = {
         "qa":["https://uc-qa.youyu.cn/v1/users/check","https://sso-qa.youyu.cn/v1/services/login"],
@@ -27,12 +27,13 @@ class getCookies1():
         print datajson
         return datajson["data"]["uin"],datajson["data"]["loginid"],datajson["data"]["salt"]
     def getauth(self,q):
-        jvmPath = jpype.getDefaultJVMPath()
-
-        #jpype.startJVM(jvmPath, "-ea", "-Djava.class.path=.")  # 如果这里是有自定义jar,就把jar地址填入
-        #jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
-        jpype.startJVM(jvmPath,"-ea",
-                       "-Djava.class.path=C:\\Users\\nan.wei\\Desktop\\jiama\\module-httpFunctionTest-0.0.1-SNAPSHOT.jar")
+        #jvmPath = jpype.getDefaultJVMPath()
+        jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
+        path = "\\dependJar\\module-httpFunctionTest-0.0.1-SNAPSHOT.jar"
+        realpath = os.path.dirname(os.path.dirname(__file__)) + path
+        print realpath
+        jpype.startJVM(jvmPath,
+                       "-Djava.class.path = C:\\Users\\nan.wei\\Desktop\\jiama\\module-httpFunctionTest-0.0.1-SNAPSHOT.jar")
         HanLP = JClass('com.ruifusoft.wm.WmEncrypt')
         uin, loginid,salt = self.getsalt()
         print  uin, loginid,salt

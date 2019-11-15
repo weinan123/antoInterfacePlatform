@@ -81,5 +81,5 @@ urlpatterns = [
     url(r'^delCookies/$', cookiesManage.delCookies),
     url(r'^updataDependID/$', apiinfo.updataDependID),
     url(r'^projectconfiger/$', projectConf.projectconfiger),
-
+    url(r'^getScheduleinitData/$', projectConf.getScheduleinitData),
 ]

@@ -70,7 +70,7 @@
                                     <option  v-for="item in result.data" :value="item.id">{! item.name !}</option>
                                 </select>
                             </td>
-                            <td><input type="text" class="form-control" :value="info.depend_data" @change="changeDependData($event,info.id)"></td>
+                            <td><input contenteditable="true" type="text" class="form-control" :value="info.depend_data" @change="changeDependData($event,info.id)"></input></td>
                             <td>
                                 <p v-if="info.lastrunrslt === 0">无</p>
                                 <p v-else-if="info.lastrunrslt === 1">Pass</p>

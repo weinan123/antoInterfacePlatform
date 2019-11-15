@@ -1,7 +1,7 @@
 import sendRequests
 import json,requests
 from jpype import *
-import jpype
+import jpype,os
 import multiprocessing
 class getCookies3():
     typecookie1 = {
@@ -31,9 +31,13 @@ class getCookies3():
         datajson = resp.json()
         return datajson["data"]["uin"],datajson["data"]["loginid"],datajson["data"]["salt"]
     def getauth(self,q):
-        jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
+        #jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
+        jvmPath = jpype.getDefaultJVMPath()
+        path = "/dependJar/SmartAuth.jar"
+        realpath = os.path.dirname(os.path.dirname(__file__)) + path
+        print realpath
         jpype.startJVM(jvmPath,
-                       "-Djava.class.path=C:\\Users\\nan.wei\\Desktop\\jiama\\SmartAuth.jar")
+                       "-Djava.class.path=%s"%(realpath))
         HanLP = JClass('yflife.SmartAuth')
         auth = HanLP.getAuth()
         q.put(auth)
@@ -67,5 +71,5 @@ class getCookies3():
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
         return cookies
 if __name__ == "__main__":
-  cookiess = getCookies3("qa","27775411","test13579").servirce()
+  cookiess = getCookies3("qa","27775411","test13579").servirce(3)
   print cookiess
