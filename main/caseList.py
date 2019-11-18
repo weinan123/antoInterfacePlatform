@@ -127,26 +127,37 @@ def getCaseAPIInfo(request):
     }
     if request.method == 'GET':
         id = request.GET.get('id')  # 获取的是用例的id
-        resp = caseList.objects.filter(id=id).values("includeAPI", "owningProject")
+        resp = caseList.objects.filter(id=id).values("includeAPI", "owningProject", "caseName")
         respList = list(resp)
         APIID = str(respList[0]['includeAPI']).split(',')
-        apiList = list(APIID)
+        checkList = []
+        temp = []
+        print APIID
+        for x in APIID:
+            temp = []
+            temp.append(x)
+            checkList.append(temp)
         projectName = respList[0]['owningProject']
+        caseName = respList[0]['caseName']
         projectID = projectList.objects.filter(projectName=projectName).values('id')[0]['id']
         resp2 = moduleList.objects.filter(owningListID=projectID).values('id')
         respList2 = list(resp2)
         respList = []
         # 获取对应项目下，所有的api
         for i in range(len(respList2)):
+            moduleName = moduleList.objects.filter(id=respList2[i]['id']).values("moduleName")[0][
+                'moduleName']
             resp = apiInfoTable.objects.filter(owningListID=respList2[i]['id']).values("apiID",
                                                                                        "apiName")
-            respList = respList + list(resp)
-        for j in range(len(respList)):
-            if (str(respList[j]['apiID']) in apiList):
-                respList[j]['checked'] = 1
-            else:
-                respList[j]['checked'] = 0
+            resp = list(resp)
+            result2 = {
+                'data': resp,
+                'moduleName': moduleName
+            }
+            respList.append(result2)
         result = {
+            'modifyCheckList': checkList,
+            'caseName': caseName,
             'data': respList,
             'code': 0,
             'info': 'success'
