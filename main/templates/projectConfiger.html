@@ -25,7 +25,7 @@
                         </div>
                         <div class="panel-body tableStyles" style="text-align: center;">
                                 <div class="form-horizontal" role="form" style="margin-top: 8px">
-                                    <span class="col-sm-3">执行环境：</span>
+                                    <label class="col-sm-3">执行环境：</label>
                                     <div class="col-sm-8">
                                     <select class="form-control" :value="project.evirment">
                                         <option value="">请选择</option>
@@ -34,27 +34,28 @@
                                         <option value="live">Live</option></select>
                                     </div>
                                 </div>
-                               <div class="form-horizontal" role="form" style="margin-top: 8px">
-                                    <span class="col-sm-3">执行用例：</span>
-                                    <div class="col-sm-8">
+                               <div class="form-horizontal" role="form" style="margin-top: 8px;">
+                                    <label class="col-sm-3">业务用例：</label>
+                                    <div class="col-sm-8" style="border: 1px solid gainsboro;margin-left:15px;width: 62%;
+                                    margin-top: 10px;margin-bottom: 10px;height:250px;overflow-y:auto;max-height:250px;">
+
                                         <template v-for="caseinfor,index in project.runcaseinfor">
-                                        <div style="width: 100%;float: left;text-align: left">
-                                    <input  type="checkbox" :checked = caseinfor.checked>
-                                    <span >{! caseinfor.casename !}</span>
+                                        <div style="width: 50%;float: left;text-align: left">
+                                            <input  type="checkbox" :checked = caseinfor.checked>
+                                        <span >{! caseinfor.casename !}</span>
                                         </div>
                                         </template>
-
                                     </div>
                                </div>
                                <div class="form-horizontal" role="form" style="margin-top: 8px">
-                                    <span class="col-sm-3">收件人：</span>
+                                    <label class="col-sm-3">收件人：</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" :value="project.reporter" >
+                                        <input class="form-control" :value="project.reporter" placeholder="多个收件人之间用,隔开">
                                     </div>
                                </div>
 
                                <div class="form-horizontal" role="form" style="margin-top: 8px">
-                                    <span class="col-sm-3" style="margin-top: 10px">执行时间：</span>
+                                    <label class="col-sm-3" style="margin-top: 10px;font-weight: bold">执行时间：</label>
                                     <div class="col-sm-4" style="margin-top: 10px">
                                     <select class="form-control" :value="project.timeDay">
                                         <option value="">请选择</option>

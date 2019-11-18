@@ -87,7 +87,6 @@ def addProject(request):
                 projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(
                     updateTime=dtime,
                     createTime=dtime)
-                schedule.objects.create()
                 code = 0
                 info = '新建成功！'
                 result = {

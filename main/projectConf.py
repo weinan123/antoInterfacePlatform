@@ -21,16 +21,11 @@ def getScheduleinitData(request):
                 singleProject = {
                 }
                 singleProject["projectname"] = i["projectname"]
-                print i["projectname"]
                 allprojectcase = caseList.objects.filter(owningProject=i["projectname"]).values("id","caseName")
-                singleProject["runcaseId"] = i["runcaseId"]
-                ss = (i["runcaseId"]).encode('unicode-escape').decode('string_escape')
-                checklist = ss.split(",")
-                print checklist
-                allcaselist = []
                 singleProject["runcaseinfor"] = []
+                allcaselist = []
                 print len(allprojectcase)
-                if len(allprojectcase)>0:
+                if len(allprojectcase) > 0:
                     for s in allprojectcase:
                             cases = {
                                 "id":int(s["id"]),
@@ -39,6 +34,9 @@ def getScheduleinitData(request):
                             }
                             allcaselist.append(cases)
                     print allcaselist
+                    ss = (i["runcaseId"]).encode('unicode-escape').decode('string_escape')
+                    checklist = ss.split(",")
+                    print checklist
                     for w in checklist:
                         for s in allcaselist:
                             if int(w)==s["id"]:
@@ -50,6 +48,11 @@ def getScheduleinitData(request):
                     singleProject["timeTime"] = i["timeTime"]
                     responseData["data"].append(singleProject)
                 else:
+                    singleProject["runcaseinfor"] = allcaselist
+                    singleProject["evirment"] = i["evirment"]
+                    singleProject["reporter"] = i["reporter"]
+                    singleProject["timeDay"] = i["timeDay"]
+                    singleProject["timeTime"] = i["timeTime"]
                     responseData["data"].append(singleProject)
         except Exception as e:
             responseData = {
