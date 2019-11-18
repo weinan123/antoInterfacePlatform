@@ -64,17 +64,18 @@ def caseInfo(request):
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
             APIID = str(respList[i]['includeAPI']).split(',')
-            num = 1
+            num = 0
             respList[i]['describe'] = ''
             describe = []
             strAPI = ''
             for x in APIID:
+                num = num + 1
                 strAPI = '第' + str(num) + '个API：' + \
                          apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
                              'apiName']
                 describe.append(strAPI)
                 respList[i]['describe'] = describe
-                num = num + 1
+            respList[i]['apiCount'] = num
             if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
                 respList[i]['executor'] = '暂未执行'
             if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
@@ -101,9 +102,50 @@ def caseAPIInfo(request):
         respList2 = list(resp2)
         respList = []
         for i in range(len(respList2)):
+            moduleName = moduleList.objects.filter(id=respList2[i]['id']).values("moduleName")[0][
+                'moduleName']
+            resp = apiInfoTable.objects.filter(owningListID=respList2[i]['id']).values("apiID",
+                                                                                       "apiName")
+            resp = list(resp)
+            result2 = {
+                'data': resp,
+                'moduleName': moduleName
+            }
+            respList.append(result2)
+        result = {
+            'data': respList,
+            'code': 0,
+            'info': 'success'
+        }
+    return JsonResponse(result, safe=False)
+
+
+def getCaseAPIInfo(request):
+    result = {
+        'code': -1,
+        'info': '调用的方法错误，请使用GET方法查询！'
+    }
+    if request.method == 'GET':
+        id = request.GET.get('id')  # 获取的是用例的id
+        resp = caseList.objects.filter(id=id).values("includeAPI", "owningProject")
+        respList = list(resp)
+        APIID = str(respList[0]['includeAPI']).split(',')
+        apiList = list(APIID)
+        projectName = respList[0]['owningProject']
+        projectID = projectList.objects.filter(projectName=projectName).values('id')[0]['id']
+        resp2 = moduleList.objects.filter(owningListID=projectID).values('id')
+        respList2 = list(resp2)
+        respList = []
+        # 获取对应项目下，所有的api
+        for i in range(len(respList2)):
             resp = apiInfoTable.objects.filter(owningListID=respList2[i]['id']).values("apiID",
                                                                                        "apiName")
             respList = respList + list(resp)
+        for j in range(len(respList)):
+            if (str(respList[j]['apiID']) in apiList):
+                respList[j]['checked'] = 1
+            else:
+                respList[j]['checked'] = 0
         result = {
             'data': respList,
             'code': 0,
@@ -186,6 +228,43 @@ def caseBatchDelete(request):
             caseList.objects.filter(id=x[0]).delete()
         code = 0
         info = '删除成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
+
+
+def caseBatchRun(request):
+    result = {
+        'code': -1,
+        'info': '未知错误！'
+    }
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        idRun = req['idRun']
+        idCookie = req['idCookie']
+        for x in idRun:
+            print x
+        print '**************************************'
+        print '**************************************'
+        for x in idCookie:
+            print x
+        code = 0
+        info = '运行成功！'
+        result = {
+            'code': code,
+            'info': info
+        }
+    return JsonResponse(result, safe=False)
+
+
+def runCase(request):
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        print id
+        code = 0
+        info = '运行成功！'
         result = {
             'code': code,
             'info': info

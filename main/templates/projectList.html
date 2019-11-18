@@ -351,28 +351,36 @@
                                     </div>
 
                                     <div style="margin-top: 50px;margin-bottom: 10px;">
-                                        <div v-for="item in apiList" class="col-sm-3">
-                                            <input class="custom-checkbox"
-                                                   v-bind:id="['checkboxDelete'+item.apiID]"
-                                                   type="checkbox"
-                                                   v-bind:value="[item.apiID]" v-model="selectAPI">
-                                            <label v-bind:for="['checkboxDelete'+item.apiID]">{!
-                                                item.apiName
-                                                !}</label>
+                                        <div v-for="item in apiList" class="col-sm-12">
+                                            <h4 class="col-sm-12" style="font-weight: bold">所属项目：{!
+                                                item.moduleName !}</h4>
+                                            <template v-for="x in item.data">
+                                                <div class="col-sm-3">
+                                                    <input class="custom-checkbox"
+                                                           v-bind:id="['checkbox'+x.apiID]"
+                                                           type="checkbox" @change="selectDisplay = []"
+                                                           v-bind:value="[x.apiID]" v-model="selectAPI">
+                                                    <label v-bind:for="['checkbox'+x.apiID]">{!
+                                                        x.apiName
+                                                        !}</label>
+                                                </div>
+                                            </template>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn-local" @click="submitAPI()">
-                                                选择这些接口
-                                            </button>
-                                        </div>
-
                                         <div style="clear:both;"></div>
                                     </div>
-                                    <label class="col-sm-12">所选结果，请确认：</label>
+                                    <div class="col-sm-3">
+                                        <label class="col-sm-12">请先点击右侧确认按钮：</label>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn-local" @click="submitAPI()">
+                                            确认
+                                        </button>
+                                    </div>
+
                                     <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p>
 
                                     <div class="col-sm-12"
-                                         style="align-items: center;text-align: center">
+                                         style="align-items: center;text-align: center;margin-top: 10px;">
                                         <div class="col-sm-6">
                                             <input type="button" class="viewButton"
                                                    @click="addCase()" value="新建"/>
@@ -414,14 +422,12 @@
                             <option value="QA">QA</option>
                             <option value="Stage">Stage</option>
                             <option value="Live">Live</option>
-                            <option value="Dev"">Dev</option>
+                            <option value="Dev">Dev</option>
                         </select>
                     </div>
 
                     <label for="environment" class="col-sm-1 control-label"
                            style="margin-top: 5px;float: right;">环境切换：</label>
-
-
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
@@ -430,7 +436,7 @@
                     <tr>
                         <th>批量操作</th>
                         <th>用例名称</th>
-                        <th>包含接口</th>
+                        <th>包含接口数</th>
                         <th>所需Cookie</th>
                         <th>最后运行时间</th>
                         <th>执行结果</th>
@@ -438,115 +444,136 @@
                     </tr>
                     </thead>
                     <tbody id="row">
-                    <tr v-for="item in list">
-                        <td>
-                            <div>
-                                <input class="custom-checkbox" id="checkedList" type="checkbox"
-                                       v-bind:value="[item.id]"
-                                       v-model="checkedList">
-                            </div>
-                        </td>
-                        <td>{! item.caseName !}</td>
-                        <td>
-                            <p v-for="x in item['describe']">{! x !}</p>
-                        </td>
-                        <td>
-                            <select class="form-control" v-bind:id="['cookie'+item.id]">
-                                <option v-for="x in cookieList" v-bind:value="[x.id]">{! x.cookiename
-                                    !}
-                                </option>
-                            </select>
-
-                        </td>
-                        <td>{! item.lastRunTime !}</td>
-                        <td>{! item.runResult !}</td>
-                        <td style="margin: auto">
-                            <div class="btn-group" style="margin: auto">
-                                <a v-bind:href="['/apiCases?id='+item.id]">
-                                    <button type="button" class="btn-local">
-                                        查看
-                                    </button>
-                                </a>
-
-                                <a>
-                                    <button type="button" class="btn-local" data-toggle="modal"
-                                            v-bind:data-target="'#editProject'+[item.id]">
-                                        编辑
-                                    </button>
-                                </a>
-                                <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
-                                     role="dialog"
-                                     aria-labelledby="myModalLabel"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
-                                        <div class="modal-content"
-                                             style="width: 450px;margin: 75px auto;">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                        aria-hidden="true">
-                                                    &times;
-                                                </button>
-                                                <label class="modal-title" id="myModalLabel">编辑</label>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form style="text-align: center" class="form-horizontal">
-                                                    <div class="form-group">
-                                                        <label for="id_projectName"
-                                                               class="col-sm-3 control-label">项目名称:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="projectName"
-                                                                   class="form-control"
-                                                                   v-bind:value="[item.projectName]"
-                                                                   required="required"
-                                                                   v-bind:id="'projectNameEdit'+[item.id]"
-                                                                   maxlength="50" readonly="readonly">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="id_moduleName"
-                                                               class="col-sm-3 control-label">模块名称:</label>
-                                                        <div class="col-sm-9">
-                                                            <input type="text" name="moduleName"
-                                                                   class="form-control"
-                                                                   v-bind:value="[item.moduleName]"
-                                                                   required="required"
-                                                                   v-bind:id="'moduleNameEdit'+[item.id]"
-                                                                   maxlength="50">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-sm-6">
-                                                            <button class="viewButton"
-                                                                    @click="editForm($event,item.id)">
-                                                                修改
-                                                            </button>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <button type="button" class="viewButton"
-                                                                    data-dismiss="modal">
-                                                                关闭
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal -->
+                    <template v-for="item in list">
+                        <tr>
+                            <td>
+                                <div>
+                                    <input class="custom-checkbox" id="checkedList" type="checkbox"
+                                           v-bind:value="[item.id]"
+                                           v-model="checkedList">
                                 </div>
+                            </td>
+                            <td>{! item.caseName !}</td>
+                            <td>
+                                {! item.apiCount !}
+                            </td>
+                            <td>
+                                <select class="form-control" v-bind:id="['cookie'+item.id]">
+                                    <option v-bind:value="[item.id+',不使用Cookie']">
+                                        不使用Cookie
+                                    </option>
+                                    <option v-for="x in cookieList" v-bind:value="[item.id+','+x.id]">{!
+                                        x.cookiename
+                                        !}
+                                    </option>
+                                </select>
 
-                                <a>
-                                    <button type="button" class="btn-delete"
-                                            @click="caseDelete(item.id)">删除
-                                    </button>
-                                </a>
-                                <a>
-                                    <button type="button" class="btn-delete"
-                                            @click="runCase(item.id)">执行
-                                    </button>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>{! item.lastRunTime !}</td>
+                            <td>{! item.runResult !}</td>
+                            <td style="margin: auto">
+                                <div class="btn-group" style="margin: auto">
+                                    <a>
+                                        <button type="button" class="btn-local" data-toggle="collapse"
+                                                v-bind:data-target="'#collapse'+[item.id]">
+                                            查看
+                                        </button>
+                                    </a>
+
+                                    <a>
+                                        <button type="button" class="btn-local" data-toggle="modal"
+                                                v-bind:data-target="'#editProject'+[item.id]">
+                                            编辑
+                                        </button>
+                                    </a>
+                                    <div class="modal fade" v-bind:id="'editProject'+[item.id]"
+                                         tabindex="-1"
+                                         role="dialog"
+                                         aria-labelledby="myModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
+                                            <div class="modal-content"
+                                                 style="width: 450px;margin: 75px auto;">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal"
+                                                            aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <label class="modal-title"
+                                                           id="myModalLabel">编辑</label>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form style="text-align: center"
+                                                          class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label for="id_projectName"
+                                                                   class="col-sm-3 control-label">项目名称:</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="projectName"
+                                                                       class="form-control"
+                                                                       v-bind:value="[item.projectName]"
+                                                                       required="required"
+                                                                       v-bind:id="'projectNameEdit'+[item.id]"
+                                                                       maxlength="50"
+                                                                       readonly="readonly">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="id_moduleName"
+                                                                   class="col-sm-3 control-label">模块名称:</label>
+                                                            <div class="col-sm-9">
+                                                                <input type="text" name="moduleName"
+                                                                       class="form-control"
+                                                                       v-bind:value="[item.moduleName]"
+                                                                       required="required"
+                                                                       v-bind:id="'moduleNameEdit'+[item.id]"
+                                                                       maxlength="50">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-sm-6">
+                                                                <button class="viewButton"
+                                                                        @click="editForm($event,item.id)">
+                                                                    修改
+                                                                </button>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <button type="button" class="viewButton"
+                                                                        data-dismiss="modal">
+                                                                    关闭
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal -->
+                                    </div>
+
+                                    <a>
+                                        <button type="button" class="btn-delete"
+                                                @click="caseDelete(item.id)">删除
+                                        </button>
+                                    </a>
+                                    <a>
+                                        <button type="button" class="btn-delete"
+                                                @click="runCase(item.id)">执行
+                                        </button>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-bind:id="'collapse'+[item.id]" class="collapse">
+                            <td colspan="7">
+                                <div>
+                                    <div class="panel-body" v-for="x in item['describe']">
+                                        接口详情：{! x !}运行结果：成功 查看详情
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
                     </tbody>
                 </table>
             </div>
@@ -1176,7 +1203,6 @@
             delimiters: ['{!', '!}'],
             el: '#cases',
             data() {
-                projectBatchDelete = true;
                 return {
                     currentSort: 0,
                     projectNameTitle: '',
@@ -1184,6 +1210,7 @@
                     list: [],
                     checkedList: [],
                     apiList: [],
+                    selectCookieList: [],
                     selectAPI: [],
                     selectDisplay: [],
                     cookieList: [],
@@ -1394,7 +1421,37 @@
 
                 },
 
-                runCase() {
+                runCase(id) {
+                    var cookieID = document.getElementById("cookie" + id).value;
+                    axios.get('/runCase?id=' + cookieID)
+                        .then(resp => {
+                                let info = resp.data.info;
+                                let code = resp.data.code;
+                                if (code === 0) {
+                                    toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
+                                    toastr.success(info);
+                                } else {
+                                    alert(info);
+                                }
+                            }
+                        ).then(() => {
+                            this.refresh();
+                        }
+                    );
 
                 },
 
@@ -1440,6 +1497,44 @@
                 },
 
                 caseBatchRun() {
+                    this.selectCookieList = [];
+                    this.checkedList.forEach(item => {
+                        var cookieID = document.getElementById("cookie" + item).value;
+                        this.selectCookieList.push(cookieID);
+                    });
+                    axios.post('/caseBatchRun/', {
+                        params: {
+                            idRun: this.checkedList,
+                            idCookie: this.selectCookieList,
+                        }
+                    }).then(resp => {
+                            if (resp.data.code === 0) {
+                                toastr.options = {
+                                    closeButton: false,
+                                    debug: false,
+                                    progressBar: false,
+                                    positionClass: "toast-top-center",
+                                    onclick: null,
+                                    showDuration: "300",
+                                    hideDuration: "1000",
+                                    timeOut: "2000",
+                                    extendedTimeOut: "1000",
+                                    showEasing: "swing",
+                                    hideEasing: "linear",
+                                    showMethod: "fadeIn",
+                                    hideMethod: "fadeOut"
+                                };
+                                toastr.success(resp.data.info);
+                                this.checkedList = [];
+                            } else {
+                                alert(resp.data.info);
+                            }
+                        }
+                    ).then(
+                        () => {
+                            this.refresh();
+                        });
+
                 },
 
                 getUserCookieList() {
@@ -1625,6 +1720,14 @@
             window.event.returnValue = false;
         }
     </script>
+    <script language="javascript">
+        function traverse(array) {
+            array.forEach(item => {
+                console.log(document.getElementById("cookie" + item).value);
+            })
+        }
+    </script>
+
 
 
 
