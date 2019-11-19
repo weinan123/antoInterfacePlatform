@@ -84,12 +84,12 @@
     pointer-events: none;
 }
 #responseCSS{
-    width:72%;
+    width:35%;
     height: 120px;
     text-align: left;
     padding: 6px;
     border-radius: 2px;
-    border: 1px solid #999898;
+    border: 1px solid #cccccc;
     background-color:#FFFFFF;
     resize: none;
     margin: 5px;
@@ -97,5 +97,12 @@
 .itemCSS{
     margin: 5px;
     vertical-align:top;
+    display: inline-block;
+}
+.itemCSS1{
+    margin-top: 10px;
+    margin-right: 5px;
+    margin-left: 5px;
+    vertical-align:middle;
     display: inline-block;
 }

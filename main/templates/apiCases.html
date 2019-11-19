@@ -288,6 +288,7 @@
             },
             getlist(number){
                 let pagenumber = number;
+                this.casesSel_list = [];
                 var target = document.getElementById("tableBody");
                 var spinner1 = Spinner({top:"1"}).spin(target);
                 if(this.totalCount>0 && (this.totalCount / this.pageCount)<=this.pageNum-1 && (this.pageNum>1)){
@@ -398,6 +399,21 @@
 
             },
             delapi(id) {
+                toastr.options = {
+                                 closeButton: false,
+                                 debug: false,
+                                 progressBar: false,
+                                 positionClass: "toast-top-center",
+                                 onclick: null,
+                                 showDuration: "300",
+                                 hideDuration: "1000",
+                                 timeOut: "2000",
+                                 extendedTimeOut: "1000",
+                                 showEasing: "swing",
+                                 hideEasing: "linear",
+                                 showMethod: "fadeIn",
+                                 hideMethod: "fadeOut"
+                };
                 let self = this;
                 zdconfirm("确认要删除吗？", function (r) {
                     if (r) {
@@ -412,26 +428,11 @@
                                 let code = resp.data.code;
                                 if (code === 0) {
                                     {#console.log(self);#}
-                                    toastr.options = {
-                                         closeButton: false,
-                                         debug: false,
-                                         progressBar: false,
-                                         positionClass: "toast-top-center",
-                                         onclick: null,
-                                         showDuration: "300",
-                                         hideDuration: "1000",
-                                         timeOut: "2000",
-                                         extendedTimeOut: "1000",
-                                         showEasing: "swing",
-                                         hideEasing: "linear",
-                                         showMethod: "fadeIn",
-                                         hideMethod: "fadeOut"
-                                     };
                                     toastr.success("删除成功");
                                     self.totalCount = self.totalCount - 1;
                                     self.getlist(self.pageNum);
                                 } else {
-                                    toastr.error("删除失败:",info);
+                                    toastr.error("删除失败:" + info);
                                     self.getlist(self.pageNum);
                                 }
                             })
@@ -494,6 +495,21 @@
                 }
             },
             batchdel(){
+                toastr.options = {
+                                 closeButton: false,
+                                 debug: false,
+                                 progressBar: false,
+                                 positionClass: "toast-top-center",
+                                 onclick: null,
+                                 showDuration: "300",
+                                 hideDuration: "1000",
+                                 timeOut: "2000",
+                                 extendedTimeOut: "1000",
+                                 showEasing: "swing",
+                                 hideEasing: "linear",
+                                 showMethod: "fadeIn",
+                                 hideMethod: "fadeOut"
+                };
                 let dellist = [];
                 let self = this;
                 for(let j=0;j<self.casesSel_list.length;j++){
@@ -512,25 +528,10 @@
                                     let code = resp.data.code;
                                     let info = resp.data.info;
                                     if (code === 0) {
-                                        alert("删除成功，结果：" + info);
+                                        alert("删除结果：" + info);
                                         self.totalCount = self.totalCount - resp.data.successNum;
                                         self.getlist(self.pageNum);
                                     } else {
-                                        toastr.options = {
-                                            closeButton: false,
-                                            debug: false,
-                                            progressBar: false,
-                                            positionClass: "toast-top-center",
-                                            onclick: null,
-                                            showDuration: "300",
-                                            hideDuration: "1000",
-                                            timeOut: "2000",
-                                            extendedTimeOut: "1000",
-                                            showEasing: "swing",
-                                            hideEasing: "linear",
-                                            showMethod: "fadeIn",
-                                            hideMethod: "fadeOut"
-                                        };
                                         toastr.error("删除失败");
                                         self.getlist(self.pageNum);
                                     }

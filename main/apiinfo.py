@@ -44,9 +44,11 @@ def apidel(request):
         id = req['aid']
         ainfo = apiInfoTable.objects.get(apiID=id)
         # 判断用例是否有被依赖的用例
-        dependflag = checkdependCaseID(ainfo.t_id)
+        dependflag = False
+        if ainfo.t_id is not None:
+            dependflag = checkdependCaseID(ainfo.t_id)
         if dependflag:
-            result = {'code': -1, 'info': '接口被依赖不能被删除'}
+            result = {'code': -1, 'info': '接口被依赖不能删除'}
         else:
             if ainfo:
                 try:
@@ -76,7 +78,9 @@ def batchdel(request):
                 flist.append(id)
                 continue
             # 判断用例是否有被依赖的用例
-            dependflag = checkdependCaseID(ainfo.t_id)
+            dependflag = False
+            if ainfo.t_id is not None:
+                dependflag = checkdependCaseID(ainfo.t_id)
             if dependflag:
                 flist.append(id)
             else:
