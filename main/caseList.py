@@ -69,11 +69,15 @@ def caseInfo(request):
             describe = []
             strAPI = ''
             for x in APIID:
+                mydict = {}
                 num = num + 1
                 strAPI = '第' + str(num) + '个API：' + \
                          apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
                              'apiName']
-                describe.append(strAPI)
+                mydict["name"] = strAPI
+                mydict["runResult"] = "成功"
+                mydict["href"] = "#"
+                describe.append(mydict)
                 respList[i]['describe'] = describe
             respList[i]['apiCount'] = num
             if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
@@ -312,14 +316,29 @@ def modifyCase(request):
                 'info': info
             }
         else:
-            inter = caseList.objects.get(id=caseID)
-            inter.includeAPI = api
-            inter.caseName = caseName
-            inter.save()
-            code = 0
-            info = '修改成功！'
-            result = {
-                'code': code,
-                'info': info
-            }
+            if (originalIncludeAPI == api):  # 说明只修改了caseName，此时不需要将执行情况重置
+                inter = caseList.objects.get(id=caseID)
+                inter.includeAPI = api
+                inter.caseName = caseName
+                inter.save()
+                code = 0
+                info = '修改成功！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
+            else:
+                inter = caseList.objects.get(id=caseID)
+                inter.includeAPI = api
+                inter.executor = ''
+                inter.runResult = ''
+                inter.lastRunTime = ''
+                inter.caseName = caseName
+                inter.save()
+                code = 0
+                info = '修改成功！'
+                result = {
+                    'code': code,
+                    'info': info
+                }
     return JsonResponse(result, safe=False)

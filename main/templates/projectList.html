@@ -595,7 +595,7 @@
                             <td colspan="7">
                                 <div>
                                     <div class="panel-body" v-for="x in item['describe']">
-                                        接口详情：{! x !}运行结果：成功 查看详情
+                                        接口详情：{! x.name !}运行结果：{! x.runResult !} 查看详情{! x.href !}
                                     </div>
                                 </div>
                             </td>
