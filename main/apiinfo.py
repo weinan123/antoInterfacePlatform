@@ -76,7 +76,9 @@ def batchdel(request):
                 flist.append(id)
                 continue
             # 判断用例是否有被依赖的用例
-            dependflag = checkdependCaseID(ainfo.t_id)
+            dependflag = False
+            if ainfo.t_id is not None:
+                dependflag = checkdependCaseID(ainfo.t_id)
             if dependflag:
                 flist.append(id)
             else:

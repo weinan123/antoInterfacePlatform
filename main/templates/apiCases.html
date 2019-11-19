@@ -512,7 +512,7 @@
                                     let code = resp.data.code;
                                     let info = resp.data.info;
                                     if (code === 0) {
-                                        alert("删除成功，结果：" + info);
+                                        alert("删除结果：" + info);
                                         self.totalCount = self.totalCount - resp.data.successNum;
                                         self.getlist(self.pageNum);
                                     } else {
