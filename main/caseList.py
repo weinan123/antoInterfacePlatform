@@ -332,7 +332,7 @@ def modifyCase(request):
                 inter.includeAPI = api
                 inter.executor = ''
                 inter.runResult = ''
-                inter.lastRunTime = ''
+                # inter.lastRunTime = ''
                 inter.caseName = caseName
                 inter.save()
                 code = 0

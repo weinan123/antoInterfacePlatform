@@ -484,7 +484,6 @@ def projectImport(request):
                         verification = True
                     else:
                         checkCode = checkFormat(depend_casedata)["code"]
-                        print checkFormat(depend_casedata)
                         if (checkCode != 0):
                             code = -10
                             info = '当前批量导入文件的depend_casedata列存在数据不符合规范！'
