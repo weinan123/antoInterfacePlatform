@@ -307,15 +307,24 @@ def modifyCase(request):
         originalIncludeAPI = str(
             caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI'])
         originalCaseName = str(caseList.objects.filter(id=caseID).values("caseName")[0]['caseName'])
-
+        verification = True
         if (originalIncludeAPI == api and originalCaseName == caseName):
             code = -1
             info = '未做任何修改！'
+            verification = False
             result = {
                 'code': code,
                 'info': info
             }
-        else:
+        if (caseList.objects.filter(owningProject=owningProject, caseName=caseName).count() > 0):
+            code = -2
+            info = '用例名称与已存在的用例重复！'
+            verification = False
+            result = {
+                'code': code,
+                'info': info
+            }
+        if (verification):
             if (originalIncludeAPI == api):  # 说明只修改了caseName，此时不需要将执行情况重置
                 inter = caseList.objects.get(id=caseID)
                 inter.includeAPI = api

@@ -560,7 +560,7 @@
                                                          style="align-items: center;text-align: center;margin-top: 10px;">
                                                         <div class="col-sm-6">
                                                             <input type="button" class="viewButton"
-                                                                   @click="modifyCase(item.id)"
+                                                                   @click="modifyCase(modifyID)"
                                                                    value="修改"/>
                                                         </div>
                                                         <div class="col-sm-6">
@@ -1234,6 +1234,7 @@
                     currentSort: 0,
                     projectNameTitle: '',
                     caseName: '',
+                    modifyID: '',
                     caseNameModify: '',
                     list: [],
                     checkedList: [],
@@ -1609,6 +1610,7 @@
                             this.caseNameModify = resp.data.caseName;
                             this.modifyCheckList = resp.data.modifyCheckList;
                             this.modifySubmitAPI();
+                            this.modifyID = id;
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
                     })
