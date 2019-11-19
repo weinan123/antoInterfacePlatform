@@ -87,12 +87,13 @@ def getHost(id,environment):
 
 
 '''执行用例'''
-def getResp(id,environment, dtime):
+def getResp(id,environment, dtime, cookices = None):
     try:
         query = apiInfoTable.objects.get(apiID=id)
     except Exception as e:
         result = {"code": -1, "info": "执行用例不存在，" + str(e)}
         return result
+    Cookie = cookices
     # 判断是否有关联用例
     depend_flag = query.depend_caseId
     dependData_str = query.depend_casedata
@@ -106,7 +107,7 @@ def getResp(id,environment, dtime):
             dependData = defindData
             print(u"接口自定义参数：%s" % str(dependData))
     else:
-        dependData = isDependency(depend_flag, dependData_str, environment)
+        dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
     send_url = replaceParam(dependData, query.url)
@@ -131,7 +132,6 @@ def getResp(id,environment, dtime):
     host = replaceParam(dependData, host)
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
-    Cookie = ""
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     # print json.dumps(dependData)
@@ -179,12 +179,12 @@ def getResp(id,environment, dtime):
     return result
 
 
-def isDependency(depend_flag, depend_data, environment):
+def isDependency(depend_flag, depend_data, environment, Cookie):
     depend_caseid = depend_flag
     depend_data = depend_data
     print u"关联用例t_id：%s" % (depend_caseid)
     if depend_data != "" and depend_data is not None:
-        dependRes = getDependData.getdepands(depend_caseid, depend_data, environment)
+        dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
         if dependRes["code"] == 0:
             dependData = dependRes["dependdata"]
             print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))

@@ -7,7 +7,7 @@ import authService, batchUntils
 import json,time,re
 
 
-def getdepands(depend_caseid, depend_data, environment):
+def getdepands(depend_caseid, depend_data, environment, Cookie):
     dependCase = str(depend_caseid)
     dependDataKeys = (str(depend_data).replace(" ", "")).split(",")
     print("dependDataKeys list: %s " % str(dependDataKeys))
@@ -29,7 +29,7 @@ def getdepands(depend_caseid, depend_data, environment):
             dependData = defindData
             print(u"依赖接口自定义参数：%s" % str(dependData))
     else:
-        dependData = batchUntils.isDependency(depend_flag, dependData_str, environment)
+        dependData = batchUntils.isDependency(depend_flag, dependData_str, environment, Cookie)
     methods = query.method
     send_url = batchUntils.replaceParam(dependData, query.url)
     host = batchUntils.getHost(int(query.host), environment)
@@ -52,7 +52,6 @@ def getdepands(depend_caseid, depend_data, environment):
     send_body, files, showflag1 = mul_bodyData(bodyinfor)
     isRedirect = query.isRedirect
     isScreat = query.isScreat
-    Cookie = ""
     # # 写入获取的依赖数据
     # if len(dependData) != 0:
     #     for dd in dependData:
