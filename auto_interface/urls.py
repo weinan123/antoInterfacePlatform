@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^getUserCookieList/$', caseList.getUserCookieList),
     url(r'^caseBatchRun/$', caseList.caseBatchRun),
     url(r'^runCase/$', caseList.runCase),
+    url(r'^modifyCase/$', caseList.modifyCase),
     url(r'^getCaseAPIInfo/$', caseList.getCaseAPIInfo),
     url(r'^caseInfo/$', caseList.caseInfo),
     url(r'^projectListInfo/$', projectList.projectListInfo),

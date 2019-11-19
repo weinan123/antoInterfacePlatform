@@ -428,6 +428,8 @@
 
                     <label for="environment" class="col-sm-1 control-label"
                            style="margin-top: 5px;float: right;">环境切换：</label>
+                    {! selectAPI !}
+                    {! modifyCheckList !}
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
@@ -528,12 +530,12 @@
                                                                 item.moduleName !}</h4>
                                                             <template v-for="x in item.data">
                                                                 <div class="col-sm-3">
-                                                                    <input v-bind:id="['checkbox'+x.apiID]"
+                                                                    <input v-bind:id="['checkboxModify'+x.apiID]"
                                                                            type="checkbox"
                                                                            @change="selectDisplay = []"
                                                                            v-bind:value="[x.apiID]"
                                                                            v-model="modifyCheckList">
-                                                                    <label v-bind:for="['checkbox'+x.apiID]">{!
+                                                                    <label v-bind:for="['checkboxModify'+x.apiID]">{!
                                                                         x.apiName
                                                                         !}</label>
                                                                 </div>
@@ -558,7 +560,8 @@
                                                          style="align-items: center;text-align: center;margin-top: 10px;">
                                                         <div class="col-sm-6">
                                                             <input type="button" class="viewButton"
-                                                                   @click="addCase()" value="新建"/>
+                                                                   @click="modifyCase(item.id)"
+                                                                   value="修改"/>
                                                         </div>
                                                         <div class="col-sm-6">
                                                             <button type="button" class="viewButton"
@@ -1611,6 +1614,56 @@
                     })
 
                 },
+
+                modifyCase(caseID) {
+                    if (this.projectNameTitle === '' || this.caseNameModify === '' || this.modifyCheckList.length < 1) {
+                        alert('请输入所有字段！');
+                    } else if (this.selectDisplay.length < 1) {
+                        alert('请先点击“选择这些接口”按钮进行接口顺序的确认！');
+                    } else {
+                        var target = document.getElementById("cases");
+                        var spinner = Spinner({top: '3'}).spin(target);
+
+                        axios.post('/modifyCase/', {
+                            params: {
+                                caseID: caseID,
+                                owningProject: this.projectNameTitle,
+                                caseName: this.caseNameModify,
+                                selectAPI: this.modifyCheckList,
+                            }
+                        }).then(resp => {
+                                spinner.spin();
+                                {#设置为当模态框完全隐藏时，激活弹窗的功能#}
+                                if (resp.data.code === 0) {
+                                    toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
+                                    toastr.success(resp.data.info);
+                                    $('#modifyCase').modal('hide');
+                                    this.selectDisplay = [];
+                                } else {
+                                    alert(resp.data.info);
+                                }
+                            }
+                        ).then(() => {
+                                this.refresh();
+                            }
+                        );
+                    }
+                },
+
 
             },
         })

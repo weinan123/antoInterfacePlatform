@@ -281,3 +281,45 @@ def runCase(request):
             'info': info
         }
     return JsonResponse(result, safe=False)
+
+
+def modifyCase(request):
+    result = {
+        'code': -1,
+        'info': '未知错误！'
+    }
+    if request.method == 'POST':
+        dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        user = request.session.get('username')
+        req = json.loads(request.body)["params"]
+        selectAPI = req['selectAPI']
+        owningProject = req['owningProject']
+        caseName = req['caseName']
+        api = str(selectAPI[0][0])
+        caseID = req['caseID']
+        if (len(selectAPI) > 1):
+            for x in range(len(selectAPI) - 1):
+                api = api + ',' + str(selectAPI[x + 1][0])
+        originalIncludeAPI = str(
+            caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI'])
+        originalCaseName = str(caseList.objects.filter(id=caseID).values("caseName")[0]['caseName'])
+
+        if (originalIncludeAPI == api and originalCaseName == caseName):
+            code = -1
+            info = '未做任何修改！'
+            result = {
+                'code': code,
+                'info': info
+            }
+        else:
+            inter = caseList.objects.get(id=caseID)
+            inter.includeAPI = api
+            inter.caseName = caseName
+            inter.save()
+            code = 0
+            info = '修改成功！'
+            result = {
+                'code': code,
+                'info': info
+            }
+    return JsonResponse(result, safe=False)
