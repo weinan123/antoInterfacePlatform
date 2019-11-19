@@ -43,16 +43,21 @@ def apidel(request):
         req = json.loads(request.body)["params"]
         id = req['aid']
         ainfo = apiInfoTable.objects.get(apiID=id)
-        if ainfo:
-            try:
-                ainfo.delete()
-                print("删除成功")
-            except BaseException as e:
-                result = {'code': -1, 'info': 'sql error' + str(e)}
-                return JsonResponse(result)
-            result = {'code': 0, 'info': 'delete success'}
+        # 判断用例是否有被依赖的用例
+        dependflag = checkdependCaseID(ainfo.t_id)
+        if dependflag:
+            result = {'code': -1, 'info': '接口被依赖不能被删除'}
         else:
-            result = {'code': -2, 'info': 'no exist'}
+            if ainfo:
+                try:
+                    ainfo.delete()
+                    print("删除成功")
+                except BaseException as e:
+                    result = {'code': -1, 'info': 'sql error' + str(e)}
+                    return JsonResponse(result)
+                result = {'code': 0, 'info': 'delete success'}
+            else:
+                result = {'code': -2, 'info': 'no exist'}
     return JsonResponse(result)
 
 
@@ -64,21 +69,36 @@ def batchdel(request):
         slist = []
         flist = []
         for id in idlist:
-            ainfo = apiInfoTable.objects.get(apiID=id)
-            if ainfo:
+            try:
+                ainfo = apiInfoTable.objects.get(apiID=id)
+            except Exception as e:
+                print(u"删除%d失败:%s" % (id, str(e)))
+                flist.append(id)
+                continue
+            # 判断用例是否有被依赖的用例
+            dependflag = checkdependCaseID(ainfo.t_id)
+            if dependflag:
+                flist.append(id)
+            else:
                 try:
                     ainfo.delete()
-                    print("删除%d成功" % id)
+                    print(u"删除%d成功" % id)
                     slist.append(id)
                 except BaseException as e:
                     flist.append(id)
-                    print("删除%d失败:%s" % (id, str(e)))
-            else:
-                flist.append(id)
-                print("删除%d失败:不存在" % id)
+                    print(u"删除%d失败:%s" % (id, str(e)))
         infos = "delete success:" + str(len(slist)) + ",fail:" + str(len(flist))
         result = {'code': 0, 'info': infos, 'successNum': len(slist)}
     return JsonResponse(result)
+
+def checkdependCaseID(tid):
+    query = apiInfoTable.objects.filter(depend_caseId=tid)
+    if len(query) == 0:
+        flag = False
+    else:
+        flag = True
+    return flag
+
 
 def runsingle(request):
     result = {}
