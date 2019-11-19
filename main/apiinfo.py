@@ -48,7 +48,7 @@ def apidel(request):
         if ainfo.t_id is not None:
             dependflag = checkdependCaseID(ainfo.t_id)
         if dependflag:
-            result = {'code': -1, 'info': '接口被依赖不能被删除'}
+            result = {'code': -1, 'info': '接口被依赖不能删除'}
         else:
             if ainfo:
                 try:
