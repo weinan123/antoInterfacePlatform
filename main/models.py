@@ -133,5 +133,6 @@ class schedule(models.Model):
     runcaseId =  models.CharField(max_length=50,null=True, blank=True)
     evirment =  models.CharField(max_length=50,null=True, blank=True)
     reporter =  models.CharField(max_length=50,null=True, blank=True)
+    cookies =  models.CharField(max_length=200,null=True, blank=True)
     timeDay =  models.CharField(max_length=50,null=True, blank=True)
     timeTime = models.CharField(max_length=50,null=True, blank=True)

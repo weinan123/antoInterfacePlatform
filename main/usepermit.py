@@ -14,7 +14,6 @@ def getUserLevel(request):
     if request.method == 'GET':
         username = request.GET['username']
         depart_lever = users.objects.filter(username=username).values("group","depart_lever","configer_permit")
-        print depart_lever
         depart_lever_value = depart_lever[0]["depart_lever"]
         configer_permit = depart_lever[0]["configer_permit"]
         group = depart_lever[0]["group"]
