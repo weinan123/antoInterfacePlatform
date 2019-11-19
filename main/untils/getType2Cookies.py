@@ -54,6 +54,7 @@ class getCookies2():
         showflag = ""
         resp = sendRequests.sendRequest().sendRequest(methods, url, headers, body, files, isRedirect, showflag)
         datajson = resp.json()
+        print datajson
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
         print cookies
         return cookies

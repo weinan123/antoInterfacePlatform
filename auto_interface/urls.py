@@ -89,4 +89,6 @@ urlpatterns = [
     url(r'^saveOrUpdateData/$', apiinfo.saveOrUpdateData),
     url(r'^projectconfiger/$', projectConf.projectconfiger),
     url(r'^getScheduleinitData/$', projectConf.getScheduleinitData),
+    url(r'^saveProConf/$', projectConf.saveProConf),
+
 ]

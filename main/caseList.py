@@ -60,6 +60,7 @@ def caseInfo(request):
                                                                          "runResult", "lastRunTime")
         respList = list(resp)
         for i in range(len(respList)):
+            id = respList[i]['id']
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
@@ -68,18 +69,38 @@ def caseInfo(request):
             respList[i]['describe'] = ''
             describe = []
             strAPI = ''
-            for x in APIID:
-                mydict = {}
-                num = num + 1
-                strAPI = '第' + str(num) + '个API：' + \
-                         apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
-                             'apiName']
-                mydict["name"] = strAPI
-                mydict["runResult"] = "成功"
-                mydict["href"] = "#"
-                describe.append(mydict)
-                respList[i]['describe'] = describe
-            respList[i]['apiCount'] = num
+            deleteList = []
+            if (APIID[0] != ''):
+                for x in APIID:
+                    if (apiInfoTable.objects.filter(apiID=x).count() == 0):
+                        deleteList.append(x)
+            if (len(deleteList) > 0):
+                for y in deleteList:
+                    APIID.remove(y)
+                if (len(APIID) > 0):
+                    api = str(APIID[0])
+                    if (len(APIID) > 1):
+                        for z in range(len(APIID) - 1):
+                            api = api + ',' + str(APIID[z + 1])
+                    caseList.objects.filter(id=id).update(includeAPI=api)
+                else:
+                    api = ''
+                    caseList.objects.filter(id=id).update(includeAPI=api)
+            if (APIID[0] != ''):
+                for x in APIID:
+                    mydict = {}
+                    num = num + 1
+                    strAPI = '第' + str(num) + '个API：' + \
+                             apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
+                                 'apiName']
+                    mydict["name"] = strAPI
+                    mydict["runResult"] = "成功"
+                    mydict["href"] = "#"
+                    describe.append(mydict)
+                    respList[i]['describe'] = describe
+                respList[i]['apiCount'] = num
+            else:
+                respList[i]['apiCount'] = num
             if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
                 respList[i]['executor'] = '暂未执行'
             if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
@@ -136,11 +157,11 @@ def getCaseAPIInfo(request):
         APIID = str(respList[0]['includeAPI']).split(',')
         checkList = []
         temp = []
-        print APIID
-        for x in APIID:
-            temp = []
-            temp.append(x)
-            checkList.append(temp)
+        if (APIID[0] != ''):
+            for x in APIID:
+                temp = []
+                temp.append(x)
+                checkList.append(temp)
         projectName = respList[0]['owningProject']
         caseName = respList[0]['caseName']
         projectID = projectList.objects.filter(projectName=projectName).values('id')[0]['id']
@@ -316,7 +337,8 @@ def modifyCase(request):
                 'code': code,
                 'info': info
             }
-        if (caseList.objects.filter(owningProject=owningProject, caseName=caseName).count() > 0):
+        if (caseList.objects.filter(owningProject=owningProject, caseName=caseName).count() > 0) and (
+                originalCaseName != caseName):
             code = -2
             info = '用例名称与已存在的用例重复！'
             verification = False
