@@ -53,8 +53,6 @@
                                         <span >{! caseinfor.casename !}</span>
                                         </div>
                                         </template>
-
-
                                     </div>
 
 
@@ -212,12 +210,18 @@ var vm = new Vue({
         choseAll(index,e){
             let caseList = this.projectSchedule[index].runcaseinfor;
             let ischeckall =  e.target.checked;
-            for(var s=0;s<=caseList.length;s++){
-                if (ischeckall===true){
-                    this.projectSchedule[index].runcaseinfor[s]=true
-                }else{
-                    this.projectSchedule[index].runcaseinfor[s]=false
+            let runcaseList = [];
+            if (ischeckall===true){
+                for(var s=0;s<caseList.length;s++){
+                    caseList[s].checkif=true;
+                    runcaseList.push((caseList[s].id).toString())
                 }
+            this.projectSchedule[index].runcaseid =  runcaseList
+            }else{
+                for(var m=0;m<caseList.length;m++){
+                    caseList[m].checkif=false
+                }
+            this.projectSchedule[index].runcaseid =  []
             }
         }
 

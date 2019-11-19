@@ -159,7 +159,10 @@ var vm1 = new Vue({
                 window.alert("您没有此页面权限，请联系管理员添加权限")
             }else if(url==="/configer/"&&this.user_configPermit===false){
                  window.alert("您没有此页面权限，请联系管理员添加权限")
-            }else{
+            }else if(url==="/projectconfiger/"&&this.user_configPermit===false){
+                 window.alert("您没有此页面权限，请联系管理员添加权限")
+            }
+            else{
                 this.currentSort = index;
                 window.location.href=url
             }
