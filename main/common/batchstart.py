@@ -14,14 +14,14 @@ def setUp(self):
     print(u"开始执行....")
 
 
-def actions(self, arg1, arg2, environment):
+def actions(self, arg1, arg2, environment, cookices):
     # 获取元素的方式
     caseID = arg1
     state = False
     caseName = arg2
     print(u"\n用例名称:%s." % caseName)  # 报告输出中使用，请勿删除
     print(u"用例id:%s." % caseID)  # 报告输出中使用，请勿删除
-    singleResult = self.singleRun(caseID, environment)
+    singleResult = self.singleRun(caseID, environment, cookices)
     if singleResult["code"] == 0:
         state = True
         print (u"执行结果：case (%s:%s) 执行成功." % (caseID, caseName))
@@ -33,9 +33,9 @@ def actions(self, arg1, arg2, environment):
 
 # 闭包函数
 @staticmethod
-def getTestFunc(arg1, arg2, environment):
+def getTestFunc(arg1, arg2, environment, cookices):
     def func(self):
-        self.actions(arg1, arg2, environment)
+        self.actions(arg1, arg2, environment, cookices)
     return func
 
 
@@ -43,10 +43,10 @@ def tearDown(self):
     print(u"执行结束....")
 
 
-def singleRun(self, caseID, environment):
+def singleRun(self, caseID, environment, cookices):
     id = caseID
     dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    respResult = batchUntils.getResp(id, environment, dtime)
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
     code = respResult["code"]
     if code == 0:
         resp = respResult["response"]
@@ -86,7 +86,7 @@ def singleRun(self, caseID, environment):
     return result
 
 
-def _getTestcase(list, classname, environment):
+def _getTestcase(list, classname, environment, cookices):
     testlist = list
     # for attr in dir(classname):
     #     if str(attr).startswith("test_func_"):
@@ -97,7 +97,7 @@ def _getTestcase(list, classname, environment):
         except Exception as e:
             print("用例ID:%s, 不存在，跳过执行...,报错：%s" % (str(args), str(e)))
             continue
-        fun = classname.getTestFunc(args, caseName, environment)
+        fun = classname.getTestFunc(args, caseName, environment, cookices)
         setattr(classname, 'test_func_%s_%s' % (args, caseName), fun)
 
 
@@ -139,9 +139,13 @@ def createClass(batchrun_list, environment):
                      {"setUp": setUp, "actions": actions, "tearDown": tearDown, "getTestFunc": getTestFunc, "singleRun": singleRun})
         classList.append(Class)
         list = i["list"]
-        _getTestcase(list, Class, environment)
+        try:
+            sCookice = i["cookices"]
+        except Exception as e:
+            sCookice = None
+        _getTestcase(list, Class, environment, sCookice)
         # testSuite = unittest.TestSuite()
         # # testSuite.addTest(unittest.makeSuite(Class))
         # # testSuite = getTestSuite(Class)
-        print classList
+        # print classList
     return classList
