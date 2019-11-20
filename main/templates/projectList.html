@@ -12,7 +12,7 @@
         <div class="pageheader" id="projectname">
             <p class="titlecss">{! projectNameTitle !}</p>
         </div>
-        <div class="pageheader" id="modelname">
+        <div class="pageheader" style="margin-top: 10px" id="modelname">
             <div v-for="tabName,index in tabNameList" class="projectCss" style="cursor:pointer"><a
                     :class="{'projectnamesel':currentSort==index}" class="projectname"
                     @click="changemodel(index)">{! tabName !}</a>
@@ -1728,7 +1728,8 @@
                             if (resp.data.code === 0) {
                                 this.getCookieList();
                             } else {
-                                alert(resp.data.msg)
+                                alert(resp.data.msg+"\n"
+                                    +"错误信息:"+resp.data.error)
                             }
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText)

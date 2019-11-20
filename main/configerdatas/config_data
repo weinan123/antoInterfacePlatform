@@ -2,7 +2,7 @@
 eviorment = Qa
 isreport = Y
 ismail = Y
-senderlist = nan.wei@yff.com,ruru.yang@yff.com
+senderlist = nan.wei@yff.com
 runcase = 
 sechdel_time = 每天&19:00
 selectall = True

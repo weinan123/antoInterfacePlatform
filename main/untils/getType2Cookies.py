@@ -8,10 +8,10 @@ class getCookies2():
     typecookie2 = {
         "qa": ["http://wlb-cms-ui-qa.youyu.cn//v2/cms/account/permission/management/uniKey",
                "http://wlb-cms-ui-qa.youyu.cn/v2/cms/login/signin"],
-        "stage": ["http://wlb-cms-ui-qa.youyu.cn//v2/cms/account/permission/management/uniKey",
-               "http://wlb-cms-ui-qa.youyu.cn/v2/cms/login/signin"],
-        "live": ["http://wlb-cms-ui-qa.youyu.cn//v2/cms/account/permission/management/uniKey",
-               "http://wlb-cms-ui-qa.youyu.cn/v2/cms/login/signin"],
+        "stage": ["http://wlb-cms-ui-stage.youyu.cn//v2/cms/account/permission/management/uniKey",
+               "http://wlb-cms-ui-stage.youyu.cn/v2/cms/login/signin"],
+        "live": ["http://wlb-cms-ui.youyu.cn//v2/cms/account/permission/management/uniKey",
+               "http://wlb-cms-ui.youyu.cn/v2/cms/login/signin"],
     }
     def __init__(self, evirment, username, password):
         self.username = username
@@ -56,7 +56,8 @@ class getCookies2():
         datajson = resp.json()
         print datajson
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
-        print cookies
-        return cookies
+        cookies["uid"] = datajson["uid"]
+        print cookies,datajson["code"]
+        return cookies,datajson["code"]
 if __name__ == "__main__":
-    cookies = getCookies2("qa",'cms.publisher','123456pb').getcookies()
+    cookies = getCookies2("qa",'aa01','aa123456..').getcookies()

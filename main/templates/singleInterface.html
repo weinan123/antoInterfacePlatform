@@ -114,8 +114,10 @@
           </thead>
           <tbody >
             <tr v-for="headerVal,index in headerVals">
-                <td col-xs-2><select class="form-control" name="selectPrio" v-model="headerVal.type" >
-                    <option value="" selected>头部标签</option>
+                <td col-xs-2>
+                    <input list="test" type="text" class="form-control" v-model="headerVal.type">
+                    <datalist id="test">
+                    <option value="" >头部标签</option>
                     <option value="Content-Type" >Content-Type</option>
                     <option value="Accept" >Accept</option>
                     <option value="Accept-Charset" >Accept-Charset</option>
@@ -126,9 +128,10 @@
                     <option value="Content-Length" >Content-Length</option>
                     <option value="Connection" >Connection</option>
                     <option value="Authorization" >Authorization</option>
+                    <option value="X-Product" >X-Product</option>
                     <option value="X-Requested-With" >X-Requested-With</option>
                     <option value="X-encryptflag" >X-encryptflag</option>
-                </select></td>
+                    </datalist></td>
                 <td col-xs-2><input type="text" class="form-control" id="name" placeholder="头部内容" v-model="headerVal.value">{{ headerVal.value  }}</td>
                 <td col-xs-2><button type="button" class="btn-local" @click="insertTable(showState,showbodyState)">增加</button>
                     <button type="button" class="btn-delete" @click="deleteHeader(index,showState,showbodyState)">删除</button></td>

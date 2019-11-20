@@ -27,13 +27,12 @@ class getCookies1():
         print datajson
         return datajson["data"]["uin"],datajson["data"]["loginid"],datajson["data"]["salt"]
     def getauth(self,q):
-        #jvmPath = jpype.getDefaultJVMPath()
-        jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
-        path = "\\dependJar\\module-httpFunctionTest-0.0.1-SNAPSHOT.jar"
+        jvmPath = jpype.getDefaultJVMPath()
+        path = "\dependJar\module-httpFunctionTest-0.0.1-SNAPSHOT.jar"
         realpath = os.path.dirname(os.path.dirname(__file__)) + path
         print realpath
         jpype.startJVM(jvmPath,
-                       "-Djava.class.path = C:\\Users\\nan.wei\\Desktop\\jiama\\module-httpFunctionTest-0.0.1-SNAPSHOT.jar")
+                       "-Djava.class.path=%s" % (realpath))
         HanLP = JClass('com.ruifusoft.wm.WmEncrypt')
         uin, loginid,salt = self.getsalt()
         print  uin, loginid,salt
@@ -67,11 +66,9 @@ class getCookies1():
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,body,files,isRedirect,showflag)
         datajson = resp.json()
         print datajson
-        if datajson["code"]==0:
-            cookies = requests.utils.dict_from_cookiejar(resp.cookies)
-            return cookies
-        else:
-            cookies = {}
-            return cookies
+        cookies = requests.utils.dict_from_cookiejar(resp.cookies)
+        print cookies, datajson["code"]
+        return cookies, datajson["code"]
 if __name__ == "__main__":
-    cookies = getCookies1("qa","+8610111112271","1234qwer").servirce()
+    cookies = getCookies1("qa","+8610111112273","1234qwer").servirce()
+

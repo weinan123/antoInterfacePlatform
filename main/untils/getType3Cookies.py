@@ -68,8 +68,11 @@ class getCookies3():
         showflag = ""
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,body,files,isRedirect,showflag)
         print resp.text
+        datajson = resp.json()
+        print datajson
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
-        return cookies
+        print cookies, datajson["code"]
+        return cookies, datajson["code"]
 if __name__ == "__main__":
   cookiess = getCookies3("qa","27775411","test13579").servirce(3)
   print cookiess

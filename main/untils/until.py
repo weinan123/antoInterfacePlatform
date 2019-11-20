@@ -54,7 +54,7 @@ def getcookies(cookieFlag,evirment,username,password):
         cookies = getType2Cookies.getCookies2(evirment, username, password).getcookies()
     elif int(cookieFlag==3):
         cookies = getType3Cookies.getCookies3(evirment, username, password).servirce(cookieFlag)
-    elif int(cookieFlag==3):
+    elif int(cookieFlag==4):
         cookies = getType3Cookies.getCookies3(evirment, username, password).servirce(cookieFlag)
     return cookies
 

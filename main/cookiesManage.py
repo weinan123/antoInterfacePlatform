@@ -23,18 +23,19 @@ def getCookies(request):
         cookieFlag = projectList.objects.filter(projectName=projectname).values("cookieFlag")[0]["cookieFlag"]
         print cookieFlag,id
         try:
-            cookies = until.getcookies(cookieFlag, evirment, username, password)
+            cookies,responsecode = until.getcookies(cookieFlag, evirment, username, password)
             if cookies=={}:
                 response = {
                 "code": -2,
                 "msg": "获取cookie为空",
+                "error":responsecode
                 }
                 return JsonResponse(response, safe=False)
         except Exception as e:
             response = {
                 "code":-1,
-                "msg":"获取cookie失败,请输入正确用户名,密码",
-                "error":str(e)
+                "msg":"获取cookie失败",
+                "error":str(e),
             }
             return JsonResponse(response, safe=False)
         cookies = json.dumps(cookies)
