@@ -6,6 +6,7 @@ from main.models import *
 from forms import *
 from untils import until
 from common.batchUntils import checkFormat
+from common import batchstart
 
 
 def addCase(request):
@@ -60,26 +61,55 @@ def caseInfo(request):
                                                                          "runResult", "lastRunTime")
         respList = list(resp)
         for i in range(len(respList)):
+            id = respList[i]['id']
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+            respList[i]['lastRunTime'] = str(respList[i]['lastRunTime']).split('.')[0]
             APIID = str(respList[i]['includeAPI']).split(',')
             num = 0
             respList[i]['describe'] = ''
             describe = []
             strAPI = ''
-            for x in APIID:
-                mydict = {}
-                num = num + 1
-                strAPI = '第' + str(num) + '个API：' + \
-                         apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
-                             'apiName']
-                mydict["name"] = strAPI
-                mydict["runResult"] = "成功"
-                mydict["href"] = "#"
-                describe.append(mydict)
-                respList[i]['describe'] = describe
-            respList[i]['apiCount'] = num
+            deleteList = []
+            if (APIID[0] != ''):
+                for x in APIID:
+                    if (apiInfoTable.objects.filter(apiID=x).count() == 0):
+                        deleteList.append(x)
+            if (len(deleteList) > 0):
+                for y in deleteList:
+                    APIID.remove(y)
+                if (len(APIID) > 0):
+                    api = str(APIID[0])
+                    if (len(APIID) > 1):
+                        for z in range(len(APIID) - 1):
+                            api = api + ',' + str(APIID[z + 1])
+                    caseList.objects.filter(id=id).update(includeAPI=api)
+                else:
+                    api = ''
+                    caseList.objects.filter(id=id).update(includeAPI=api)
+            if (APIID[0] != ''):
+                for x in APIID:
+                    mydict = {}
+                    num = num + 1
+                    strAPI = '第' + str(num) + '个API：' + \
+                             apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
+                                 'apiName']
+                    mydict["name"] = strAPI
+                    result = apiInfoTable.objects.filter(apiID=x).values('lastRunResult')[0][
+                        'lastRunResult']
+                    if (result == 1):
+                        mydict["runResult"] = "成功"
+                    elif (result == 0):
+                        mydict["runResult"] = "暂未执行"
+                    elif (result == -1):
+                        mydict["runResult"] = "失败"
+                    mydict["href"] = "#"
+                    describe.append(mydict)
+                    respList[i]['describe'] = describe
+                respList[i]['apiCount'] = num
+            else:
+                respList[i]['apiCount'] = num
             if (respList[i]['executor'] is None) or (respList[i]['executor'] == ''):
                 respList[i]['executor'] = '暂未执行'
             if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
@@ -136,11 +166,11 @@ def getCaseAPIInfo(request):
         APIID = str(respList[0]['includeAPI']).split(',')
         checkList = []
         temp = []
-        print APIID
-        for x in APIID:
-            temp = []
-            temp.append(x)
-            checkList.append(temp)
+        if (APIID[0] != ''):
+            for x in APIID:
+                temp = []
+                temp.append(x)
+                checkList.append(temp)
         projectName = respList[0]['owningProject']
         caseName = respList[0]['caseName']
         projectID = projectList.objects.filter(projectName=projectName).values('id')[0]['id']
@@ -253,37 +283,202 @@ def caseBatchDelete(request):
 def caseBatchRun(request):
     result = {
         'code': -1,
-        'info': '未知错误！'
+        'info': '接口调用错误！'
     }
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
-        idRun = req['idRun']
-        idCookie = req['idCookie']
-        for x in idRun:
-            print x
-        print '**************************************'
-        print '**************************************'
-        for x in idCookie:
-            print x
-        code = 0
-        info = '运行成功！'
-        result = {
-            'code': code,
-            'info': info
+        id = req['idCookie']
+        environment = req['environment']
+        runResultName = req['runResultName']
+        reportflag = "Y"
+        exeuser = request.session.get('username')
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        batchrun_list = []
+        for case in id:
+            paramList = str(case).split(',')
+            caseID = paramList[0]
+            cookieID = paramList[1]
+            list = []
+            caseName = caseList.objects.filter(id=caseID).values("caseName")[0]['caseName']
+            includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+            APIID = str(includeAPI).split(',')
+            if (APIID[0] != ''):
+                for x in APIID:
+                    list.append(x)
+                    # [{"sname":"登录","list":[1,5,10],"cookices":{}}]
+                if (cookieID == '不使用Cookie'):
+                    batchrunJson = {
+                        "sname": str(caseName),
+                        "list": list,
+                    }
+                    batchrun_list.append(batchrunJson)
+                else:
+                    cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
+                    cookices = json.loads(cookie)
+                    batchrunJson = {
+                        "sname": str(caseName),
+                        "list": list,
+                        "cookices": cookices,
+                    }
+                    batchrun_list.append(batchrunJson)
+        batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+        report_localName = batchResult["reportPath"]
+        report_runName = runResultName
+        successNum = batchResult["sNum"]
+        failNum = batchResult["fNum"]
+        errorNum = batchResult["eNum"]
+        totalNum = successNum + failNum + errorNum
+        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        result_infos = {
+            "report_runName": report_runName,
+            "environment": environment,
+            "startTime": starttime,
+            "endTime": endtime,
+            "totalNum": totalNum,
+            "successNum": successNum,
+            "failNum": failNum,
+            "errorNum": errorNum,
+            "executor": exeuser,
+            "report_localName": report_localName,
         }
+        try:
+            s = reports.objects.create(**result_infos)
+            s.save()
+        except BaseException as e:
+            print(" SQL Error: %s" % e)
+            result = {'code': -2, 'info': 'sql error'}
+            return JsonResponse(result)
+        inter = caseList.objects.get(id=caseID)
+        inter.lastRunTime = starttime
+        inter.reportLocation = report_localName
+        if (totalNum == successNum):
+            inter.runResult = str(environment) + "环境运行成功"
+        else:
+            inter.runResult = str(environment) + "环境运行失败"
+        inter.save()
+        result = {"code": 0, "info": "执行结束，结果请查看报告"}
+
     return JsonResponse(result, safe=False)
 
 
 def runCase(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        print id
-        code = 0
-        info = '运行成功！'
-        result = {
-            'code': code,
-            'info': info
-        }
+    result = {'code': -3, 'info': '接口调用错误！'}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        id = req['id']
+        environment = req['environment']
+        runResultName = req['runResultName']
+        reportflag = "Y"
+        exeuser = request.session.get('username')
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        paramList = str(id).split(',')
+        caseID = paramList[0]
+        cookieID = paramList[1]
+        list = []
+        caseName = caseList.objects.filter(id=caseID).values("caseName")[0]['caseName']
+        includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+        APIID = str(includeAPI).split(',')
+        if (APIID[0] != ''):
+            for x in APIID:
+                list.append(x)
+                # [{"sname":"登录","list":[1,5,10],"cookices":{}}]
+            if (cookieID == '不使用Cookie'):
+                batchrunJson = {
+                    "sname": str(caseName),
+                    "list": list,
+                }
+                batchrun_list = []
+                batchrun_list.append(batchrunJson)
+                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+                report_localName = batchResult["reportPath"]
+                report_runName = runResultName
+                successNum = batchResult["sNum"]
+                failNum = batchResult["fNum"]
+                errorNum = batchResult["eNum"]
+                totalNum = successNum + failNum + errorNum
+                endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                result_infos = {
+                    "report_runName": report_runName,
+                    "environment": environment,
+                    "startTime": starttime,
+                    "endTime": endtime,
+                    "totalNum": totalNum,
+                    "successNum": successNum,
+                    "failNum": failNum,
+                    "errorNum": errorNum,
+                    "executor": exeuser,
+                    "report_localName": report_localName,
+                }
+                try:
+                    s = reports.objects.create(**result_infos)
+                    s.save()
+                except BaseException as e:
+                    print(" SQL Error: %s" % e)
+                    result = {'code': -2, 'info': 'sql error'}
+                    return JsonResponse(result)
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                inter.reportLocation = report_localName
+                if (totalNum == successNum):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+                result = {"code": 0, "info": "执行结束，结果请查看报告"}
+            else:
+                cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
+                cookices = json.loads(cookie)
+                print cookices, type(cookices)
+                batchrunJson = {
+                    "sname": str(caseName),
+                    "list": list,
+                    "cookices": cookices,
+                }
+                batchrun_list = []
+                batchrun_list.append(batchrunJson)
+                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+                report_localName = batchResult["reportPath"]
+                report_runName = runResultName
+                successNum = batchResult["sNum"]
+                failNum = batchResult["fNum"]
+                errorNum = batchResult["eNum"]
+                totalNum = successNum + failNum + errorNum
+                endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                result_infos = {
+                    "report_runName": report_runName,
+                    "environment": environment,
+                    "startTime": starttime,
+                    "endTime": endtime,
+                    "totalNum": totalNum,
+                    "successNum": successNum,
+                    "failNum": failNum,
+                    "errorNum": errorNum,
+                    "executor": exeuser,
+                    "report_localName": report_localName,
+                }
+                try:
+                    s = reports.objects.create(**result_infos)
+                    s.save()
+                except BaseException as e:
+                    print(" SQL Error: %s" % e)
+                    result = {'code': -2, 'info': 'sql error'}
+                    return JsonResponse(result)
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                inter.reportLocation = report_localName
+                if (totalNum == successNum):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+                result = {"code": 0, "info": "执行结束，结果请查看报告"}
+        else:
+            code = -1
+            info = '用例下不存在接口！'
+            result = {
+                'code': code,
+                'info': info
+            }
     return JsonResponse(result, safe=False)
 
 
@@ -316,7 +511,8 @@ def modifyCase(request):
                 'code': code,
                 'info': info
             }
-        if (caseList.objects.filter(owningProject=owningProject, caseName=caseName).count() > 0):
+        if (caseList.objects.filter(owningProject=owningProject, caseName=caseName).count() > 0) and (
+                originalCaseName != caseName):
             code = -2
             info = '用例名称与已存在的用例重复！'
             verification = False

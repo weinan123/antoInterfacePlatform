@@ -231,7 +231,7 @@ def getapiInfos(request):
             json_dict["method"] = query.method
             showbodyState =0
             body_list = []
-            if query.headers != "{}" and query.headers != "":
+            if query.headers != "{}" and query.headers != "" and query.headers is not None:
                 header_data = json.loads(query.headers)
                 for k in header_data:
                     header_dict = {}
@@ -242,7 +242,7 @@ def getapiInfos(request):
                 json_dict["header"] = header_list
             else:
                 json_dict["header"] = []
-            if query.body != "{}" and query.body != "":
+            if query.body != "{}" and query.body != "" and query.body is not None:
                 bodydata = json.loads(query.body)
                 stateflag = bodydata["showflag"]
                 if stateflag == 3:
@@ -510,9 +510,29 @@ def saveOrUpdateData(request):
         dependData = data["dependData"]
         header = data["header"]
         body_str = data["bodys"]
-        body = {"showflag": 3,
-                "datas": [{"paramValue": body_str}]
-                }
+        cbody = body_str
+        cheader = header
+        if cbody != "" and cbody is not None:
+            try:
+                json.loads(cbody)
+            except Exception as e:
+                result = {"code": -1, "info": "body格式不正确"}
+                return JsonResponse(result)
+        if cheader != "" and cheader is not None:
+            try:
+                json.loads(cheader)
+            except Exception as e:
+                result = {"code": -1, "info": "header格式不正确"}
+                return JsonResponse(result)
+        if body_str != "" and body_str is not None:
+            body = {"showflag": 3,
+                    "datas": [{"paramValue": body_str}]
+                    }
+            body = json.dumps(body)
+        else:
+            body = None
+        if header == "" or header is None:
+            header = None
         assertinfo = data["assert"]
         environment = data["environment"]
         userName = data["user"]
