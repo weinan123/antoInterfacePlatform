@@ -441,7 +441,7 @@
                         <th>包含接口数</th>
                         <th>所需Cookie</th>
                         <th>最后运行时间</th>
-                        <th>执行结果</th>
+                        <th>最后执行结果</th>
                         <th>操作</th>
                     </tr>
                     </thead>
@@ -585,9 +585,55 @@
                                     </a>
                                     <a>
                                         <button type="button" class="btn-delete"
-                                                @click="runCase(item.id)">执行
+                                                data-toggle="modal"
+                                                v-bind:data-target="'#runCase'+[item.id]">执行
                                         </button>
                                     </a>
+                                    <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
+                                         role="dialog"
+                                         aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal"
+                                                            aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <label class="modal-title"
+                                                           id="myModalLabel">报告名称</label>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <label for="runResultName"
+                                                           class="col-sm-4 control-label">报告名称:</label>
+                                                    <div class="col-sm-8">
+                                                        <input class="form-control" type="text"
+                                                               name="runResultName" id="runResultName"
+                                                               v-model="runResultName" maxlength="50"
+                                                               placeholder="请输入报告名称"/>
+                                                    </div>
+
+
+                                                    <div class="col-sm-12"
+                                                         style="align-items: center;text-align: center;margin-top: 10px;padding-bottom: 10px;">
+                                                        <div class="col-sm-6">
+                                                            <input type="button" class="viewButton"
+                                                                   @click="runCase(item.id)"
+                                                                   value="执行"/>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <button type="button" class="viewButton"
+                                                                    data-dismiss="modal">
+                                                                关闭
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="clear:both;"></div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal -->
+                                    </div>
+
                                 </div>
                             </td>
                         </tr>
@@ -1245,6 +1291,7 @@
                     selectDisplay: [],
                     cookieList: [],
                     environment: 'QA',
+                    runResultName: '',
                     modifyApi: [],
                 }
                     ;
@@ -1470,9 +1517,17 @@
                 },
 
                 runCase(id) {
-                    var cookieID = document.getElementById("cookie" + id).value;
-                    axios.get('/runCase?id=' + cookieID)
-                        .then(resp => {
+                    if (this.runResultName === "") {
+                        alert('请输入报告名称！');
+                    } else {
+                        var cookieID = document.getElementById("cookie" + id).value;
+                        axios.post('/runCase/', {
+                            params: {
+                                id: cookieID,
+                                environment: this.environment,
+                                runResultName: this.runResultName,
+                            }
+                        }).then(resp => {
                                 let info = resp.data.info;
                                 let code = resp.data.code;
                                 if (code === 0) {
@@ -1492,14 +1547,18 @@
                                         hideMethod: "fadeOut"
                                     };
                                     toastr.success(info);
+                                    $('#runCase' + id).modal('hide');
+                                    this.runResultName = '';
                                 } else {
                                     alert(info);
                                 }
                             }
                         ).then(() => {
-                            this.refresh();
-                        }
-                    );
+                                this.refresh();
+                            }
+                        );
+
+                    }
 
                 },
 
@@ -1652,9 +1711,9 @@
                                         showMethod: "fadeIn",
                                         hideMethod: "fadeOut"
                                     };
-                                    toastr.success(resp.data.info);
                                     $('#modifyCase').modal('hide');
                                     this.selectDisplay = [];
+                                    toastr.success(resp.data.info);
                                 } else {
                                     alert(resp.data.info);
                                 }

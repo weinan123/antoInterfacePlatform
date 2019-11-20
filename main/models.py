@@ -37,6 +37,7 @@ class caseList(models.Model):
     createTime = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     lastRunTime = models.DateTimeField(null=True, blank=True, verbose_name='最后运行时间')
     runResult = models.TextField(null=True, blank=True, verbose_name='运行结果')
+    reportLocation = models.CharField(max_length=200, null=True, blank=True, verbose_name='报告地址')
 
 
 class hostTags(models.Model):
@@ -128,11 +129,12 @@ class department(models.Model):
     depart_lever = models.IntegerField()
     depart_name = models.CharField(max_length=50)
 
+
 class schedule(models.Model):
-    projectname = models.CharField(max_length=50,null=True, blank=True)
-    runcaseId =  models.CharField(max_length=50,null=True, blank=True)
-    evirment =  models.CharField(max_length=50,null=True, blank=True)
-    reporter =  models.CharField(max_length=50,null=True, blank=True)
-    cookies =  models.CharField(max_length=200,null=True, blank=True)
-    timeDay =  models.CharField(max_length=50,null=True, blank=True)
-    timeTime = models.CharField(max_length=50,null=True, blank=True)
+    projectname = models.CharField(max_length=50, null=True, blank=True)
+    runcaseId = models.CharField(max_length=50, null=True, blank=True)
+    evirment = models.CharField(max_length=50, null=True, blank=True)
+    reporter = models.CharField(max_length=50, null=True, blank=True)
+    cookies = models.CharField(max_length=200, null=True, blank=True)
+    timeDay = models.CharField(max_length=50, null=True, blank=True)
+    timeTime = models.CharField(max_length=50, null=True, blank=True)

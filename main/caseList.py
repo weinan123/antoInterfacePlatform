@@ -6,6 +6,7 @@ from main.models import *
 from forms import *
 from untils import until
 from common.batchUntils import checkFormat
+from common import batchstart
 
 
 def addCase(request):
@@ -64,6 +65,7 @@ def caseInfo(request):
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
             respList[i]['createTime'] = str(respList[i]['createTime']).split('.')[0]
+            respList[i]['lastRunTime'] = str(respList[i]['lastRunTime']).split('.')[0]
             APIID = str(respList[i]['includeAPI']).split(',')
             num = 0
             respList[i]['describe'] = ''
@@ -296,15 +298,124 @@ def caseBatchRun(request):
 
 
 def runCase(request):
-    if request.method == 'GET':
-        id = request.GET.get('id')
-        print id
-        code = 0
-        info = '运行成功！'
-        result = {
-            'code': code,
-            'info': info
-        }
+    result = {'code': -3, 'info': '接口调用错误！'}
+    if request.method == 'POST':
+        req = json.loads(request.body)["params"]
+        id = req['id']
+        environment = req['environment']
+        runResultName = req['runResultName']
+        reportflag = "Y"
+        exeuser = request.session.get('username')
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        paramList = str(id).split(',')
+        caseID = paramList[0]
+        cookieID = paramList[1]
+        list = []
+        caseName = caseList.objects.filter(id=caseID).values("caseName")[0]['caseName']
+        includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+        APIID = str(includeAPI).split(',')
+        if (APIID[0] != ''):
+            for x in APIID:
+                list.append(x)
+                # [{"sname":"登录","list":[1,5,10],"cookices":{}}]
+            if (cookieID == '不使用Cookie'):
+                batchrunJson = {
+                    "sname": str(caseName),
+                    "list": list,
+                }
+                batchrun_list = []
+                batchrun_list.append(batchrunJson)
+                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+                report_localName = batchResult["reportPath"]
+                report_runName = runResultName
+                successNum = batchResult["sNum"]
+                failNum = batchResult["fNum"]
+                errorNum = batchResult["eNum"]
+                totalNum = successNum + failNum + errorNum
+                endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                result_infos = {
+                    "report_runName": report_runName,
+                    "environment": environment,
+                    "startTime": starttime,
+                    "endTime": endtime,
+                    "totalNum": totalNum,
+                    "successNum": successNum,
+                    "failNum": failNum,
+                    "errorNum": errorNum,
+                    "executor": exeuser,
+                    "report_localName": report_localName,
+                }
+                try:
+                    s = reports.objects.create(**result_infos)
+                    s.save()
+                except BaseException as e:
+                    print(" SQL Error: %s" % e)
+                    result = {'code': -2, 'info': 'sql error'}
+                    return JsonResponse(result)
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                inter.reportLocation = report_localName
+                if (totalNum == successNum):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+                result = {"code": 0, "info": "执行结束，结果请查看报告"}
+            else:
+                cookices = []
+                cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
+                cookices = json.loads(cookie)
+                print cookices, type(cookices)
+                batchrunJson = {
+                    "sname": str(caseName),
+                    "list": list,
+                    "cookices": cookices,
+                }
+                batchrun_list = []
+                batchrun_list.append(batchrunJson)
+                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+                report_localName = batchResult["reportPath"]
+                report_runName = runResultName
+                successNum = batchResult["sNum"]
+                failNum = batchResult["fNum"]
+                errorNum = batchResult["eNum"]
+                totalNum = successNum + failNum + errorNum
+                endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+                result_infos = {
+                    "report_runName": report_runName,
+                    "environment": environment,
+                    "startTime": starttime,
+                    "endTime": endtime,
+                    "totalNum": totalNum,
+                    "successNum": successNum,
+                    "failNum": failNum,
+                    "errorNum": errorNum,
+                    "executor": exeuser,
+                    "report_localName": report_localName,
+                }
+                try:
+                    s = reports.objects.create(**result_infos)
+                    s.save()
+                except BaseException as e:
+                    print(" SQL Error: %s" % e)
+                    result = {'code': -2, 'info': 'sql error'}
+                    return JsonResponse(result)
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                inter.reportLocation = report_localName
+                if (totalNum == successNum):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+                result = {"code": 0, "info": "执行结束，结果请查看报告"}
+        else:
+            code = -1
+            info = '用例下不存在接口！'
+            result = {
+                'code': code,
+                'info': info
+            }
     return JsonResponse(result, safe=False)
 
 
