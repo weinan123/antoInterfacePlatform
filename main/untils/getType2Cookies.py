@@ -56,7 +56,7 @@ class getCookies2():
         datajson = resp.json()
         print datajson
         cookies = requests.utils.dict_from_cookiejar(resp.cookies)
-        cookies["uid"] = datajson["uid"]
+        cookies["UID"] = datajson["uid"]
         print cookies,datajson["code"]
         return cookies,datajson["code"]
 if __name__ == "__main__":
