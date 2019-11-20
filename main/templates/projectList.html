@@ -413,9 +413,55 @@
 
 
                     <button v-if="checkedList !== undefined && checkedList.length > 0 "
-                            class="btn-delete"
-                            style="width: 74px;height: 36px;" @click="caseBatchRun()">批量执行
+                            class="btn-delete" data-toggle="modal" data-target="#caseBatchRun"
+                            style="width: 74px;height: 36px;">批量执行
                     </button>
+
+                    <div class="modal fade" id="caseBatchRun" tabindex="-1" role="dialog"
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close"
+                                            data-dismiss="modal"
+                                            aria-hidden="true">
+                                        &times;
+                                    </button>
+                                    <label class="modal-title"
+                                           id="myModalLabel">报告名称</label>
+                                </div>
+                                <div class="modal-body">
+                                    <label for="runResultName"
+                                           class="col-sm-4 control-label">报告名称:</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text"
+                                               name="runResultName" id="runResultName"
+                                               v-model="runResultName" maxlength="50"
+                                               placeholder="请输入报告名称"/>
+                                    </div>
+
+
+                                    <div class="col-sm-12"
+                                         style="align-items: center;text-align: center;margin-top: 10px;padding-bottom: 10px;">
+                                        <div class="col-sm-6">
+                                            <input type="button" class="viewButton"
+                                                   @click="caseBatchRun()"
+                                                   value="执行"/>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <button type="button" class="viewButton"
+                                                    data-dismiss="modal">
+                                                关闭
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+
+
                     <div class="col-sm-2" style="float: right;">
                         <select class="form-control" v-model="environment" @change="getUserCookieList()"
                                 id="environment" style="float: right;">
@@ -1604,43 +1650,50 @@
                 },
 
                 caseBatchRun() {
-                    this.selectCookieList = [];
-                    this.checkedList.forEach(item => {
-                        var cookieID = document.getElementById("cookie" + item).value;
-                        this.selectCookieList.push(cookieID);
-                    });
-                    axios.post('/caseBatchRun/', {
-                        params: {
-                            idRun: this.checkedList,
-                            idCookie: this.selectCookieList,
-                        }
-                    }).then(resp => {
-                            if (resp.data.code === 0) {
-                                toastr.options = {
-                                    closeButton: false,
-                                    debug: false,
-                                    progressBar: false,
-                                    positionClass: "toast-top-center",
-                                    onclick: null,
-                                    showDuration: "300",
-                                    hideDuration: "1000",
-                                    timeOut: "2000",
-                                    extendedTimeOut: "1000",
-                                    showEasing: "swing",
-                                    hideEasing: "linear",
-                                    showMethod: "fadeIn",
-                                    hideMethod: "fadeOut"
-                                };
-                                toastr.success(resp.data.info);
-                                this.checkedList = [];
-                            } else {
-                                alert(resp.data.info);
-                            }
-                        }
-                    ).then(
-                        () => {
-                            this.refresh();
+                    if (this.runResultName === "") {
+                        alert('请输入报告名称！');
+                    } else {
+                        this.selectCookieList = [];
+                        this.checkedList.forEach(item => {
+                            var cookieID = document.getElementById("cookie" + item).value;
+                            this.selectCookieList.push(cookieID);
                         });
+                        axios.post('/caseBatchRun/', {
+                            params: {
+                                idCookie: this.selectCookieList,
+                                environment: this.environment,
+                                runResultName: this.runResultName,
+                            }
+                        }).then(resp => {
+                                if (resp.data.code === 0) {
+                                    toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
+                                    toastr.success(resp.data.info);
+                                    this.checkedList = [];
+                                    $('#caseBatchRun').modal('hide');
+                                    this.runResultName = '';
+                                } else {
+                                    alert(resp.data.info);
+                                }
+                            }
+                        ).then(
+                            () => {
+                                this.refresh();
+                            });
+                    }
 
                 },
 

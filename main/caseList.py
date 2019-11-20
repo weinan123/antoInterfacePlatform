@@ -96,7 +96,14 @@ def caseInfo(request):
                              apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
                                  'apiName']
                     mydict["name"] = strAPI
-                    mydict["runResult"] = "成功"
+                    result = apiInfoTable.objects.filter(apiID=x).values('lastRunResult')[0][
+                        'lastRunResult']
+                    if (result == 1):
+                        mydict["runResult"] = "成功"
+                    elif (result == 0):
+                        mydict["runResult"] = "暂未执行"
+                    elif (result == -1):
+                        mydict["runResult"] = "失败"
                     mydict["href"] = "#"
                     describe.append(mydict)
                     respList[i]['describe'] = describe
@@ -276,24 +283,81 @@ def caseBatchDelete(request):
 def caseBatchRun(request):
     result = {
         'code': -1,
-        'info': '未知错误！'
+        'info': '接口调用错误！'
     }
     if request.method == 'POST':
         req = json.loads(request.body)["params"]
-        idRun = req['idRun']
-        idCookie = req['idCookie']
-        for x in idRun:
-            print x
-        print '**************************************'
-        print '**************************************'
-        for x in idCookie:
-            print x
-        code = 0
-        info = '运行成功！'
-        result = {
-            'code': code,
-            'info': info
+        id = req['idCookie']
+        environment = req['environment']
+        runResultName = req['runResultName']
+        reportflag = "Y"
+        exeuser = request.session.get('username')
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        batchrun_list = []
+        for case in id:
+            paramList = str(case).split(',')
+            caseID = paramList[0]
+            cookieID = paramList[1]
+            list = []
+            caseName = caseList.objects.filter(id=caseID).values("caseName")[0]['caseName']
+            includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+            APIID = str(includeAPI).split(',')
+            if (APIID[0] != ''):
+                for x in APIID:
+                    list.append(x)
+                    # [{"sname":"登录","list":[1,5,10],"cookices":{}}]
+                if (cookieID == '不使用Cookie'):
+                    batchrunJson = {
+                        "sname": str(caseName),
+                        "list": list,
+                    }
+                    batchrun_list.append(batchrunJson)
+                else:
+                    cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
+                    cookices = json.loads(cookie)
+                    batchrunJson = {
+                        "sname": str(caseName),
+                        "list": list,
+                        "cookices": cookices,
+                    }
+                    batchrun_list.append(batchrunJson)
+        batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+        report_localName = batchResult["reportPath"]
+        report_runName = runResultName
+        successNum = batchResult["sNum"]
+        failNum = batchResult["fNum"]
+        errorNum = batchResult["eNum"]
+        totalNum = successNum + failNum + errorNum
+        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        result_infos = {
+            "report_runName": report_runName,
+            "environment": environment,
+            "startTime": starttime,
+            "endTime": endtime,
+            "totalNum": totalNum,
+            "successNum": successNum,
+            "failNum": failNum,
+            "errorNum": errorNum,
+            "executor": exeuser,
+            "report_localName": report_localName,
         }
+        try:
+            s = reports.objects.create(**result_infos)
+            s.save()
+        except BaseException as e:
+            print(" SQL Error: %s" % e)
+            result = {'code': -2, 'info': 'sql error'}
+            return JsonResponse(result)
+        inter = caseList.objects.get(id=caseID)
+        inter.lastRunTime = starttime
+        inter.reportLocation = report_localName
+        if (totalNum == successNum):
+            inter.runResult = str(environment) + "环境运行成功"
+        else:
+            inter.runResult = str(environment) + "环境运行失败"
+        inter.save()
+        result = {"code": 0, "info": "执行结束，结果请查看报告"}
+
     return JsonResponse(result, safe=False)
 
 
@@ -362,7 +426,6 @@ def runCase(request):
                 inter.save()
                 result = {"code": 0, "info": "执行结束，结果请查看报告"}
             else:
-                cookices = []
                 cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
                 cookices = json.loads(cookie)
                 print cookices, type(cookices)
