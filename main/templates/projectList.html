@@ -324,7 +324,7 @@
 
                     <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
                          aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" id="newProjectRow" style="width: 60%;height: 50%">
+                        <div class="modal-dialog" id="newProjectRow" style="width: 40%;height: 50%">
                             <div class="modal-content"
                                  style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
                                 <div class="modal-header">
@@ -332,65 +332,56 @@
                                             aria-hidden="true">
                                         &times;
                                     </button>
-                                    <label class="modal-title" id="myModalLabel">选择接口</label>
+                                    <h4 class="modal-title" id="myModalLabel">选择接口</h4>
                                 </div>
                                 <div class="modal-body">
                                     <label for="projectName"
-                                           class="col-sm-2 control-label">项目名称:</label>
-                                    <div class="col-sm-4">
+                                           class="control-label" style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
+                                    <div style="width: 35%;float: left">
                                         <input class="form-control" type="text" name="projectName"
-                                               v-model="projectNameTitle" readonly="readonly"
-                                               maxlength="50" placeholder="请输入项目名称"/>
+                                               v-model="projectNameTitle" readonly="readonly" maxlength="50">
                                     </div>
                                     <label for="caseName"
-                                           class="col-sm-2 control-label">用例名称:</label>
-                                    <div class="col-sm-4">
+                                           class=" control-label" style="margin-top: 10px;margin-left:5%;width: 10%;float: left" >用例名称:</label>
+                                    <div style="width: 35%;float: left">
                                         <input class="form-control" type="text" name="caseName"
                                                id="caseName" v-model="caseName"
                                                maxlength="50" placeholder="请输入用例名称"/>
                                     </div>
-
-                                    <div style="margin-top: 50px;margin-bottom: 10px;">
+                                    <div style="overflow-y:auto;margin-top: 20px;max-height:350px;height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                         <div v-for="item in apiList" class="col-sm-12">
-                                            <h4 class="col-sm-12" style="font-weight: bold">所属项目：{!
-                                                item.moduleName !}</h4>
+                                            <span style="color: #2372A8;font-weight: bold">模块：{!
+                                                item.moduleName !}</span>
                                             <template v-for="x in item.data">
-                                                <div class="col-sm-3">
+                                                <div style="margin-left: 10px">
                                                     <input class="custom-checkbox"
                                                            v-bind:id="['checkbox'+x.apiID]"
                                                            type="checkbox" @change="selectDisplay = []"
                                                            v-bind:value="[x.apiID]" v-model="selectAPI">
-                                                    <label v-bind:for="['checkbox'+x.apiID]">{!
+                                                    <span v-bind:for="['checkbox'+x.apiID]">{!
                                                         x.apiName
-                                                        !}</label>
+                                                        !}</span>
                                                 </div>
                                             </template>
                                         </div>
                                         <div style="clear:both;"></div>
                                     </div>
-                                    <div class="col-sm-3">
-                                        <label class="col-sm-12">请先点击右侧确认按钮：</label>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <button type="button" class="btn-local" @click="submitAPI()">
+                                    <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
+                                        <button type="button" class="btn btn-info btn-sm" @click="submitAPI()">
                                             确认
                                         </button>
                                     </div>
+                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro" >
+                                        <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p></div>
 
-                                    <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p>
-
-                                    <div class="col-sm-12"
-                                         style="align-items: center;text-align: center;margin-top: 10px;">
-                                        <div class="col-sm-6">
-                                            <input type="button" class="viewButton"
-                                                   @click="addCase()" value="新建"/>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <button type="button" class="viewButton"
+                                    <div style="text-align: right;margin-top: 10px;float: right">
+                                            <input type="button" class="btn btn-primary btn-sm"
+                                                   @click="addCase()" value="新建"/>&nbsp&nbsp&nbsp
+                                            <button type="button" class="btn btn-primary btn-sm"
                                                     data-dismiss="modal">
                                                 关闭
                                             </button>
-                                        </div>
+
                                     </div>
                                 </div>
                                 <div style="clear:both;"></div>
