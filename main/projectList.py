@@ -318,6 +318,7 @@ def firstProjectDelete(request):
         if (projectList.objects.filter(projectName=projectName).count() == 1):
             countCase.objects.filter(projectName=projectName).delete()
             projectList.objects.filter(projectName=projectName).delete()
+            schedule.objects.filter(projectname=projectName).delete()
             code = 0
             info = '删除成功！'
         else:
