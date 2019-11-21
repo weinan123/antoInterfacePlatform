@@ -118,7 +118,7 @@ def start_main(batchrun_list, environment, reportflag, exeuser):
         return {"reportPath": pathName, "reportname": reportname, "sNum": result.success_count, "fNum": result.failure_count,
                 "eNum": result.error_count}
     else:
-        if len(batchrun_list) == 0:
+        if len(batchrun_list) != 0:
             runner = unittest.TextTestRunner()
             result = runner.run(suite)
             return {"sNum": suite.countTestCases() - len(result.errors) - len(result.failures),

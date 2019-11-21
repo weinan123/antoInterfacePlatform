@@ -302,6 +302,7 @@ def caseBatchRun(request):
         environment = req['environment']
         runResultName = req['runResultName']
         reportflag = "Y"
+        # reportflag = req['reportflag']
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         batchrun_list = []
@@ -333,54 +334,69 @@ def caseBatchRun(request):
                     }
                     batchrun_list.append(batchrunJson)
         batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
-        report_localName = batchResult["reportPath"]
-        report_runName = runResultName
-        successNum = batchResult["sNum"]
-        failNum = batchResult["fNum"]
-        errorNum = batchResult["eNum"]
-        totalNum = successNum + failNum + errorNum
-        endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        result_infos = {
-            "report_runName": report_runName,
-            "environment": environment,
-            "startTime": starttime,
-            "endTime": endtime,
-            "totalNum": totalNum,
-            "successNum": successNum,
-            "failNum": failNum,
-            "errorNum": errorNum,
-            "executor": exeuser,
-            "report_localName": report_localName,
-        }
-        try:
-            s = reports.objects.create(**result_infos)
-            s.save()
-        except BaseException as e:
-            print(" SQL Error: %s" % e)
-            result = {'code': -2, 'info': 'sql error'}
-            return JsonResponse(result)
-        for case in id:
-            paramList = str(case).split(',')
-            caseID = paramList[0]
-            inter = caseList.objects.get(id=caseID)
-            inter.lastRunTime = starttime
-            inter.reportLocation = report_localName
-            includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
-            APIID = str(includeAPI).split(',')
-            Success = True
-            if (APIID[0] != ''):
-                for x in APIID:
-                    flag = int(
-                        apiInfoTable.objects.filter(apiID=x).values("lastRunResult")[0]['lastRunResult'])
-                    if (flag == -1):
-                        Success = False
-            if (Success):
-                inter.runResult = str(environment) + "环境运行成功"
+        if (reportflag == 'Y'):
+            report_localName = batchResult["reportPath"]
+            report_runName = runResultName
+            successNum = batchResult["sNum"]
+            failNum = batchResult["fNum"]
+            errorNum = batchResult["eNum"]
+            totalNum = successNum + failNum + errorNum
+            endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            result_infos = {
+                "report_runName": report_runName,
+                "environment": environment,
+                "startTime": starttime,
+                "endTime": endtime,
+                "totalNum": totalNum,
+                "successNum": successNum,
+                "failNum": failNum,
+                "errorNum": errorNum,
+                "executor": exeuser,
+                "report_localName": report_localName,
+            }
+            try:
+                s = reports.objects.create(**result_infos)
+                s.save()
+            except BaseException as e:
+                print(" SQL Error: %s" % e)
+                result = {'code': -2, 'info': 'sql error'}
+                return JsonResponse(result)
+            for case in id:
+                paramList = str(case).split(',')
+                caseID = paramList[0]
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                inter.reportLocation = report_localName
+                includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+                APIID = str(includeAPI).split(',')
+                Success = True
+                if (APIID[0] != ''):
+                    for x in APIID:
+                        flag = int(
+                            apiInfoTable.objects.filter(apiID=x).values("lastRunResult")[0][
+                                'lastRunResult'])
+                        if (flag == -1):
+                            Success = False
+                if (Success):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+                result = {"code": 0, "info": "执行结束，结果请查看报告"}
             else:
-                inter.runResult = str(environment) + "环境运行失败"
-            inter.save()
-        result = {"code": 0, "info": "执行结束，结果请查看报告"}
-
+                for case in id:
+                    paramList = str(case).split(',')
+                    caseID = paramList[0]
+                    failNum = batchResult["fNum"]
+                    errorNum = batchResult["eNum"]
+                    inter = caseList.objects.get(id=caseID)
+                    inter.lastRunTime = starttime
+                    if (failNum == 0) and (errorNum == 0):
+                        inter.runResult = str(environment) + "环境运行成功"
+                    else:
+                        inter.runResult = str(environment) + "环境运行失败"
+                    inter.save()
+                result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
     return JsonResponse(result, safe=False)
 
 
@@ -392,6 +408,7 @@ def runCase(request):
         environment = req['environment']
         runResultName = req['runResultName']
         reportflag = "Y"
+        # reportflag = req['reportflag']
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         paramList = str(id).split(',')
@@ -410,9 +427,18 @@ def runCase(request):
                     "sname": str(caseName),
                     "list": list,
                 }
-                batchrun_list = []
-                batchrun_list.append(batchrunJson)
-                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+            else:
+                cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
+                cookices = json.loads(cookie)
+                batchrunJson = {
+                    "sname": str(caseName),
+                    "list": list,
+                    "cookices": cookices,
+                }
+            batchrun_list = []
+            batchrun_list.append(batchrunJson)
+            batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
+            if (reportflag == 'Y'):
                 report_localName = batchResult["reportPath"]
                 report_runName = runResultName
                 successNum = batchResult["sNum"]
@@ -449,52 +475,16 @@ def runCase(request):
                 inter.save()
                 result = {"code": 0, "info": "执行结束，结果请查看报告"}
             else:
-                cookie = userCookies.objects.filter(id=cookieID).values("cookies")[0]['cookies']
-                cookices = json.loads(cookie)
-                print cookices, type(cookices)
-                batchrunJson = {
-                    "sname": str(caseName),
-                    "list": list,
-                    "cookices": cookices,
-                }
-                batchrun_list = []
-                batchrun_list.append(batchrunJson)
-                batchResult = batchstart.start_main(batchrun_list, environment, reportflag, exeuser)
-                report_localName = batchResult["reportPath"]
-                report_runName = runResultName
-                successNum = batchResult["sNum"]
                 failNum = batchResult["fNum"]
                 errorNum = batchResult["eNum"]
-                totalNum = successNum + failNum + errorNum
-                endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-                result_infos = {
-                    "report_runName": report_runName,
-                    "environment": environment,
-                    "startTime": starttime,
-                    "endTime": endtime,
-                    "totalNum": totalNum,
-                    "successNum": successNum,
-                    "failNum": failNum,
-                    "errorNum": errorNum,
-                    "executor": exeuser,
-                    "report_localName": report_localName,
-                }
-                try:
-                    s = reports.objects.create(**result_infos)
-                    s.save()
-                except BaseException as e:
-                    print(" SQL Error: %s" % e)
-                    result = {'code': -2, 'info': 'sql error'}
-                    return JsonResponse(result)
                 inter = caseList.objects.get(id=caseID)
                 inter.lastRunTime = starttime
-                inter.reportLocation = report_localName
-                if (totalNum == successNum):
+                if (failNum == 0) and (errorNum == 0):
                     inter.runResult = str(environment) + "环境运行成功"
                 else:
                     inter.runResult = str(environment) + "环境运行失败"
                 inter.save()
-                result = {"code": 0, "info": "执行结束，结果请查看报告"}
+                result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
         else:
             code = -1
             info = '用例下不存在接口！'
