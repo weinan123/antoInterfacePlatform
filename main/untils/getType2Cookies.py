@@ -6,11 +6,11 @@ import requests
 import hashlib
 class getCookies2():
     typecookie2 = {
-        "qa": ["http://wlb-cms-ui-qa.youyu.cn//v2/cms/account/permission/management/uniKey",
+        "qa": ["http://wlb-cms-ui-qa.youyu.cn/v2/cms/account/permission/management/uniKey",
                "http://wlb-cms-ui-qa.youyu.cn/v2/cms/login/signin"],
-        "stage": ["http://wlb-cms-ui-stage.youyu.cn//v2/cms/account/permission/management/uniKey",
+        "stage": ["http://wlb-cms-ui-stage.youyu.cn/v2/cms/account/permission/management/uniKey",
                "http://wlb-cms-ui-stage.youyu.cn/v2/cms/login/signin"],
-        "live": ["http://wlb-cms-ui.youyu.cn//v2/cms/account/permission/management/uniKey",
+        "live": ["http://wlb-cms-ui.youyu.cn/v2/cms/account/permission/management/uniKey",
                "http://wlb-cms-ui.youyu.cn/v2/cms/login/signin"],
     }
     def __init__(self, evirment, username, password):
@@ -20,7 +20,7 @@ class getCookies2():
     def getsalt(self):
         url = self.typecookie2.get(self.evirment)[0]
         body = {'account': self.username}
-        methods = "GET"
+        methods = "POST"
         headers = {"Content-Type": "application/json"}
         files = {}
         isRedirect = ""
