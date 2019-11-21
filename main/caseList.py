@@ -301,8 +301,8 @@ def caseBatchRun(request):
         id = req['idCookie']
         environment = req['environment']
         runResultName = req['runResultName']
-        reportflag = "Y"
-        # reportflag = req['reportflag']
+        # reportflag = "Y"
+        reportflag = req['reportflag']
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         batchrun_list = []
@@ -383,20 +383,20 @@ def caseBatchRun(request):
                     inter.runResult = str(environment) + "环境运行失败"
                 inter.save()
                 result = {"code": 0, "info": "执行结束，结果请查看报告"}
-            else:
-                for case in id:
-                    paramList = str(case).split(',')
-                    caseID = paramList[0]
-                    failNum = batchResult["fNum"]
-                    errorNum = batchResult["eNum"]
-                    inter = caseList.objects.get(id=caseID)
-                    inter.lastRunTime = starttime
-                    if (failNum == 0) and (errorNum == 0):
-                        inter.runResult = str(environment) + "环境运行成功"
-                    else:
-                        inter.runResult = str(environment) + "环境运行失败"
-                    inter.save()
-                result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
+        else:
+            for case in id:
+                paramList = str(case).split(',')
+                caseID = paramList[0]
+                failNum = batchResult["fNum"]
+                errorNum = batchResult["eNum"]
+                inter = caseList.objects.get(id=caseID)
+                inter.lastRunTime = starttime
+                if (failNum == 0) and (errorNum == 0):
+                    inter.runResult = str(environment) + "环境运行成功"
+                else:
+                    inter.runResult = str(environment) + "环境运行失败"
+                inter.save()
+            result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
     return JsonResponse(result, safe=False)
 
 
@@ -407,8 +407,8 @@ def runCase(request):
         id = req['id']
         environment = req['environment']
         runResultName = req['runResultName']
-        reportflag = "Y"
-        # reportflag = req['reportflag']
+        # reportflag = "Y"
+        reportflag = req['reportflag']
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         paramList = str(id).split(',')
