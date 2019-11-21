@@ -400,6 +400,7 @@
 
 
                     <button class="viewButton" @click="selectAll()">全选</button>
+                    <button class="viewButton" @click="refresh()">shuaxin</button>
                     <button class="viewButton" @click="selectNone()">全不选</button>
 
 
@@ -715,6 +716,13 @@
                             </td>
                         </tr>
                     </template>
+                    <tr>
+                        <td colspan="7">
+                            <input class="custom-checkbox" id="createReport" type="checkbox"
+                                   v-model="createReport">生成执行报告
+                            {! createReport !}
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -1349,6 +1357,7 @@
                     projectNameTitle: '',
                     caseName: '',
                     modifyID: '',
+                    createReport: false,
                     caseNameModify: '',
                     list: [],
                     checkedList: [],
