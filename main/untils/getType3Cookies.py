@@ -46,9 +46,9 @@ class getCookies3():
 
     def servirce(self,cookieFlag):
         url = ""
-        if int(cookieFlag==3):
+        if int(cookieFlag==4):
             url = self.typecookie1.get(self.evirment)[0]
-        elif int(cookieFlag==4):
+        elif int(cookieFlag==3):
             url = self.typecookie2.get(self.evirment)[0]
 
         q = multiprocessing.Queue()
@@ -74,5 +74,5 @@ class getCookies3():
         print cookies, datajson["code"]
         return cookies, datajson["code"]
 if __name__ == "__main__":
-  cookiess = getCookies3("qa","27775411","test13579").servirce(3)
+  cookiess = getCookies3("qa","27775411","test13579").servirce(4)
   print cookiess
