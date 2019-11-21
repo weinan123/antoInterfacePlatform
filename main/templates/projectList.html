@@ -696,17 +696,17 @@
                                             依赖数据：{! x.dependData !}
                                         </div>
                                         <div class="col-sm-3" v-if="x.runResult === '失败'">
-                                            运行结果：
+                                            最近运行结果：
                                             <button type="button" class="btn btn-danger btn-xs">失败
                                             </button>
                                         </div>
                                         <div class="col-sm-3" v-if="x.runResult === '成功'">
-                                            运行结果：
+                                            最近运行结果：
                                             <button type="button" class="btn btn-success btn-xs">成功
                                             </button>
                                         </div>
                                         <div class="col-sm-3" v-if="x.runResult === '暂未执行'">
-                                            运行结果：
+                                            最近运行结果：
                                             <button type="button" class="btn btn-default btn-xs">暂未执行
                                             </button>
                                         </div>
@@ -1368,13 +1368,10 @@
                 let id = this.getparam('projectName');
                 pro = id;
                 this.projectNameTitle = pro;
-                var target = document.getElementById("case");
-                var spinner = Spinner({top: '3'}).spin(target);
                 axios
                     .get('/caseInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
-                        spinner.spin();
                         {#console.log(this.list);#}
                     }).catch(err => {
                     {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
@@ -1383,7 +1380,6 @@
                     .get('/caseAPIInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.apiList = resp.data.data;
-                        spinner.spin();
                         {#console.log(this.list);#}
                     }).catch(err => {
                     {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
@@ -1409,8 +1405,8 @@
                     let id = this.getparam('projectName');
                     pro = id;
                     this.projectNameTitle = pro;
-                    var target = document.getElementById("case");
-                    var spinner = Spinner({top: '3'}).spin(target);
+                    var target = document.getElementById("cases");
+                    var spinner = Spinner({top: '1'}).spin(target);
 
                     axios
                         .get('/caseInfo?projectName=' + this.projectNameTitle)
