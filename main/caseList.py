@@ -92,19 +92,29 @@ def caseInfo(request):
                 for x in APIID:
                     mydict = {}
                     num = num + 1
-                    strAPI = '第' + str(num) + '个API：' + \
-                             apiInfoTable.objects.filter(apiID=x).values('apiName')[0][
-                                 'apiName']
+                    respApi = apiInfoTable.objects.filter(apiID=x).values('apiName', 'lastRunResult',
+                                                                          'depend_caseId',
+                                                                          'depend_casedata')
+                    respApiList = list(respApi)
+                    strAPI = '第' + str(num) + '个API：' + respApiList[0]['apiName']
                     mydict["name"] = strAPI
-                    result = apiInfoTable.objects.filter(apiID=x).values('lastRunResult')[0][
-                        'lastRunResult']
+                    result = respApiList[0]['lastRunResult']
                     if (result == 1):
                         mydict["runResult"] = "成功"
                     elif (result == 0):
                         mydict["runResult"] = "暂未执行"
                     elif (result == -1):
                         mydict["runResult"] = "失败"
-                    mydict["href"] = "#"
+                    depend = respApiList[0]['depend_caseId']
+                    if (depend is None) or (depend == ''):
+                        mydict["depend"] = "无"
+                    else:
+                        mydict["depend"] = str(depend)
+                    dependData = respApiList[0]['depend_casedata']
+                    if (dependData is None) or (dependData == ''):
+                        mydict["dependData"] = "无"
+                    else:
+                        mydict["dependData"] = str(dependData)
                     describe.append(mydict)
                     respList[i]['describe'] = describe
                 respList[i]['apiCount'] = num
@@ -348,14 +358,26 @@ def caseBatchRun(request):
             print(" SQL Error: %s" % e)
             result = {'code': -2, 'info': 'sql error'}
             return JsonResponse(result)
-        inter = caseList.objects.get(id=caseID)
-        inter.lastRunTime = starttime
-        inter.reportLocation = report_localName
-        if (totalNum == successNum):
-            inter.runResult = str(environment) + "环境运行成功"
-        else:
-            inter.runResult = str(environment) + "环境运行失败"
-        inter.save()
+        for case in id:
+            paramList = str(case).split(',')
+            caseID = paramList[0]
+            inter = caseList.objects.get(id=caseID)
+            inter.lastRunTime = starttime
+            inter.reportLocation = report_localName
+            includeAPI = caseList.objects.filter(id=caseID).values("includeAPI")[0]['includeAPI']
+            APIID = str(includeAPI).split(',')
+            Success = True
+            if (APIID[0] != ''):
+                for x in APIID:
+                    flag = int(
+                        apiInfoTable.objects.filter(apiID=x).values("lastRunResult")[0]['lastRunResult'])
+                    if (flag == -1):
+                        Success = False
+            if (Success):
+                inter.runResult = str(environment) + "环境运行成功"
+            else:
+                inter.runResult = str(environment) + "环境运行失败"
+            inter.save()
         result = {"code": 0, "info": "执行结束，结果请查看报告"}
 
     return JsonResponse(result, safe=False)

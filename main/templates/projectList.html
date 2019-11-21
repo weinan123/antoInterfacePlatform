@@ -474,8 +474,6 @@
 
                     <label for="environment" class="col-sm-1 control-label"
                            style="margin-top: 5px;float: right;">环境切换：</label>
-                    {! selectAPI !}
-                    {! modifyCheckList !}
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
@@ -686,8 +684,32 @@
                         <tr v-bind:id="'collapse'+[item.id]" class="collapse">
                             <td colspan="7">
                                 <div>
+                                    接口详情：<br>
                                     <div class="panel-body" v-for="x in item['describe']">
-                                        接口详情：{! x.name !}运行结果：{! x.runResult !} 查看详情{! x.href !}
+                                        <div class="col-sm-3">
+                                            {! x.name !}
+                                        </div>
+                                        <div class="col-sm-3">
+                                            依赖用例：{! x.depend !}
+                                        </div>
+                                        <div class="col-sm-3">
+                                            依赖数据：{! x.dependData !}
+                                        </div>
+                                        <div class="col-sm-3" v-if="x.runResult === '失败'">
+                                            运行结果：
+                                            <button type="button" class="btn btn-danger btn-xs">失败
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-3" v-if="x.runResult === '成功'">
+                                            运行结果：
+                                            <button type="button" class="btn btn-success btn-xs">成功
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-3" v-if="x.runResult === '暂未执行'">
+                                            运行结果：
+                                            <button type="button" class="btn btn-default btn-xs">暂未执行
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -1840,8 +1862,8 @@
                             if (resp.data.code === 0) {
                                 this.getCookieList();
                             } else {
-                                alert(resp.data.msg+"\n"
-                                    +"错误信息:"+resp.data.error)
+                                alert(resp.data.msg + "\n"
+                                    + "错误信息:" + resp.data.error)
                             }
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText)
