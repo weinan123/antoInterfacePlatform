@@ -739,21 +739,21 @@
                         <th>密码</th>
                         <th>生成</th>
                         <th>cookies</th>
-                        <th>是否有效</th>
                         <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in qaCookieList">
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 10%;"><input :readOnly="index===0"
+                                type="text" class="form-control" id="name"
                                                        v-model="qcookie.cookiename"
                                                        placeholder="cookie名称">
                         </td>
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%;"><input type="text" class="form-control" id="name"
                                                        placeholder="+8615611112276"
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 11%"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%"><input type="text" class="form-control" id="name"
                                                       placeholder="密码"
                                                       v-model="qcookie.password">
                         </td>
@@ -767,8 +767,7 @@
                                                       placeholder="cookie" readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 7%">{! qcookie.iseffect !}</td>
-                        <td style="width: 10%">
+                        <td style="width: 15%">
                             <button class="btn-local" @click="addCookie('qa')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'qa')">删除
@@ -788,21 +787,21 @@
                         <th>密码</th>
                         <th>生成</th>
                         <th>cookies</th>
-                        <th>是否有效</th>
                         <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in stageCookieList">
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 10%;"><input type="text" class="form-control" id="name"
+                                                       :readonly="index===0"
                                                        v-model="qcookie.cookiename"
                                                        placeholder="cookie名称">
                         </td>
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%;"><input type="text" class="form-control" id="name"
                                                        placeholder="+8615611112276"
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 11%"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%"><input type="text" class="form-control" id="name"
                                                       placeholder="密码"
                                                       v-model="qcookie.password">
                         </td>
@@ -816,8 +815,7 @@
                                                       placeholder="cookie" readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 7%">{! qcookie.iseffect !}</td>
-                        <td style="width: 10%">
+                        <td style="width: 15%">
                             <button class="btn-local" @click="addCookie('stage')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'stage')">删除
@@ -837,21 +835,21 @@
                         <th>密码</th>
                         <th>生成</th>
                         <th>cookies</th>
-                        <th>是否有效</th>
                         <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in liveCookieList">
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 10%;"><input type="text" class="form-control" id="name"
+                                                       :readonly="index===0"
                                                        v-model="qcookie.cookiename"
                                                        placeholder="cookie名称">
                         </td>
-                        <td style="width: 11%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%;"><input type="text" class="form-control" id="name"
                                                        placeholder="+8615611112276"
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 11%"><input type="text" class="form-control" id="name"
+                        <td style="width: 15%"><input type="text" class="form-control" id="name"
                                                       placeholder="密码"
                                                       v-model="qcookie.password">
                         </td>
@@ -865,8 +863,7 @@
                                                       placeholder="cookie" readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 7%">{! qcookie.iseffect !}</td>
-                        <td style="width: 10%">
+                        <td style="width: 15%">
                             <button class="btn-local" @click="addCookie('live')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'live')">删除
@@ -876,6 +873,7 @@
                     </tbody>
                 </table>
             </div>
+            <p>说明：basecookie生成应用于单接口执行所用cookie,业务用例执行可根据业务用例选择不同状态cookie</p>
         </div>
 
     </div>
@@ -1817,7 +1815,17 @@
             data() {
                 return {
                     currentSort: 0,
-                    qaCookieList: [{
+
+                    qaCookieList: [
+                        {
+                        id: "",
+                        cookiename: "basecookie",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffect: ""
+                    },
+                        {
                         id: "",
                         cookiename: "",
                         username: "",
@@ -1825,7 +1833,15 @@
                         cookies: "",
                         iseffect: ""
                     },],
-                    stageCookieList: [{
+                    stageCookieList: [
+                        {
+                        id: "",
+                        cookiename: "basecookie",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffect: ""
+                    },{
                         id: "",
                         cookiename: "",
                         username: "",
@@ -1833,7 +1849,15 @@
                         cookies: "",
                         iseffect: ""
                     },],
-                    liveCookieList: [{
+                    liveCookieList: [
+                        {
+                        id: "",
+                        cookiename: "basecookie",
+                        username: "",
+                        password: "",
+                        cookies: "",
+                        iseffect: ""
+                    },{
                         id: "",
                         cookiename: "",
                         username: "",

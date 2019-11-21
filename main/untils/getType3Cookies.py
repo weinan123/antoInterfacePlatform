@@ -10,9 +10,9 @@ class getCookies3():
         "live":["https://cxsit.yflife.app/v1/mma/connect/sso/login"],
     }
     typecookie2 = {
-        "qa": ["https://servicesit.yflife.app/v1/mma/connect/sso/login"],
-        "stage": ["https://servicesit.yflife.app/v1/mma/connect/sso/login"],
-        "live": ["https://servicesit.yflife.app/v1/mma/connect/sso/login"],
+        "qa": ["https://servicesit.yflife.app/v1/mma/smt/sso/login"],
+        "stage": ["https://servicesit.yflife.app/v1/mma/smt/sso/login"],
+        "live": ["https://servicesit.yflife.app/v1/mma/smt/sso/login"],
     }
     def __init__(self,evirment,username,password):
         self.username = username
@@ -60,7 +60,11 @@ class getCookies3():
         p.terminate()
         auth = a
         print auth
-        body = {"loginname":self.username,"logintype":2,"auth":auth,"value":self.password}
+        body = {}
+        if(cookieFlag==4):
+            body = {"loginname":self.username,"logintype":2,"auth":auth,"value":self.password}
+        elif(cookieFlag==3):
+            body = {"agentcode": self.username, "auth": auth, "agentpwd": self.password}
         methods = "POST"
         headers = {"Content-Type": "application/json"}
         files = {}
@@ -74,5 +78,5 @@ class getCookies3():
         print cookies, datajson["code"]
         return cookies, datajson["code"]
 if __name__ == "__main__":
-  cookiess = getCookies3("qa","87825","test13579").servirce(4)
+  cookiess = getCookies3("qa","87825","Test13579").servirce(3)
   print cookiess
