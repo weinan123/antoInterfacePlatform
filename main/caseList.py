@@ -124,7 +124,8 @@ def caseInfo(request):
                 respList[i]['executor'] = '暂未执行'
             if (respList[i]['runResult'] is None) or (respList[i]['runResult'] == ''):
                 respList[i]['runResult'] = '暂未执行'
-            if (respList[i]['lastRunTime'] is None) or (respList[i]['lastRunTime'] == ''):
+            if (respList[i]['lastRunTime'] is None) or (respList[i]['lastRunTime'] == '') or (
+                    respList[i]['lastRunTime'] == 'None'):
                 respList[i]['lastRunTime'] = '暂未执行'
         result = {
             'data': respList,
@@ -559,7 +560,7 @@ def modifyCase(request):
                 inter.includeAPI = api
                 inter.executor = ''
                 inter.runResult = ''
-                # inter.lastRunTime = ''
+                inter.lastRunTime = None
                 inter.caseName = caseName
                 inter.save()
                 code = 0
