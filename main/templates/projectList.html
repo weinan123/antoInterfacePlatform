@@ -336,13 +336,16 @@
                                 </div>
                                 <div class="modal-body">
                                     <label for="projectName"
-                                           class="control-label" style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
+                                           class="control-label"
+                                           style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
                                     <div style="width: 35%;float: left">
                                         <input class="form-control" type="text" name="projectName"
-                                               v-model="projectNameTitle" readonly="readonly" maxlength="50">
+                                               v-model="projectNameTitle" readonly="readonly"
+                                               maxlength="50">
                                     </div>
                                     <label for="caseName"
-                                           class=" control-label" style="margin-top: 10px;margin-left:5%;width: 10%;float: left" >用例名称:</label>
+                                           class=" control-label"
+                                           style="margin-top: 10px;margin-left:5%;width: 10%;float: left">用例名称:</label>
                                     <div style="width: 35%;float: left">
                                         <input class="form-control" type="text" name="caseName"
                                                id="caseName" v-model="caseName"
@@ -1592,6 +1595,8 @@
                         if (this.createReport === true) {
                             reportflag = "Y"
                         }
+                        var target = document.getElementById("cases");
+                        var spinner = Spinner({top: '1'}).spin(target);
                         axios.post('/runCase/', {
                             params: {
                                 id: cookieID,
@@ -1600,6 +1605,7 @@
                                 reportflag: reportflag,
                             }
                         }).then(resp => {
+                                spinner.spin();
                                 let info = resp.data.info;
                                 let code = resp.data.code;
                                 if (code === 0) {
@@ -1824,32 +1830,32 @@
 
                     qaCookieList: [
                         {
-                        id: "",
-                        cookiename: "basecookie",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },
-                        ],
+                            id: "",
+                            cookiename: "basecookie",
+                            username: "",
+                            password: "",
+                            cookies: "",
+                            iseffect: ""
+                        },
+                    ],
                     stageCookieList: [
                         {
-                        id: "",
-                        cookiename: "basecookie",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },],
+                            id: "",
+                            cookiename: "basecookie",
+                            username: "",
+                            password: "",
+                            cookies: "",
+                            iseffect: ""
+                        },],
                     liveCookieList: [
                         {
-                        id: "",
-                        cookiename: "basecookie",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },]
+                            id: "",
+                            cookiename: "basecookie",
+                            username: "",
+                            password: "",
+                            cookies: "",
+                            iseffect: ""
+                        },]
 
                 };
 
@@ -1859,8 +1865,8 @@
             },
             methods: {
                 getCookies(index, id, cookiename, username, password, evirment) {
-                var target = document.getElementById("cookies");
-                var spinner = Spinner({top:'1'}).spin(target);
+                    var target = document.getElementById("cookies");
+                    var spinner = Spinner({top: '1'}).spin(target);
                     let data_to_send = {
                         id: id,
                         cookiename: cookiename,
