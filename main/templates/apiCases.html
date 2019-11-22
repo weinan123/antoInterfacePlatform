@@ -288,7 +288,6 @@
             },
             getlist(number){
                 let pagenumber = number;
-                this.casesSel_list = [];
                 var target = document.getElementById("tableBody");
                 var spinner1 = Spinner({top:"1"}).spin(target);
                 if(this.totalCount>0 && (this.totalCount / this.pageCount)<=this.pageNum-1 && (this.pageNum>1)){
@@ -530,6 +529,7 @@
                                     if (code === 0) {
                                         alert("删除结果：" + info);
                                         self.totalCount = self.totalCount - resp.data.successNum;
+                                        self.casesSel_list = [];
                                         self.getlist(self.pageNum);
                                     } else {
                                         toastr.error("删除失败");
