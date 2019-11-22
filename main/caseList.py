@@ -59,6 +59,16 @@ def caseInfo(request):
                                                                          "creator", "executor",
                                                                          "updateTime", "createTime",
                                                                          "runResult", "lastRunTime")
+        user = request.session.get('username')
+        resp2 = users.objects.filter(username=user).values("batch_check", "batch_del", "batch_run")
+        batch_check = resp2[0]['batch_check']
+        batch_del = resp2[0]['batch_del']
+        batch_run = resp2[0]['batch_run']
+        permit = {
+            'batch_check': batch_check,
+            'batch_del': batch_del,
+            'batch_run': batch_run
+        }
         respList = list(resp)
         for i in range(len(respList)):
             id = respList[i]['id']
@@ -129,6 +139,7 @@ def caseInfo(request):
                 respList[i]['lastRunTime'] = '暂未执行'
         result = {
             'data': respList,
+            'permit': permit,
             'code': 0,
             'info': 'success'
         }
