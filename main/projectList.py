@@ -122,6 +122,16 @@ def projectListInfo(request):
                                                                            "updateTime",
                                                                            "createTime")
         respList = list(resp)
+        user = request.session.get('username')
+        resp2 = users.objects.filter(username=user).values("batch_check", "batch_del", "batch_run")
+        batch_check = resp2[0]['batch_check']
+        batch_del = resp2[0]['batch_del']
+        batch_run = resp2[0]['batch_run']
+        permit = {
+            'batch_check': batch_check,
+            'batch_del': batch_del,
+            'batch_run': batch_run
+        }
         for i in range(len(respList)):
             respList[i]['projectName'] = projectName
             respList[i]['updateTime'] = str(respList[i]['updateTime']).split('.')[0]
@@ -160,6 +170,7 @@ def projectListInfo(request):
             respList[i]['failcaseNum'] = failcaseNum
             respList[i]['blockcaseNum'] = blockcaseNum
         result = {
+            'permit': permit,
             'data': respList,
             'code': 0,
             'info': 'success'

@@ -177,7 +177,7 @@
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
-                    <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 "
+                    <button v-if="checkedDelete !== undefined && checkedDelete.length > 0 && permit.batch_del "
                             class="btn-delete"
                             style="width: 74px;height: 36px;" @click="projectBatchDelete()">批量删除
                     </button>
@@ -367,20 +367,21 @@
                                         <div style="clear:both;"></div>
                                     </div>
                                     <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
-                                        <button type="button" class="btn btn-info btn-sm" @click="submitAPI()">
+                                        <button type="button" class="btn btn-info btn-sm"
+                                                @click="submitAPI()">
                                             确认
                                         </button>
                                     </div>
-                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro" >
+                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                         <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p></div>
 
                                     <div style="text-align: right;margin-top: 10px;float: right">
-                                            <input type="button" class="btn btn-primary btn-sm"
-                                                   @click="addCase()" value="新建"/>&nbsp&nbsp&nbsp
-                                            <button type="button" class="btn btn-primary btn-sm"
-                                                    data-dismiss="modal">
-                                                关闭
-                                            </button>
+                                        <input type="button" class="btn btn-primary btn-sm"
+                                               @click="addCase()" value="新建"/>&nbsp&nbsp&nbsp
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                                data-dismiss="modal">
+                                            关闭
+                                        </button>
 
                                     </div>
                                 </div>
@@ -391,21 +392,25 @@
 
 
                     <button class="viewButton" @click="selectAll()">全选</button>
-                    <button class="viewButton" @click="refresh()">shuaxin</button>
                     <button class="viewButton" @click="selectNone()">全不选</button>
+                    <button class="viewButton" @click="refresh()">刷新</button>
 
 
                     {#                判断批量删除的复选框是否被选中，如果被选中，则显示批量删除的按钮#}
                     {#                checkedDelete为数组，记录着选中的项目的ID#}
 
-                    <button v-if="checkedList !== undefined && checkedList.length > 0 "
+                    <button v-if="checkedList !== undefined && checkedList.length > 0 && permit.batch_del"
                             class="btn-delete"
                             style="width: 74px;height: 36px;" @click="caseBatchDelete()">批量删除
                     </button>
 
 
-                    <button v-if="checkedList !== undefined && checkedList.length > 0 "
+                    <button v-if="checkedList !== undefined && checkedList.length > 0 && createReport && permit.batch_run"
                             class="btn-delete" data-toggle="modal" data-target="#caseBatchRun"
+                            style="width: 74px;height: 36px;">批量执行
+                    </button>
+                    <button v-if="checkedList !== undefined && checkedList.length > 0 && !createReport && permit.batch_run"
+                            class="btn-delete" @click="caseBatchRun()"
                             style="width: 74px;height: 36px;">批量执行
                     </button>
 
@@ -436,9 +441,8 @@
                                     <div class="col-sm-12"
                                          style="align-items: center;text-align: center;margin-top: 10px;padding-bottom: 10px;">
                                         <div class="col-sm-6">
-                                            <input type="button" class="viewButton"
-                                                   @click="caseBatchRun()"
-                                                   value="执行"/>
+                                            <input type="button" class="viewButton" value="执行"
+                                                   @click="caseBatchRun()"/>
                                         </div>
                                         <div class="col-sm-6">
                                             <button type="button" class="viewButton"
@@ -460,7 +464,6 @@
                             <option value="QA">QA</option>
                             <option value="Stage">Stage</option>
                             <option value="Live">Live</option>
-                            <option value="Dev">Dev</option>
                         </select>
                     </div>
 
@@ -538,7 +541,7 @@
                                                         &times;
                                                     </button>
                                                     <label class="modal-title"
-                                                           id="myModalLabel">选择接口</label>
+                                                           id="myModalLabel">编辑</label>
                                                 </div>
                                                 <div class="modal-body">
                                                     <label for="projectName"
@@ -558,55 +561,51 @@
                                                                id="caseName" v-model="caseNameModify"
                                                                maxlength="50" placeholder="请输入用例名称"/>
                                                     </div>
-
-                                                    <div style="margin-top: 50px;margin-bottom: 10px;">
+                                                    <div style="overflow-y:auto;margin-top: 20px;max-height:350px;height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                                         <div v-for="item in modifyApi" class="col-sm-12">
-                                                            <h4 class="col-sm-12"
-                                                                style="font-weight: bold">所属项目：{!
-                                                                item.moduleName !}</h4>
+                                            <span style="color: #2372A8;font-weight: bold">模块：{!
+                                                item.moduleName !}</span>
                                                             <template v-for="x in item.data">
-                                                                <div class="col-sm-3">
-                                                                    <input v-bind:id="['checkboxModify'+x.apiID]"
+                                                                <div style="margin-left: 10px">
+                                                                    <input class="custom-checkbox"
+                                                                           v-bind:id="['checkboxModify'+x.apiID]"
                                                                            type="checkbox"
                                                                            @change="selectDisplay = []"
                                                                            v-bind:value="[x.apiID]"
                                                                            v-model="modifyCheckList">
-                                                                    <label v-bind:for="['checkboxModify'+x.apiID]">{!
-                                                                        x.apiName
-                                                                        !}</label>
+                                                                    <span v-bind:for="['checkboxModify'+x.apiID]">{!
+                                                        x.apiName
+                                                        !}</span>
                                                                 </div>
                                                             </template>
                                                         </div>
                                                         <div style="clear:both;"></div>
                                                     </div>
-                                                    <div class="col-sm-3">
-                                                        <label class="col-sm-12">请先点击右侧确认按钮：</label>
-                                                    </div>
-                                                    <div class="col-sm-2">
-                                                        <button type="button" class="btn-local"
+
+                                                    <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
+                                                        <button type="button" class="btn btn-info btn-sm"
                                                                 @click="modifySubmitAPI()">
                                                             确认
                                                         </button>
                                                     </div>
 
-                                                    <p class="col-sm-12" v-for="x in selectDisplay">{! x
-                                                        !}</p>
+                                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
+                                                        <p class="col-sm-12" v-for="x in selectDisplay">
+                                                            {! x !}</p></div>
 
-                                                    <div class="col-sm-12"
-                                                         style="align-items: center;text-align: center;margin-top: 10px;">
-                                                        <div class="col-sm-6">
-                                                            <input type="button" class="viewButton"
-                                                                   @click="modifyCase(modifyID)"
-                                                                   value="修改"/>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <button type="button" class="viewButton"
-                                                                    @click="selectDisplay=[]"
-                                                                    data-dismiss="modal">
-                                                                关闭
-                                                            </button>
-                                                        </div>
+                                                    <div style="text-align: right;margin-top: 10px;float: right">
+                                                        <input type="button"
+                                                               class="btn btn-primary btn-sm"
+                                                               @click="modifyCase(modifyID)" value="修改"/>&nbsp&nbsp&nbsp
+                                                        <button type="button"
+                                                                class="btn btn-primary btn-sm"
+                                                                @click="selectDisplay=[]"
+                                                                data-dismiss="modal">
+                                                            关闭
+                                                        </button>
+
                                                     </div>
+
                                                 </div>
                                                 <div style="clear:both;"></div>
                                             </div><!-- /.modal-content -->
@@ -619,10 +618,15 @@
                                                 @click="caseDelete(item.id)">删除
                                         </button>
                                     </a>
-                                    <a>
+                                    <a v-if="createReport">
                                         <button type="button" class="btn-delete"
                                                 data-toggle="modal"
                                                 v-bind:data-target="'#runCase'+[item.id]">执行
+                                        </button>
+                                    </a>
+                                    <a v-if="!createReport">
+                                        <button type="button" class="btn-delete"
+                                                @click="runCase(item.id)">执行
                                         </button>
                                     </a>
                                     <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
@@ -707,11 +711,10 @@
                             </td>
                         </tr>
                     </template>
-                    <tr>
+                    <tr v-if="list.length > 0">
                         <td colspan="7">
                             <input class="custom-checkbox" id="createReport" type="checkbox"
-                                   v-model="createReport">生成执行报告
-                            {! createReport !}
+                                   v-model="createReport">&nbsp&nbsp生成执行报告
                         </td>
                     </tr>
                     </tbody>
@@ -736,9 +739,9 @@
                     <tbody>
                     <tr v-for="qcookie,index in qaCookieList">
                         <td style="width: 10%;"><input :readOnly="index===0"
-                                type="text" class="form-control" id="name"
+                                                       type="text" class="form-control" id="name"
                                                        v-model="qcookie.cookiename"
-                                                      >
+                        >
                         </td>
                         <td style="width: 15%;"><input type="text" class="form-control" id="name"
                                                        v-model="qcookie.username">
@@ -785,7 +788,7 @@
                         <td style="width: 10%;"><input type="text" class="form-control" id="name"
                                                        :readonly="index===0"
                                                        v-model="qcookie.cookiename"
-                                                       >
+                        >
                         </td>
                         <td style="width: 15%;"><input type="text" class="form-control" id="name"
 
@@ -801,7 +804,7 @@
                             </button>
                         </td>
                         <td style="width: 45%"><input type="text" class="form-control" id="name"
-                                                       readOnly="true"
+                                                      readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
                         <td style="width: 15%">
@@ -964,6 +967,7 @@
                     moduleNameNew: '',
                     file: '',
                     list: [],
+                    permit: [],
                     checkedDelete: [],
                 };
             },
@@ -980,6 +984,7 @@
                     .get('/projectListInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
+                        this.permit = resp.data.permit;
                         spinner.spin();
                         {#console.log(this.list);#}
                     }).catch(err => {
@@ -1126,6 +1131,7 @@
                         .get('/projectListInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
+                            this.permit = resp.data.permit;
                             {#console.log(this.list);#}
                         }).catch(err => {
                         console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -1345,6 +1351,7 @@
                     createReport: false,
                     caseNameModify: '',
                     list: [],
+                    permit: [],
                     checkedList: [],
                     modifyCheckList: [],
                     apiList: [],
@@ -1366,6 +1373,7 @@
                     .get('/caseInfo?projectName=' + this.projectNameTitle)
                     .then(resp => {
                         this.list = resp.data.data;
+                        this.permit = resp.data.permit;
                         {#console.log(this.list);#}
                     }).catch(err => {
                     {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
@@ -1406,6 +1414,7 @@
                         .get('/caseInfo?projectName=' + this.projectNameTitle)
                         .then(resp => {
                             this.list = resp.data.data;
+                            this.permit = resp.data.permit;
                             {#console.log(this.list);#}
                         }).catch(err => {
                         {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
@@ -1575,15 +1584,20 @@
                 },
 
                 runCase(id) {
-                    if (this.runResultName === "") {
+                    if (this.runResultName === "" && this.createReport === true) {
                         alert('请输入报告名称！');
                     } else {
                         var cookieID = document.getElementById("cookie" + id).value;
+                        var reportflag = "N";
+                        if (this.createReport === true) {
+                            reportflag = "Y"
+                        }
                         axios.post('/runCase/', {
                             params: {
                                 id: cookieID,
                                 environment: this.environment,
                                 runResultName: this.runResultName,
+                                reportflag: reportflag,
                             }
                         }).then(resp => {
                                 let info = resp.data.info;
@@ -1662,7 +1676,7 @@
                 },
 
                 caseBatchRun() {
-                    if (this.runResultName === "") {
+                    if (this.runResultName === "" && this.createReport === true) {
                         alert('请输入报告名称！');
                     } else {
                         this.selectCookieList = [];
@@ -1670,11 +1684,16 @@
                             var cookieID = document.getElementById("cookie" + item).value;
                             this.selectCookieList.push(cookieID);
                         });
+                        var reportflag = "N";
+                        if (this.createReport === true) {
+                            reportflag = "Y"
+                        }
                         axios.post('/caseBatchRun/', {
                             params: {
                                 idCookie: this.selectCookieList,
                                 environment: this.environment,
                                 runResultName: this.runResultName,
+                                reportflag: reportflag,
                             }
                         }).then(resp => {
                                 if (resp.data.code === 0) {
@@ -1912,35 +1931,34 @@
                     lenstage = this.stageCookieList.length;
                     lenlive = this.liveCookieList.length;
                     if (id === "") {
-                        if (evirment === "qa" && lenqa > 1&& index>0) {
+                        if (evirment === "qa" && lenqa > 1 && index > 0) {
                             this.qaCookieList.splice(index, 1);
-                        } else if (evirment === "stage" && lenstage > 1&& index>0) {
+                        } else if (evirment === "stage" && lenstage > 1 && index > 0) {
                             this.stageCookieList.splice(index, 1);
-                        } else if (evirment === "live" && lenlive > 1&& index>0) {
+                        } else if (evirment === "live" && lenlive > 1 && index > 0) {
                             this.liveCookieList.splice(index, 1);
-                        }else{
+                        } else {
                             alert("baseCookie不可删除")
                         }
                     } else {
-                        if(index===0){
-                          alert("baseCookie不可删除")
-                        }
-                        else{
-                             let data_to_send = {
-                            id: id,
-                        };
-                        axios
-                            .post('/delCookies/', data_to_send)
-                            .then(resp => {
-                                console.log(resp.data);
-                                if (resp.data.code === 0) {
-                                    this.getCookieList()
-                                } else {
-                                    alert(resp.data.msg)
-                                }
-                            }).catch(err => {
-                            console.log('请求失败:' + err.status + ',' + err.statusText)
-                        });
+                        if (index === 0) {
+                            alert("baseCookie不可删除")
+                        } else {
+                            let data_to_send = {
+                                id: id,
+                            };
+                            axios
+                                .post('/delCookies/', data_to_send)
+                                .then(resp => {
+                                    console.log(resp.data);
+                                    if (resp.data.code === 0) {
+                                        this.getCookieList()
+                                    } else {
+                                        alert(resp.data.msg)
+                                    }
+                                }).catch(err => {
+                                console.log('请求失败:' + err.status + ',' + err.statusText)
+                            });
                         }
 
 
