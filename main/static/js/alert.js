@@ -29,10 +29,11 @@ window.alert = function (txt, time) {
     alertDiv.style.height = "150px";
     alertDiv.style.background = "#ccc";
     alertDiv.style.textAlign = "center";
-    alertDiv.style.lineHeight = "150px";
     alertDiv.style.zIndex = "10000";
     alertDiv.style.zIndex = "9999999";
-    alertDiv.innerHTML = "<ul style='list-style:none;margin:0px;padding:0px;width:100%'><li style='background:#2372A8;text-align:left;padding-left:10px;font-size:16px;font-weight:bold;height:30px;line-height:25px;border:1px solid #2372A8;color:white'>提示:</li><li style='background:#fff;text-align:center;font-size:14px;height:120px;line-height:120px;border-left:1px solid #2372A8;border-right:1px solid #2372A8;'>" + txt + "</li><li style='background:#2372A8;text-align:center;font-weight:bold;height:30px;line-height:25px; border:1px solid #2372A8;'onclick='doOk()'><input type='button' style='background-color: #2372A8;padding-top: 1px;border: none;outline:none;color:white' value='确 定'/></li></ul>";
+    alertDiv.innerHTML = "<div style='list-style:none;margin:0px;padding:0px;width:100%'><li style='background:#2372A8;text-align:left;padding-left:10px;font-size:16px;font-weight:bold;height:30px;border:1px solid #2372A8;color:white'>提示:</li>" +
+        "<div style='background:#fff;text-align:center;font-size:14px;height:120px;padding-top: 35px;border-left:1px solid #2372A8;border-right:1px solid #2372A8;'>"+ txt + "</div>" +
+        "<li style='background:#2372A8;text-align:center;font-weight:bold;height:30px;line-height:25px; border:1px solid #2372A8;'onclick='doOk()'><input type='button' style='background-color: #2372A8;padding-top: 1px;border: none;outline:none;color:white' value='确 定'/></li></div>";
     document.body.appendChild(alertDiv);
      document.body.appendChild(shield);
     var c = 0;

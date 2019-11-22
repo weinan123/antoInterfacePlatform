@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sendRequests
 import json,requests
 from jpype import *
@@ -18,18 +19,6 @@ class getCookies3():
         self.username = username
         self.password = password
         self.evirment = evirment
-    def getsalt(self):
-        #url = "https://uc-qa.youyu.cn/v1/users/check"
-        url = self.typecookie1.get(self.evirment)[0]
-        body = {"type": "mobile", "value": self.username, "aver": 1}
-        methods = "POST"
-        headers = {"Content-Type": "application/json"}
-        files = {}
-        isRedirect = ""
-        showflag = ""
-        resp = sendRequests.sendRequest().sendRequest(methods,url,headers,body,files,isRedirect,showflag)
-        datajson = resp.json()
-        return datajson["data"]["uin"],datajson["data"]["loginid"],datajson["data"]["salt"]
     def getauth(self,q):
         #jvmPath = ur"D:\jre_python\jre-8u231-windows-x64\jre1.8.0_231\bin\server\jvm.dll"
         jvmPath = jpype.getDefaultJVMPath()
@@ -73,10 +62,20 @@ class getCookies3():
         resp = sendRequests.sendRequest().sendRequest(methods,url,headers,body,files,isRedirect,showflag)
         print resp.text
         datajson = resp.json()
-        print datajson
-        cookies = requests.utils.dict_from_cookiejar(resp.cookies)
-        print cookies, datajson["code"]
-        return cookies, datajson["code"]
+        if datajson["code"] == 0:
+            cookies = requests.utils.dict_from_cookiejar(resp.cookies)
+            cookiedata = {
+                "code": 0,
+                "msg": "获取cookie成功",
+                "cookies": cookies,
+            }
+        else:
+            cookiedata = {
+                "code": -2,
+                "msg": "获取cookie失败",
+                "error_msg": datajson["msg"]
+            }
+        return cookiedata
 if __name__ == "__main__":
   cookiess = getCookies3("qa","87825","Test13579").servirce(3)
   print cookiess

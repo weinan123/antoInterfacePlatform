@@ -1812,25 +1812,11 @@
                         cookies: "",
                         iseffect: ""
                     },
-                        {
-                        id: "",
-                        cookiename: "",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },],
+                        ],
                     stageCookieList: [
                         {
                         id: "",
                         cookiename: "basecookie",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },{
-                        id: "",
-                        cookiename: "",
                         username: "",
                         password: "",
                         cookies: "",
@@ -1840,13 +1826,6 @@
                         {
                         id: "",
                         cookiename: "basecookie",
-                        username: "",
-                        password: "",
-                        cookies: "",
-                        iseffect: ""
-                    },{
-                        id: "",
-                        cookiename: "",
                         username: "",
                         password: "",
                         cookies: "",
@@ -1861,6 +1840,8 @@
             },
             methods: {
                 getCookies(index, id, cookiename, username, password, evirment) {
+                var target = document.getElementById("cookies");
+                var spinner = Spinner({top:'1'}).spin(target);
                     let data_to_send = {
                         id: id,
                         cookiename: cookiename,
@@ -1876,6 +1857,7 @@
                             console.log(resp.data);
                             index = resp.data.index;
                             if (resp.data.code === 0) {
+                                spinner.spin();
                                 this.getCookieList();
                             } else {
                                 alert(resp.data.msg + "\n"
