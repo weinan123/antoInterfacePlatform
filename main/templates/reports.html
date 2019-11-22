@@ -119,6 +119,7 @@ var vmRs = new Vue({
         getreportList() {
             var target = document.getElementById("tableBody");
             var spinner1 = Spinner({top:"1"}).spin(target);
+            this.casesSel_list = [];
             if(this.totalCount>0 && (this.totalCount / this.pageCount)<=this.pageNum-1 && (this.pageNum>1)){
                 this.pageNum = this.pageNum -1;
             }
