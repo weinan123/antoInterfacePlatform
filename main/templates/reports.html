@@ -283,6 +283,8 @@ var vmRs = new Vue({
                                 if (code === 0) {
                                     alert("删除成功，结果：" + info);
                                     self.totalCount = self.totalCount - resp.data.successNum;
+                                    self.casesSel_list = [];
+                                    self.delList = [];
                                     self.getreportList();
                                 } else {
                                     toastr.options = {
