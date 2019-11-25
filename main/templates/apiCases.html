@@ -530,6 +530,7 @@
                                         alert("删除结果：" + info);
                                         self.totalCount = self.totalCount - resp.data.successNum;
                                         self.casesSel_list = [];
+                                        self.dlist = [];
                                         self.getlist(self.pageNum);
                                     } else {
                                         toastr.error("删除失败");

@@ -55,7 +55,7 @@ def create():
 '''
 def getHost(id,environment):
     hostdict = hostTags.objects.filter(id=id).values()
-    print hostdict
+    # print hostdict
     hostqa = hostdict[0]["qa"]
     hoststage = hostdict[0]["stage"]
     hostlive = hostdict[0]["live"]
@@ -122,11 +122,12 @@ def getResp(id,environment, dtime, cookices = None):
         result = {"code": -1, "info": "参数不能为空"}
         return result
     headers = replaceParam(dependData, query.headers)
-    if headers != "":
+    if headers != "" and headers is not None:
         headers = json.loads(headers)
     bodyinfor = replaceParam(dependData, query.body)
     showflag = ""
-    if bodyinfor != "" and str(bodyinfor) != "{}":
+    # print("bodyinfor: ", bodyinfor)
+    if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
         showflag = bodyinfor["showflag"]
 
@@ -164,7 +165,7 @@ def getResp(id,environment, dtime, cookices = None):
     # 加密执行
     else:
         credentials = authService.BceCredentials(key_id, secret_key)
-        print credentials
+        # print credentials
         headers_data = {
             'Accept': 'text/html, */*; q=0.01',
             'X-Requested-With': 'XMLHttpRequest',
@@ -205,8 +206,9 @@ def isDependency(depend_flag, depend_data, environment, Cookie):
 
 
 def replaceParam(dependdata_dict, stringValue):
-    strValue = str(stringValue)
-    if strValue.find("${") != -1:
+    strValue = stringValue
+    if str(strValue).find("${") != -1:
+        strValue = str(strValue)
         param_key = re.findall(r"\${(.*?)}", strValue)[0]
         if param_key != "" and (param_key in dependdata_dict.keys()):
             # print("___dependdata_dict___",strValue,type(strValue),dependdata_dict,dependdata_dict[param_key])
