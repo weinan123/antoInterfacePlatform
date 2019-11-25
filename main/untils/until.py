@@ -17,7 +17,7 @@ def my_login(func):
 def mul_bodyData(bodyinfor):
     body = {}
     files = {}
-    if bodyinfor == "" or str(bodyinfor) == "{}" :
+    if bodyinfor == "" or str(bodyinfor) == "{}" or bodyinfor is None:
         body = {}
         files = {}
         showflag = ""
@@ -57,7 +57,6 @@ def getcookies(cookieFlag,evirment,username,password):
     elif int(cookieFlag==4):
         cookies = getType3Cookies.getCookies3(evirment, username, password).servirce(cookieFlag)
     return cookies
-
 
 
 

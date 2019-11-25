@@ -525,15 +525,15 @@ def saveOrUpdateData(request):
         #     except Exception as e:
         #         result = {"code": -1, "info": "header格式不正确"}
         #         return JsonResponse(result)
-        if body_str != "" and body_str is not None:
+        if body_str != "" and body_str is not None and body_str != "{}":
             body = {"showflag": 3,
                     "datas": [{"paramValue": body_str}]
                     }
             body = json.dumps(body)
         else:
-            body = None
+            body = "{}"
         if header == "" or header is None:
-            header = None
+            header = "{}"
         assertinfo = data["assert"]
         environment = data["environment"]
         userName = data["user"]
