@@ -54,12 +54,43 @@ def caseInfo(request):
         'info': '调用的方法错误，请使用GET方法查询！'
     }
     if request.method == 'GET':
-        projectName = request.GET.get('projectName')
+        projectName = request.GET["projectName"]
+        pageNum = int(request.GET["pageNum"])
+        cut = pageNum * 10
         resp = caseList.objects.filter(owningProject=projectName).values("id", "caseName", "includeAPI",
                                                                          "creator", "executor",
                                                                          "updateTime", "createTime",
                                                                          "runResult", "lastRunTime")
         user = request.session.get('username')
+        totalCase = resp.count()
+        disflag_right = "disabled"
+        disflag_left = "disabled"
+        pageview = False
+        if (pageNum > 0):
+            if (totalCase > pageNum * 10):  # 说明不在尾页
+                resp = resp[cut - 10:cut]
+                if (pageNum > 1):
+                    disflag_left = ""
+            else:  # 说明在尾页
+                pageNum = int((totalCase - 1) / 10) + 1
+                cut = pageNum * 10
+                resp = resp[cut - 10:cut]
+                disflag_left = ""
+            if (totalCase < 11):
+                pageview = False
+            else:
+                pageview = True
+            if (totalCase <= pageNum * 10):
+                disflag_right = "disabled"
+            else:
+                disflag_right = ""
+        else:
+            pageNum = int((totalCase - 1) / 10) + 1
+            cut = pageNum * 10
+            resp = resp[cut - 10:cut]
+            disflag_left = ""
+            pageview = True
+
         resp2 = users.objects.filter(username=user).values("batch_check", "batch_del", "batch_run")
         batch_check = resp2[0]['batch_check']
         batch_del = resp2[0]['batch_del']
@@ -138,6 +169,10 @@ def caseInfo(request):
                     respList[i]['lastRunTime'] == 'None'):
                 respList[i]['lastRunTime'] = '暂未执行'
         result = {
+            'pageNum': pageNum,
+            'disflag_left': disflag_left,
+            'pageview': pageview,
+            'disflag_right': disflag_right,
             'data': respList,
             'permit': permit,
             'code': 0,

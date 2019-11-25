@@ -722,6 +722,22 @@
                     </tr>
                     </tbody>
                 </table>
+                <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
+                    <ul class="pagination">
+                        <li v-bind:class="disflag_left" style="cursor:pointer"><a
+                                @click="fristPage()">首页</a></li>
+                        <li v-bind:class="disflag_left" style="cursor:pointer"><a
+                                @click="cutPage(pageNum)">上一页</a></li>
+                        <li>
+                            <a style="background-color: #428bca;color: #FFFFFF;border-top: 1px solid #428bca;border-bottom: 1px solid #428bca;">{!
+                                pageNum !}</a></li>
+                        <li v-bind:class="disflag_right" style="cursor:pointer"><a
+                                @click="addPage(pageNum)">下一页</a></li>
+                        <li v-bind:class="disflag_right" style="cursor:pointer"><a
+                                @click="lastPage()">末页</a></li>
+                    </ul>
+                </div>
+
             </div>
         </div>
         {% comment %}/**cookie详情model**/{% endcomment %}
@@ -868,7 +884,6 @@
             </div>
             <p>说明：basecookie生成应用于单接口执行所用cookie,业务用例执行可根据业务用例选择不同状态cookie</p>
         </div>
-
     </div>
     <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>
 {% endblock %}
@@ -1347,6 +1362,10 @@
             el: '#cases',
             data() {
                 return {
+                    pageNum: 1,
+                    disflag_left: "disabled",
+                    disflag_right: "",
+                    pageview: false,
                     currentSort: 0,
                     projectNameTitle: '',
                     caseName: '',
@@ -1373,16 +1392,29 @@
                 pro = id;
                 this.projectNameTitle = pro;
                 axios
-                    .get('/caseInfo?projectName=' + this.projectNameTitle)
+                    .get('/caseInfo/', {
+                        params: {
+                            projectName: this.projectNameTitle,
+                            pageNum: this.pageNum,
+                        }
+                    })
                     .then(resp => {
                         this.list = resp.data.data;
                         this.permit = resp.data.permit;
+                        this.pagenum = resp.data.pagenum;
+                        this.disflag_left = resp.data.disflag_left;
+                        this.pageview = resp.data.pageview;
+                        this.disflag_right = resp.data.disflag_right;
                         {#console.log(this.list);#}
                     }).catch(err => {
                     {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                 });
                 axios
-                    .get('/caseAPIInfo?projectName=' + this.projectNameTitle)
+                    .get('/caseAPIInfo/', {
+                        params: {
+                            projectName: this.projectNameTitle,
+                        }
+                    })
                     .then(resp => {
                         this.apiList = resp.data.data;
                         {#console.log(this.list);#}
@@ -1414,16 +1446,29 @@
                     var spinner = Spinner({top: '1'}).spin(target);
 
                     axios
-                        .get('/caseInfo?projectName=' + this.projectNameTitle)
+                        .get('/caseInfo/', {
+                            params: {
+                                projectName: this.projectNameTitle,
+                                pageNum: this.pageNum,
+                            }
+                        })
                         .then(resp => {
                             this.list = resp.data.data;
                             this.permit = resp.data.permit;
+                            this.pageNum = resp.data.pageNum;
+                            this.disflag_left = resp.data.disflag_left;
+                            this.pageview = resp.data.pageview;
+                            this.disflag_right = resp.data.disflag_right;
                             {#console.log(this.list);#}
                         }).catch(err => {
                         {#console.log('请求失败:' + err.status + ',' + err.statusText);#}
                     });
                     axios
-                        .get('/caseAPIInfo?projectName=' + this.projectNameTitle)
+                        .get('/caseAPIInfo/', {
+                            params: {
+                                projectName: this.projectNameTitle,
+                            }
+                        })
                         .then(resp => {
                             this.apiList = resp.data.data;
                             spinner.spin();
@@ -1813,6 +1858,30 @@
                             }
                         );
                     }
+                },
+
+                addPage(num) {
+                    this.pageNum = num + 1;
+                    this.refresh();
+                },
+
+                cutPage(num) {
+                    this.pageNum = num - 1;
+                    this.refresh();
+                },
+
+                fristPage() {
+                    this.pageNum = 1;
+                    this.disflag_left = "disabled";
+                    this.disflag_right = "";
+                    this.refresh();
+                },
+
+                lastPage() {
+                    this.pageNum = -1;
+                    this.disflag_left = "";
+                    this.disflag_right = "disabled";
+                    this.refresh();
                 },
 
 
