@@ -69,6 +69,9 @@
                 </ul>
             </div>
         </div>
+    <p>{! casesSel_list !}</p>
+    <p>{! cases_list !}</p>
+    <p>{! delList !}</p>
 </div>
 {% endblock %}
 {% block vuejs %}
@@ -119,7 +122,6 @@ var vmRs = new Vue({
         getreportList() {
             var target = document.getElementById("tableBody");
             var spinner1 = Spinner({top:"1"}).spin(target);
-            this.casesSel_list = [];
             if(this.totalCount>0 && (this.totalCount / this.pageCount)<=this.pageNum-1 && (this.pageNum>1)){
                 this.pageNum = this.pageNum -1;
             }
@@ -268,6 +270,21 @@ var vmRs = new Vue({
                 dellist.push(this.casesSel_list[j][0]);
             }
             let self = this;
+            toastr.options = {
+                                        closeButton: false,
+                                        debug: false,
+                                        progressBar: false,
+                                        positionClass: "toast-top-center",
+                                        onclick: null,
+                                        showDuration: "300",
+                                        hideDuration: "1000",
+                                        timeOut: "2000",
+                                        extendedTimeOut: "1000",
+                                        showEasing: "swing",
+                                        hideEasing: "linear",
+                                        showMethod: "fadeIn",
+                                        hideMethod: "fadeOut"
+                                    };
             if (dellist.length !== 0) {
                 zdconfirm("删除之后无法恢复，确认要删除？", function (r) {
                     if (r) {
@@ -287,21 +304,6 @@ var vmRs = new Vue({
                                     self.delList = [];
                                     self.getreportList();
                                 } else {
-                                    toastr.options = {
-                                        closeButton: false,
-                                        debug: false,
-                                        progressBar: false,
-                                        positionClass: "toast-top-center",
-                                        onclick: null,
-                                        showDuration: "300",
-                                        hideDuration: "1000",
-                                        timeOut: "2000",
-                                        extendedTimeOut: "1000",
-                                        showEasing: "swing",
-                                        hideEasing: "linear",
-                                        showMethod: "fadeIn",
-                                        hideMethod: "fadeOut"
-                                    };
                                     toastr.error("删除失败");
                                     self.getreportList();
                                 }
