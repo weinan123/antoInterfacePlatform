@@ -326,7 +326,7 @@ def projectDelete(request):
 def firstProjectDelete(request):
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        if (projectList.objects.filter(projectName=projectName).count() == 1):
+        if (projectList.objects.filter(projectName=projectName).count() == 0):
             countCase.objects.filter(projectName=projectName).delete()
             projectList.objects.filter(projectName=projectName).delete()
             projectschedule.objects.filter(projectname=projectName).delete()
