@@ -317,6 +317,7 @@ def caseBatchRun(request):
         exeuser = request.session.get('username')
         starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         batchrun_list = []
+        info = ""
         for case in id:
             paramList = str(case).split(',')
             caseID = paramList[0]
@@ -398,6 +399,7 @@ def caseBatchRun(request):
             for case in id:
                 paramList = str(case).split(',')
                 caseID = paramList[0]
+                successNum = batchResult["sNum"]
                 failNum = batchResult["fNum"]
                 errorNum = batchResult["eNum"]
                 inter = caseList.objects.get(id=caseID)
@@ -407,7 +409,12 @@ def caseBatchRun(request):
                 else:
                     inter.runResult = str(environment) + "环境运行失败"
                 inter.save()
-            result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
+                info = u"执行结束,结果：<br>成功：" + str(successNum) + "；失败：" + str(failNum) + "；出错：" + str(
+                    errorNum)
+            result = {
+                "code": 0,
+                "info": info
+            }
     return JsonResponse(result, safe=False)
 
 
@@ -486,6 +493,7 @@ def runCase(request):
                 inter.save()
                 result = {"code": 0, "info": "执行结束，结果请查看报告"}
             else:
+                successNum = batchResult["sNum"]
                 failNum = batchResult["fNum"]
                 errorNum = batchResult["eNum"]
                 inter = caseList.objects.get(id=caseID)
@@ -495,7 +503,12 @@ def runCase(request):
                 else:
                     inter.runResult = str(environment) + "环境运行失败"
                 inter.save()
-                result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
+                info = u"执行结束,结果：<br>成功：" + str(successNum) + "；失败：" + str(failNum) + "；出错：" + str(
+                    errorNum)
+                result = {
+                    "code": 0,
+                    "info": info
+                }
         else:
             code = -1
             info = '用例下不存在接口！'

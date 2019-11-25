@@ -241,7 +241,7 @@ def getDefindData(datas_str):
 
 def checkFormat(dataValue):
     # print("1...dataValue: ",dataValue)
-    if dataValue == "":
+    if dataValue == "" or dataValue is None:
         updataData = ""
     else:
         updataData = ""
