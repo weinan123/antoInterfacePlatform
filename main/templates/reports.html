@@ -143,6 +143,9 @@ var vmRs = new Vue({
                     this.totalCount = resp.data.totalCount;
                     if((this.totalCount / this.pageCount) > 1){
                         this.pageview = true;
+                        if(this.pageNum >= (this.totalCount / this.pageCount)){
+                            this.disflag_right = "disabled";
+                        }
                     }else{
                         this.pageview = false;
                     }
