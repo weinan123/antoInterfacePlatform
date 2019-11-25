@@ -66,30 +66,31 @@ def caseInfo(request):
         disflag_right = "disabled"
         disflag_left = "disabled"
         pageview = False
-        if (pageNum > 0):
-            if (totalCase > pageNum * 10):  # 说明不在尾页
-                resp = resp[cut - 10:cut]
-                if (pageNum > 1):
+        if (totalCase != 0):
+            if (pageNum > 0):
+                if (totalCase > pageNum * 10):  # 说明不在尾页
+                    resp = resp[cut - 10:cut]
+                    if (pageNum > 1):
+                        disflag_left = ""
+                else:  # 说明在尾页
+                    pageNum = int((totalCase - 1) / 10) + 1
+                    cut = pageNum * 10
+                    resp = resp[cut - 10:cut]
                     disflag_left = ""
-            else:  # 说明在尾页
+                if (totalCase < 11):
+                    pageview = False
+                else:
+                    pageview = True
+                if (totalCase <= pageNum * 10):
+                    disflag_right = "disabled"
+                else:
+                    disflag_right = ""
+            else:
                 pageNum = int((totalCase - 1) / 10) + 1
                 cut = pageNum * 10
                 resp = resp[cut - 10:cut]
                 disflag_left = ""
-            if (totalCase < 11):
-                pageview = False
-            else:
                 pageview = True
-            if (totalCase <= pageNum * 10):
-                disflag_right = "disabled"
-            else:
-                disflag_right = ""
-        else:
-            pageNum = int((totalCase - 1) / 10) + 1
-            cut = pageNum * 10
-            resp = resp[cut - 10:cut]
-            disflag_left = ""
-            pageview = True
 
         resp2 = users.objects.filter(username=user).values("batch_check", "batch_del", "batch_run")
         batch_check = resp2[0]['batch_check']
