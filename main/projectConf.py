@@ -19,7 +19,7 @@ def saveProConf(request):
         timeDay = data["datas"]["timeDay"]
         timeTime = data["datas"]["timeTime"]
         try:
-            schedule.objects.filter(id=id).update(evirment=evirment,reporter=reporter,cookies=cookies,runcaseId=runcaseid,
+            projectschedule.objects.filter(id=id).update(evirment=evirment,reporter=reporter,cookies=cookies,runcaseId=runcaseid,
                                               timeDay=timeDay,timeTime=timeTime)
             responseData = {
                 "code": 0,
@@ -41,7 +41,7 @@ def getScheduleinitData(request):
             "msg":""
         }
         try:
-            allcase = schedule.objects.filter().values()
+            allcase = projectschedule.objects.filter().values()
             for i in allcase:
                 singleProject = {
                 }
@@ -57,11 +57,10 @@ def getScheduleinitData(request):
                                 "checkif":False
                             }
                             allcaselist.append(cases)
-
-                    ss = (i["runcaseId"]).encode('unicode-escape').decode('string_escape')
-                    if ss=="":
+                    if (i["runcaseId"])==None or (i["runcaseId"])=="":
                         checklist = []
                     else:
+                        ss = (i["runcaseId"]).encode('unicode-escape').decode('string_escape')
                         checklist = ss.split(",")
 
                     for w in checklist:

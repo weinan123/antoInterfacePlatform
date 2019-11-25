@@ -283,7 +283,7 @@ def uploadCase(request):
             print caseList
             filepath = r"main/postfiles/template.xls"
             saveexcel = mulExcel.mulExcel(filepath, 0)
-            saveexcel.writeRowData(8, caselist, modelname)
+            saveexcel.writeRowData(newWorkbook, newsheet, 8, caselist, modelname)
         file = open('main/postfiles/' + modelname + '.xls', 'rb')
         print file
         print modelname

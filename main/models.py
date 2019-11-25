@@ -130,7 +130,7 @@ class department(models.Model):
     depart_name = models.CharField(max_length=50)
 
 
-class schedule(models.Model):
+class projectschedule(models.Model):
     projectname = models.CharField(max_length=50, null=True, blank=True)
     runcaseId = models.CharField(max_length=50, null=True, blank=True)
     evirment = models.CharField(max_length=50, null=True, blank=True)

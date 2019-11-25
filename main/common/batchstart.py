@@ -1,4 +1,7 @@
 # coding=utf-8
+import sys,os,django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
+django.setup()
 import unittest
 from libs import HTMLTestRunner1
 import batchUntils

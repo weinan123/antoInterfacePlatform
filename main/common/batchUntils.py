@@ -1,4 +1,7 @@
 # coding=utf-8
+import sys,os,django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
+django.setup()
 import unittest
 import sys,os
 from main.models import apiInfoTable, projectList,hostTags,moduleList
@@ -6,7 +9,9 @@ import time
 import json
 from main.untils.until import mul_bodyData
 from main.untils import sendRequests
-from main.common import authService,getDependData
+import getDependData
+import authService
+#from main.common import authService,getDependData
 import sys,re
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -50,6 +55,7 @@ def create():
 '''
 def getHost(id,environment):
     hostdict = hostTags.objects.filter(id=id).values()
+    print hostdict
     hostqa = hostdict[0]["qa"]
     hoststage = hostdict[0]["stage"]
     hostlive = hostdict[0]["live"]
@@ -58,24 +64,25 @@ def getHost(id,environment):
     match2 = re.search('dev', hostqa)
     match3 = re.search('stage', hostqa)
     host = ""
+    lowenvironment = environment.lower()
     if (match1 != None) or (match2 != None) or (match3 != None):
-        if environment=="QA":
+        if lowenvironment=="qa":
                 hoststr = hostqa.replace('qa', str(environment).lower())
                 hoststr = hoststr.replace('stage', str(environment).lower())
                 hoststr = hoststr.replace('dev', str(environment).lower())
                 hostTags.objects.filter(id=id).update(qa=hoststr)
                 host = hostdict[0]["qa"]
-        elif environment=="Stage" :
+        elif lowenvironment=="stage" :
             if hoststage=="":
                 hoststr = hostqa.replace("qa", str(environment).lower())
                 hostTags.objects.filter(id=id).update(stage=hoststr)
             host = hostdict[0]["stage"]
-        elif environment == "Live":
+        elif lowenvironment == "live":
             if hostlive == "":
                 hoststr = hostqa.replace("-qa", "")
                 hostTags.objects.filter(id=id).update(live=hoststr)
             host = hostdict[0]["live"]
-        elif environment=="Dev" :
+        elif lowenvironment=="dev" :
             if hostdev=="":
                 hoststr = hostqa.replace("qa", str(environment).lower())
                 hostTags.objects.filter(id=id).update(dev=hoststr)

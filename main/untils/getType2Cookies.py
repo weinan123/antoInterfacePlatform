@@ -27,8 +27,6 @@ class getCookies2():
         showflag = ""
         resp = sendRequests.sendRequest().sendRequest(methods, url, headers, body, files, isRedirect, showflag)
         datajson = resp.json()
-        print datajson
-        #salt = datajson['data']['uniKey']
         return datajson
     def scretData(self):
         datajson = self.getsalt()
@@ -51,7 +49,6 @@ class getCookies2():
                 "rand":rand,
                 "sha2":sha2
             }
-            return timeStamp,rand,sha2
         else:
             scretdata = {
                 "code": -1,
@@ -62,7 +59,7 @@ class getCookies2():
     def getcookies(self):
         #timeStamp, rand, sha2 = self.scretData()
         scretdata = self.scretData()
-        if scretdata["code"]==0:
+        if scretdata["code"]== 0:
             timeStamp, rand, sha2 = scretdata["timeStamp"],scretdata["rand"],scretdata["sha2"]
             url = self.typecookie2.get(self.evirment)[1]
             body = {'account': self.username, 'info': sha2, 'rand': rand, 'timeStamp': timeStamp}
@@ -73,7 +70,8 @@ class getCookies2():
             showflag = ""
             resp = sendRequests.sendRequest().sendRequest(methods, url, headers, body, files, isRedirect, showflag)
             datajson1 = resp.json()
-            if datajson1["code"]==0:
+            print datajson1
+            if datajson1["code"]==200:
                 cookies = requests.utils.dict_from_cookiejar(resp.cookies)
                 cookies["UID"] = datajson1["uid"]
                 cookiedata = {
@@ -95,4 +93,5 @@ class getCookies2():
             }
         return cookiedata
 if __name__ == "__main__":
-    cookies = getCookies2("qa",'aawqdqwdq01','adqwdqda123456..').getcookies()
+    cookies = getCookies2("qa",'aa01','aa123456..').getcookies()
+    print cookies
