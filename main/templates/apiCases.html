@@ -801,6 +801,9 @@
                                     hideMethod: "fadeOut"
                 };
                 var dependdata = this.viewapiInfos.depend_data;
+                if(dependdata === null){
+                    dependdata = ""
+                }
                 var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]", 'g');
                 var rs = dependdata.replace(pattern, '');
                 if(rs.length === dependdata.length) {
