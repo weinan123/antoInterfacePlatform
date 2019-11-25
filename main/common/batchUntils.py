@@ -132,9 +132,13 @@ def getResp(id,environment, dtime, cookices = None):
         showflag = bodyinfor["showflag"]
 
     listid = query.owningListID
-    querylist = moduleList.objects.get(id=int(listid))
-    proList = projectList.objects.get(id=int(querylist.owningListID))
-    print(u"所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
+    try:
+        querylist = moduleList.objects.get(id=int(listid))
+        proList = projectList.objects.get(id=int(querylist.owningListID))
+        print(u"所属项目-模块：%s - %s" % (proList.projectName, querylist.moduleName))
+    except Exception as e:
+        result = {"code": -1, "info": str(e)}
+        return result
     print u"请求方法：%s" % (methods)
     host = getHost(int(query.host),environment)
     host = replaceParam(dependData, host)

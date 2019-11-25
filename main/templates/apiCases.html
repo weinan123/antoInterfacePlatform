@@ -547,6 +547,8 @@
             },
             runsingle(id){
                 {#console.log(id);#}
+                var target = document.getElementById("tableBody");
+                var spinner1 = Spinner({top:"1"}).spin(target);
                 let datas = this.result.data;
                 {#console.log(datas);#}
                 let method = "";
@@ -595,6 +597,7 @@
                                 //alert("执行失败: " + datas);
                             }
                             this.getlist(this.pageNum);
+                            spinner1.spin();
                         })
                         .catch(err => {
                             console.log('请求失败:' + err.status + ',' + err.statusText);
@@ -800,6 +803,9 @@
                                     hideMethod: "fadeOut"
                 };
                 var dependdata = this.viewapiInfos.depend_data;
+                if(dependdata === null){
+                    dependdata = ""
+                }
                 var pattern = new RegExp("[`~!@#^&*()|{}':;'<>/?~！@#￥……*（）——|{}【】‘；：”“'。，、？]", 'g');
                 var rs = dependdata.replace(pattern, '');
                 if(rs.length === dependdata.length) {

@@ -69,9 +69,9 @@
                 </ul>
             </div>
         </div>
-    <p>{! casesSel_list !}</p>
-    <p>{! cases_list !}</p>
-    <p>{! delList !}</p>
+{#    <p>{! casesSel_list !}</p>#}
+{#    <p>{! cases_list !}</p>#}
+{#    <p>{! delList !}</p>#}
 </div>
 {% endblock %}
 {% block vuejs %}
@@ -143,6 +143,9 @@ var vmRs = new Vue({
                     this.totalCount = resp.data.totalCount;
                     if((this.totalCount / this.pageCount) > 1){
                         this.pageview = true;
+                        if(this.pageNum >= (this.totalCount / this.pageCount)){
+                            this.disflag_right = "disabled";
+                        }
                     }else{
                         this.pageview = false;
                     }
@@ -269,6 +272,7 @@ var vmRs = new Vue({
             for(let j=0;j<this.casesSel_list.length;j++){
                 dellist.push(this.casesSel_list[j][0]);
             }
+            {#console.log("dellist: "+ dellist);#}
             let self = this;
             toastr.options = {
                                         closeButton: false,
