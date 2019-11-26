@@ -324,7 +324,7 @@
 
                     <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
                          aria-labelledby="myModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" id="newProjectRow" style="width: 40%;height: 50%">
+                        <div class="modal-dialog" id="newProjectRow" style="width: 45%;height: 50%">
                             <div class="modal-content"
                                  style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
                                 <div class="modal-header">
@@ -632,7 +632,35 @@
                                                 @click="runCase(item.id)">执行
                                         </button>
                                     </a>
-                                    <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
+                                    <!-- 点击批量执行时，输入报告名称弹框 -->
+                                    <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1" role="dialog" aria-labelledby="reportNameLabel" aria-hidden="true" style="margin-top: 0px;">
+            <div class="modal-dialog" style="width: 500px;margin: 75px auto;max-height: 650px;">
+                <div class="modal-content" id="Names">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="reportNameLabel">
+                            报告名称
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                         <div class="form-group form-inline">
+                             <div><label class="itemCSS" style="width: 15%;text-align: right;">名称:</label>
+                                 <input type="text" class="form-control" name="reportName" v-model="runResultName"
+                            placeholder="请输入报告名称" style="width:70%;">
+                                 <span v-if="!runResultName" style="color: red">*</span>
+                             </div>
+                         </div>
+                    </div>
+                    <div class="modal-footer" style="margin-top: 0px;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <input type="submit" value="执行" class="btn btn-primary" @click="runCase(item.id)" data-dismiss="modal" :disabled="!runResultName"/>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div>
+                                    {% comment %}<div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
                                          role="dialog"
                                          aria-labelledby="myModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -675,14 +703,14 @@
                                                 <div style="clear:both;"></div>
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal -->
-                                    </div>
+                                    </div>{% endcomment %}
 
                                 </div>
                             </td>
                         </tr>
-                        <tr v-bind:id="'collapse'+[item.id]" class="collapse">
+                        <tr v-bind:id="'collapse'+[item.id]" class="collapse" style="background-color: #fcf8e3">
                             <td colspan="7">
-                                <div>
+                                <div >
                                     接口详情：<br>
                                     <div class="panel-body" v-for="x in item['describe']">
                                         <div class="col-sm-3">
@@ -882,15 +910,11 @@
                     </tbody>
                 </table>
             </div>
-            <p>说明：basecookie生成应用于单接口批量执行所依赖cookie,业务用例执行可根据不同业务用例选择不同私有cookie</p>
+            <p style="color: orangered">说明：basecookie生成应用于单接口批量执行所依赖cookie,业务用例执行可根据不同业务用例选择不同私有cookie</p>
         </div>
     </div>
     <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>
 {% endblock %}
-</div>
-</div>
-<div class="col-md-4"></div>
-
 {% block vuejs %}
     <!-- titlevue -->
     <script type="text/javascript">
@@ -1950,8 +1974,9 @@
                         .then(resp => {
                             console.log(resp.data);
                             index = resp.data.index;
+                            spinner.spin();
                             if (resp.data.code === 0) {
-                                spinner.spin();
+
                                 this.getCookieList();
                             } else {
                                 alert(resp.data.msg + "\n"
