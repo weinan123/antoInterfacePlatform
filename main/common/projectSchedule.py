@@ -50,13 +50,13 @@ class runProSchdeule():
                    }
                    projectschList.append(projectschinfor)
         return projectschList
-    def getEamilData(isreport,senderlist,reportpath, successNum, faileNum, errorNum):
+    def getEamilData(self,senderlist,report_runName,reportpath, successNum, faileNum, errorNum):
         senderList = []
         for i in senderlist:
             if (i != ""):
                 senderList.append(i)
         print senderList
-        subject = '业务场景回归测试运行报告'
+        subject = report_runName
         content = '测试详情见附件'
         mailsender = sendmail_exchange.MailSender()
         reportpath = os.path.dirname(os.path.dirname(__file__)) + "\\report\\" + str(reportpath)
@@ -92,7 +92,7 @@ class runProSchdeule():
             faileNum = failNum
             errorNum = errorNum
             senderlist = reporter
-            self.getEamilData(senderlist,reportpath, successNum, faileNum, errorNum)
+            self.getEamilData(senderlist,report_runName,reportpath, successNum, faileNum, errorNum)
         except BaseException as e:
             print(" SQL Error: %s" % e)
     def runschedule(self,):

@@ -82,7 +82,7 @@ def addProject(request):
                 inter = projectList.objects.create(projectName=form.cleaned_data['projectName'],
                                                    cookieFlag=form.cleaned_data['cookieFlag'])
                 inter.save()
-                scheduledata = schedule.objects.create(projectname=form.cleaned_data['projectName'])
+                scheduledata = projectschedule.objects.create(projectname=form.cleaned_data['projectName'])
                 scheduledata.save()
                 projectList.objects.filter(projectName=form.cleaned_data['projectName']).update(
                     updateTime=dtime,
@@ -326,10 +326,10 @@ def projectDelete(request):
 def firstProjectDelete(request):
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        if (projectList.objects.filter(projectName=projectName).count() == 1):
+        if (projectList.objects.filter(projectName=projectName).count() == 0):
             countCase.objects.filter(projectName=projectName).delete()
             projectList.objects.filter(projectName=projectName).delete()
-            schedule.objects.filter(projectname=projectName).delete()
+            projectschedule.objects.filter(projectname=projectName).delete()
             code = 0
             info = '删除成功！'
         else:
