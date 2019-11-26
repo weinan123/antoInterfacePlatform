@@ -20,7 +20,7 @@ def mul_bodyData(bodyinfor):
     if bodyinfor == "" or str(bodyinfor) == "{}" or bodyinfor is None:
         body = {}
         files = {}
-        showflag = ""
+        showflag = 0
     else:
         paramsData = bodyinfor["datas"]
         showflag = bodyinfor["showflag"]
