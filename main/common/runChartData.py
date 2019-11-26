@@ -33,30 +33,34 @@ class getChartData():
             self.cursor.execute(updataCount)
             self.conn.commit()
     def nullmodel(self):
-        sql = " select id,projectName,moduleName from main_projectList "
+        sql = " select id,owningListID,moduleName from main_modulelist "
         self.cursor.execute(sql)
         # 获取所有记录列表
         results = self.cursor.fetchall()
         for data in results:
-            if data[2]=="":
-                continue
-            else:
-                sqlList = [
-                    {"casetype": "allcase",
-                     "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d" % (data[0])},
-                    {"casetype": "passcase",
-                     "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and  lastRunResult=1" % (data[0])},
-                    {"casetype": "failcase",
-                     "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and lastRunResult=-1 " % (data[0])},
-                    {"casetype": "nullcase",
-                     "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and lastRunResult=0" % (data[0])}
-                ]
-                for i in sqlList:
-                    self.cursor.execute(i["sql"])
-                    # 获取所有记录列表
-                    result = self.cursor.fetchall()
-                    print result[0][0]
-                    self.updatedb(i["casetype"],result[0][0],data[1],data[2])
+            print data
+            projetname = " select id,projectName from main_projectlist where id= %d" % (data[1])
+            self.cursor.execute(projetname)
+            projectinfor = self.cursor.fetchall()
+            print projectinfor[0][1]
+            sqlList = [
+                {"casetype": "allcase",
+                 "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d" % (data[0])},
+                {"casetype": "passcase",
+                 "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and  lastRunResult=1" % (data[0])},
+                {"casetype": "failcase",
+                 "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and lastRunResult=-1 " % (data[0])},
+                {"casetype": "nullcase",
+                 "sql": "select COUNT(*)  from main_apiInfoTable where owningListID= %d and lastRunResult=0" % (data[0])}
+            ]
+
+            for i in sqlList:
+                self.cursor.execute(i["sql"])
+                # 获取所有记录列表
+                result = self.cursor.fetchall()
+                #print result[0][0]
+                self.updatedb(i["casetype"],result[0][0],projectinfor[0][1],data[2])
+
 if __name__=='__main__':
     getChartData = getChartData()
     getChartData.nullmodel()
