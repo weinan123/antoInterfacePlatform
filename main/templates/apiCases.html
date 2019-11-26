@@ -30,9 +30,9 @@
            <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">环境切换：</label>
             <div class="col-lg-1 col-md-2 col-sm-2 col-xs-2">
                 <select class="form-control" v-model="environment">
-                    <option selected value="qa">QA</option>
-                    <option  value="stage">Stage</option>
-                    <option  value="live">Live</option>
+                    <option selected value="QA">QA</option>
+                    <option  value="Stage">Stage</option>
+                    <option  value="Live">Live</option>
                 </select>
             </div>
         </div>
@@ -97,11 +97,11 @@
                     </label><span>&nbsp;全选&nbsp;</span>
                     <button type="button" class="btn btn-default btn-sm" id="batchdel"  @click="batchdel()" v-if="permission_del">批量删除</button>
                     <button type="button" class="btn btn-default btn-sm" id="batchexe" data-toggle="modal" data-target="#reportName" style="padding: 2px 6px;margin-left: 10px;margin-bottom: 2px;margin-right: 8px;" v-if="permission_run">批量执行</button>
-                    <span v-if="permission_run">
-                    <label class="form-check-label">
-                        <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
-                    </label><span> 批量执行是否生成报告</span>
-                    </span>
+{#                    <span v-if="permission_run">#}
+{#                    <label class="form-check-label">#}
+{#                        <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">#}
+{#                    </label><span> 批量执行是否生成报告</span>#}
+{#                    </span>#}
                 </div>
             </div>
             <div style="margin: 0px auto;width: auto;text-align: center;" v-if="pageview">
@@ -198,13 +198,19 @@
                              <div><label class="itemCSS" style="width: 15%;text-align: right;">名称:</label>
                                  <input type="text" class="form-control" name="reportName" v-model="reportName"
                             placeholder="请输入报告名称" style="width:70%;">
-                                 <span v-if="!reportName" style="color: red">*</span>
+                                 <span v-if="!reportName && reportflag" style="color: red">*</span>
+                             </div>
+                             <div style="margin-top: 12px;margin-left: 10%;">
+                                 <label class="form-check-label">
+                                     <input type="checkbox" v-model="reportflag" style="margin-top: 6px;">
+                                 </label>
+                                 <span> 是否生成测试报告</span>
                              </div>
                          </div>
                     </div>
                     <div class="modal-footer" style="margin-top: 0px;">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <input type="submit" value="执行" class="btn btn-primary" @click="batchrun()" data-dismiss="modal" :disabled="!reportName"/>
+                        <input type="submit" value="执行" class="btn btn-primary" @click="batchrun()" data-dismiss="modal" :disabled="!reportName && reportflag"/>
                     </div>
                 </div>
             </div><!-- /.modal-content -->
@@ -350,7 +356,7 @@
                 }
             },
             getProinfo(params){
-                console.log("**1params**",params);
+                {#console.log("**1params**",params);#}
                 if(params["id"] === undefined){
                     axios.get('/projectInfos/')
                     .then(resp =>{
@@ -607,6 +613,7 @@
                 }
             },
             batchrun(){
+                this.reportflag = true;
                 let runlist = [];
                 let self = this;
                  let environment = this.environment;
@@ -628,7 +635,7 @@
                                 .then(resp => {
                                     {#console.log(resp.data);#}
                                     let code = resp.data.code;
-                                    let info = resp.data.datas;
+                                    let info = resp.data.info;
                                     toastr.options = {
                                             closeButton: false,
                                             debug: false,
@@ -691,7 +698,7 @@
             },
             viewapi(id){
                 var target = document.getElementById("infos");
-                var spinner1 = Spinner({top:"1",left:"2"}).spin(target);
+                var spinner1 = Spinner({top:"2",left:"4"}).spin(target);
                 this.viewapiInfos = "";
                 this.headers = "";
                 this.bodys = "";

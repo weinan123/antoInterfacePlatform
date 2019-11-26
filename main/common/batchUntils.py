@@ -221,8 +221,10 @@ def replaceParam(dependdata_dict, stringValue):
         else:
             strValue = strValue.replace("${"+param_key+"}", "")
             print(u"使用值：''替换参数${%s}" % param_key)
+        strValue = replaceParam(dependdata_dict, strValue)
+    else:
+        return strValue
     return strValue
-
 
 def checkDepend(apiID, dependID):
     flag = False

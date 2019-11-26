@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from models import apiInfoTable, projectList,moduleList,reports, users, hostTags
+from models import apiInfoTable, projectList,moduleList,reports, users, hostTags, userCookies
 import time, re
 import json
 from django.http.response import JsonResponse
@@ -111,7 +111,14 @@ def runsingle(request):
         id = req["id"]
         environment = req["environment"]
         dtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        respResult = batchUntils.getResp(id,environment, dtime)
+        exeuser = request.session.get('username')
+        try:
+            projectid = moduleList.objects.get(id=int(apiInfoTable.objects.get(apiID=int(id)).owningListID)).owningListID
+            projectname = projectList.objects.get(id=int(projectid)).projectName
+            cookies = getCookies(environment, exeuser, projectname)
+        except Exception as e:
+            cookies = None
+        respResult = batchUntils.getResp(id,environment, dtime, cookices=cookies)
         code = respResult["code"]
         responseText = ""
         if code == 0:
@@ -149,6 +156,7 @@ def runsingle(request):
         # print result
     return JsonResponse(result)
 
+
 def batchrun(request):
     result = {}
     if request.method == 'POST':
@@ -169,12 +177,18 @@ def batchrun(request):
             try:
                 query = apiInfoTable.objects.get(apiID=id)
             except Exception as e:
-                result = {"code": -2, "datas": "用例不存在，" + str(e)}
+                result = {"code": -2, "info": "用例不存在，" + str(e)}
                 return JsonResponse(result)
             if query.method == "" or query.url == "":
-                result = {"code": -1, "datas": "method或url不能为空"}
+                result = {"code": -1, "info": "method或url不能为空"}
                 return JsonResponse(result)
-        batchrun_list = [{"sname": "批量执行", "list": idlist}]
+        # batchrun_list = [{"sname": "批量执行", "list": idlist, "cookices": cookices}]
+        try:
+            batchrun_list = getbatchrunList(idlist, exeuser, environment)
+            # print("batchrun_list: ", batchrun_list)
+        except Exception as e:
+            result = {"code": -1, "info": "获取执行列表失败"}
+            return JsonResponse(result)
         batchResult = batchstart.start_main(batchrun_list, environment, reflag, exeuser)
         # print batchResult
         if reportflag == True:
@@ -208,6 +222,48 @@ def batchrun(request):
         else:
             result = {"code": 0, "info": "执行结束,结果：" + str(batchResult)}
     return JsonResponse(result)
+
+
+def getbatchrunList(idlist, exeuser, environment):
+    batchrun_list = []
+    try:
+        projectname_list = projectList.objects.all().values("projectName").distinct()
+    except Exception as e:
+        print(u"error: %s" % str(e))
+        return batchrun_list
+    for pm in projectname_list:
+        batchrun_dict = {}
+        list = []
+        for id in idlist:
+            try:
+                projectid = moduleList.objects.get(
+                    id=int(apiInfoTable.objects.get(apiID=int(id)).owningListID)).owningListID
+                projectname = projectList.objects.get(id=int(projectid)).projectName
+                if str(projectname) == str(pm["projectName"]):
+                    list.append(id)
+            except Exception as e:
+                print(u"error: %s" % str(e))
+                continue
+        if len(list) == 0:
+            continue
+        else:
+            cookies = getCookies(environment, exeuser, pm["projectName"])
+            batchrun_dict = {"sname": str(pm["projectName"]), "list": list, "cookices": cookies}
+            batchrun_list.append(batchrun_dict)
+    return batchrun_list
+
+
+def getCookies(environment, exeuser, projectname):
+    try:
+        cookies = {}
+        environment = str(environment).lower()
+        cookies_list = userCookies.objects.filter(user=exeuser, cookiename="basecookie", evirment=environment, projectname=projectname).values("cookies")
+        cookiesstr = cookies_list[0]["cookies"]
+        if cookiesstr != "" and cookiesstr is not None:
+            cookies = json.loads(cookiesstr)
+    except Exception as e:
+        cookies = None
+    return cookies
 
 
 def getapiInfos(request):
