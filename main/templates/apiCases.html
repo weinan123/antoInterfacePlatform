@@ -356,7 +356,7 @@
                 }
             },
             getProinfo(params){
-                console.log("**1params**",params);
+                {#console.log("**1params**",params);#}
                 if(params["id"] === undefined){
                     axios.get('/projectInfos/')
                     .then(resp =>{

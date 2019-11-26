@@ -46,8 +46,8 @@ def getdepands(depend_caseid, depend_data, environment, Cookie):
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
         showflag = bodyinfor["showflag"]
-    listid = query.owningListID
-    querylist = projectList.objects.get(id=listid)
+    # listid = query.owningListID
+    # querylist = projectList.objects.get(id=listid)
     url = str(host) + str(send_url)
     # 处理数据类型的方法
     send_body, files, showflag1 = mul_bodyData(bodyinfor)
