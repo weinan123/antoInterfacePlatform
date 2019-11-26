@@ -3,21 +3,15 @@ from django.shortcuts import render, redirect
 import json, time
 from django.http import HttpResponse, JsonResponse
 import requests, urllib2
-from forms import UserForm
 from django.contrib import auth
-from django.contrib.auth.models import User
 from .models import *
 from .untils.until import my_login, mul_bodyData
 from untils import sendRequests
 from common import authService, batchUntils
-from django.core import serializers
-
-
 @my_login
 def index(request):
     if request.method == 'GET':
         return render(request, 'myindex.html')
-
 
 def login(request):
     username = request.COOKIES.get('username')
