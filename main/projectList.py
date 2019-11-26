@@ -326,7 +326,7 @@ def projectDelete(request):
 def firstProjectDelete(request):
     if request.method == 'GET':
         projectName = request.GET.get('projectName')
-        id = projectList.objects.filter(projectName=projectName).value("id")[0]["id"]
+        id = projectList.objects.filter(projectName=projectName).values("id")[0]["id"]
         if (moduleList.objects.filter(owningListID=id).count() == 0):
             countCase.objects.filter(projectName=projectName).delete()
             projectList.objects.filter(projectName=projectName).delete()
