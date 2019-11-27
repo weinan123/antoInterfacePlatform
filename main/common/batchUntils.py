@@ -115,8 +115,10 @@ def getResp(id,environment, dtime, cookices = None):
             print(u"接口自定义参数：%s" % str(dependData))
     else:
         dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
+    print dependData
     send_url = replaceParam(dependData, query.url)
     if methods == "" or send_url == "":
         result = {"code": -1, "info": "参数不能为空"}
@@ -125,6 +127,7 @@ def getResp(id,environment, dtime, cookices = None):
     if headers != "" and headers is not None:
         headers = json.loads(headers)
     bodyinfor = replaceParam(dependData, query.body)
+    print bodyinfor
     showflag = ""
     # print("bodyinfor: ", bodyinfor)
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
