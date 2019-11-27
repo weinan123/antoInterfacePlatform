@@ -31,26 +31,28 @@ def getdepands(depend_caseid, depend_data, environment, Cookie):
     else:
         dependData = batchUntils.isDependency(depend_flag, dependData_str, environment, Cookie)
     methods = query.method
-    send_url = batchUntils.replaceParam(dependData, query.url)
+    send_url = batchUntils.replaceStrParam(dependData, query.url)
     host = batchUntils.getHost(int(query.host), environment)
-    host = batchUntils.replaceParam(dependData, host)
+    host = batchUntils.replaceStrParam(dependData, host)
     if methods == "" or send_url == "" or host == "":
         result = {"code": -1, "info": "相关参数不能为空"}
         return result
-    headers = batchUntils.replaceParam(dependData, query.headers)
+    headers = query.headers
     # print("headers: ", headers)
-    if headers != "" and headers is not None:
-        headers = json.loads(headers)
-    bodyinfor = batchUntils.replaceParam(dependData, query.body)
-    showflag = ""
+    headers_dict = {}
+    if headers != "" and headers is not None and str(headers) != "{}":
+        headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+    bodyinfor = query.body
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
-        showflag = bodyinfor["showflag"]
     # listid = query.owningListID
     # querylist = projectList.objects.get(id=listid)
     url = str(host) + str(send_url)
     # 处理数据类型的方法
-    send_body, files, showflag1 = mul_bodyData(bodyinfor)
+    send_body, files, showflag = mul_bodyData(bodyinfor)
+    send_body_dict = {}
+    if len(send_body) != 0:
+        send_body_dict = batchUntils.replaceParam(dependData, send_body)
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     # # 写入获取的依赖数据
@@ -63,7 +65,7 @@ def getdepands(depend_caseid, depend_data, environment, Cookie):
     #                 send_body[key.decode('raw_unicode_escape')] = value
     if isScreat == False or isScreat == "":
         try:
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag, Cookie)
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers_dict, send_body_dict, files, isRedirect, showflag, Cookie)
             # print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
             print(u"依赖接口返回信息： %s " % re.sub(r'(\\u[\s\S]{4})', lambda x: x.group(1).encode("utf-8").decode("unicode-escape"),
                    str(resp.text)))
@@ -86,7 +88,7 @@ def getdepands(depend_caseid, depend_data, environment, Cookie):
             Authorization = authService.simplify_sign(credentials, methods, send_url, headers_data, timestamp, 300,
                                                       headersOpt)
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,send_url
-                                                                , headers, send_body, files, isRedirect, showflag, Cookie)
+                                                                , headers_dict, send_body_dict, files, isRedirect, showflag, Cookie)
             print(u"依赖接口返回信息： %s " % str(resp.text).decode('raw_unicode_escape'))
         except Exception as e:
             result = {"code": -1, "info": "error"}

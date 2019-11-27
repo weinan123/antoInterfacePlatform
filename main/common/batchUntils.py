@@ -117,19 +117,18 @@ def getResp(id,environment, dtime, cookices = None):
         dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
-    send_url = replaceParam(dependData, query.url)
+    send_url = replaceStrParam(dependData, query.url)
     if methods == "" or send_url == "":
         result = {"code": -1, "info": "参数不能为空"}
         return result
-    headers = replaceParam(dependData, query.headers)
-    if headers != "" and headers is not None:
-        headers = json.loads(headers)
-    bodyinfor = replaceParam(dependData, query.body)
-    showflag = ""
+    headers = query.headers
+    headers_dict = {}
+    if headers != "" and headers is not None and str(headers) != "{}":
+        headers_dict = replaceParam(dependData, json.loads(headers))
+    bodyinfor = query.body
     # print("bodyinfor: ", bodyinfor)
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
-        showflag = bodyinfor["showflag"]
 
     listid = query.owningListID
     try:
@@ -141,26 +140,29 @@ def getResp(id,environment, dtime, cookices = None):
         return result
     print u"请求方法：%s" % (methods)
     host = getHost(int(query.host),environment)
-    host = replaceParam(dependData, host)
+    host = replaceStrParam(dependData, host)
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
+    send_body_dict = {}
+    if len(send_body) != 0:
+        send_body_dict = replaceParam(dependData, send_body)
     # print json.dumps(dependData)
-    print u"请求体：%s " % (str(send_body).decode('raw_unicode_escape'))
-    print(u"请求头： %s" % str(headers))
+    print(u"请求头： %s" % str(headers_dict))
+    print u"请求体：%s " % (str(send_body_dict).decode('raw_unicode_escape'))
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     key_id = query.key_id
     secret_key = query.secret_key
     timestamp = int(time.time())
-    assertinfo = replaceParam(dependData, str(query.assertinfo))
+    assertinfo = replaceStrParam(dependData, str(query.assertinfo))
     dtime = dtime
     responseText = ""
     # 非加密执行接口
     if isScreat == False or isScreat == "":
         try:
-            resp = sendRequests.sendRequest().sendRequest(methods, url, headers, send_body, files, isRedirect, showflag, Cookie)
+            resp = sendRequests.sendRequest().sendRequest(methods, url, headers_dict, send_body_dict, files, isRedirect, showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
             apiInfoTable.objects.filter(apiID=id).update(lastRunTime=dtime, lastRunResult=-1, response=responseText)
@@ -180,7 +182,7 @@ def getResp(id,environment, dtime, cookices = None):
                                                   headersOpt)
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
-                                                                send_url, headers, send_body, files, isRedirect,
+                                                                send_url, headers_dict, send_body_dict, files, isRedirect,
                                                                 showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
@@ -194,22 +196,22 @@ def getResp(id,environment, dtime, cookices = None):
 def isDependency(depend_flag, depend_data, environment, Cookie):
     depend_caseid = depend_flag
     depend_data = depend_data
-    print u"关联用例t_id：%s" % (depend_caseid)
+    print u"依赖用例t_id：%s" % (depend_caseid)
     if depend_data != "" and depend_data is not None:
         dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
         if dependRes["code"] == 0:
             dependData = dependRes["dependdata"]
-            print u"关联数据：%s" % (str(dependData).decode('raw_unicode_escape'))
+            print u"依赖数据：%s" % (str(dependData).decode('raw_unicode_escape'))
         else:
             dependData = {}
-            print(u"关联数据：无")
+            print(u"依赖数据：无")
     else:
         dependData = {}
-        print(u"关联数据：无")
+        print(u"依赖数据：无")
     return dependData
 
 
-def replaceParam(dependdata_dict, stringValue):
+def replaceStrParam(dependdata_dict, stringValue):
     strValue = stringValue
     if str(strValue).find("${") != -1:
         strValue = str(strValue)
@@ -225,6 +227,22 @@ def replaceParam(dependdata_dict, stringValue):
     else:
         return strValue
     return strValue
+
+def replaceParam(dependdata_dict, value_dict):
+    old_dict = value_dict
+    for item_key, item_value in old_dict.items():
+        paramkey_list = re.findall(r"\${(.*?)}", str(item_value))
+        if len(paramkey_list) != 0:
+            paramkey_value = paramkey_list[0]
+            try:
+                value_dict[item_key] = dependdata_dict[paramkey_value]
+                print(u"使用值：%s替换参数${%s}" % (dependdata_dict[paramkey_value], paramkey_value))
+            except Exception as e:
+                value_dict[item_key] = ""
+                print("error: %s" % str(e))
+                print(u"使用值空值替换参数${%s}" % paramkey_value)
+    return value_dict
+
 
 def checkDepend(apiID, dependID):
     flag = False
