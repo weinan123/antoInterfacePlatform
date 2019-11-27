@@ -20,7 +20,7 @@ def mul_bodyData(bodyinfor):
     if bodyinfor == "" or str(bodyinfor) == "{}" or bodyinfor is None:
         body = {}
         files = {}
-        showflag = ""
+        showflag = 0
     else:
         paramsData = bodyinfor["datas"]
         showflag = bodyinfor["showflag"]
@@ -34,8 +34,7 @@ def mul_bodyData(bodyinfor):
                 params_name = paramsData[i]["paramName"]
                 params_value = paramsData[i]["paramValue"]
                 params_type = paramsData[i]["paramType"]
-                #print params_name,params_value,params_type
-                if(params_type=='file'):
+                if(params_type == 'file'):
                     path = r'main/postfiles/%s' % bodyinfor[i]["paramValue"]
                     if os.path.exists(path):
                         files = {'file':open(path, 'rb')}
@@ -44,7 +43,8 @@ def mul_bodyData(bodyinfor):
                 else:
                     getvalue = toType(params_type,params_value).toreturnType()
                     body[params_name] = getvalue
-    return body,files,showflag
+    return body, files, showflag
+
 
 def getcookies(cookieFlag,evirment,username,password):
     cookies = {}
