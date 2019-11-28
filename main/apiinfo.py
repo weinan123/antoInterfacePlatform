@@ -118,8 +118,12 @@ def runsingle(request):
             cookies = getCookies(environment, exeuser, projectname)
         except Exception as e:
             cookies = None
-        respResult = batchUntils.getResp(id,environment, dtime, cookices=cookies)
-        code = respResult["code"]
+        try:
+            respResult = batchUntils.getResp(id,environment, dtime, cookices=cookies)
+            code = respResult["code"]
+        except Exception as e:
+            result = {"code": -1, "info": "run fail"}
+            return JsonResponse(result)
         responseText = ""
         if code == 0:
             resp = respResult["response"]
