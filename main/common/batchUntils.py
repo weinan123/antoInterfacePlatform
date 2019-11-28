@@ -228,6 +228,7 @@ def replaceStrParam(dependdata_dict, stringValue):
         return strValue
     return strValue
 
+
 def replaceParam(dependdata_dict, value_dict):
     old_dict = value_dict
     for item_key, item_value in old_dict.items():
