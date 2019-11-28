@@ -361,14 +361,15 @@
                                         </div>
                                         <div style="clear:both;"></div>
                                     </div>
-                                    <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left;margin-left: 5px;">
+                                    <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left;text-align: center;">
                                         <button type="button" class="btn btn-info btn-sm"
                                                 @click="submitAPI()">
                                             确认
                                         </button>
                                     </div>
-                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
-                                        <p class="col-sm-12" v-for="x in selectDisplay">{! x !}</p></div>
+                                    <div class="col-sm-12" style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
+                                        <span style="color: #2372A8;font-weight: bold">所选接口：</span>
+                                        <span class="col-sm-12" style="line-height: 25px" v-for="x in selectDisplay">{! x !}</span></div>
 
                                     <div style="text-align: right;margin-top: 10px;float: right">
                                         <input type="button" class="btn btn-primary btn-sm"
@@ -570,16 +571,17 @@
                                                         <div style="clear:both;"></div>
                                                     </div>
 
-                                                    <div style="margin-left:10px;margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
+                                                    <div style="text-align: center;margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
                                                         <button type="button" class="btn btn-info btn-sm"
                                                                 @click="modifySubmitAPI()">
                                                             确认
                                                         </button>
                                                     </div>
 
-                                                    <div style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
-                                                        <p class="col-sm-12" v-for="x in selectDisplay">
-                                                            {! x !}</p></div>
+                                                    <div class="col-sm-12" style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
+                                                        <span style="color: #2372A8;font-weight: bold">所选接口：</span>
+                                                        <span style="line-height: 25px" class="col-sm-12" v-for="x in selectDisplay">
+                                                            {! x !}</span></div>
 
                                                     <div style="text-align: right;margin-top: 10px;float: right">
                                                         <input type="button"
