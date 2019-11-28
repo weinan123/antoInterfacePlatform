@@ -784,7 +784,7 @@
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in qaCookieList">
-                        <td style="width: 10%;"><input :readOnly="index===0"
+                        <td style="width: 12%;"><input :readOnly="index===0"
                                                        type="text" class="form-control" id="name"
                                                        v-model="qcookie.cookiename"
                         >
@@ -792,21 +792,21 @@
                         <td style="width: 15%;"><input type="text" class="form-control" id="name"
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 15%"><input type="text" class="form-control" id="name"
+                        <td style="width: 12%"><input type="text" class="form-control" id="name"
 
                                                       v-model="qcookie.password">
                         </td>
-                        <td style="width: 5%">
+                        <td style="width: 7%;text-align: center;">
                             <button class="btn-local"
                                     @click="getCookies(index,qcookie.id,qcookie.cookiename,qcookie.username,qcookie.password,'qa')">
                                 生成
                             </button>
                         </td>
-                        <td style="width: 45%"><input type="text" class="form-control" id="name"
+                        <td style="width: 41%"><input type="text" class="form-control" id="name"
                                                       readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 15%">
+                        <td style="width: 13%;text-align: center;">
                             <button class="btn-local" @click="addCookie('qa')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'qa')">删除
@@ -831,7 +831,7 @@
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in stageCookieList">
-                        <td style="width: 10%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 12%;"><input type="text" class="form-control" id="name"
                                                        :readonly="index===0"
                                                        v-model="qcookie.cookiename"
                         >
@@ -840,20 +840,20 @@
 
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 15%"><input type="text" class="form-control" id="name"
+                        <td style="width: 12%"><input type="text" class="form-control" id="name"
                                                       v-model="qcookie.password">
                         </td>
-                        <td style="width: 5%">
+                        <td style="width: 7%;text-align: center;">
                             <button class="btn-local"
                                     @click="getCookies(index,qcookie.id,qcookie.cookiename,qcookie.username,qcookie.password,'stage')">
                                 生成
                             </button>
                         </td>
-                        <td style="width: 45%"><input type="text" class="form-control" id="name"
+                        <td style="width: 41%"><input type="text" class="form-control" id="name"
                                                       readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 15%">
+                        <td style="width: 13%;text-align: center;">
                             <button class="btn-local" @click="addCookie('stage')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'stage')">删除
@@ -878,7 +878,7 @@
                     </thead>
                     <tbody>
                     <tr v-for="qcookie,index in liveCookieList">
-                        <td style="width: 10%;"><input type="text" class="form-control" id="name"
+                        <td style="width: 12%;"><input type="text" class="form-control" id="name"
                                                        :readonly="index===0" v-model="qcookie.cookiename"
                         >
                         </td>
@@ -886,20 +886,20 @@
 
                                                        v-model="qcookie.username">
                         </td>
-                        <td style="width: 15%"><input type="text" class="form-control" id="name"
+                        <td style="width: 12%"><input type="text" class="form-control" id="name"
                                                       v-model="qcookie.password">
                         </td>
-                        <td style="width: 5%">
+                        <td style="width: 7%;text-align: center;">
                             <button class="btn-local"
                                     @click="getCookies(index,qcookie.id,qcookie.cookiename,qcookie.username,qcookie.password,'live')">
                                 生成
                             </button>
                         </td>
-                        <td style="width: 45%"><input type="text" class="form-control" id="name"
+                        <td style="width: 41%"><input type="text" class="form-control" id="name"
                                                       placeholder="cookie" readOnly="true"
                                                       v-model="qcookie.cookies">
                         </td>
-                        <td style="width: 15%">
+                        <td style="width: 13%;text-align: center;">
                             <button class="btn-local" @click="addCookie('live')">增加</button>
                             &nbsp&nbsp
                             <button class="btn-local" @click="delCookie(index,qcookie.id,'live')">删除
