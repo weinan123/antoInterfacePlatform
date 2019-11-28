@@ -194,7 +194,7 @@
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
-                <table style="width: 90%">
+                <table style="width: 97%;margin: auto">
                     <thead>
                     <tr>
                         <th>批量删除</th>
@@ -205,7 +205,7 @@
                         <th>通过用例数</th>
                         <th>失败用例数</th>
                         <th>未执行用例数</th>
-                        <th>操作</th>
+                        <th style="min-width: 90px">操作</th>
                     </tr>
                     </thead>
                     <tbody id="row">
@@ -225,18 +225,13 @@
                         <td>{! item.failcaseNum !}</td>
                         <td>{! item.blockcaseNum !}</td>
                         <td style="margin: auto">
-                            <div class="btn-group" style="margin: auto">
+                            <div class="btn-group" style="margin: auto;text-align: center">
                                 <a v-bind:href="['/apiCases?id='+item.id]">
-                                    <button type="button" class="btn-local">
-                                        查看
-                                    </button>
+                                    <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
 
-                                <a>
-                                    <button type="button" class="btn-local" data-toggle="modal"
-                                            v-bind:data-target="'#editProject'+[item.id]">
-                                        编辑
-                                    </button>
+                                <a data-toggle="modal" v-bind:data-target="'#editProject'+[item.id]">
+                                    <span class="glyphicon glyphicon-edit"></span>
                                 </a>
                                 <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
                                      role="dialog"
@@ -298,15 +293,12 @@
                                     </div><!-- /.modal -->
                                 </div>
 
-                                <a>
-                                    <button type="button" class="btn-delete"
-                                            @click="projectDelete(item.id)">删除
-                                    </button>
+                                <a @click="projectDelete(item.id)">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
                                 <a v-bind:href="['/uploadCase/?modelid='+item.id]"
                                    v-bind:download="item.moduleName">
-                                    <button type="button" class="btn-delete">导出
-                                    </button>
+                                    <span class="glyphicon glyphicon-log-out"></span>
                                 </a>
                             </div>
                         </td>
@@ -476,7 +468,7 @@
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
-                <table style="width: 90%;margin-right: 30px;">
+                <table style="width: 97%">
                     <thead>
                     <tr>
                         <th>批量操作</th>
@@ -485,7 +477,7 @@
                         <th>所需Cookie</th>
                         <th>最后运行时间</th>
                         <th>最后执行结果</th>
-                        <th>操作</th>
+                        <th style="min-width: 130px">操作</th>
                     </tr>
                     </thead>
                     <tbody id="row">
@@ -518,19 +510,13 @@
                             <td>{! item.runResult !}</td>
                             <td style="margin: auto">
                                 <div class="btn-group" style="margin: auto">
-                                    <a>
-                                        <button type="button" class="btn-local" data-toggle="collapse"
-                                                v-bind:data-target="'#collapse'+[item.id]">
-                                            查看
-                                        </button>
+                                    <a class="iconlink" data-toggle="collapse" v-bind:data-target="'#collapse'+[item.id]">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
 
-                                    <a>
-                                        <button type="button" class="btn-local"
-                                                data-toggle="modal" data-target="#modifyCase"
+                                    <a class="iconlink" data-toggle="modal" data-target="#modifyCase"
                                                 @click="getCaseAPIInfo(item.id)">
-                                            编辑
-                                        </button>
+                                        <span class="glyphicon glyphicon-edit"></span>
                                     </a>
 
                                     <div class="modal fade" id="modifyCase" tabindex="-1" role="dialog"
@@ -617,21 +603,12 @@
                                     </div>
 
 
-                                    <a>
-                                        <button type="button" class="btn-delete"
-                                                @click="caseDelete(item.id)">删除
-                                        </button>
+                                    <a v-if="createReport" class="iconlink" data-toggle="modal"
+                                                v-bind:data-target="'#runCase'+[item.id]">
+                                        <span class="glyphicon glyphicon-expand"></span>
                                     </a>
-                                    <a v-if="createReport">
-                                        <button type="button" class="btn-delete"
-                                                data-toggle="modal"
-                                                v-bind:data-target="'#runCase'+[item.id]">执行
-                                        </button>
-                                    </a>
-                                    <a v-if="!createReport">
-                                        <button type="button" class="btn-delete"
-                                                @click="runCase(item.id)">执行
-                                        </button>
+                                    <a v-if="!createReport" class="iconlink" @click="runCase(item.id)">
+                                        <span class="glyphicon glyphicon-expand"></span>
                                     </a>
                                     <!-- 点击批量执行时，输入报告名称弹框 -->
                                     <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1" role="dialog" aria-labelledby="reportNameLabel" aria-hidden="true" style="margin-top: 0px;">
@@ -705,6 +682,9 @@
                                             </div><!-- /.modal-content -->
                                         </div><!-- /.modal -->
                                     </div>{% endcomment %}
+                                    <a class="iconlink" @click="caseDelete(item.id)">
+                                        <span class="glyphicon glyphicon-remove-circle"></span>
+                                    </a>
 
                                 </div>
                             </td>
