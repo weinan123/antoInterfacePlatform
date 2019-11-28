@@ -205,7 +205,7 @@
                         <th>通过用例数</th>
                         <th>失败用例数</th>
                         <th>未执行用例数</th>
-                        <th style="min-width: 90px">操作</th>
+                        <th style="min-width: 140px">操作</th>
                     </tr>
                     </thead>
                     <tbody id="row">
@@ -226,11 +226,12 @@
                         <td>{! item.blockcaseNum !}</td>
                         <td style="margin: auto">
                             <div class="btn-group" style="margin: auto;text-align: center">
-                                <a v-bind:href="['/apiCases?id='+item.id]">
+                                <a class="iconlink" v-bind:href="['/apiCases?id='+item.id]">
                                     <span class="glyphicon glyphicon-eye-open"></span>
                                 </a>
 
-                                <a data-toggle="modal" v-bind:data-target="'#editProject'+[item.id]">
+                                <a class="iconlink" data-toggle="modal"
+                                   v-bind:data-target="'#editProject'+[item.id]">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
                                 <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
@@ -293,10 +294,10 @@
                                     </div><!-- /.modal -->
                                 </div>
 
-                                <a @click="projectDelete(item.id)">
+                                <a class="iconlink" @click="projectDelete(item.id)">
                                     <span class="glyphicon glyphicon-remove-circle"></span>
                                 </a>
-                                <a v-bind:href="['/uploadCase/?modelid='+item.id]"
+                                <a class="iconlink" v-bind:href="['/uploadCase/?modelid='+item.id]"
                                    v-bind:download="item.moduleName">
                                     <span class="glyphicon glyphicon-log-out"></span>
                                 </a>
@@ -367,9 +368,11 @@
                                             确认
                                         </button>
                                     </div>
-                                    <div class="col-sm-12" style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
+                                    <div class="col-sm-12"
+                                         style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                         <span style="color: #2372A8;font-weight: bold">所选接口：</span>
-                                        <span class="col-sm-12" style="line-height: 25px" v-for="x in selectDisplay">{! x !}</span></div>
+                                        <span class="col-sm-12" style="line-height: 25px"
+                                              v-for="x in selectDisplay">{! x !}</span></div>
 
                                     <div style="text-align: right;margin-top: 10px;float: right">
                                         <input type="button" class="btn btn-primary btn-sm"
@@ -454,9 +457,10 @@
                     </div>
 
 
-                    <div class="col-sm-2" style="float: right;">
+                    <div class="col-sm-2" style="float: right;padding-left: 0px;padding-right: 0px;">
                         <select class="form-control" v-model="environment" @change="getUserCookieList()"
-                                id="environment" style="float: right;">
+                                id="environment"
+                                style="float: right;padding-left: 0px;padding-right: 0px;text-align: center">
                             <option value="QA">QA</option>
                             <option value="Stage">Stage</option>
                             <option value="Live">Live</option>
@@ -464,7 +468,7 @@
                     </div>
 
                     <label for="environment" class="col-sm-1 control-label"
-                           style="margin-top: 5px;float: right;">环境切换：</label>
+                           style="margin-top: 5px;float: right;min-width: 100px;padding-right: 0px;padding-left: 30px;">环境切换：</label>
                 </div>
             </div>
             <div class="tableStyles" style="width:100%;margin-left: 15px;padding: 15px;">
@@ -510,12 +514,13 @@
                             <td>{! item.runResult !}</td>
                             <td style="margin: auto">
                                 <div class="btn-group" style="margin: auto">
-                                    <a class="iconlink" data-toggle="collapse" v-bind:data-target="'#collapse'+[item.id]">
+                                    <a class="iconlink" data-toggle="collapse"
+                                       v-bind:data-target="'#collapse'+[item.id]">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </a>
 
                                     <a class="iconlink" data-toggle="modal" data-target="#modifyCase"
-                                                @click="getCaseAPIInfo(item.id)">
+                                       @click="getCaseAPIInfo(item.id)">
                                         <span class="glyphicon glyphicon-edit"></span>
                                     </a>
 
@@ -535,21 +540,24 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <label for="projectName"
-                                           class="control-label"
-                                           style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
-                                    <div style="width: 35%;float: left">
-                                        <input class="form-control" type="text" name="projectName"
-                                               v-model="projectNameTitle" readonly="readonly"
-                                               maxlength="50">
-                                    </div>
-                                    <label for="caseName"
-                                           class=" control-label"
-                                           style="margin-top: 10px;margin-left:5%;width: 10%;float: left">用例名称:</label>
-                                    <div style="width: 35%;float: left">
-                                        <input class="form-control" type="text" name="caseName"
-                                               id="caseName" v-model="caseNameModify"
-                                               maxlength="50" placeholder="请输入用例名称"/>
-                                    </div>
+                                                           class="control-label"
+                                                           style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
+                                                    <div style="width: 35%;float: left">
+                                                        <input class="form-control" type="text"
+                                                               name="projectName"
+                                                               v-model="projectNameTitle"
+                                                               readonly="readonly"
+                                                               maxlength="50">
+                                                    </div>
+                                                    <label for="caseName"
+                                                           class=" control-label"
+                                                           style="margin-top: 10px;margin-left:5%;width: 10%;float: left">用例名称:</label>
+                                                    <div style="width: 35%;float: left">
+                                                        <input class="form-control" type="text"
+                                                               name="caseName"
+                                                               id="caseName" v-model="caseNameModify"
+                                                               maxlength="50" placeholder="请输入用例名称"/>
+                                                    </div>
                                                     <div style="overflow-y:auto;margin-top: 20px;max-height:350px;height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                                         <div v-for="item in modifyApi" class="col-sm-12">
                                             <span style="color: #2372A8;font-weight: bold">模块：{!
@@ -578,9 +586,11 @@
                                                         </button>
                                                     </div>
 
-                                                    <div class="col-sm-12" style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
+                                                    <div class="col-sm-12"
+                                                         style="overflow-y:auto;margin-top: 20px; height:350px;max-height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                                         <span style="color: #2372A8;font-weight: bold">所选接口：</span>
-                                                        <span style="line-height: 25px" class="col-sm-12" v-for="x in selectDisplay">
+                                                        <span style="line-height: 25px" class="col-sm-12"
+                                                              v-for="x in selectDisplay">
                                                             {! x !}</span></div>
 
                                                     <div style="text-align: right;margin-top: 10px;float: right">
@@ -604,40 +614,54 @@
 
 
                                     <a v-if="createReport" class="iconlink" data-toggle="modal"
-                                                v-bind:data-target="'#runCase'+[item.id]">
+                                       v-bind:data-target="'#runCase'+[item.id]">
                                         <span class="glyphicon glyphicon-expand"></span>
                                     </a>
                                     <a v-if="!createReport" class="iconlink" @click="runCase(item.id)">
                                         <span class="glyphicon glyphicon-expand"></span>
                                     </a>
                                     <!-- 点击批量执行时，输入报告名称弹框 -->
-                                    <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1" role="dialog" aria-labelledby="reportNameLabel" aria-hidden="true" style="margin-top: 0px;">
-            <div class="modal-dialog" style="width: 500px;margin: 75px auto;max-height: 650px;">
-                <div class="modal-content" id="Names">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                            &times;
-                        </button>
-                        <h4 class="modal-title" id="reportNameLabel">
-                            报告名称
-                        </h4>
-                    </div>
-                    <div class="modal-body">
-                         <div class="form-group form-inline">
-                             <div><label class="itemCSS" style="width: 15%;text-align: right;">名称:</label>
-                                 <input type="text" class="form-control" name="reportName" v-model="runResultName"
-                            placeholder="请输入报告名称" style="width:70%;">
-                                 <span v-if="!runResultName" style="color: red">*</span>
-                             </div>
-                         </div>
-                    </div>
-                    <div class="modal-footer" style="margin-top: 0px;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <input type="submit" value="执行" class="btn btn-primary" @click="runCase(item.id)" data-dismiss="modal" :disabled="!runResultName"/>
-                    </div>
-                </div>
-            </div><!-- /.modal-content -->
-        </div>
+                                    <div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
+                                         role="dialog" aria-labelledby="reportNameLabel"
+                                         aria-hidden="true" style="margin-top: 0px;">
+                                        <div class="modal-dialog"
+                                             style="width: 500px;margin: 75px auto;max-height: 650px;">
+                                            <div class="modal-content" id="Names">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close"
+                                                            data-dismiss="modal" aria-hidden="true">
+                                                        &times;
+                                                    </button>
+                                                    <h4 class="modal-title" id="reportNameLabel">
+                                                        报告名称
+                                                    </h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="form-group form-inline">
+                                                        <div><label class="itemCSS"
+                                                                    style="width: 15%;text-align: right;">名称:</label>
+                                                            <input type="text" class="form-control"
+                                                                   name="reportName"
+                                                                   v-model="runResultName"
+                                                                   placeholder="请输入报告名称"
+                                                                   style="width:70%;">
+                                                            <span v-if="!runResultName"
+                                                                  style="color: red">*</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer" style="margin-top: 0px;">
+                                                    <button type="button" class="btn btn-default"
+                                                            data-dismiss="modal">关闭
+                                                    </button>
+                                                    <input type="submit" value="执行"
+                                                           class="btn btn-primary"
+                                                           @click="runCase(item.id)" data-dismiss="modal"
+                                                           :disabled="!runResultName"/>
+                                                </div>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div>
                                     {% comment %}<div class="modal fade" v-bind:id="'runCase'+[item.id]" tabindex="-1"
                                          role="dialog"
                                          aria-labelledby="myModalLabel" aria-hidden="true">
@@ -689,9 +713,10 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr v-bind:id="'collapse'+[item.id]" class="collapse" style="background-color: #fcf8e3">
+                        <tr v-bind:id="'collapse'+[item.id]" class="collapse"
+                            style="background-color: #fcf8e3">
                             <td colspan="7">
-                                <div >
+                                <div>
                                     接口详情：<br>
                                     <div class="panel-body" v-for="x in item['describe']">
                                         <div class="col-sm-3">
@@ -891,7 +916,8 @@
                     </tbody>
                 </table>
             </div>
-            <p style="color: orangered">说明：basecookie生成应用于单接口批量执行所依赖cookie,业务用例执行可根据不同业务用例选择不同私有cookie</p>
+            <p style="color: orangered">
+                说明：basecookie生成应用于单接口批量执行所依赖cookie,业务用例执行可根据不同业务用例选择不同私有cookie</p>
         </div>
     </div>
     <div style="height: 400px;background-color: #f7f7f7;" id="mounted"></div>

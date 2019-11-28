@@ -142,5 +142,29 @@ body {
     border-radius: 3px;
 }
 
+.iconlink {
+    color: rgba(99, 98, 98, 0.75) !important;
+    margin: 6px;
+}
+
+.iconlink:link {
+    color: rgba(99, 98, 98, 0.75) !important;
+    text-decoration: none;
+}
+
+.iconlink:visited {
+    color: rgba(99, 98, 98, 0.75) !important;
+    text-decoration: line-through;
+}
+
+.iconlink:hover {
+    color: #2372A8 !important;
+    text-decoration: underline;
+}
+
+.iconlink:active {
+    color: #2372A8 !important;
+}
+
 
 
