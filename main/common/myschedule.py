@@ -4,24 +4,61 @@ import runChartData,sendmail_exchange
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
+from main.models import projectschedule,apiInfoTable,projectList,moduleList
 import schedule,subprocess,batchstart
 from main.untils import configerData
+from main import apiinfo
 '''
 定时批量执行用例
 '''
+def getbatchrunList(idlist):
+    batchrun_list = []
+    try:
+        projectname_list = projectList.objects.all().values("projectName").distinct()
+    except Exception as e:
+        print(u"error: %s" % str(e))
+        return batchrun_list
+    for pm in projectname_list:
+        batchrun_dict = {}
+        list = []
+        for id in idlist:
+            try:
+                projectid = moduleList.objects.get(
+                    id=int(apiInfoTable.objects.get(apiID=int(id)).owningListID)).owningListID
+                projectname = projectList.objects.get(id=int(projectid)).projectName
+                if str(projectname) == str(pm["projectName"]):
+                    list.append(id)
+            except Exception as e:
+                print(u"error: %s" % str(e))
+                continue
+        if len(list) == 0:
+            continue
+        else:
+            cookieslist = projectschedule.objects.filter(projectname=str(pm["projectName"])).values("cookies")
+            if len(cookieslist)==0:
+                cookies = {}
+            else:
+                cookies = cookieslist[0]["cookies"]
+            print cookies
+            batchrun_dict = {"sname": str(pm["projectName"]), "list": list, "cookices": cookies}
+            batchrun_list.append(batchrun_dict)
+    return batchrun_list
 def runCase(ismail):
     conf = configerData.configerData()
     runcase = conf.getItemData("configerinfor","runcase").split(",")
+    environment = conf.getItemData("configerinfor","eviorment")
     scheduleList = []
     for i in runcase:
         if(i!=""):
             scheduleList.append(int(i))
     print scheduleList
-    reportName = u"定时报告" + "_" + time.strftime('%Y-%m-%d-%H_%M_%S', time.localtime(time.time()))
+    schedulePList = getbatchrunList(scheduleList)
+    print schedulePList
+    reportName = u"定时接口批量执行报告"
     starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
     isreport = conf.getItemData("configerinfor", "isreport")
 
-    batchResult = batchstart.start_main(scheduleList,isreport,"")
+    batchResult = batchstart.start_main(schedulePList,environment,isreport,"")
     successNum = batchResult["sNum"]
     faileNum = batchResult["fNum"]
     errorNum = batchResult["eNum"]
@@ -32,8 +69,8 @@ def runCase(ismail):
         exeuser = ""
         endtime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         print reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath
-        sql = "insert into main_reports(report_runName,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,report_localName)" \
-              "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,reportPath)
+        sql = "insert into main_reports(report_runName,startTime,endTime,totalNum,successNum,failNum,errorNum,executor,environment,report_localName)" \
+              "values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(reportName,starttime,endtime,totalNum,successNum,faileNum,errorNum,exeuser,environment,reportPath)
         mulSQL.mulSql().insertData(sql)
     else:
         pass
@@ -88,6 +125,8 @@ if __name__ == '__main__':
         schedule.every(28).to(31).at(localTime).do(runCase)
     while True:
         schedule.run_pending()
+
+
 
 
 

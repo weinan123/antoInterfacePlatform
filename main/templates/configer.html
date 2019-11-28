@@ -18,10 +18,10 @@
             <span class="leftlable">环境切换:</span>
             <div class="rightform">
                 <select class="form-control" v-model="eviorment">
-                  <option selected>Qa</option>
-                  <option>Dev</option>
-                  <option>Stage</option>
-                  <option>Live</option>
+                    <option value=null >请选择</option>
+                  <option value="QA" >QA</option>
+                  <option value="Stage">Stage</option>
+                  <option value="Live">Live</option>
                 </select>
             </div>
         </div>
@@ -120,14 +120,16 @@
         <span class="leftlable" for="name">定时时间:</span>
         <div class="rightform">
        <select class="form-control" style="width: 48%;float: left" v-model="timingDay">
-          <option selected>每天</option>
-          <option>每周</option>
-          <option>每月</option>
+           <option value="" >请选择</option>
+         <option value="每天">每天</option>
+           <option value="每周">每周</option>
+            <option value="每月">每月</option>
         </select>
         <select class="form-control" style="width: 48%;float: left;margin-left: 5px" v-model="timingHour">
-          <option selected>09:00</option>
-          <option>15:00</option>
-          <option>19:00</option>
+           <option value="">请选择</option>
+            <option value="09:00">09:00</option>
+             <option value="14:00">14:00</option>
+             <option value="19:00">19:00</option>
         </select>
     </div>
     </div>

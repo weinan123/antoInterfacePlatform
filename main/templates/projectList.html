@@ -534,7 +534,7 @@
 
                                     <div class="modal fade" id="modifyCase" tabindex="-1" role="dialog"
                                          aria-labelledby="myModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" style="width: 60%;height: 50%">
+                                        <div class="modal-dialog" style="width: 45%;height: 50%">
                                             <div class="modal-content"
                                                  style="width: 90%;margin: 75px auto;height: auto;padding-bottom: 10px;">
                                                 <div class="modal-header">
@@ -548,22 +548,21 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <label for="projectName"
-                                                           class="col-sm-2 control-label">项目名称:</label>
-                                                    <div class="col-sm-4">
-                                                        <input class="form-control" type="text"
-                                                               name="projectName"
-                                                               v-model="projectNameTitle"
-                                                               readonly="readonly"
-                                                               maxlength="50" placeholder="请输入项目名称"/>
-                                                    </div>
-                                                    <label for="caseName"
-                                                           class="col-sm-2 control-label">用例名称:</label>
-                                                    <div class="col-sm-4">
-                                                        <input class="form-control" type="text"
-                                                               name="caseName"
-                                                               id="caseName" v-model="caseNameModify"
-                                                               maxlength="50" placeholder="请输入用例名称"/>
-                                                    </div>
+                                           class="control-label"
+                                           style="margin-top: 10px;width: 10%;float: left">项目名称:</label>
+                                    <div style="width: 35%;float: left">
+                                        <input class="form-control" type="text" name="projectName"
+                                               v-model="projectNameTitle" readonly="readonly"
+                                               maxlength="50">
+                                    </div>
+                                    <label for="caseName"
+                                           class=" control-label"
+                                           style="margin-top: 10px;margin-left:5%;width: 10%;float: left">用例名称:</label>
+                                    <div style="width: 35%;float: left">
+                                        <input class="form-control" type="text" name="caseName"
+                                               id="caseName" v-model="caseNameModify"
+                                               maxlength="50" placeholder="请输入用例名称"/>
+                                    </div>
                                                     <div style="overflow-y:auto;margin-top: 20px;max-height:350px;height:350px;width: 45%;float: left;border: 1px solid gainsboro">
                                                         <div v-for="item in modifyApi" class="col-sm-12">
                                             <span style="color: #2372A8;font-weight: bold">模块：{!
@@ -585,7 +584,7 @@
                                                         <div style="clear:both;"></div>
                                                     </div>
 
-                                                    <div style="margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
+                                                    <div style="margin-left:10px;margin-top: 170px;margin-bottom: 10px;width: 8%;float: left">
                                                         <button type="button" class="btn btn-info btn-sm"
                                                                 @click="modifySubmitAPI()">
                                                             确认
