@@ -4,31 +4,31 @@
 {% block content %}
     <div id="apiCases">
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" id="navSelBar">
-            <div class="col-md-3 cl-sm-3 cl-xs-3"  id="search">
+            <div class="col-md-2 cl-sm-2 cl-xs-2"  id="search" style="padding: 0px;margin-left: 20px;">
                 <input type="text" class="form-control" name="search" v-model="searchinfo"
-                            placeholder="请输入搜索接口名称的文本" @change="search()">
+                            placeholder="请输入接口名称" @change="search()">
             </div>
-            <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择项目：</label>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <label class="col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;padding: 0px;margin-left: 2%;">选择项目：</label>
+            <div class="col-md-2 col-sm-2 col-xs-2" style="padding: 0px;">
                 <select class="form-control" v-model="projectID" @change="selectPro($event)">
                     <option selected value="">请选择</option>
                     <option  v-for="item in projectList" :value="item.id">{! item.projectName !}</option>
                 </select>
             </div>
-            <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">选择模块：</label>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <label class="col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;padding: 0px;margin-left: 2%;">选择模块：</label>
+            <div class="col-md-2 col-sm-2 col-xs-2" style="padding: 0px;">
                 <select class="form-control" v-model="moduleName" @change="selectModu($event)">
                     <option selected value="">请选择</option>
                     <option  v-for="item in moduleList" :value="item">{! item !}</option>
                 </select>
             </div>
-            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="align-content: right">
+            <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1" style="margin-left: 1%;">
                 <a href="/singleInterface/addapi/">
-                    <button type="button" class="btn btn-primary" style="background-color: #2372A8">新建用例</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #2372A8;">新建用例</button>
                 </a>
             </div>
-           <label class="col-lg-1 col-md-2 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;">环境切换：</label>
-            <div class="col-lg-1 col-md-2 col-sm-2 col-xs-2">
+           <label class="col-md-1 col-sm-2 col-xs-2" style="margin-top: 8px;width: auto;padding: 0px;margin-left: 2%;">环境切换：</label>
+            <div class="col-md-1 col-sm-2 col-xs-2" style="padding: 0px;">
                 <select class="form-control" v-model="environment">
                     <option selected value="QA">QA</option>
                     <option  value="Stage">Stage</option>
@@ -42,14 +42,14 @@
                 <table style="width: 100%">
                     <thead>
                     <tr>
-                        <th>序号</th>
-                        <th>接口名称</th>
+                        <th style="width: 8%">序号</th>
+                        <th style="width: 12%">接口名称</th>
 {#                        <th>标记ID</th>#}
-                        <th>依赖用例</th>
-                        <th>依赖数据</th>
-                        <th>执行结果</th>
-                        <th>执行时间</th>
-                        <th>创建者</th>
+                        <th style="width: 15%">依赖用例</th>
+                        <th style="width: 15%">依赖数据</th>
+                        <th style="width: 12%">执行结果</th>
+                        <th style="width: 15%">执行时间</th>
+                        <th style="width: 12%">创建者</th>
                         <th style="width: 16%">操作</th>
                     </tr>
                     </thead>
