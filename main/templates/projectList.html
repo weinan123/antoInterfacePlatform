@@ -29,7 +29,7 @@
                     <button class="viewButton" data-toggle="modal" data-target="#newProject">新建</button>
                     <!-- 新建模态框（Modal） -->
                     <div class="modal fade" id="newProject" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
+                         aria-labelledby="myModalLabel" style="margin-top:0px;"
                          aria-hidden="true">
                         <div class="modal-dialog" id="newProjectRow">
                             <div class="modal-content" style="width: 450px;margin: 75px auto;">
@@ -92,7 +92,7 @@
 
                     <!-- 导入模态框（Modal） -->
                     <div class="modal fade" id="importProject" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
+                         aria-labelledby="myModalLabel" style="margin-top:0px;"
                          aria-hidden="true">
                         <div class="modal-dialog" id="importProjectRow">
                             <div class="modal-content" style="width: 450px;margin: 75px auto;">
@@ -235,7 +235,7 @@
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
                                 <div class="modal fade" v-bind:id="'editProject'+[item.id]" tabindex="-1"
-                                     role="dialog"
+                                     role="dialog" style="margin-top:0px;"
                                      aria-labelledby="myModalLabel"
                                      aria-hidden="true">
                                     <div class="modal-dialog" v-bind:id="'editProjectRow'+[item.id]">
@@ -316,7 +316,7 @@
                     <button class="viewButton" data-toggle="modal" data-target="#createCase">新建</button>
 
                     <div class="modal fade" id="createCase" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel" aria-hidden="true">
+                         aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:0px;">
                         <div class="modal-dialog" id="newProjectRow" style="width: 55%;height: 50%">
                             <div class="modal-content"
                                  style="width: 90%;margin: 75px auto;height: 462px;padding-bottom: 10px;">
@@ -414,7 +414,7 @@
                     </button>
 
                     <div class="modal fade" id="caseBatchRun" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel" aria-hidden="true">
+                         aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top:0px;">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -525,7 +525,8 @@
                                     </a>
 
                                     <div class="modal fade" id="modifyCase" tabindex="-1" role="dialog"
-                                         aria-labelledby="myModalLabel" aria-hidden="true">
+                                         aria-labelledby="myModalLabel" aria-hidden="true"
+                                         style="margin-top:0px;">
                                         <div class="modal-dialog" style="width: 55%;height: 50%">
                                             <div class="modal-content"
                                                  style="width: 90%;margin: 75px auto;height: 462px;padding-bottom: 10px;">
