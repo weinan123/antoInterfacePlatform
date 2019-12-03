@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys,os,django
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 import unittest
@@ -139,7 +140,7 @@ def getResp(id,environment, dtime, cookices = None):
         result = {"code": -1, "info": str(e)}
         return result
     print u"请求方法：%s" % (methods)
-    host = getHost(int(query.host),environment)
+    host = getHost(int(query.host), environment)
     host = replaceStrParam(dependData, host)
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)

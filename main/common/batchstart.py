@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys,os,django
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 import unittest
