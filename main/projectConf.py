@@ -7,7 +7,7 @@ from django.shortcuts import render
 from models import *
 from django.http.response import JsonResponse
 import json, os
-from main.common import projectSchedule
+from untils import configerData
 def projectconfiger(request):
     return render(request, "projectConfiger.html")
 def saveProConf(request):
@@ -29,6 +29,7 @@ def saveProConf(request):
                 "data": [],
                 "msg": "保存成功"
             }
+            configerData.configerData().setData("scheduleChanged", "caseflag", "true")
         except Exception as e:
             responseData = {
                 "code": -1,

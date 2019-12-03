@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import sys,os,django
-import myschedule
+from main.untils import configerData
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 from main.models import projectschedule,caseList,reports
@@ -119,15 +119,16 @@ if __name__ == '__main__':
     runcase = runProSchdeule()
     runcase.runschedule()
     while True:
-        times = int(time.time())
-        onemin = times % 60
-        print onemin
-        if onemin == 0:
+        flag = configerData.configerData().getItemData("scheduleChanged", "projectflag")
+        print flag
+        if flag == "true":
             for j in schedule.jobs:
                 schedule.cancel_job(j)
             runcase.runschedule()
+            configerData.configerData().setData("scheduleChanged", "projectflag", "false")
+            print schedule.jobs
         else:
-            pass
+            print schedule.jobs
         schedule.run_pending()
 
 

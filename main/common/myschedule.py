@@ -128,17 +128,19 @@ def runSchedule():
 if __name__ == '__main__':
     runSchedule()
     while True:
-         times = int(time.time())
-         onemin = times % 60
-         print onemin
-         if onemin == 0:
-             for j in schedule.jobs:
-                 schedule.cancel_job(j)
-             runSchedule()
-             print schedule.jobs
-         else:
-             print schedule.jobs
-         schedule.run_pending()
+        flag = configerData.configerData().getItemData("scheduleChanged", "caseflag")
+        print flag
+        if flag == "true":
+            for j in schedule.jobs:
+                schedule.cancel_job(j)
+            runSchedule()
+            configerData.configerData().setData("scheduleChanged", "caseflag", "false")
+            print schedule.jobs
+        else:
+            print schedule.jobs
+        schedule.run_pending()
+
+
 
 
 

@@ -7,7 +7,6 @@ class configerData():
     def __init__(self):
         self.conf = ConfigParser.ConfigParser()
         curpath = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-        print curpath
         self.iniFileUrl = curpath+"/configerdatas/config_data"
         #print self.iniFileUrl
         try:
