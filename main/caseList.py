@@ -151,7 +151,8 @@ def caseInfo(request):
                     if (depend is None) or (depend == ''):
                         mydict["depend"] = "无"
                     else:
-                        mydict["depend"] = str(depend)
+                        caseName = apiInfoTable.objects.filter(t_id=depend).values('apiName')[0]['apiName']
+                        mydict["depend"] = str(caseName)
                     dependData = respApiList[0]['depend_casedata']
                     if (dependData is None) or (dependData == ''):
                         mydict["dependData"] = "无"
