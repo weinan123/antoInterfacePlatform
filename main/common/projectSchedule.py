@@ -31,7 +31,10 @@ class runProSchdeule():
                timeTime = i["timeTime"]
                for j in runcaselist:
                    runcaseinfor = caseList.objects.filter(id=int(j)).values("caseName","includeAPI")
-                   list = map(int, runcaseinfor[0]["includeAPI"].split(","))
+                   if runcaseinfor[0]["includeAPI"]==""or i["reporter"] == None:
+                       list = []
+                   else:
+                       list = map(int, runcaseinfor[0]["includeAPI"].split(","))
                    print str(runcaseinfor[0]["caseName"])
                    batchrunJson = {
                        "sname": str(runcaseinfor[0]["caseName"]),
@@ -99,30 +102,32 @@ class runProSchdeule():
         ddd = self.getProinfor()
         for i in ddd:
             batchrun_list = i["scheduleinfor"]
-            evirment = "qa"
             projectname = i["projectname"]
-            p = Process(target=self.runcase, args=[batchrun_list, evirment, projectname])
-            p.start()
-            p.join()
+            evirment = i["evirment"]
+            reporter = i["reporter"]
+            everyRounder = i["timeDay"]
+            localTime = str(i["timeTime"])
+            print reporter
+            if everyRounder == "每天":
+                schedule.every().day.at(localTime).do(self.runcase, batchrun_list, evirment, projectname, reporter)
+            elif everyRounder == "每周":
+                schedule.every().monday.at(localTime).do(self.runcase, batchrun_list, evirment, projectname, reporter)
+            elif everyRounder == "每月":
+                schedule.every(28).to(31).at(localTime).do(self.runcase, batchrun_list, evirment, projectname,
+                                                             reporter)
 if __name__ == '__main__':
-    sss = runProSchdeule()
-    ddd =sss.getProinfor()
-    print ddd
-    for i in ddd:
-        batchrun_list=i["scheduleinfor"]
-        projectname=i["projectname"]
-        evirment = i["evirment"]
-        reporter = i["reporter"]
-        everyRounder = i["timeDay"]
-        localTime = str(i["timeTime"])
-        print reporter
-        if everyRounder == "每天":
-            schedule.every().day.at(localTime).do(sss.runcase,batchrun_list,evirment,projectname,reporter)
-        elif everyRounder == "每周":
-            schedule.every().monday.at(localTime).do(sss.runcase,batchrun_list,evirment,projectname,reporter)
-        elif everyRounder == "每月":
-            schedule.every(28).to(31).at(localTime).dodo(sss.runcase,batchrun_list,evirment,projectname,reporter)
+    runcase = runProSchdeule()
+    runcase.runschedule()
     while True:
+        times = int(time.time())
+        onemin = times % 60
+        print onemin
+        if onemin == 0:
+            for j in schedule.jobs:
+                schedule.cancel_job(j)
+            runcase.runschedule()
+        else:
+            pass
         schedule.run_pending()
 
 

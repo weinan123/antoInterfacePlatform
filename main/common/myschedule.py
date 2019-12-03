@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 import os,django
+import sys
+reload(sys)
 import runChartData,sendmail_exchange
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
@@ -114,17 +116,29 @@ def getEamilData(isreport,successNum,faileNum,errorNum):
         reportpath=""
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath,successNum,faileNum,errorNum,'normal')
+def runSchedule():
+        schedule.every(3).minutes.do(runChart)
+        isreport, ismail,everyRounder,localTime = getCofigerData()
+        if everyRounder =="每天":
+            schedule.every().day.at(localTime).do(runCase,ismail)
+        elif everyRounder =="每周":
+            schedule.every().monday.at(localTime).do(runCase)
+        elif everyRounder =="每月":
+            schedule.every(28).to(31).at(localTime).do(runCase)
 if __name__ == '__main__':
-    schedule.every(3).minutes.do(runChart)
-    isreport, ismail,everyRounder,localTime = getCofigerData()
-    if everyRounder =="每天":
-        schedule.every().day.at(localTime).do(runCase,ismail)
-    elif everyRounder =="每周":
-        schedule.every().monday.at(localTime).do(runCase)
-    elif everyRounder =="每月":
-        schedule.every(28).to(31).at(localTime).do(runCase)
+    runSchedule()
     while True:
-        schedule.run_pending()
+         times = int(time.time())
+         onemin = times % 60
+         print onemin
+         if onemin == 0:
+             for j in schedule.jobs:
+                 schedule.cancel_job(j)
+             runSchedule()
+             print schedule.jobs
+         else:
+             print schedule.jobs
+         schedule.run_pending()
 
 
 
