@@ -1,5 +1,6 @@
 # coding=utf-8
 import sys,os,django
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 import unittest
@@ -10,8 +11,6 @@ import time, re
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
-
-
 @classmethod
 def setUp(self):
     print(u"开始执行....")

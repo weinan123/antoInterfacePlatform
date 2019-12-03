@@ -19,6 +19,9 @@ class configerData():
             #print key,value
             self.conf.set(section,key,(value))
         self.conf.write(open(self.iniFileUrl, "w"))
+    def setData(self,section, key, (value)):
+        self.conf.set(section, key, (value))
+        self.conf.write(open(self.iniFileUrl, "w"))
 
     def getData(self,section):
         alldata = self.conf.items(section)

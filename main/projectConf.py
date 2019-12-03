@@ -29,8 +29,6 @@ def saveProConf(request):
                 "data": [],
                 "msg": "保存成功"
             }
-            from untils import configerData
-            configerData.configerData().setData("ischange", "changed", "true")
         except Exception as e:
             responseData = {
                 "code": -1,

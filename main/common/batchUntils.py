@@ -1,25 +1,27 @@
 # coding=utf-8
-import sys,os,django
+import sys, os, django
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 import unittest
-import sys,os
-from main.models import apiInfoTable, projectList,hostTags,moduleList
+import sys, os
+from main.models import apiInfoTable, projectList, hostTags, moduleList
 import time
 import json
 from main.untils.until import mul_bodyData
 from main.untils import sendRequests
 import getDependData
 import authService
-#from main.common import authService,getDependData
-import sys,re
+import sys, re
+
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 
 '''
 获取测试套件
 '''
+
+
 # 获取TestSuite
 def getTestSuite(*classes):
     valid_types = (unittest.TestSuite, unittest.TestCase)
@@ -41,6 +43,8 @@ def getTestSuite(*classes):
 '''
 查找文件，如果没有，则创建文件
 '''
+
+
 def create():
     t = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))  # 将指定格式的当前时间以字符串输出
     suffix = "_result.html"
@@ -48,8 +52,6 @@ def create():
     report_path = os.path.dirname(os.path.dirname(__file__)) + "\\report\\" + relpath
     reportname = t
     return report_path, relpath, reportname
-
-
 '''
 根据环境查询host，如果为空，则正则创建
 '''
@@ -115,20 +117,24 @@ def getResp(id,environment, dtime, cookices = None):
             print(u"接口自定义参数：%s" % str(dependData))
     else:
         dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
-    send_url = replaceStrParam(dependData, query.url)
+    print dependData
+    send_url = replaceParam(dependData, query.url)
     if methods == "" or send_url == "":
         result = {"code": -1, "info": "参数不能为空"}
         return result
-    headers = query.headers
-    headers_dict = {}
-    if headers != "" and headers is not None and str(headers) != "{}":
-        headers_dict = replaceParam(dependData, json.loads(headers))
-    bodyinfor = query.body
+    headers = replaceParam(dependData, query.headers)
+    if headers != "" and headers is not None:
+        headers = json.loads(headers)
+    bodyinfor = replaceParam(dependData, query.body)
+    print bodyinfor
+    showflag = ""
     # print("bodyinfor: ", bodyinfor)
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
+        showflag = bodyinfor["showflag"]
 
     listid = query.owningListID
     try:
@@ -182,7 +188,7 @@ def getResp(id,environment, dtime, cookices = None):
                                                   headersOpt)
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
-                                                                send_url, headers_dict, send_body_dict, files, isRedirect,
+                                                                send_url, headers, send_body, files, isRedirect,
                                                                 showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
@@ -227,23 +233,6 @@ def replaceStrParam(dependdata_dict, stringValue):
     else:
         return strValue
     return strValue
-
-
-def replaceParam(dependdata_dict, value_dict):
-    old_dict = value_dict
-    for item_key, item_value in old_dict.items():
-        paramkey_list = re.findall(r"\${(.*?)}", str(item_value))
-        if len(paramkey_list) != 0:
-            paramkey_value = paramkey_list[0]
-            try:
-                value_dict[item_key] = dependdata_dict[paramkey_value]
-                print(u"使用值：%s替换参数${%s}" % (dependdata_dict[paramkey_value], paramkey_value))
-            except Exception as e:
-                value_dict[item_key] = ""
-                print("error: %s" % str(e))
-                print(u"使用值空值替换参数${%s}" % paramkey_value)
-    return value_dict
-
 
 def checkDepend(apiID, dependID):
     flag = False
