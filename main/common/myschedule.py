@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
 import os,django
+import sys
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 import runChartData,sendmail_exchange
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 from main.models import projectschedule,apiInfoTable,projectList,moduleList
-import schedule,subprocess,batchstart
+import schedule,batchstart
 from main.untils import configerData
-from main import apiinfo
 '''
 定时批量执行用例
 '''
@@ -114,17 +115,31 @@ def getEamilData(isreport,successNum,faileNum,errorNum):
         reportpath=""
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath,successNum,faileNum,errorNum,'normal')
+def runSchedule():
+        schedule.every(3).minutes.do(runChart)
+        isreport, ismail,everyRounder,localTime = getCofigerData()
+        if everyRounder =="每天":
+            schedule.every().day.at(localTime).do(runCase,ismail)
+        elif everyRounder =="每周":
+            schedule.every().monday.at(localTime).do(runCase)
+        elif everyRounder =="每月":
+            schedule.every(28).to(31).at(localTime).do(runCase)
 if __name__ == '__main__':
-    schedule.every(3).minutes.do(runChart)
-    isreport, ismail,everyRounder,localTime = getCofigerData()
-    if everyRounder =="每天":
-        schedule.every().day.at(localTime).do(runCase,ismail)
-    elif everyRounder =="每周":
-        schedule.every().monday.at(localTime).do(runCase)
-    elif everyRounder =="每月":
-        schedule.every(28).to(31).at(localTime).do(runCase)
+    runSchedule()
     while True:
+        flag = configerData.configerData().getItemData("scheduleChanged", "caseflag")
+        print flag
+        if flag == "true":
+            for j in schedule.jobs:
+                schedule.cancel_job(j)
+            runSchedule()
+            configerData.configerData().setData("scheduleChanged", "caseflag", "false")
+            print schedule.jobs
+        else:
+            print schedule.jobs
         schedule.run_pending()
+
+
 
 
 

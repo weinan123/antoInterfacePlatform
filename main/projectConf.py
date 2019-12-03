@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+import os,django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
+django.setup()
+import schedule
 from django.shortcuts import render
 from models import *
 from django.http.response import JsonResponse
 import json, os
-
-
+from untils import configerData
 def projectconfiger(request):
     return render(request, "projectConfiger.html")
 def saveProConf(request):
@@ -26,6 +29,7 @@ def saveProConf(request):
                 "data": [],
                 "msg": "保存成功"
             }
+            configerData.configerData().setData("scheduleChanged", "projectflag", "true")
         except Exception as e:
             responseData = {
                 "code": -1,

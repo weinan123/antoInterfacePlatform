@@ -7,7 +7,6 @@ class configerData():
     def __init__(self):
         self.conf = ConfigParser.ConfigParser()
         curpath = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-        print curpath
         self.iniFileUrl = curpath+"/configerdatas/config_data"
         #print self.iniFileUrl
         try:
@@ -18,6 +17,9 @@ class configerData():
         for key,value in reqdata.items():
             #print key,value
             self.conf.set(section,key,(value))
+        self.conf.write(open(self.iniFileUrl, "w"))
+    def setData(self,section, key, (value)):
+        self.conf.set(section, key, (value))
         self.conf.write(open(self.iniFileUrl, "w"))
 
     def getData(self,section):

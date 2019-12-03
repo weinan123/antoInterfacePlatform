@@ -100,11 +100,12 @@ def saveConfigData(request):
         conf = configerData.configerData()
         try:
             conf.saveData("configerinfor", reqdata)
-            updateHost()
+            #updateHost()
             data = {
                 "code": 0,
                 "msg": "保存成功"
             }
+            configerData.configerData().setData("scheduleChanged", "caseflag", "true")
         except:
             data = {
                 "code": -1,
@@ -115,6 +116,7 @@ def saveConfigData(request):
 
 
 # 更新host环境
+'''
 def updateHost():
     conf = configerData.configerData()
     evirment = conf.getItemData("configerinfor", "eviorment").lower()
@@ -150,6 +152,7 @@ def updateHost():
                 host = host.replace('.youyu', evirment + ".youyu")
                 apiInfoTable.objects.filter(apiID=id).update(host=host)
                 continue
+                '''
 
 
 def getConfiginitData(request):

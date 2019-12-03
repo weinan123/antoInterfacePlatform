@@ -1,22 +1,21 @@
 # coding=utf-8
-import sys,os,django
+import sys, os, django
 sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 import unittest
-import sys,os
-from main.models import apiInfoTable, projectList,hostTags,moduleList
+import sys, os
+from main.models import apiInfoTable, projectList, hostTags, moduleList
 import time
 import json
 from main.untils.until import mul_bodyData
 from main.untils import sendRequests
 import getDependData
 import authService
-#from main.common import authService,getDependData
-import sys,re
+import sys, re
+
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 
 '''
 获取测试套件

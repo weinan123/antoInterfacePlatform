@@ -12,7 +12,6 @@ from common import authService, batchUntils
 def index(request):
     if request.method == 'GET':
         return render(request, 'myindex.html')
-
 def login(request):
     username = request.COOKIES.get('username')
     print username

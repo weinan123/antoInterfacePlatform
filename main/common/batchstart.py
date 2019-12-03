@@ -11,8 +11,6 @@ import time, re
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
-
-
 @classmethod
 def setUp(self):
     print(u"开始执行....")
