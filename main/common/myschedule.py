@@ -1,15 +1,14 @@
 # -*- coding: UTF-8 -*-
 import os,django
 import sys
-reload(sys)
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 import runChartData,sendmail_exchange
 import mulSQL,time
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 from main.models import projectschedule,apiInfoTable,projectList,moduleList
-import schedule,subprocess,batchstart
+import schedule,batchstart
 from main.untils import configerData
-from main import apiinfo
 '''
 定时批量执行用例
 '''

@@ -29,7 +29,7 @@ def saveProConf(request):
                 "data": [],
                 "msg": "保存成功"
             }
-            configerData.configerData().setData("scheduleChanged", "caseflag", "true")
+            configerData.configerData().setData("scheduleChanged", "projectflag", "true")
         except Exception as e:
             responseData = {
                 "code": -1,

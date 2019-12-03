@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
 import sys,os,django
-from main.untils import configerData
+sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "auto_interface.settings")
 django.setup()
 from main.models import projectschedule,caseList,reports
-from multiprocessing import Process
+from main.untils import configerData
 import batchstart,time,json
 import sendmail_exchange
 import schedule,subprocess,batchstart

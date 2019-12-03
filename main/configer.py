@@ -105,7 +105,7 @@ def saveConfigData(request):
                 "code": 0,
                 "msg": "保存成功"
             }
-            configerData.configerData().setData("scheduleChanged", "projectflag", "true")
+            configerData.configerData().setData("scheduleChanged", "caseflag", "true")
         except:
             data = {
                 "code": -1,
