@@ -37,22 +37,29 @@ def getdepands(depend_caseid, depend_data, environment, Cookie):
     if methods == "" or send_url == "" or host == "":
         result = {"code": -1, "info": "相关参数不能为空"}
         return result
-    headers = query.headers
-    # print("headers: ", headers)
-    headers_dict = {}
-    if headers != "" and headers is not None and str(headers) != "{}":
-        headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
-    bodyinfor = query.body
-    if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
-        bodyinfor = json.loads(bodyinfor)
+    # headers = query.headers
+    # # print("headers: ", headers)
+    # headers_dict = {}
+    # if headers != "" and headers is not None and str(headers) != "{}":
+    #     headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+    # bodyinfor = query.body
+    # if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
+    #     bodyinfor = json.loads(bodyinfor)
     # listid = query.owningListID
     # querylist = projectList.objects.get(id=listid)
+    headers = batchUntils.replaceStrParam(dependData, str(query.headers))
+    bodyinfor = batchUntils.replaceStrParam(dependData, str(query.body))
+    headers_dict = {}
+    if headers != "" and headers is not None and str(headers) != "{}":
+        headers_dict = json.loads(headers)
+    if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
+        bodyinfor = json.loads(bodyinfor)
     url = str(host) + str(send_url)
     # 处理数据类型的方法
     send_body, files, showflag = mul_bodyData(bodyinfor)
     send_body_dict = {}
     if len(send_body) != 0:
-        send_body_dict = batchUntils.replaceParam(dependData, send_body)
+        send_body_dict = send_body
     isRedirect = query.isRedirect
     isScreat = query.isScreat
     # # 写入获取的依赖数据
