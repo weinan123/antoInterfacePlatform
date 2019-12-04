@@ -227,8 +227,8 @@ def replaceStrParam(dependdata_dict, stringValue):
             strValue = strValue.replace("${"+param_key+"}", str(dependdata_dict[param_key]))
             print(u"使用值：%s替换参数${%s}" % (dependdata_dict[param_key], param_key))
         else:
-            strValue = strValue.replace("${"+param_key+"}", "")
-            print(u"使用值：''替换参数${%s}" % param_key)
+            strValue = strValue.replace("${"+param_key+"}", "null")
+            print(u"依赖参数未找到，使用值：'null'替换参数${%s}" % param_key)
         strValue = replaceStrParam(dependdata_dict, strValue)
     else:
         return strValue
