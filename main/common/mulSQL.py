@@ -2,10 +2,10 @@
 import pymysql
 class mulSql():
     def __init__(self):
-        host = "10.9.8.20"  # 数据库服务器名称或IP
-        user = "monitor"
-        password = "monitor123"
-        database = "monitor"
+        host = "127.0.0.1"  # 数据库服务器名称或IP
+        user = "root"
+        password = ""
+        database = "my_web"
         conn = pymysql.connect(host, user, password, database)
         # 使用cursor()方法获取操作游标
         cursor = conn.cursor()

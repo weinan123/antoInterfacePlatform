@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> nan.wei</p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-27 15:01:17</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:02.830000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 1，通过 1，通过率= 100.00%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 100.00% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 1 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 1 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='passClass warning'>
+    <td>connect</td>
+    <td class="text-center">1</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',1)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='pt1_1' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_func_69_weinan2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_pt1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_pt1_1'>通过</button>
+    <div id='div_pt1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_pt1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_1'>通过</button>
+    <div id='div_pt1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+pt1_1: 开始执行....
+
+用例名称:weinan2.
+用例id:69.
+依赖用例t_id：d68
+依赖接口d68是否有关联接口：否
+依赖接口自定义参数：{'pageSize': '5'}
+使用值：5替换参数${pageSize}
+依赖接口返回信息： {"msg":"","code":0,"data":{"count":7067,"list":[{"publ_date":"2019-11-27 05:34:08","keywords":"公司债@年近@翻倍@美联储@官员@担心@一个@经济@隐患","id":"7266","digest":"美联储官员担心美国公司债务激增，而未来经济增速的放缓或将债务问题放大。","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918124753_33383.png?x-oss-process=image/format,jpg/quality,Q_80","title":"公司债12年近翻倍！美联储官员担心下一个经济“隐患”","tags":"银行@财经@金融风暴@债务@美联储@债券@金融","column_name":"万得资讯","image":"https://img.zhitongcaijing.com/source/image/57062.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"},{"publ_date":"2019-11-27 03:16:00","keywords":"同程@艺龙@Q3@电话会@纪要@19Q3@业绩@持续@增长@住宿@广告业务@表现@亮眼","id":"7259","digest":"同程艺龙发布Q3财报，2019Q3营收20.62亿/+22.3%，经调整净利4.19亿/+33.2%。其中，剔除买断成本的净佣金收入19.11亿/+17.8%。","avatar":"https://img.zhitongcaijing.com/image/20181025/20181025172649_29402.png?x-oss-process=image/format,jpg/quality,Q_80","title":"同程艺龙（00780）Q3电话会纪要：19Q3业绩持续高增长，住宿及广告业务表现亮眼","tags":"流量经营@流量变现@流量平台@科技@市场营销@广告业","column_name":"国盛证券","image":"https://img.zhitongcaijing.com/image/20191127/20191127112801_44430.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 02:52:46","keywords":"佣金@放大@美国@券商@并购案@打造@巨无霸@客户@资产@万亿","id":"7260","digest":"在集体推出“零佣金”之后，美国证券经纪商又开始“强强联合”，这个举动震惊了华尔街的分析师。\n","avatar":"http://img.zhitongcaijing.com/image/20180407/20180407100544_22689.png?x-oss-process=image/format,jpg/quality,Q_80","title":"零佣金后再放大招！美国券商1828亿并购案将打造巨无霸，客户2400万、资产超35万亿","tags":"财经@券商@公司理财@股票交易佣金@投资@收入理财@嘉信理财@财富管理","column_name":"券商中国","image":"https://img.zhitongcaijing.com/image/20191127/20191127103952_87014.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 02:35:40","keywords":"优步@UBER@US@卖身@退出@亿美元@卖掉@印度@外卖@业务","id":"7261","digest":"网约车巨头Uber（UBER.US）面临巨亏，而餐饮外卖业务被认为是一个能够让母公司摆脱亏损的救星，但是日前传出一个令人意外的消息。据外媒最新消息，Uber计划以5亿美元卖掉在印度大市场的餐饮外卖业务。","avatar":"http://img.zhitongcaijing.com/image/20180911/20180911142237_58183.png?x-oss-process=image/format,jpg/quality,Q_80","title":"优步（UBER.US）又要“卖身退出”：拟5亿美元卖掉印度外卖业务","tags":"uber@科技","column_name":"腾讯网","image":"https://img.zhitongcaijing.com/image/20191127/20191127103931_66265.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 02:19:56","keywords":"国信@证券@李宁@Q4@基本面@仍具@增长@韧性@持续@优质@赛道@龙头@红利","id":"7262","digest":"维持李宁19-21年EPS为0.64/0.79/1.05元/股（人民币），当前股价对应PE36/29/22倍，维持“买入”评级。","avatar":"http://img.zhitongcaijing.com/image/20170921/20170921193506_93883.png?x-oss-process=image/format,jpg/quality,Q_80","title":"国信证券：李宁(02331)Q4基本面仍具增长韧性，持续享优质赛道龙头红利","tags":"股票@李宁@财经@基本面@投资","column_name":"国信证券","image":"https://img.zhitongcaijing.com/image/20191127/20191127102107_18276.png?x-oss-process=image/format,jpg/quality,Q_80"}],"hasNext":true}} 
+依赖数据：{'count': 7067, 'keywords': u'公司债@年近@翻倍@美联储@官员@担心@一个@经济@隐患'}
+所属项目-模块：connect - 123
+请求方法：GET
+请求地址：https://www-qa.yfyouyu.com/api/cms/collection
+使用值：7067替换参数${count}
+使用值：公司债@年近@翻倍@美联储@官员@担心@一个@经济@隐患替换参数${keywords}
+请求头： {u'weinan': u'123'}
+请求体：{u'count': 7067, u'keywords': u'公司债@年近@翻倍@美联储@官员@担心@一个@经济@隐患'} 
+接口返回状态码：200
+返回数据：{"code":0,"data":{"items":[{"thumbnailUrl":"https://img-article.youyu.cn/1521526637004.png","shareImage":"https://img-article.youyu.cn/1521526642902.png","contentUrl":"https://www.baidu.com","title":"美军航母访越后，中国将与这国举行联合演练 专家：针对意味明显","type":"banner","desc":"666"},{"id":271766,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/FA2E0C00-10DD-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：维持阿里健康(00241)“跑赢行业”评级 上调目标价至10.9港元","desc":"中金公司发布报告称，维持阿里健康(00241)“跑赢行业”评级，上调目标价8%至10.9港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127141718_69788.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574835614,"updateFlag":"42 分钟前","isTop":false},{"id":271763,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/9108C7B0-10DD-11EA-B701-D9D602B85642?lang=zh-hans","title":"国信11月医药行业投资策略：紧抓医疗器械与药品创新龙头","desc":"仿制药4+7降价与辅助用药严控打开了创新药的大幅结构性成长空间。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127141019_15884.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574835427,"updateFlag":"1 小时前","isTop":false},{"id":271760,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/2F95D6E1-10DC-11EA-B701-D9D602B85642?lang=zh-hans","title":"17款中国手游入围Q3美国手游市场Top100，合计收入同比增长127%","desc":"在美国市场收入Top100手游中，中国手游共17款，收入达4.1亿美元，占Top100总收入的14.5%。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/53624.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574834816,"updateFlag":"1 小时前","isTop":false},{"id":271761,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/2F95D6E0-10DC-11EA-B701-D9D602B85642?lang=zh-hans","title":"高盛预测2020年十大市场主题 哪些标的最有“钱”景？","desc":"在高盛看来，金油股汇债各大市场，谁的前景更加光明呢？发达经济体和新兴市场谁又将吸引更多资金流入？","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127135705_20990.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574834781,"updateFlag":"1 小时前","isTop":false},{"id":271758,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/A2446380-10D9-11EA-B701-D9D602B85642?lang=zh-hans","title":"美国纽约市通过香味电子烟禁令 2020年7月起实施","desc":"当地时间26日，美国纽约市议会以42票对2票，通过禁止香味电子烟的决议。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127134552_26088.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574833707,"updateFlag":"1 小时前","isTop":false},{"id":271753,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/3C7FA4C0-10D8-11EA-B701-D9D602B85642?lang=zh-hans","title":"公司债12年近翻倍！美联储官员担心下一个经济“隐患”","desc":"美联储官员担心美国公司债务激增，而未来经济增速的放缓或将债务问题放大。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/57062.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574833126,"updateFlag":"1 小时前","isTop":false},{"id":271752,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/199CD3B0-10D8-11EA-B701-D9D602B85642?lang=zh-hans","title":"顶级CEO与对冲基金经理，谁挣得多?","desc":"Meb Faber在社交媒体上抛了一个hold my beer梗,表示对冲基金经理挣的钱可比耳熟能详的名人，光鲜无比的顶级CEO 多多了","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127132055_49398.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574833086,"updateFlag":"1 小时前","isTop":false},{"id":271751,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/88EF5220-10D7-11EA-B701-D9D602B85642?lang=zh-hans","title":"美股涨的越高，越要买黄金","desc":"乱世买黄金，虽然不知道这个确定的时间点是什么时候，但是在此时开始定投已经离胜利更近一步了。","thumbnailUrl":"http://img.zhitongcaijing.com/source/image/58259.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574832795,"updateFlag":"1 小时前","isTop":false},{"id":271709,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/F1E5DBC0-10CB-11EA-B701-D9D602B85642?lang=zh-hans","title":"中信建投：维持阿里巴巴(09988)“买入”评级 目标价224港元","desc":"中信建投发布报告称，维持阿里巴巴(09988)“买入”评级，目标价224港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127120856_36248.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574827867,"updateFlag":"3 小时前","isTop":false},{"id":271701,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/461C7610-10CA-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：下调维珍妮(02199)目标价至5.5港元 评级升至“优于大市”","desc":"大和发表研究报告指出，将维珍妮(02199)目标价下调6.78％，由原来的5.9港元降至5.5港元，而评级就由“持有”升至“优于大市”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127114129_39345.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574827124,"updateFlag":"3 小时前","isTop":false},{"id":271691,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/529B3B30-10C8-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：预计明年内银净收益增长 看好招商银行(03968)及光大银行(06818)","desc":"中金公司发布称，预计明年内银净收益增长，预计招商银行(03968)及光大银行(06818)实现较快业绩增长。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127113318_36739.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574826298,"updateFlag":"3 小时前","isTop":false},{"id":271692,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/529B1420-10C8-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：予领展(00823)“与大市同步”评级 目标价91港元","desc":"大摩发布报告称，予领展(00823)“与大市同步”评级及目标价91港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127114025_26417.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574826272,"updateFlag":"3 小时前","isTop":false},{"id":271670,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/D0A1FC60-10C5-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：下调维珍妮(02199)目标价至6.5港元 维持“买入”评级","desc":"野村发表报告表示，将维珍妮(02199)的目标价由7.3港元调低11%至6.5港元，投资评级维持“买入”不变。该行维续看好维珍妮毛利前景。","thumbnailUrl":"http://img.zhitongcaijing.com/source/image/30491.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"云锋金融","updateTime":1574825178,"updateFlag":"4 小时前","isTop":false},{"id":271667,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/6B3D37F0-10C4-11EA-B701-D9D602B85642?lang=zh-hans","title":"汇丰：下调大家乐集团(00341)“买入”评级 目标价25港元 ","desc":"汇丰发表报告表示，将大家乐(00341) 下调2020和2021年盈利预测33%和24%，以反映收益下降及成本上升的问题，相应目标价由28港元降至25港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127111251_60099.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824594,"updateFlag":"4 小时前","isTop":false},{"id":271664,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/94BE7B82-10C3-11EA-B701-D9D602B85642?lang=zh-hans","title":"博恩斯坦(Bernstein)：推荐金风科技(02208)和龙源电力(00916) “优于大市”评级","desc":"美资券商博恩斯坦(Bernstein)发表报告称，目前新能源行业的政策风险比以往低，预计风力发电机生产商在2019-20年发展较好，，给予金风科技(02208)与龙源电力(00916)“优于大市”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110117_69044.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824214,"updateFlag":"4 小时前","isTop":false},{"id":271660,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/29C5D6C0-10C3-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：维持敏华控股(01999)“优于大市”评级 上调目标价至7港元","desc":"中金公司发布报告称，维持敏华控股(01999)“优于大市”评级，上调目标价17%至7港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110544_10368.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824090,"updateFlag":"4 小时前","isTop":false},{"id":271659,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/E24ABC70-10C2-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：下调中国燃气(00384)评级至“持有” 目标价调低至29.9港元","desc":"大和发布研究报告称，下调中国燃气(00384)评级，由“跑赢大市”降至“持有”，目标价由31.6港元调低5.4%至29.9港元","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110235_26081.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823939,"updateFlag":"4 小时前","isTop":false},{"id":271654,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/967A03A1-10C2-11EA-B701-D9D602B85642?lang=zh-hans","title":"Q3智能手机行业研究：安卓手机强者愈强，苹果(AAPL.US)低价策略奏效","desc":"强者愈强，销量第一手机品牌华为Q3销量份额提升4个百分点。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/54111.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"云锋金融","updateTime":1574823818,"updateFlag":"4 小时前","isTop":false},{"id":271652,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/7522DBA0-10C2-11EA-B701-D9D602B85642?lang=zh-hans","title":"花旗：维持广汽集团(02238)“中性”评级 下调目标价至8.7港元","desc":"花旗发布报告称，维持广汽集团(02238)“中性”评级，目标价相应自8.9港元小幅下调至8.7港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127105934_30859.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823787,"updateFlag":"4 小时前","isTop":false},{"id":271650,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/A01C8E60-10C1-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：降新东方在线(01797)至“减持”评级 下调目标价至11.6港元","desc":"大摩发布报告称，将新东方在线(01797)目标价由13港元下调至11.6港元，评级由“增持”降至“减持”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127105418_87278.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823402,"updateFlag":"4 小时前","isTop":false},{"id":271648,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/0B7DD570-10C1-11EA-B701-D9D602B85642?lang=zh-hans","title":"零佣金后再放大招！美国券商1828亿并购案将打造巨无霸，客户2400万、资产超35万亿","desc":"在集体推出“零佣金”之后，美国证券经纪商又开始“强强联合”，这个举动震惊了华尔街的分析师。\n","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103952_87014.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574823152,"updateFlag":"4 小时前","isTop":false},{"id":271646,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/816708C0-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：维持中生制药(01177)“增持”评级 目标价12.5港元","desc":"大摩发布报告称，维持中生制药(01177)“增持”评级及目标价12.5港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104535_83302.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822907,"updateFlag":"4 小时前","isTop":false},{"id":271644,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/5C1B7510-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：重申欧舒丹（00973）“买入”评级 目标价升至21.5港元","desc":"大和发布报告称，将重申欧舒丹(00973）“买入”评级，目标价由19港元升至21.5港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104152_34319.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822854,"updateFlag":"4 小时前","isTop":false},{"id":271642,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/15A21350-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"汇丰：维持莎莎(00178)“持有”评级 下调目标价至1.8港元","desc":"汇丰发布报告称，维持莎莎(00178)“持有”评级。目标价由原来的2.7港元下调至1.8港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104042_44025.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822750,"updateFlag":"4 小时前","isTop":false},{"id":271639,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/CF0B3E80-10BF-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：降维珍妮（02199）目标价至6.5港元 维持“买入”评级","desc":"野村发布报告称，将对维珍妮(02199）目标价由7.3港元降至6.5港元，评级维持“买入”","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103326_26142.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822600,"updateFlag":"4 小时前","isTop":false},{"id":271633,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/437CBB60-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"国盛证券：邮储银行(01658)成长空间广阔 维持“买入”评级","desc":"国盛证券发布报告称，邮储银行(01658)成长空间广阔，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103055_61901.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821933,"updateFlag":"5 小时前","isTop":false},{"id":271631,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/1EDF6911-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：预计2020年上市银行净利润同比增长6.8％ 增速同比保持平稳","desc":"中金公司发布报告称，中资银行正处于一轮结构性不良周期。跟以往相比，问题资产成因和高风险机构分布更具结构性特征，上市银行整体资产负债表也更加健康。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127101536_12712.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821899,"updateFlag":"5 小时前","isTop":false},{"id":271626,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/DEB436F0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"瑞银：维持广汽集团(02238)“买入”评级 目标价10港元","desc":"瑞银发表报告表示，上调广汽集团(02238)目标价，由9.3港元升至10港元，基于明年预测市盈率8.5倍，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127102002_31332.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821378,"updateFlag":"5 小时前","isTop":false},{"id":271621,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/2924B8F0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"新股消息 |新加坡物流服务商Legion Consortium第三次申请香港IPO，这次能否成功?","desc":"新加坡综合物流解决方案供应商Legion Consortium Limited再次向港交所递交上市申请，丰盛融资为保荐人。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100709_95734.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821041,"updateFlag":"5 小时前","isTop":false},{"id":271619,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/04965AC0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"如何给中国SaaS公司估值？","desc":"在多变的科技行业，预测一个公司的未来现金流，实在需要太多的假设。所以，大家往往用“估值除以盈利”作为指标。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100739_96236.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821001,"updateFlag":"5 小时前","isTop":false}],"stockmove":[{"id":271770,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/75723880-10E0-11EA-B701-D9D602B85642?lang=zh-hans","title":"次新股午后惊现“高台跳水” 瑞诚中国传媒(01640)暴跌32.5%","desc":"云锋金融获悉，次新股瑞诚中国传媒(01640)惊现“高台跳水”，午后跌幅扩大逾30%。截至14时32分，跌32.53%，报价1.95港元，成交额2649万。值得注意的是，该股此前四个交易...","stock":{"symbol":"hk01640","name":"瑞诚中国传媒","type":"010104","changeRatio":"-39.45"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574836500,"updateFlag":"27 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271768,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/33949B70-10DF-11EA-B701-D9D602B85642?lang=zh-hans","title":"阿里巴巴(09988)上市次日续涨近4% 总市值达4.17万亿港元","desc":"云锋金融获悉，阿里巴巴(09988)上市次日涨势延续，并获多家大行唱好，总市值达4.17万亿港元。截至14时18分，涨3.94%，报价195港元，成交额74.56亿。获汇丰看高至240....","stock":{"symbol":"hk09988","name":"阿里巴巴-SW","type":"010104","changeRatio":"3.78"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574835960,"updateFlag":"36 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271764,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/B65322E0-10DD-11EA-B701-D9D602B85642?lang=zh-hans","title":"联手天津市药监局共建疫苗实训基地 康希诺(06185)续涨4.5%破顶","desc":"云锋金融获悉，康希诺生物-B(06185)联手天津市药监局共建国内首个疫苗实训基地，受利好消息刺激，股价涨势延续，盘中再度破顶，截至14时08分，涨4.55%，报价52.8港元，成交额3014万...","stock":{"symbol":"hk06185","name":"康希诺生物-B","type":"010104","changeRatio":"4.46"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574835300,"updateFlag":"1 小时前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271762,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/AFD91330-10DC-11EA-B701-D9D602B85642?lang=zh-hans","title":"港股异动 | 本周五发财报 快餐帝国(01843)绩前涨逾14% 两日累涨三成","desc":"云锋金融获悉，快餐帝国(01843)将于本周五发财报，该股止跌反弹，两日累涨超三成。今日盘中高见0.445港元，较招股价仍低三成。截至发稿，涨14.67%，报0.43港元，成交额1827.74万...","stock":{"symbol":"hk01843","name":"快餐帝国","type":"010104","changeRatio":"17.33"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574834940,"updateFlag":"1 小时前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271757,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/796548D0-10D9-11EA-B701-D9D602B85642?lang=zh-hans","title":"中期业绩超预期 中国动向(03818)午后放量急升6%","desc":"云锋金融获悉，中国动向(03818)午间发布中期业绩，股东应占净利同比增长36.2%至1.88亿人民币，超市场预期，午后股价急升，截至13时42分，涨6.02%，报价0.88港元，成交额1549...","stock":{"symbol":"hk03818","name":"中国动向","type":"010104","changeRatio":"6.02"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574833500,"updateFlag":"1 小时前","isTop":false,"newFlag":0,"cardsCount":0}]}} 
+断言数据：空
+执行结果：case (69:weinan2) 执行成功.
+执行结束....
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>通过率：100.00%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>

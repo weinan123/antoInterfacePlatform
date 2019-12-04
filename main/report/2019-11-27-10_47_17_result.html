@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> nan.wei</p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-27 10:47:17</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:00.303000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 1，错误 1，通过率= 0.00%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 0.00% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 0 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 1 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>connect</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',1)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft1_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_69_weinan2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_1: 开始执行....
+
+用例名称:weinan2.
+用例id:69.
+关联用例t_id：d68
+依赖接口d68是否有关联接口：否
+依赖接口自定义参数：{'pageSize': '5'}
+使用值：5替换参数${pageSize}
+依赖接口返回信息： {"msg":"","code":0,"data":{"count":7059,"list":[{"publ_date":"2019-11-27 01:29:55","keywords":"美联储@过来@QE@实施@条件@否决@降息@联储@做到","id":"7251","digest":"美联储的鲍威尔花了数月时间终于说服了市场目前不需要降息，而澳洲央行只用了一天。","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918124753_33383.png?x-oss-process=image/format,jpg/quality,Q_80","title":"美联储看过来！用QE实施条件来否决降息：澳联储做到了","tags":"经济@国外宏观@宏观经济@财经@银行@美联储@央行降息@澳联储@利率","column_name":"万得资讯","image":"https://img.zhitongcaijing.com/source/image/85884.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"},{"publ_date":"2019-11-27 01:18:45","keywords":"天津市@药监局@联手@康希诺@生物@共建@国内@首个@疫苗@实训@基地","id":"7252","digest":"双方将重点围绕企业主体质量合规能力建设、现场检查员能力建设、疫苗追溯体系政企通联，以及药品批签发能力建设等方面展开合作。","avatar":"https://img.zhitongcaijing.com/image/20190214/20190214090121_26021.png?x-oss-process=image/format,jpg/quality,Q_80","title":"天津市药监局联手康希诺生物(06185)共建国内首个疫苗实训基地","tags":"疫苗@时事@希诺@生物技术","column_name":"中国新闻网","image":"https://img.zhitongcaijing.com/image/20191127/20191127091928_80679.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 01:10:10","keywords":"中金@银行@展望@结构性@不良@估值@重估@起点","id":"7253","digest":"目前A/H银行股仓位处于历史低位，该估值较为充分地反映了一系列负面情绪，我们判断估值继续走低的概率和幅度有限。","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918125529_94646.png?x-oss-process=image/format,jpg/quality,Q_80","title":"中金2020年银行展望：结构性不良出清，估值重估的起点","tags":"银行上市@股票@财经@银行@资产负债表@投资","column_name":"中金研究","image":"https://img.zhitongcaijing.com/image/20191127/20191127091355_41741.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 00:51:19","keywords":"中信@友邦保险@永续@经营@定价@分享@内在@价值@增长","id":"7254","digest":"中国高端保险市场刚刚崛起，职业转型带来高端队伍扩张机会，金融开放带来区域扩张机会，友邦已具备中国高端市场的成功经验、是最有竞争实力的玩家之一，预计未来五年友邦中国新单保费维持超过30%复合增速。","avatar":"http://img.zhitongcaijing.com/image/20171009/20171009170922_64547.png?x-oss-process=image/format,jpg/quality,Q_80","title":"中信：友邦保险（01299）按永续经营定价，分享内在价值增长","tags":"中信公司@股票@财经@友邦中国@非银金融行业@友邦保险@香港友邦@投资@中信集团@金融","column_name":"中信证券","image":"https://img.zhitongcaijing.com/image/20191127/20191127085355_95182.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 00:32:31","keywords":"传九毛@国际@正式@登陆@港交所@近期@寻求@上市@聆讯","id":"7255","digest":"“九毛九”和“太二酸菜鱼”，很多北方人可能对它们不太了解，但对华南地区的食客们来说，前者在城市购物中心随处可见，后者则需要饕客们“排上两、三个小时才能吃上嘴”。","avatar":"https://img.zhitongcaijing.com/image/20190725/20190725083028_43607.png?x-oss-process=image/format,jpg/quality,Q_80","title":"传九毛九国际将于12月正式登陆港交所 近期或将寻求赴港上市聆讯","tags":"呷哺呷哺@九毛九@财经@酸菜鱼","column_name":"独角兽早知道","image":"https://img.zhitongcaijing.com/source/image/81799.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"}],"hasNext":true}} 
+关联数据：{'count': 7059, 'keywords': u'美联储@过来@QE@实施@条件@否决@降息@联储@做到'}
+使用值：7059替换参数${count}
+使用值：美联储@过来@QE@实施@条件@否决@降息@联储@做到替换参数${keywords}
+所属项目-模块：connect - 123
+请求方法：GET
+请求地址：https://www-qa.yfyouyu.com/api/cms/collection
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 148, in getResp
+    send_body, files, showflag = mul_bodyData(bodyinfor)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\untils\until.py", line 29, in mul_bodyData
+    body = json.loads(paramsData[0]["paramValue"])
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>通过率：0.00%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>

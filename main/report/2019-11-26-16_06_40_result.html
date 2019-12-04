@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> nan.wei</p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-26 16:06:40</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:00.758000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 1，错误 1，通过率= 0.00%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 0.00% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 0 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 1 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>批量执行</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',1)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft1_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_69_weinan2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_1: 开始执行....
+
+用例名称:weinan2.
+用例id:69.
+关联用例t_id：d68
+依赖接口d68是否有关联接口：否
+依赖接口自定义参数：{'pageSize': '5'}
+使用值：5替换参数${pageSize}
+依赖接口返回信息： {"msg":"","code":0,"data":{"count":7032,"list":[{"publ_date":"2019-11-26 03:30:00","keywords":"传媒@行业@凛冬@已逝@爱奇艺@IQ@US@拐点","id":"7219","digest":"我们认为2020年随着内容供给恢复，影视行业回暖在即，且爱奇艺2020年片单质量较高，收入增速有望回升，同时，随着行业竞争环境改善，爱奇艺内容成本率有望下滑从而使亏损改善。","avatar":"http://img.zhitongcaijing.com/image/20170929/20170929191016_49274.png?x-oss-process=image/format,jpg/quality,Q_80","title":"传媒行业凛冬已逝，爱奇艺（IQ.US）拐点可期","tags":"爱奇艺@netflix@爱奇艺会员@科技@腾讯视频@付费服务","column_name":"天风证券","image":"https://img.zhitongcaijing.com/image/20191126/20191126112507_14362.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-26 01:05:31","keywords":"网易@NTES@US@别离@离职@高管@业务@卖钱","id":"7204","digest":"丁磊怒斗前高管，甩业务卖钱，裁员数千人，砍部门眼睛都不眨。","avatar":"https://img.zhitongcaijing.com/image/20181010/20181010202922_58806.png?x-oss-process=image/format,jpg/quality,Q_80","title":"网易(NTES.US)轻别离：曾“点杀”离职高管，甩业务卖钱","tags":"网易@网易门户@丁磊@李学凌@科技@网易金融@唐岩","column_name":"市界","image":"https://img.zhitongcaijing.com/source/image/43949.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"},{"publ_date":"2019-11-26 01:02:40","keywords":"阿里@七年@回家@中国@新股@发行@制度@一部@变迁","id":"7205","digest":"阿里将成为首个同时在香港和美国两地上市的内地互联网公司。而港交所也将成为继纽交所之后，聚集中国互联网巨头最多的证券交易所。","avatar":"http://img.zhitongcaijing.com/image/20170928/20170928140252_89814.png?x-oss-process=image/format,jpg/quality,Q_80","title":"阿里(09988)的七年回家路，是中国新股发行制度的一部变迁史","tags":"阿里市值@阿里股价@美股@财经@阿里上市@ipo@资本市场@普通股@阿里@股票@港交所","column_name":"国泰君安证券","image":"https://img.zhitongcaijing.com/image/20191126/20191126090556_92281.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-26 01:02:18","keywords":"美版@双十@来袭@零售业@回血","id":"7206","digest":"本周，美国人将迎来他们的“双十一”——“黑色星期五”(简称“黑五”)。\n","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918123515_80428.png?x-oss-process=image/format,jpg/quality,Q_80","title":"美版“双十一”来袭，能让零售业“回血”吗？","tags":"财经@双十一@黑五@亚马逊","column_name":"国际金融报","image":"https://img.zhitongcaijing.com/image/20191126/20191126085628_69046.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-26 01:02:14","keywords":"真的@旺季@不旺@北方@供暖@季提振@LNG@需求@分析师@价格@还有@向上@空间","id":"7207","digest":"被指“旺季不旺”的今冬LNG（液化天然气）价格，在北方进入供暖季后，开始出现价格上行。\n","avatar":"http://img.zhitongcaijing.com/image/20170922/20170922090651_88513.png?x-oss-process=image/format,jpg/quality,Q_80","title":"真的旺季不旺？北方供暖季提振LNG需求，分析师：价格还有向上空间","tags":"投资@lng@财经@能源@分析师","column_name":"证券时报","image":"https://img.zhitongcaijing.com/image/20191126/20191126084704_72057.png?x-oss-process=image/format,jpg/quality,Q_80"}],"hasNext":true}} 
+关联数据：{'count': u'2019-11-26 03:30:00', 'uin': '4006785'}
+使用值：2019-11-26 03:30:00替换参数${count}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 126, in getResp
+    headers = json.loads(headers)
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 380, in raw_decode
+    obj, end = self.scan_once(s, idx)
+ValueError: Expecting , delimiter: line 1 column 31 (char 30)
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>通过率：0.00%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>

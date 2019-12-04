@@ -1,0 +1,1747 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> </p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-29 15:36:46</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:00.559000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 35，错误 35，通过率= 0.00%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 0.00% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 0 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 35 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>123</td>
+    <td class="text-center">4</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">4</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',4)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft1_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_13_test2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_1'>错误</button>
+    <div id='div_ft1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_1: 开始执行....
+
+用例名称:test2.
+用例id:13.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_14_test3</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_2'>错误</button>
+    <div id='div_ft1_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_2'>错误</button>
+    <div id='div_ft1_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_2: 开始执行....
+
+用例名称:test3.
+用例id:14.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_15_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_3'>错误</button>
+    <div id='div_ft1_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_3'>错误</button>
+    <div id='div_ft1_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_3: 开始执行....
+
+用例名称:执行用例.
+用例id:15.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_4' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_17_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_4' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_4'>错误</button>
+    <div id='div_ft1_4' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_4' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_4'>错误</button>
+    <div id='div_ft1_4' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_4: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:17.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>21e21e21e12e12e12e12</td>
+    <td class="text-center">4</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">4</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c2',4)" class="detail" id='c2'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft2_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_13_test2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_1'>错误</button>
+    <div id='div_ft2_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_1'>错误</button>
+    <div id='div_ft2_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_1: 开始执行....
+
+用例名称:test2.
+用例id:13.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_17_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_2'>错误</button>
+    <div id='div_ft2_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_2'>错误</button>
+    <div id='div_ft2_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_2: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:17.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_7_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_3'>错误</button>
+    <div id='div_ft2_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_3'>错误</button>
+    <div id='div_ft2_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_3: 开始执行....
+
+用例名称:被依赖用例.
+用例id:7.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_4' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_8_行情首屏[港股]</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_4' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_4'>错误</button>
+    <div id='div_ft2_4' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_4' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_4'>错误</button>
+    <div id='div_ft2_4' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_4: 开始执行....
+
+用例名称:行情首屏[港股].
+用例id:8.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>454545</td>
+    <td class="text-center">7</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">7</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c3',7)" class="detail" id='c3'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft3_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_12_test1</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_1'>错误</button>
+    <div id='div_ft3_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_1'>错误</button>
+    <div id='div_ft3_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_1: 开始执行....
+
+用例名称:test1.
+用例id:12.
+依赖用例t_id：t04
+依赖接口t04是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 44, in getdepands
+    headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_13_test2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_2'>错误</button>
+    <div id='div_ft3_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_2'>错误</button>
+    <div id='div_ft3_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_2: 开始执行....
+
+用例名称:test2.
+用例id:13.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_14_test3</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_3'>错误</button>
+    <div id='div_ft3_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_3'>错误</button>
+    <div id='div_ft3_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_3: 开始执行....
+
+用例名称:test3.
+用例id:14.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_4' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_16_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_4' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_4'>错误</button>
+    <div id='div_ft3_4' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_4' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_4'>错误</button>
+    <div id='div_ft3_4' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_4: 开始执行....
+
+用例名称:被依赖用例.
+用例id:16.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_5' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_17_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_5' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_5'>错误</button>
+    <div id='div_ft3_5' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_5' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_5'>错误</button>
+    <div id='div_ft3_5' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_5: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:17.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_6' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_58_呜呜呜呜呜呜呜呜呜呜呜呜呜呜</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_6' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_6'>错误</button>
+    <div id='div_ft3_6' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_6' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_6'>错误</button>
+    <div id='div_ft3_6' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_6: 开始执行....
+
+用例名称:呜呜呜呜呜呜呜呜呜呜呜呜呜呜.
+用例id:58.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft3_7' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_62_wlb</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft3_7' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft3_7'>错误</button>
+    <div id='div_ft3_7' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft3_7' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft3_7'>错误</button>
+    <div id='div_ft3_7' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft3_7: 开始执行....
+
+用例名称:wlb.
+用例id:62.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>新建2</td>
+    <td class="text-center">3</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">3</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c4',3)" class="detail" id='c4'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft4_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_65_获取股票信息-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft4_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft4_1'>错误</button>
+    <div id='div_ft4_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft4_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft4_1'>错误</button>
+    <div id='div_ft4_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft4_1: 开始执行....
+
+用例名称:获取股票信息-需登录.
+用例id:65.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft4_2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_66_获取策略列表-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft4_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft4_2'>错误</button>
+    <div id='div_ft4_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft4_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft4_2'>错误</button>
+    <div id='div_ft4_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft4_2: 开始执行....
+
+用例名称:获取策略列表-需登录.
+用例id:66.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft4_3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_67_获取上证30-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft4_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft4_3'>错误</button>
+    <div id='div_ft4_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft4_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft4_3'>错误</button>
+    <div id='div_ft4_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft4_3: 开始执行....
+
+用例名称:获取上证30-需登录.
+用例id:67.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>2</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c5',1)" class="detail" id='c5'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft5_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_65_获取股票信息-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft5_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft5_1'>错误</button>
+    <div id='div_ft5_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft5_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft5_1'>错误</button>
+    <div id='div_ft5_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft5_1: 开始执行....
+
+用例名称:获取股票信息-需登录.
+用例id:65.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>23313</td>
+    <td class="text-center">2</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">2</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c6',2)" class="detail" id='c6'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft6_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_12_test1</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft6_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft6_1'>错误</button>
+    <div id='div_ft6_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft6_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft6_1'>错误</button>
+    <div id='div_ft6_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft6_1: 开始执行....
+
+用例名称:test1.
+用例id:12.
+依赖用例t_id：t04
+依赖接口t04是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 44, in getdepands
+    headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft6_2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft6_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft6_2'>错误</button>
+    <div id='div_ft6_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft6_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft6_2'>错误</button>
+    <div id='div_ft6_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft6_2: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>页数测试</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c7',1)" class="detail" id='c7'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft7_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft7_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft7_1'>错误</button>
+    <div id='div_ft7_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft7_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft7_1'>错误</button>
+    <div id='div_ft7_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft7_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>页数测试2</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c8',1)" class="detail" id='c8'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft8_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft8_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft8_1'>错误</button>
+    <div id='div_ft8_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft8_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft8_1'>错误</button>
+    <div id='div_ft8_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft8_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>页数测试3</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c9',1)" class="detail" id='c9'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft9_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft9_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft9_1'>错误</button>
+    <div id='div_ft9_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft9_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft9_1'>错误</button>
+    <div id='div_ft9_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft9_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>1</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c10',1)" class="detail" id='c10'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft10_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft10_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft10_1'>错误</button>
+    <div id='div_ft10_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft10_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft10_1'>错误</button>
+    <div id='div_ft10_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft10_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>4</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c11',1)" class="detail" id='c11'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft11_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft11_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft11_1'>错误</button>
+    <div id='div_ft11_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft11_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft11_1'>错误</button>
+    <div id='div_ft11_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft11_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>5</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c12',1)" class="detail" id='c12'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft12_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft12_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft12_1'>错误</button>
+    <div id='div_ft12_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft12_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft12_1'>错误</button>
+    <div id='div_ft12_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft12_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>6</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c13',1)" class="detail" id='c13'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft13_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft13_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft13_1'>错误</button>
+    <div id='div_ft13_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft13_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft13_1'>错误</button>
+    <div id='div_ft13_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft13_1: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d8
+依赖接口d8是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 55, in getdepands
+    send_body_dict = batchUntils.replaceParam(dependData, send_body)
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>7</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c14',1)" class="detail" id='c14'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft14_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_13_test2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft14_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft14_1'>错误</button>
+    <div id='div_ft14_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft14_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft14_1'>错误</button>
+    <div id='div_ft14_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft14_1: 开始执行....
+
+用例名称:test2.
+用例id:13.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>8</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c15',1)" class="detail" id='c15'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft15_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_65_获取股票信息-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft15_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft15_1'>错误</button>
+    <div id='div_ft15_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft15_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft15_1'>错误</button>
+    <div id='div_ft15_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft15_1: 开始执行....
+
+用例名称:获取股票信息-需登录.
+用例id:65.
+是否有关联接口：否
+接口是否有自定义参数：否
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>9</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c16',1)" class="detail" id='c16'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft16_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_9_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft16_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft16_1'>错误</button>
+    <div id='div_ft16_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft16_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft16_1'>错误</button>
+    <div id='div_ft16_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft16_1: 开始执行....
+
+用例名称:执行用例.
+用例id:9.
+依赖用例t_id：t02
+依赖接口t02是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 44, in getdepands
+    headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>10</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c17',1)" class="detail" id='c17'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft17_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_9_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft17_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft17_1'>错误</button>
+    <div id='div_ft17_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft17_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft17_1'>错误</button>
+    <div id='div_ft17_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft17_1: 开始执行....
+
+用例名称:执行用例.
+用例id:9.
+依赖用例t_id：t02
+依赖接口t02是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 44, in getdepands
+    headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>11</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c18',1)" class="detail" id='c18'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft18_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_9_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft18_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft18_1'>错误</button>
+    <div id='div_ft18_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft18_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft18_1'>错误</button>
+    <div id='div_ft18_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft18_1: 开始执行....
+
+用例名称:执行用例.
+用例id:9.
+依赖用例t_id：t02
+依赖接口t02是否有关联接口：否
+依赖接口是否有自定义参数：否
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 120, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 208, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 44, in getdepands
+    headers_dict = batchUntils.replaceParam(dependData, json.loads(headers))
+AttributeError: 'module' object has no attribute 'replaceParam'
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>12</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c19',1)" class="detail" id='c19'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft19_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_11_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft19_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft19_1'>错误</button>
+    <div id='div_ft19_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft19_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft19_1'>错误</button>
+    <div id='div_ft19_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft19_1: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:11.
+依赖用例t_id：d5
+依赖数据：无
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>13</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">1</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c20',1)" class="detail" id='c20'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft20_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_11_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft20_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft20_1'>错误</button>
+    <div id='div_ft20_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft20_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft20_1'>错误</button>
+    <div id='div_ft20_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft20_1: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:11.
+依赖用例t_id：d5
+依赖数据：无
+{}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 125, in getResp
+    send_url = replaceParam(dependData, query.url)
+NameError: global name 'replaceParam' is not defined
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>35</td>
+    <td>0</td>
+    <td>0</td>
+    <td>35</td>
+    <td>通过率：0.00%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>

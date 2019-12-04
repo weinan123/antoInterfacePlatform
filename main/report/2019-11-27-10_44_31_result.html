@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> nan.wei</p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-27 10:44:31</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:02.956000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 1，通过 1，通过率= 100.00%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 100.00% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 0 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 1 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 1 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='passClass warning'>
+    <td>connect</td>
+    <td class="text-center">1</td>
+    <td class="text-center">1</td>
+    <td class="text-center">0</td>
+    <td class="text-center">0</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',1)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='pt1_1' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_func_69_weinan2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_pt1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_pt1_1'>通过</button>
+    <div id='div_pt1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_pt1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt1_1'>通过</button>
+    <div id='div_pt1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+pt1_1: 开始执行....
+
+用例名称:weinan2.
+用例id:69.
+关联用例t_id：d68
+依赖接口d68是否有关联接口：否
+依赖接口自定义参数：{'pageSize': '5'}
+使用值：5替换参数${pageSize}
+依赖接口返回信息： {"msg":"","code":0,"data":{"count":7059,"list":[{"publ_date":"2019-11-27 01:29:55","keywords":"美联储@过来@QE@实施@条件@否决@降息@联储@做到","id":"7251","digest":"美联储的鲍威尔花了数月时间终于说服了市场目前不需要降息，而澳洲央行只用了一天。","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918124753_33383.png?x-oss-process=image/format,jpg/quality,Q_80","title":"美联储看过来！用QE实施条件来否决降息：澳联储做到了","tags":"经济@国外宏观@宏观经济@财经@银行@美联储@央行降息@澳联储@利率","column_name":"万得资讯","image":"https://img.zhitongcaijing.com/source/image/85884.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"},{"publ_date":"2019-11-27 01:18:45","keywords":"天津市@药监局@联手@康希诺@生物@共建@国内@首个@疫苗@实训@基地","id":"7252","digest":"双方将重点围绕企业主体质量合规能力建设、现场检查员能力建设、疫苗追溯体系政企通联，以及药品批签发能力建设等方面展开合作。","avatar":"https://img.zhitongcaijing.com/image/20190214/20190214090121_26021.png?x-oss-process=image/format,jpg/quality,Q_80","title":"天津市药监局联手康希诺生物(06185)共建国内首个疫苗实训基地","tags":"疫苗@时事@希诺@生物技术","column_name":"中国新闻网","image":"https://img.zhitongcaijing.com/image/20191127/20191127091928_80679.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 01:10:10","keywords":"中金@银行@展望@结构性@不良@估值@重估@起点","id":"7253","digest":"目前A/H银行股仓位处于历史低位，该估值较为充分地反映了一系列负面情绪，我们判断估值继续走低的概率和幅度有限。","avatar":"http://img.zhitongcaijing.com/image/20170918/20170918125529_94646.png?x-oss-process=image/format,jpg/quality,Q_80","title":"中金2020年银行展望：结构性不良出清，估值重估的起点","tags":"银行上市@股票@财经@银行@资产负债表@投资","column_name":"中金研究","image":"https://img.zhitongcaijing.com/image/20191127/20191127091355_41741.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 00:51:19","keywords":"中信@友邦保险@永续@经营@定价@分享@内在@价值@增长","id":"7254","digest":"中国高端保险市场刚刚崛起，职业转型带来高端队伍扩张机会，金融开放带来区域扩张机会，友邦已具备中国高端市场的成功经验、是最有竞争实力的玩家之一，预计未来五年友邦中国新单保费维持超过30%复合增速。","avatar":"http://img.zhitongcaijing.com/image/20171009/20171009170922_64547.png?x-oss-process=image/format,jpg/quality,Q_80","title":"中信：友邦保险（01299）按永续经营定价，分享内在价值增长","tags":"中信公司@股票@财经@友邦中国@非银金融行业@友邦保险@香港友邦@投资@中信集团@金融","column_name":"中信证券","image":"https://img.zhitongcaijing.com/image/20191127/20191127085355_95182.png?x-oss-process=image/format,jpg/quality,Q_80"},{"publ_date":"2019-11-27 00:32:31","keywords":"传九毛@国际@正式@登陆@港交所@近期@寻求@上市@聆讯","id":"7255","digest":"“九毛九”和“太二酸菜鱼”，很多北方人可能对它们不太了解，但对华南地区的食客们来说，前者在城市购物中心随处可见，后者则需要饕客们“排上两、三个小时才能吃上嘴”。","avatar":"https://img.zhitongcaijing.com/image/20190725/20190725083028_43607.png?x-oss-process=image/format,jpg/quality,Q_80","title":"传九毛九国际将于12月正式登陆港交所 近期或将寻求赴港上市聆讯","tags":"呷哺呷哺@九毛九@财经@酸菜鱼","column_name":"独角兽早知道","image":"https://img.zhitongcaijing.com/source/image/81799.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300"}],"hasNext":true}} 
+关联数据：{'count': 7059, 'uin': '4006785'}
+使用值：7059替换参数${count}
+所属项目-模块：connect - 123
+请求方法：GET
+请求地址：https://www-qa.yfyouyu.com/api/cms/collection
+请求体：{u'count': 7059} 
+请求头： {}
+接口返回状态码：200
+返回数据：{"code":0,"data":{"items":[{"thumbnailUrl":"https://img-article.youyu.cn/1521526637004.png","shareImage":"https://img-article.youyu.cn/1521526642902.png","contentUrl":"https://www.baidu.com","title":"美军航母访越后，中国将与这国举行联合演练 专家：针对意味明显","type":"banner","desc":"666"},{"id":271639,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/CF0B3E80-10BF-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：降维珍妮（02199）目标价至6.5港元 维持“买入”评级","desc":"野村发布报告称，将对维珍妮(02199）目标价由7.3港元降至6.5港元，评级维持“买入”","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103326_26142.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822600,"updateFlag":"2 分钟前","isTop":false},{"id":271633,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/437CBB60-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"国盛证券：邮储银行(01658)成长空间广阔 维持“买入”评级","desc":"国盛证券发布报告称，邮储银行(01658)成长空间广阔，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103055_61901.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821933,"updateFlag":"13 分钟前","isTop":false},{"id":271631,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/1EDF6911-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：预计2020年上市银行净利润同比增长6.8％ 增速同比保持平稳","desc":"中金公司发布报告称，中资银行正处于一轮结构性不良周期。跟以往相比，问题资产成因和高风险机构分布更具结构性特征，上市银行整体资产负债表也更加健康。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127101536_12712.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821899,"updateFlag":"14 分钟前","isTop":false},{"id":271626,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/DEB436F0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"瑞银：维持广汽集团(02238)“买入”评级 目标价10港元","desc":"瑞银发表报告表示，上调广汽集团(02238)目标价，由9.3港元升至10港元，基于明年预测市盈率8.5倍，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127102002_31332.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821378,"updateFlag":"23 分钟前","isTop":false},{"id":271621,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/2924B8F0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"新股消息 |新加坡物流服务商Legion Consortium第三次申请香港IPO，这次能否成功?","desc":"新加坡综合物流解决方案供应商Legion Consortium Limited再次向港交所递交上市申请，丰盛融资为保荐人。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100709_95734.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821041,"updateFlag":"28 分钟前","isTop":false},{"id":271619,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/04965AC0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"如何给中国SaaS公司估值？","desc":"在多变的科技行业，预测一个公司的未来现金流，实在需要太多的假设。所以，大家往往用“估值除以盈利”作为指标。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100739_96236.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821001,"updateFlag":"29 分钟前","isTop":false},{"id":271617,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/E3036240-10BB-11EA-B701-D9D602B85642?lang=zh-hans","title":"国盛证券：吉利汽车(00175)加速实现品牌升级 维持“买入”评级","desc":"国盛证券发布报告称，吉利汽车(00175)加速实现品牌升级，维持其“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127101158_82948.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574820916,"updateFlag":"30 分钟前","isTop":false},{"id":271613,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/C50015A0-10BA-11EA-B701-D9D602B85642?lang=zh-hans","title":"高盛：升港铁公司(00066)“买入“评级 目标价54港元","desc":"高盛发表研究报告指出，预计港铁公司(00066)的乘客量将很快恢复，上调其评级至\"买入\"，目标价为54港元，较昨天（26日）收市价43.35港元，仍有上涨约25％的空间。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100210_28927.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574820467,"updateFlag":"38 分钟前","isTop":false},{"id":271602,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/F94EC4D1-10B7-11EA-B701-D9D602B85642?lang=zh-hans","title":"统计局解读：高技术制造业、战略性新兴产业和装备制造业利润增长加快","desc":"2019年1—10月份，全国规模以上工业企业利润总额同比下降2.9%。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127094527_28637.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574819230,"updateFlag":"1 小时前","isTop":false},{"id":271600,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/AF734C50-10B7-11EA-B701-D9D602B85642?lang=zh-hans","title":"统计局：1-10月全国规模以上工业企业利润总额同比下降2.9% 营收增长4.2%","desc":"1—10月份，规模以上工业企业实现营业收入85.66万亿元，同比增长4.2%。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/84427.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"云锋金融","updateTime":1574819130,"updateFlag":"1 小时前","isTop":false},{"id":271593,"type":"bigfirmreport","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/B98820E0-10B6-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：同程艺龙(00780)评级“增持” 目标价16港元","desc":"大摩发布报告称，同程艺龙(00780)第3季度业绩强劲，目标价16港元，评级同程艺龙(00780)","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127093545_57069.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574818723,"updateFlag":"1 小时前","isTop":false},{"id":271592,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/B7BF6ED0-10B6-11EA-B701-D9D602B85642?lang=zh-hans","title":"美联储看过来！用QE实施条件来否决降息：澳联储做到了","desc":"美联储的鲍威尔花了数月时间终于说服了市场目前不需要降息，而澳洲央行只用了一天。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/85884.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574818708,"updateFlag":"1 小时前","isTop":false},{"id":271580,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/783FB460-10B4-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金2020年银行展望：结构性不良出清，估值重估的起点","desc":"目前A/H银行股仓位处于历史低位，该估值较为充分地反映了一系列负面情绪，我们判断估值继续走低的概率和幅度有限。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127091355_41741.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574817735,"updateFlag":"1 小时前","isTop":false},{"id":271575,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/3E5173D0-10B2-11EA-B701-D9D602B85642?lang=zh-hans","title":"电子黄金十年，中国仅有半只脚迈出了富士康","desc":"黄金十年之后，中国电子产业到底走了多远？","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127084636_80319.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574816821,"updateFlag":"2 小时前","isTop":false},{"id":271563,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/78D30270-10AE-11EA-B701-D9D602B85642?lang=zh-hans","title":"传九毛九国际将于12月正式登陆港交所 近期或将寻求赴港上市聆讯","desc":"“九毛九”和“太二酸菜鱼”，很多北方人可能对它们不太了解，但对华南地区的食客们来说，前者在城市购物中心随处可见，后者则需要饕客们“排上两、三个小时才能吃上嘴”。","thumbnailUrl":"https://img.zhitongcaijing.com/source/image/81799.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574815161,"updateFlag":"2 小时前","isTop":false},{"id":271549,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/947ED940-10A9-11EA-B701-D9D602B85642?lang=zh-hans","title":"11月美国消费者信心指数下降，但消费者仍对美国经济充满信心","desc":"美国11消费者信心指数从10月份的126.1降至125.5，这是自初春以来的最低水平。MarketWatch调查的经济学家此前预期为128.2。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127075621_75516.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574813084,"updateFlag":"3 小时前","isTop":false},{"id":271547,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/04CAABD0-10A9-11EA-B701-D9D602B85642?lang=zh-hans","title":"新股公告 | 捷隆控股(01425)以下限定价 公开发售超购12.96倍","desc":"公司发行3.12亿股，其中90%为国际发售，10%为公开发售。每股发售股份0.40港元，每手5000股，预期11月28日上市。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127075955_76464.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574812859,"updateFlag":"3 小时前","isTop":false,"stock_info":[{"0":"01425","7":0,"100":"hk","101":"捷隆控股","109":"010104"}]},{"id":271525,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/6E4D8830-10A3-11EA-B701-D9D602B85642?lang=zh-hans","title":"500亿规模保险资管公司正招聘总经理！保险资管新规征求意见，行业抢人大战已开启","desc":"日前，保险资管新规征求意见稿发布，今后保险资管将与银行理财、私募基金站在同一起跑线上同台竞技。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127070625_54063.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574810461,"updateFlag":"3 小时前","isTop":false},{"id":271520,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/2E0DBCA0-10A2-11EA-B701-D9D602B85642?lang=zh-hans","title":"新股公告 | 康龙化成(03759)以上限定价 公开发售超购逾113倍","desc":"公司发行1.17亿股，香港发售50%，国际发售50%，目前超额配股权尚未获行使。每股定价39.5港元，每手100股，预期于11月28日上市。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127070900_58914.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574809884,"updateFlag":"4 小时前","isTop":false,"stock_info":[{"0":"03759","7":0,"100":"hk","101":"康龙化成","109":"010104"}]},{"id":271518,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/0D6121F0-10A1-11EA-B701-D9D602B85642?lang=zh-hans","title":"地方政府出手！疯狂水泥终于“跳水” ，价格高位运行一年，行业利润有望超1500亿！","desc":"目前河南郑州的P.O42.5水泥到厂价格在590元/吨至620元/吨之间，较之前高点已回落了近百元","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127065847_97227.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574809439,"updateFlag":"4 小时前","isTop":false},{"id":271514,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/F03AC7D0-109F-11EA-B701-D9D602B85642?lang=zh-hans","title":"新股公告 | 辰林教育(01593)今起招股 拟于12月13日上市","desc":"公司拟发行2.5亿股，香港公开发售占10%，国际发售占90%，另有15%超额配股权。每股2.2-3.52港元，每手2000股，预期股份于2019年12月13日开始于联交所买卖。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127065438_60173.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574808955,"updateFlag":"4 小时前","isTop":false,"stock_info":[{"0":"01593","7":0,"100":"hk","101":"辰林教育","109":"010104"}]},{"id":271508,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/DD30FFE0-109C-11EA-B701-D9D602B85642?lang=zh-hans","title":"小摩：大轮动将在2020年到来，美股将进一步上涨","desc":"上一次出现“大轮动”是在2013年，散户投资者突然从债券基金转向购买股票基金。","thumbnailUrl":"http://img.zhitongcaijing.com/source/image/30636.jpg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"智通财经","updateTime":1574807591,"updateFlag":"4 小时前","isTop":false},{"id":271392,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/13F2ADB0-1054-11EA-B701-D9D602B85642?lang=zh-hans","title":"达里奥之后千亿基金女王也逃离美股，还有哪些风险你没有看到","desc":"管理着大约1000亿美元基金的投资女王莎拉·里奥佩尔最新看好欧洲和亚洲股市，美国和加拿大市场已经不是她的重点。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126214044_68461.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574776338,"updateFlag":"13 小时前","isTop":false},{"id":271350,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/0837A430-104A-11EA-B701-D9D602B85642?lang=zh-hans","title":"传统车企纷纷加强布局，全球电动化大势所趋","desc":"传统车企在新能源车领域纷纷加强布局，新能源车的行业发展趋势，也逐渐由中国单一的一个增速最快的市场，开始有向全球扩散的迹象。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126201444_60813.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574772021,"updateFlag":"14 小时前","isTop":false},{"id":271324,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/0A4C0970-1043-11EA-B701-D9D602B85642?lang=zh-hans","title":"十年间标普500指数跑赢大部分主动型基金","desc":"在过去的十年里，仅有22%的主动型基金（840支基金中有182支拥有十年记录）的年回报率超过了标准普尔500指数。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126194109_96822.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574768988,"updateFlag":"15 小时前","isTop":false},{"id":271284,"type":"observation","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/observation/E4A0B140-103C-11EA-B701-D9D602B85642?lang=zh-hans","title":"年收200亿农夫山泉又双叕被传赴港IPO？公司董秘：不知情","desc":"近年来，农夫山泉的营收增长势头格外“迅猛”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126185845_61131.png?x-oss-process=image/format,jpg/quality,Q_80","author":"智通财经","updateTime":1574766418,"updateFlag":"16 小时前","isTop":false},{"id":271272,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/3E2919D0-103A-11EA-B701-D9D602B85642?lang=zh-hans","title":"库存积压、订单下滑、重点监管，电子烟市场一夜入冬","desc":"随着国家电子烟网售禁令的出台，曾受到资本热捧的电子烟行业似乎一夜之间进入了“寒冬”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126183808_51951.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574765235,"updateFlag":"16 小时前","isTop":false},{"id":271227,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/D2FB4300-1033-11EA-B701-D9D602B85642?lang=zh-hans","title":"受命于危难之际 欧洲央行新领导班子面临重重挑战","desc":"欧洲央行近期不会调整货币政策，焦点将转向欧元及其走势，而欧元/美元将持续多久才能形成低位较低点和低位较高点？","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126173955_14753.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574762516,"updateFlag":"17 小时前","isTop":false},{"id":271210,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/57D14020-102F-11EA-B701-D9D602B85642?lang=zh-hans","title":"2019年Q3移动互联网报告：谁将发力入局，谁会黯然出局？","desc":"受到“互联网寒冬”的影响，移动应用开发整体降温。现在入局还有没有饭吃？","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126172056_90064.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574760605,"updateFlag":"17 小时前","isTop":false},{"id":271202,"type":"bignews","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bignews/F1C9D310-102D-11EA-B701-D9D602B85642?lang=zh-hans","title":"LNG在物流行业的蛋糕有多大？","desc":"在物流绿色化的道路上，LNG或将成为其优先选择的路径之一。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126171139_83621.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574759797,"updateFlag":"17 小时前","isTop":false}],"stockmove":[{"id":271637,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/C50839B0-10BF-11EA-B701-D9D602B85642?lang=zh-hans","title":"次新股华记环球集团(02296)盘中突获追捧 一度升逾40%破顶","desc":"云锋金融获悉，次新股华记环球集团(02296)突获资金追捧，盘中一度升逾40%，破顶高见0.39港元，较发行价高逾56%，截至10时28分，涨33.33%，报价0.36港元，成交额5375万。","stock":{"symbol":"hk02296","name":"华记环球集团","type":"010104","changeRatio":"25.93"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574822460,"updateFlag":"5 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271636,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/A13897A0-10BF-11EA-B701-D9D602B85642?lang=zh-hans","title":"港股异动 | 遭大摩减持35.64万股 雅生活控股(03319)高位回吐逾4%","desc":"云锋金融获悉，根据港交所最新权益披露资料显示，2019年11月20日，雅生活服务(03319)遭Morgan Stanley以每股均价26.1862 港元，减持35.64万股，总价约933....","stock":{"symbol":"hk03319","name":"雅生活服务","type":"010104","changeRatio":"-4.36"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574822340,"updateFlag":"7 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271629,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/AC983120-10BD-11EA-B701-D9D602B85642?lang=zh-hans","title":"教育板块整体高位回调 新东方在线(01797)急挫近7%","desc":"云锋金融获悉，教育板块集体高位回调，新东方在线(01797)急挫近7%，跌破多条均线，截至10时21分，跌6.68%，报价20.25港元，成交额7103万。截至发稿，成实外教育(0156...","stock":{"symbol":"hk01797","name":"新东方在线","type":"010104","changeRatio":"-5.76"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574821560,"updateFlag":"20 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271628,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/88DB2CB0-10BD-11EA-B701-D9D602B85642?lang=zh-hans","title":"港股异动 | 北水成买盘主力 美团点评-W(03690)涨逾3%破顶 市值突破6000亿","desc":"云锋金融获悉，美团点评-W(03690)自获纳入港股通以来，北水净买入额超过百亿，成为近期买盘主力。今日盘中股价破顶，高见104.7港元，市值突破6000亿港元。截至发稿，涨2.88%，报103...","stock":{"symbol":"hk03690","name":"美团点评-W","type":"010104","changeRatio":"3.37"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574821560,"updateFlag":"20 分钟前","isTop":false,"newFlag":0,"cardsCount":0},{"id":271623,"type":"stockmove","contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/stockmove/6AAE8620-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"外销或迎向上拐点获中金看高至6元 敏华控股(01999)现涨5%","desc":"云锋金融获悉，敏华控股(01999)止跌反弹，突破所有均线，中金指其外销或迎向上拐点，上调目标价17.6%至6.00港元。截至10时14分，涨5.03%，报价5.85港元，成交额2510万。...","stock":{"symbol":"hk01999","name":"敏华控股","type":"010104","changeRatio":"4.31"},"thumbnailUrl":"","author":"云锋金融","updateTime":1574821020,"updateFlag":"29 分钟前","isTop":false,"newFlag":0,"cardsCount":0}]}} 
+断言数据：空
+执行结果：case (69:weinan2) 执行成功.
+执行结束....
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>通过率：100.00%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>

@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>测试报告</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2.1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    
+<style type="text/css" media="screen">
+body        { font-family: Microsoft YaHei,Tahoma,arial,helvetica,sans-serif;padding: 20px; font-size: 14px; }
+table       { font-size: 12px; }
+/* -- heading ---------------------------------------------------------------------- */
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+/* -- report ------------------------------------------------------------------------ */
+#total_row  { font-weight: bold; }
+.passCase   { color: #5cb85c; }
+.failCase   { color: #d9534f; font-weight: bold; }
+.errorCase  { color: #f0ad4e; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+.passBtn    { background-color: #5cb85c; }
+.failBtn    { background-color: #d9534f; }
+.errorBtn    { background-color: #f0ad4e; }
+</style>
+
+</head>
+<body >
+<script language="javascript" type="text/javascript">
+output_list = Array();
+/*level 调整增加只显示通过用例的分类 --Findyou
+0:Summary //all hiddenRow
+1:Failed  //pt hiddenRow, ft none
+2:Pass    //pt none, ft hiddenRow
+3:All     //pt none, ft none
+*/
+function showCase(level) {
+    //展开或折叠用例按钮显示
+    var hidden_case = document.getElementById("case_hidden_btn");
+    if(level !=0) {
+
+        hidden_case.style.display = "block";
+    }else {
+        hidden_case.style.display = "none";
+    }
+
+    //更改通过时，显示通过按钮，样式，颜色bootstrap按钮
+    var btnpass = $('button[id^="btn_pt"]');
+    for(var i=0;i<btnpass.length;i++){
+        if(btnpass[i].innerText=="通过"){
+            btnpass[i].className="btn btn-success btn-xs";
+        }else{
+            btnpass[i].className="btn btn-danger btn-xs";
+        }
+    }
+
+
+
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level == 2 || level == 0 ) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level < 2) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+    }
+    //加入【详细】切换文字变化 --Findyou
+    detail_class=document.getElementsByClassName('detail');
+    //console.log(detail_class.length)
+    if (level == 3) {
+        for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="收起"
+        }
+    }
+    else{
+            for (var i = 0; i < detail_class.length; i++){
+            detail_class[i].innerHTML="详细"
+        }
+    }
+}
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        //ID修改 点 为 下划线 -Findyou
+        tid0 = 't' + cid.substr(1) + '_' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        //修改点击无法收起的BUG，加入【详细】切换文字变化 --Findyou
+        if (toHide) {
+            document.getElementById(tid).className = 'hiddenRow';
+            document.getElementById(cid).innerText = "详细"
+        }
+        else {
+            document.getElementById(tid).className = '';
+            document.getElementById(cid).innerText = "收起"
+        }
+    }
+}
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+function hidden_case() {
+    var case_btn = document.getElementById("case_hidden_btn");
+    var btn_text = case_btn.innerText;
+
+    var a = $('div[id^="div_pt"]');
+    for(var i=0;i<a.length;i++){
+        if(btn_text=='展开所有'){
+            a[i].className = 'in';
+            a[i].style.height = "auto";
+            case_btn.innerText = "折叠所有";
+        }else {
+            a[i].className = 'collapse';
+            a[i].style.height = "0px";
+            case_btn.innerText = "展开所有";
+        }
+    }
+}
+</script>
+<div class='heading'>
+<h4 style="font-family: Microsoft YaHei">测试报告</h4>
+<p class='attribute'><strong>测试环境 : </strong> QA</p>
+<p class='attribute'><strong>测试人员 : </strong> </p>
+<p class='attribute'><strong>开始时间 : </strong> 2019-11-27 15:39:48</p>
+<p class='attribute'><strong>合计耗时 : </strong> 0:00:03.484000</p>
+<p class='attribute'><strong>测试结果 : </strong> 共 30，通过 1，失败 24，错误 5，通过率= 3.33%</p>
+
+<p class='description'>用例执行情况</p>
+</div>
+
+
+<p id='show_detail_line'>
+<a class="btn btn-primary" href='javascript:showCase(0)'>概要{ 3.33% }</a>
+<a class="btn btn-danger" href='javascript:showCase(1)'>失败{ 24 }</a>
+<a class="btn btn-success" href='javascript:showCase(2)'>通过{ 1 }</a>
+<a class="btn btn-info" href='javascript:showCase(3)'>所有{ 30 }</a>
+</p>
+<table id='result_table' class="table table-condensed table-bordered table-hover">
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row' class="text-center success" style="font-weight: bold;font-size: 14px;">
+    <td>用例集/测试用例</td>
+    <td>总计</td>
+    <td>通过</td>
+    <td>失败</td>
+    <td>错误</td>
+    <td>详细</td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>有鱼鱼筐</td>
+    <td class="text-center">25</td>
+    <td class="text-center">0</td>
+    <td class="text-center">22</td>
+    <td class="text-center">3</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c1',25)" class="detail" id='c1'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft1_1' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_10_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_1'>失败</button>
+    <div id='div_ft1_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_1'>失败</button>
+    <div id='div_ft1_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_1: 开始执行....
+
+用例名称:被依赖用例.
+用例id:10.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - rr34r34r3
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{u'aver': 1, u'type': u'mobile', u'value': u'+8610111112245'} 
+执行结果：case (10:被依赖用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_2' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_11_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_2'>失败</button>
+    <div id='div_ft1_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_2'>失败</button>
+    <div id='div_ft1_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_2: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:11.
+依赖用例t_id：d5
+依赖数据：无
+所属项目-模块：有鱼鱼筐 - rr34r34r3
+请求方法：POST
+请求地址：2/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{} 
+执行结果：case (11:问请问企鹅企鹅) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_3' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_12_test1</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_3'>失败</button>
+    <div id='div_ft1_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_3'>失败</button>
+    <div id='div_ft1_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_3: 开始执行....
+
+用例名称:test1.
+用例id:12.
+依赖用例t_id：t04
+依赖接口t04是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖数据：无
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：dhuehduwrrerwerwerwerwer
+请求头： {u'Content-Type': u'ewrwerwer'}
+请求体：{u'erwerwer': u'erwerwrwerwerewr'} 
+执行结果：case (12:test1) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_4' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_13_test2</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_4' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_4'>失败</button>
+    <div id='div_ft1_4' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_4' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_4'>失败</button>
+    <div id='div_ft1_4' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_4: 开始执行....
+
+用例名称:test2.
+用例id:13.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：dhuehduwrrerwerwerwerwer
+请求头： {u'Content-Type': u'ewrwerwer'}
+请求体：{u'erwerwer': 'erwerwrwerwerewr'} 
+执行结果：case (13:test2) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_5' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_14_test3</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_5' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_5'>失败</button>
+    <div id='div_ft1_5' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_5' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_5'>失败</button>
+    <div id='div_ft1_5' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_5: 开始执行....
+
+用例名称:test3.
+用例id:14.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：dhuehduwrrerwerwerwerwer
+请求头： {u'Content-Type': u'ewrwerwer'}
+请求体：{u'erwerwer': 'erwerwrwerwerewr'} 
+执行结果：case (14:test3) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_6' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_15_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_6' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_6'>失败</button>
+    <div id='div_ft1_6' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_6' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_6'>失败</button>
+    <div id='div_ft1_6' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_6: 开始执行....
+
+用例名称:执行用例.
+用例id:15.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/pc/v1/quote/user/query/marketinfobatch
+请求头： {}
+请求体：{u'auth': u'731416e1214b615a77f480f053f6737398e7889be17a7f77e8aad91b1b68e66b6d65993b42902a7445dc97d68a29e4882e1d3eb9c5c17e54e7b8d30a54ae5b02c308292c579eb09920ba990632ea6f0dd308c748bbb7851ba2aa9470c728f01d', u'loginid': 90976} 
+执行结果：case (15:执行用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_7' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_16_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_7' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_7'>失败</button>
+    <div id='div_ft1_7' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_7' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_7'>失败</button>
+    <div id='div_ft1_7' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_7: 开始执行....
+
+用例名称:被依赖用例.
+用例id:16.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{u'aver': 1, u'type': u'mobile', u'value': u'+8610111112245'} 
+执行结果：case (16:被依赖用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_8' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_17_问请问企鹅企鹅</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_8' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_8'>失败</button>
+    <div id='div_ft1_8' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_8' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_8'>失败</button>
+    <div id='div_ft1_8' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_8: 开始执行....
+
+用例名称:问请问企鹅企鹅.
+用例id:17.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{} 
+执行结果：case (17:问请问企鹅企鹅) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_9' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_24_创建回测</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_9' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_9'>失败</button>
+    <div id='div_ft1_9' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_9' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_9'>失败</button>
+    <div id='div_ft1_9' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_9: 开始执行....
+
+用例名称:创建回测.
+用例id:24.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 回测
+请求方法：POST
+请求地址：https://quant-qa.youyu.cn/common/v1/user/create/backtest
+请求头： {u'Content-Type': u'application/json', u'Cookie': u'uin=400006815; session=4A34BAA922EC45CBAD51A5F383CA052A'}
+请求体：{u'benchmark': u'sh000300', u'strategy_id': 37, u'strategy_code': u'def init(context):\n     context.s1 = "sz000001"\n     g.s2 = "sz000001"\n     update_universe(context.s1)\n     g.fired = False\n     set_commission(0.0001)\n \n \ndef before_trading(context):\n     pass\n \n \ndef handle_bar(context):\n     if not g.fired:\n         # order_percent并且传入1代表买入该股票并且使其占有投资组合的100%\n         order_percent(context.s1, 0.3)\n         order_percent(g.s2, 0.3)\n         g.fired = True', u'strategy_name': u'测试1', u'frequency': u'd', u'end_time': u'2019-06-30', u'start_time': u'2019-01-01', u'init_money': u'1000000'} 
+执行结果：case (24:创建回测) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_10' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_25_获取回测列表</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_10' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_10'>失败</button>
+    <div id='div_ft1_10' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_10' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_10'>失败</button>
+    <div id='div_ft1_10' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_10: 开始执行....
+
+用例名称:获取回测列表.
+用例id:25.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 回测
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/backtestlist?
+请求头： {u'Cookie': u'uin=400006815; session=4A34BAA922EC45CBAD51A5F383CA052A'}
+请求体：{u'count': 10, u'strategy_id': 37} 
+执行结果：case (25:获取回测列表) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_11' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_26_查看回测详情</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_11' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_11'>错误</button>
+    <div id='div_ft1_11' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_11' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_11'>错误</button>
+    <div id='div_ft1_11' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_11: 开始执行....
+
+用例名称:查看回测详情.
+用例id:26.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 回测
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/btrateline?
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 157, in getResp
+    send_body, files, showflag = mul_bodyData(bodyinfor)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\untils\until.py", line 29, in mul_bodyData
+    body = json.loads(paramsData[0]["paramValue"])
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_12' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_27_获取回测成交明细</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_12' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_12'>失败</button>
+    <div id='div_ft1_12' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_12' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_12'>失败</button>
+    <div id='div_ft1_12' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_12: 开始执行....
+
+用例名称:获取回测成交明细.
+用例id:27.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 回测
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/bttradedetail?
+请求头： {u'Cookie': u'uin=400006815; session=4A34BAA922EC45CBAD51A5F383CA052A'}
+请求体：{u'bt_id': 11256} 
+执行结果：case (27:获取回测成交明细) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_13' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_58_呜呜呜呜呜呜呜呜呜呜呜呜呜呜</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_13' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_13'>错误</button>
+    <div id='div_ft1_13' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_13' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_13'>错误</button>
+    <div id='div_ft1_13' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_13: 开始执行....
+
+用例名称:呜呜呜呜呜呜呜呜呜呜呜呜呜呜.
+用例id:58.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：1232131233123213123123
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 159, in getResp
+    if len(send_body) != 0:
+TypeError: object of type 'long' has no len()
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_14' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_59_123123123</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_14' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_14'>失败</button>
+    <div id='div_ft1_14' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_14' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_14'>失败</button>
+    <div id='div_ft1_14' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_14: 开始执行....
+
+用例名称:123123123.
+用例id:59.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：31231313121313131321
+请求头： {}
+请求体：{} 
+执行结果：case (59:123123123) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_15' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_5_测试</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_15' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_15'>失败</button>
+    <div id='div_ft1_15' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_15' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_15'>失败</button>
+    <div id='div_ft1_15' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_15: 开始执行....
+
+用例名称:测试.
+用例id:5.
+依赖用例t_id：d6
+依赖接口d6是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖数据：无
+error: 'b'
+使用值空值替换参数${b}
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/pc/v1/quote/user/query/marketinfobatch
+error: 'b'
+使用值空值替换参数${b}
+请求头： {u'b': ''}
+请求体：{u'aa': ''} 
+执行结果：case (5:测试) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_16' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_62_wlb</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_16' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_16'>失败</button>
+    <div id='div_ft1_16' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_16' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_16'>失败</button>
+    <div id='div_ft1_16' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_16: 开始执行....
+
+用例名称:wlb.
+用例id:62.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 测试
+请求方法：GET
+请求地址：http://wlb-m-qa.youyu.cn/api/investment-view/ipo/list?lang=zh-Hant
+请求头： {}
+请求体：{} 
+执行结果：case (62:wlb) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_17' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_65_获取股票信息-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_17' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_17'>失败</button>
+    <div id='div_ft1_17' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_17' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_17'>失败</button>
+    <div id='div_ft1_17' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_17: 开始执行....
+
+用例名称:获取股票信息-需登录.
+用例id:65.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 新建策略
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/stockbox?type=1&amp;item=%E4%B8%8A%E8%AF%8150
+请求头： {}
+请求体：{} 
+执行结果：case (65:获取股票信息-需登录) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_18' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_66_获取策略列表-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_18' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_18'>失败</button>
+    <div id='div_ft1_18' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_18' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_18'>失败</button>
+    <div id='div_ft1_18' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_18: 开始执行....
+
+用例名称:获取策略列表-需登录.
+用例id:66.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 新建策略
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/strategylist?count=10
+请求头： {}
+请求体：{} 
+执行结果：case (66:获取策略列表-需登录) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_19' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_67_获取上证30-需登录</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_19' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_19'>失败</button>
+    <div id='div_ft1_19' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_19' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_19'>失败</button>
+    <div id='div_ft1_19' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_19: 开始执行....
+
+用例名称:获取上证30-需登录.
+用例id:67.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - 新建策略
+请求方法：GET
+请求地址：https://quant-qa.youyu.cn/common/v1/user/query/stockbox?type=1&amp;item=%E4%B8%8A%E8%AF%8150
+请求头： {}
+请求体：{} 
+执行结果：case (67:获取上证30-需登录) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_20' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_6_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_20' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_20'>失败</button>
+    <div id='div_ft1_20' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_20' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_20'>失败</button>
+    <div id='div_ft1_20' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_20: 开始执行....
+
+用例名称:执行用例.
+用例id:6.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - ceshidaochu
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/pc/v1/quote/user/query/marketinfobatch
+请求头： {}
+请求体：{u'auth': u'731416e1214b615a77f480f053f6737398e7889be17a7f77e8aad91b1b68e66b6d65993b42902a7445dc97d68a29e4882e1d3eb9c5c17e54e7b8d30a54ae5b02c308292c579eb09920ba990632ea6f0dd308c748bbb7851ba2aa9470c728f01d', u'loginid': 90976} 
+执行结果：case (6:执行用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_21' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_70_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_21' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_21'>失败</button>
+    <div id='div_ft1_21' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_21' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_21'>失败</button>
+    <div id='div_ft1_21' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_21: 开始执行....
+
+用例名称:执行用例.
+用例id:70.
+依赖用例t_id：zx2
+依赖接口zx2是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖数据：无
+使用值：''替换参数${stockcode}
+使用值：''替换参数${cf}
+所属项目-模块：有鱼鱼筐 - yilai
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/common/v1/quote/user/query/quote?key=&amp;cf=
+请求头： {}
+请求体：{} 
+执行结果：case (70:执行用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_22' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_71_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_22' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_22'>失败</button>
+    <div id='div_ft1_22' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_22' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_22'>失败</button>
+    <div id='div_ft1_22' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_22: 开始执行....
+
+用例名称:被依赖用例.
+用例id:71.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - yilai
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/pc/v3/quote/user/query/pcrank?mkt=hk_real&amp;n=00&amp;rt=7&amp;rev=1&amp;num=100&amp;sector=gem
+请求头： {}
+请求体：{} 
+执行结果：case (71:被依赖用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_23' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_7_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_23' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_23'>失败</button>
+    <div id='div_ft1_23' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_23' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_23'>失败</button>
+    <div id='div_ft1_23' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_23: 开始执行....
+
+用例名称:被依赖用例.
+用例id:7.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - ceshidaochu
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{u'aver': 1, u'type': u'mobile', u'value': u'+8610111112245'} 
+执行结果：case (7:被依赖用例) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_24' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_8_行情首屏[港股]</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_24' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_24'>失败</button>
+    <div id='div_ft1_24' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_24' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft1_24'>失败</button>
+    <div id='div_ft1_24' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_24: 开始执行....
+
+用例名称:行情首屏[港股].
+用例id:8.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：有鱼鱼筐 - ceshidaochu
+请求方法：GET
+请求地址：https://market-qa.youyu.cn/app/v3/quote/user/query/quotes?
+请求头： {}
+请求体：{u'msg': 123, u'code': u'hk0000036', u'marketid': u'hk'} 
+执行结果：case (8:行情首屏[港股]) 执行失败:run error:{'status_code': 400, 'error': 'string indices must be integers'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft1_25' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_9_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft1_25' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft1_25'>错误</button>
+    <div id='div_ft1_25' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft1_25' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft1_25'>错误</button>
+    <div id='div_ft1_25' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft1_25: 开始执行....
+
+用例名称:执行用例.
+用例id:9.
+依赖用例t_id：t02
+依赖接口t02是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖数据：无
+所属项目-模块：有鱼鱼筐 - rr34r34r3
+请求方法：GET
+请求地址：https://pc-market-qa.youyu.cn/pc/v1/quote/user/query/marketinfobatch
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 157, in getResp
+    send_body, files, showflag = mul_bodyData(bodyinfor)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\untils\until.py", line 29, in mul_bodyData
+    body = json.loads(paramsData[0]["paramValue"])
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr class='errorClass warning'>
+    <td>smart</td>
+    <td class="text-center">5</td>
+    <td class="text-center">1</td>
+    <td class="text-center">2</td>
+    <td class="text-center">2</td>
+    <td class="text-center">
+        <a href="javascript:showClassDetail('c2',5)" class="detail" id='c2'>详细</a>
+        <a href='javascript:hidden_case()' id="case_hidden_btn" style="display:none">展开所有</a>
+    </td>
+
+</tr>
+
+<tr id='ft2_1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_18_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_1' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_1'>错误</button>
+    <div id='div_ft2_1' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_1' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_1'>错误</button>
+    <div id='div_ft2_1' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_1: 开始执行....
+
+用例名称:执行用例.
+用例id:18.
+依赖用例t_id：z2
+依赖接口z2是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖接口返回信息： &lt;html&gt;
+&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 127, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 213, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 99, in getdepands
+    responseText = json.loads(resp.text)
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_2' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_19_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_2' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_2'>失败</button>
+    <div id='div_ft2_2' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_2' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft2_2'>失败</button>
+    <div id='div_ft2_2' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_2: 开始执行....
+
+用例名称:被依赖用例.
+用例id:19.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：smart - CES
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{u'aver': 1, u'type': u'mobile', u'value': u'+8610111112245'} 
+接口返回状态码：404
+返回数据：&lt;html&gt;
+&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+断言数据："code":0 
+执行结果：case (19:被依赖用例) 执行失败:{'assert': '"code":0', 'status_code': 404, 'responseText': '&lt;html&gt;\r\n&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;\r\n&lt;body bgcolor="white"&gt;\r\n&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;\r\n&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_func_22_执行用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_3' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_3'>错误</button>
+    <div id='div_ft2_3' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_3' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-warning btn-xs" data-toggle="collapse" data-target='#div_ft2_3'>错误</button>
+    <div id='div_ft2_3' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_3: 开始执行....
+
+用例名称:执行用例.
+用例id:22.
+依赖用例t_id：a02
+依赖接口a02是否有关联接口：否
+依赖接口是否有自定义参数：否
+依赖接口返回信息： &lt;html&gt;
+&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 27, in actions
+    singleResult = self.singleRun(caseID, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 52, in singleRun
+    respResult = batchUntils.getResp(id, environment, dtime, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 127, in getResp
+    dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchUntils.py", line 213, in isDependency
+    dependRes = getDependData.getdepands(depend_caseid, depend_data, environment, Cookie)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\getDependData.py", line 99, in getdepands
+    responseText = json.loads(resp.text)
+  File "C:\Python27\lib\json\__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "C:\Python27\lib\json\decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Python27\lib\json\decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='ft2_4' class='none'>
+    <td class='failCase'><div class='testcase'>test_func_23_被依赖用例</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_ft2_4' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_ft2_4'>失败</button>
+    <div id='div_ft2_4' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_ft2_4' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-danger btn-xs" data-toggle="collapse" data-target='#div_ft2_4'>失败</button>
+    <div id='div_ft2_4' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+ft2_4: 开始执行....
+
+用例名称:被依赖用例.
+用例id:23.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：smart - 123
+请求方法：POST
+请求地址：https://market-qa.youyu.cn/v1/users/check
+请求头： {u'Content-Type': u'application/json'}
+请求体：{u'aver': 1, u'type': u'mobile', u'value': u'+8610111112245'} 
+接口返回状态码：404
+返回数据：&lt;html&gt;
+&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;
+&lt;body bgcolor="white"&gt;
+&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;
+&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+断言数据："code":0 
+执行结果：case (23:被依赖用例) 执行失败:{'assert': '"code":0', 'status_code': 404, 'responseText': '&lt;html&gt;\r\n&lt;head&gt;&lt;title&gt;404 Not Found&lt;/title&gt;&lt;/head&gt;\r\n&lt;body bgcolor="white"&gt;\r\n&lt;center&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/center&gt;\r\n&lt;hr&gt;&lt;center&gt;nginx&lt;/center&gt;\r\n&lt;/body&gt;\r\n&lt;/html&gt;\r\n'}
+Traceback (most recent call last):
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 41, in func
+    self.actions(arg1, arg2, environment, cookices)
+  File "D:\project\auto_interface\antoInterfacePlatform\main\common\batchstart.py", line 34, in actions
+    self.assertEqual(True, state)
+AssertionError: True != False
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='pt2_5' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_func_28_大报告</div></td>
+    <td colspan='5' align='center'>
+    <!--默认收起错误信息 -Findyou
+    <button id='btn_pt2_5' type="button"  class="btn btn-danger btn-xs collapsed" data-toggle="collapse" data-target='#div_pt2_5'>通过</button>
+    <div id='div_pt2_5' class="collapse">  -->
+    <!-- 默认展开错误信息 -Findyou -->
+    <button id='btn_pt2_5' type="button" title="点击按钮，展开或折叠该Case" class="btn btn-success btn-xs" data-toggle="collapse" data-target='#div_pt2_5'>通过</button>
+    <div id='div_pt2_5' class="collapse" align="left">
+    <pre style="overflow-y:scroll; overflow-x:hidden;height:200px; width:1070px; margin:auto; border:1px solid #e1e1e1;">
+    
+pt2_5: 开始执行....
+
+用例名称:大报告.
+用例id:28.
+是否有关联接口：否
+接口是否有自定义参数：否
+所属项目-模块：smart - 123
+请求方法：GET
+请求地址：https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport?
+请求头： {}
+请求体：{} 
+接口返回状态码：200
+返回数据：{"code":0,"data":{"items":[{"id":271776,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/4293C5B0-10E4-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：维持香港中旅(00308)“跑赢行业”评级 目标价1.57港元","desc":"中金公司发表研究报告指出，由于公司香港地区业务下滑明显，香港中旅(00308)维持跑赢行业评级和目标价1.57港币，较当前股价有27%的上行空间。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127145237_57968.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574838253,"updateFlag":"37 分钟前","cardsCount":0},{"id":271766,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/FA2E0C00-10DD-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：维持阿里健康(00241)“跑赢行业”评级 上调目标价至10.9港元","desc":"中金公司发布报告称，维持阿里健康(00241)“跑赢行业”评级，上调目标价8%至10.9港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127141718_69788.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574835614,"updateFlag":"1 小时前","cardsCount":0},{"id":271709,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/F1E5DBC0-10CB-11EA-B701-D9D602B85642?lang=zh-hans","title":"中信建投：维持阿里巴巴(09988)“买入”评级 目标价224港元","desc":"中信建投发布报告称，维持阿里巴巴(09988)“买入”评级，目标价224港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127120856_36248.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574827867,"updateFlag":"3 小时前","cardsCount":0},{"id":271701,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/461C7610-10CA-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：下调维珍妮(02199)目标价至5.5港元 评级升至“优于大市”","desc":"大和发表研究报告指出，将维珍妮(02199)目标价下调6.78％，由原来的5.9港元降至5.5港元，而评级就由“持有”升至“优于大市”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127114129_39345.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574827124,"updateFlag":"4 小时前","cardsCount":0},{"id":271691,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/529B3B30-10C8-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：预计明年内银净收益增长 看好招商银行(03968)及光大银行(06818)","desc":"中金公司发布称，预计明年内银净收益增长，预计招商银行(03968)及光大银行(06818)实现较快业绩增长。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127113318_36739.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574826298,"updateFlag":"4 小时前","cardsCount":0},{"id":271692,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/529B1420-10C8-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：予领展(00823)“与大市同步”评级 目标价91港元","desc":"大摩发布报告称，予领展(00823)“与大市同步”评级及目标价91港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127114025_26417.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574826272,"updateFlag":"4 小时前","cardsCount":0},{"id":271670,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/D0A1FC60-10C5-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：下调维珍妮(02199)目标价至6.5港元 维持“买入”评级","desc":"野村发表报告表示，将维珍妮(02199)的目标价由7.3港元调低11%至6.5港元，投资评级维持“买入”不变。该行维续看好维珍妮毛利前景。","thumbnailUrl":"http://img.zhitongcaijing.com/source/image/30491.jpeg?x-oss-process=image/format,jpg/quality,Q_100/resize,h_300","author":"云锋金融","updateTime":1574825178,"updateFlag":"4 小时前","cardsCount":0},{"id":271667,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/6B3D37F0-10C4-11EA-B701-D9D602B85642?lang=zh-hans","title":"汇丰：下调大家乐集团(00341)“买入”评级 目标价25港元 ","desc":"汇丰发表报告表示，将大家乐(00341) 下调2020和2021年盈利预测33%和24%，以反映收益下降及成本上升的问题，相应目标价由28港元降至25港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127111251_60099.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824594,"updateFlag":"4 小时前","cardsCount":0},{"id":271664,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/94BE7B82-10C3-11EA-B701-D9D602B85642?lang=zh-hans","title":"博恩斯坦(Bernstein)：推荐金风科技(02208)和龙源电力(00916) “优于大市”评级","desc":"美资券商博恩斯坦(Bernstein)发表报告称，目前新能源行业的政策风险比以往低，预计风力发电机生产商在2019-20年发展较好，，给予金风科技(02208)与龙源电力(00916)“优于大市”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110117_69044.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824214,"updateFlag":"5 小时前","cardsCount":0},{"id":271660,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/29C5D6C0-10C3-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：维持敏华控股(01999)“优于大市”评级 上调目标价至7港元","desc":"中金公司发布报告称，维持敏华控股(01999)“优于大市”评级，上调目标价17%至7港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110544_10368.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574824090,"updateFlag":"5 小时前","cardsCount":0},{"id":271659,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/E24ABC70-10C2-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：下调中国燃气(00384)评级至“持有” 目标价调低至29.9港元","desc":"大和发布研究报告称，下调中国燃气(00384)评级，由“跑赢大市”降至“持有”，目标价由31.6港元调低5.4%至29.9港元","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127110235_26081.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823939,"updateFlag":"5 小时前","cardsCount":0},{"id":271652,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/7522DBA0-10C2-11EA-B701-D9D602B85642?lang=zh-hans","title":"花旗：维持广汽集团(02238)“中性”评级 下调目标价至8.7港元","desc":"花旗发布报告称，维持广汽集团(02238)“中性”评级，目标价相应自8.9港元小幅下调至8.7港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127105934_30859.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823787,"updateFlag":"5 小时前","cardsCount":0},{"id":271650,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/A01C8E60-10C1-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：降新东方在线(01797)至“减持”评级 下调目标价至11.6港元","desc":"大摩发布报告称，将新东方在线(01797)目标价由13港元下调至11.6港元，评级由“增持”降至“减持”。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127105418_87278.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574823402,"updateFlag":"5 小时前","cardsCount":0},{"id":271646,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/816708C0-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：维持中生制药(01177)“增持”评级 目标价12.5港元","desc":"大摩发布报告称，维持中生制药(01177)“增持”评级及目标价12.5港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104535_83302.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822907,"updateFlag":"5 小时前","cardsCount":0},{"id":271644,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/5C1B7510-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"大和：重申欧舒丹（00973）“买入”评级 目标价升至21.5港元","desc":"大和发布报告称，将重申欧舒丹(00973）“买入”评级，目标价由19港元升至21.5港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104152_34319.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822854,"updateFlag":"5 小时前","cardsCount":0},{"id":271642,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/15A21350-10C0-11EA-B701-D9D602B85642?lang=zh-hans","title":"汇丰：维持莎莎(00178)“持有”评级 下调目标价至1.8港元","desc":"汇丰发布报告称，维持莎莎(00178)“持有”评级。目标价由原来的2.7港元下调至1.8港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127104042_44025.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822750,"updateFlag":"5 小时前","cardsCount":0},{"id":271639,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/CF0B3E80-10BF-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：降维珍妮（02199）目标价至6.5港元 维持“买入”评级","desc":"野村发布报告称，将对维珍妮(02199）目标价由7.3港元降至6.5港元，评级维持“买入”","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103326_26142.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574822600,"updateFlag":"5 小时前","cardsCount":0},{"id":271633,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/437CBB60-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"国盛证券：邮储银行(01658)成长空间广阔 维持“买入”评级","desc":"国盛证券发布报告称，邮储银行(01658)成长空间广阔，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127103055_61901.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821933,"updateFlag":"5 小时前","cardsCount":0},{"id":271631,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/1EDF6911-10BE-11EA-B701-D9D602B85642?lang=zh-hans","title":"中金：预计2020年上市银行净利润同比增长6.8％ 增速同比保持平稳","desc":"中金公司发布报告称，中资银行正处于一轮结构性不良周期。跟以往相比，问题资产成因和高风险机构分布更具结构性特征，上市银行整体资产负债表也更加健康。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127101536_12712.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821899,"updateFlag":"5 小时前","cardsCount":0},{"id":271626,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/DEB436F0-10BC-11EA-B701-D9D602B85642?lang=zh-hans","title":"瑞银：维持广汽集团(02238)“买入”评级 目标价10港元","desc":"瑞银发表报告表示，上调广汽集团(02238)目标价，由9.3港元升至10港元，基于明年预测市盈率8.5倍，维持“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127102002_31332.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574821378,"updateFlag":"5 小时前","cardsCount":0},{"id":271617,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/E3036240-10BB-11EA-B701-D9D602B85642?lang=zh-hans","title":"国盛证券：吉利汽车(00175)加速实现品牌升级 维持“买入”评级","desc":"国盛证券发布报告称，吉利汽车(00175)加速实现品牌升级，维持其“买入”评级。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127101158_82948.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574820916,"updateFlag":"5 小时前","cardsCount":0},{"id":271613,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/C50015A0-10BA-11EA-B701-D9D602B85642?lang=zh-hans","title":"高盛：升港铁公司(00066)“买入“评级 目标价54港元","desc":"高盛发表研究报告指出，预计港铁公司(00066)的乘客量将很快恢复，上调其评级至\"买入\"，目标价为54港元，较昨天（26日）收市价43.35港元，仍有上涨约25％的空间。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127100210_28927.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574820467,"updateFlag":"6 小时前","cardsCount":0},{"id":271593,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/B98820E0-10B6-11EA-B701-D9D602B85642?lang=zh-hans","title":"大摩：同程艺龙(00780)评级“增持” 目标价16港元","desc":"大摩发布报告称，同程艺龙(00780)第3季度业绩强劲，目标价16港元，评级同程艺龙(00780)","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191127/20191127093545_57069.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574818723,"updateFlag":"6 小时前","cardsCount":0},{"id":271145,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/3D9DCEF0-1028-11EA-B701-D9D602B85642?lang=zh-hans","title":"招银国际：维持蒙牛乳业(02319)“买入”评级 目标价37港元","desc":"招银国际发布研究报告称，蒙牛乳业(02319)拟收购澳洲乳品及饮料公司Lion-Dairy &amp; Drinks Pty Ltd. 的100%股份，此次收购可以满足蒙牛在海外原料奶资源的需求和在东南亚市场的销售网络需求，其协同效应有待探索。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126163445_75277.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574757535,"updateFlag":"1 天前","cardsCount":0},{"id":271127,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/B028FFA0-1026-11EA-B701-D9D602B85642?lang=zh-hans","title":"花旗：维持蒙牛(02319)“买入”评级 目标价41.72港元","desc":"花旗发布报告称，维持蒙牛(02319)“买入”评级，目标价41.72港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126160739_79000.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574756853,"updateFlag":"1 天前","cardsCount":0},{"id":271107,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/CDBED6B0-1022-11EA-B701-D9D602B85642?lang=zh-hans","title":"里昂：重申蒙牛乳业(02319)“首要买入”评级 目标价36.6港元","desc":"里昂发布报告称，重申蒙牛乳业(02319)“首要买入”评级及目标价36.6港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126154129_71438.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574755205,"updateFlag":"1 天前","cardsCount":0},{"id":271089,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/B46D8B50-101F-11EA-B701-D9D602B85642?lang=zh-hans","title":"野村：维持中国燃气(00384)“买入”评级 上调目标价至40.3港元","desc":"野村发布报告称，维持中国燃气(00384)“买入”评级，由37.2港元上调至40.3港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126153316_51868.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574753874,"updateFlag":"1 天前","cardsCount":0},{"id":271080,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/0F089C61-101D-11EA-B701-D9D602B85642?lang=zh-hans","title":"招商证券国际：维持中国燃气(00384)“买入”评级 目标价38.3港元","desc":"招商证券国际发布公司研报称，中国燃气(00384)在20年上半年的表现强劲，管理层将其VAS全年GP增长率从年环比40%提高到50%。该行表示，在VAS的多元化增长驱动下，对公司的增长轨迹保持乐观，维持“买入”评级，目标价维持38.3港元不变。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126145628_39526.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574752708,"updateFlag":"1 天前","cardsCount":0},{"id":271070,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/70C1E1D0-101A-11EA-B701-D9D602B85642?lang=zh-hans","title":"麦格理：首予阿里巴巴(09988)“跑赢大市”评级 目标价为224港元","desc":"麦格理发布报告称，首予阿里巴巴(09988)“跑赢大市”评级，目标价为224港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126145753_43151.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574751586,"updateFlag":"1 天前","cardsCount":0},{"id":271066,"contentUrl":"https://cms-qa.youyu.cn/v1/cms/broker/information/bigfirmreport/6CDF45E0-1019-11EA-B701-D9D602B85642?lang=zh-hans","title":"麦格理：升(00973)至“跑赢大市”评级 上调目标价至21港元","desc":"麦格理发布报告称，欧舒丹(00973)该行将其评级由“中性”升至“跑赢大市”，目标价从16.5港元上调至21港元。","thumbnailUrl":"https://img.zhitongcaijing.com/image/20191126/20191126145116_62435.png?x-oss-process=image/format,jpg/quality,Q_80","author":"云锋金融","updateTime":1574751165,"updateFlag":"1 天前","cardsCount":0}]}} 
+断言数据：空
+执行结果：case (28:大报告) 执行成功.
+执行结束....
+
+
+    </pre>
+    </div>
+    </td>
+</tr>
+
+<tr id='total_row' class="text-center active">
+    <td>总计</td>
+    <td>30</td>
+    <td>1</td>
+    <td>24</td>
+    <td>5</td>
+    <td>通过率：3.33%</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+    <div style=" position:fixed;right:50px; bottom:30px; width:20px; height:20px;cursor:pointer">
+    <a href="#"><span class="glyphicon glyphicon-eject" style = "font-size:30px;" aria-hidden="true">
+    </span></a></div>
+    
+</body>
+</html>
