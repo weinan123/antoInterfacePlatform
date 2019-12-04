@@ -20,8 +20,6 @@ sys.setdefaultencoding('utf8')
 '''
 获取测试套件
 '''
-
-
 # 获取TestSuite
 def getTestSuite(*classes):
     valid_types = (unittest.TestSuite, unittest.TestCase)
@@ -43,8 +41,6 @@ def getTestSuite(*classes):
 '''
 查找文件，如果没有，则创建文件
 '''
-
-
 def create():
     t = time.strftime("%Y-%m-%d-%H_%M_%S", time.localtime(time.time()))  # 将指定格式的当前时间以字符串输出
     suffix = "_result.html"
@@ -52,6 +48,8 @@ def create():
     report_path = os.path.dirname(os.path.dirname(__file__)) + "\\report\\" + relpath
     reportname = t
     return report_path, relpath, reportname
+
+
 '''
 根据环境查询host，如果为空，则正则创建
 '''
@@ -117,25 +115,27 @@ def getResp(id,environment, dtime, cookices = None):
             print(u"接口自定义参数：%s" % str(dependData))
     else:
         dependData = isDependency(depend_flag, dependData_str, environment, Cookie)
-
     #判断url,header,body等字段是否使用参数，若使用则用依赖值替换，若参数在依赖变量中没有则用空替换
     methods = query.method
-    print dependData
-    send_url = replaceParam(dependData, query.url)
+    send_url = replaceStrParam(dependData, query.url)
     if methods == "" or send_url == "":
         result = {"code": -1, "info": "参数不能为空"}
         return result
-    headers = replaceParam(dependData, query.headers)
-    if headers != "" and headers is not None:
-        headers = json.loads(headers)
-    bodyinfor = replaceParam(dependData, query.body)
-    print bodyinfor
-    showflag = ""
-    # print("bodyinfor: ", bodyinfor)
+    # headers = query.headers
+    # headers_dict = {}
+    # if headers != "" and headers is not None and str(headers) != "{}":
+    #     headers_dict = replaceParam(dependData, json.loads(headers))
+    # bodyinfor = query.body
+    # # print("bodyinfor: ", bodyinfor)
+    # if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
+    #     bodyinfor = json.loads(bodyinfor)
+    headers = replaceStrParam(dependData, str(query.headers))
+    bodyinfor = replaceStrParam(dependData, str(query.body))
+    headers_dict = {}
+    if headers != "" and headers is not None and str(headers) != "{}":
+        headers_dict = json.loads(headers)
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
-        showflag = bodyinfor["showflag"]
-
     listid = query.owningListID
     try:
         querylist = moduleList.objects.get(id=int(listid))
@@ -145,7 +145,7 @@ def getResp(id,environment, dtime, cookices = None):
         result = {"code": -1, "info": str(e)}
         return result
     print u"请求方法：%s" % (methods)
-    host = getHost(int(query.host),environment)
+    host = getHost(int(query.host), environment)
     host = replaceStrParam(dependData, host)
     url = str(host) + str(send_url)
     print u"请求地址：%s" % (url)
@@ -153,7 +153,7 @@ def getResp(id,environment, dtime, cookices = None):
     send_body, files, showflag = mul_bodyData(bodyinfor)
     send_body_dict = {}
     if len(send_body) != 0:
-        send_body_dict = replaceParam(dependData, send_body)
+        send_body_dict = send_body
     # print json.dumps(dependData)
     print(u"请求头： %s" % str(headers_dict))
     print u"请求体：%s " % (str(send_body_dict).decode('raw_unicode_escape'))
@@ -188,7 +188,7 @@ def getResp(id,environment, dtime, cookices = None):
                                                   headersOpt)
         try:
             resp = sendRequests.sendRequest().sendSecretRequest(key_id, secret_key, Authorization, methods, url,
-                                                                send_url, headers, send_body, files, isRedirect,
+                                                                send_url, headers_dict, send_body_dict, files, isRedirect,
                                                                 showflag, Cookie)
         except Exception as e:
             infos = {"status_code": 400, "error": str(e)}
@@ -233,6 +233,38 @@ def replaceStrParam(dependdata_dict, stringValue):
     else:
         return strValue
     return strValue
+
+# def replaceParam(dependdata_dict, stringValue):
+#     strValue = stringValue
+#     if str(strValue).find("${") != -1:
+#         strValue = str(strValue)
+#         param_key = re.findall(r'\${(.*?)}', strValue)[0]
+#         if param_key != "" and (param_key in dependdata_dict.keys()):
+#             # print("___dependdata_dict___",strValue,type(strValue),dependdata_dict,dependdata_dict[param_key])
+#             strValue = strValue.replace('"${'+param_key+'}"', str(dependdata_dict[param_key]))
+#             print(u"使用值：%s替换参数${%s}" % (dependdata_dict[param_key], param_key))
+#         else:
+#             strValue = strValue.replace('"${'+param_key+'}"', "")
+#             print(u"使用值：''替换参数${%s}" % param_key)
+#         strValue = replaceParam(dependdata_dict, strValue)
+#     else:
+#         return strValue
+#     return strValue
+# def replaceParam(dependdata_dict, value_dict):
+#     old_dict = value_dict
+#     for item_key, item_value in old_dict.items():
+#         paramkey_list = re.findall(r"\${(.*?)}", str(item_value))
+#         if len(paramkey_list) != 0:
+#             paramkey_value = paramkey_list[0]
+#             try:
+#                 value_dict[item_key] = dependdata_dict[paramkey_value]
+#                 print(u"使用值：%s替换参数${%s}" % (dependdata_dict[paramkey_value], paramkey_value))
+#             except Exception as e:
+#                 value_dict[item_key] = ""
+#                 print("error: %s" % str(e))
+#                 print(u"使用值空值替换参数${%s}" % paramkey_value)
+#     return value_dict
+
 
 def checkDepend(apiID, dependID):
     flag = False
