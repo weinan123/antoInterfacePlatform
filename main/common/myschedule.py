@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import os,django
 import sys
+import threading
 sys.path.append(os.path.abspath('%s/../..' % sys.path[0]))
 import runChartData,sendmail_exchange
 import mulSQL,time
@@ -115,28 +116,33 @@ def getEamilData(isreport,successNum,faileNum,errorNum):
         reportpath=""
     mailsender.sendMail(senderList, subject, content,True,
                         reportpath,successNum,faileNum,errorNum,'normal')
+
+
+def job1_task():
+    threading.Thread(target=runChart).start()
+def job2_task(ismail):
+    threading.Thread(target=runCase, args=(ismail,)).start()
 def runSchedule():
-        schedule.every(3).minutes.do(runChart)
+        schedule.every(10).seconds.do(job1_task)
+        #schedule.every(3).minutes.do(job1_task)
         isreport, ismail,everyRounder,localTime = getCofigerData()
         if everyRounder =="每天":
-            schedule.every().day.at(localTime).do(runCase,ismail)
+            schedule.every().day.at(localTime).do(job2_task,ismail)
         elif everyRounder =="每周":
-            schedule.every().monday.at(localTime).do(runCase)
+            schedule.every().monday.at(localTime).do(job2_task,ismail)
         elif everyRounder =="每月":
-            schedule.every(28).to(31).at(localTime).do(runCase)
+            schedule.every(28).to(31).at(localTime).do(job2_task,ismail)
 if __name__ == '__main__':
     runSchedule()
     while True:
         flag = configerData.configerData().getItemData("scheduleChanged", "caseflag")
-        print flag
         if flag == "true":
             for j in schedule.jobs:
                 schedule.cancel_job(j)
             runSchedule()
             configerData.configerData().setData("scheduleChanged", "caseflag", "false")
-            print schedule.jobs
         else:
-            print schedule.jobs
+            pass
         schedule.run_pending()
 
 
