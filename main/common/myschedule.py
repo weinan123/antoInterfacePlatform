@@ -127,7 +127,7 @@ def runSchedule():
         #schedule.every(3).minutes.do(job1_task)
         isreport, ismail,everyRounder,localTime = getCofigerData()
         if everyRounder =="每天":
-            schedule.every().day.at("15:07").do(job2_task,ismail)
+            schedule.every().day.at(localTime).do(job2_task,ismail)
         elif everyRounder =="每周":
             schedule.every().monday.at(localTime).do(job2_task,ismail)
         elif everyRounder =="每月":
