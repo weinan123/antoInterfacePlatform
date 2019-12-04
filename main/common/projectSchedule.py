@@ -7,6 +7,7 @@ from main.models import projectschedule,caseList,reports
 from main.untils import configerData
 import batchstart,time,json
 import sendmail_exchange
+import threading
 import schedule,subprocess,batchstart
 reload(sys)
 class runProSchdeule():
@@ -43,15 +44,15 @@ class runProSchdeule():
                    }
                    batchrun_list.append(batchrunJson)
                    print batchrun_list
-                   projectschinfor = {
-                       "projectname": projectname,
-                       "scheduleinfor": batchrun_list,
-                       "reporter":reporter,
-                       "evirment":evirment,
-                       "timeDay":timeDay,
-                       "timeTime":timeTime
-                   }
-                   projectschList.append(projectschinfor)
+               projectschinfor = {
+                   "projectname": projectname,
+                   "scheduleinfor": batchrun_list,
+                   "reporter":reporter,
+                   "evirment":evirment,
+                   "timeDay":timeDay,
+                   "timeTime":timeTime
+               }
+               projectschList.append(projectschinfor)
         return projectschList
     def getEamilData(self,senderlist,report_runName,reportpath, successNum, faileNum, errorNum):
         senderList = []
@@ -98,7 +99,8 @@ class runProSchdeule():
             self.getEamilData(senderlist,report_runName,reportpath, successNum, faileNum, errorNum)
         except BaseException as e:
             print(" SQL Error: %s" % e)
-    def runschedule(self,):
+    def runschedule(self,batchrun_list, evirment, projectname, reporter):
+        '''
         ddd = self.getProinfor()
         for i in ddd:
             batchrun_list = i["scheduleinfor"]
@@ -108,27 +110,40 @@ class runProSchdeule():
             everyRounder = i["timeDay"]
             localTime = str(i["timeTime"])
             print reporter
+        '''
+        threading.Thread(target=self.runcase, args=(batchrun_list, evirment, projectname, reporter)).start()
+    def run_task(self):
+        ddd = self.getProinfor()
+        print len(ddd)
+        for i in ddd:
+            batchrun_list = i["scheduleinfor"]
+            projectname = i["projectname"]
+            evirment = i["evirment"]
+            reporter = i["reporter"]
+            everyRounder = i["timeDay"]
+            localTime = str(i["timeTime"])
             if everyRounder == "每天":
-                schedule.every().day.at(localTime).do(self.runcase, batchrun_list, evirment, projectname, reporter)
+                schedule.every().day.at(localTime).do(self.runschedule, batchrun_list, evirment, projectname, reporter)
             elif everyRounder == "每周":
-                schedule.every().monday.at(localTime).do(self.runcase, batchrun_list, evirment, projectname, reporter)
+                schedule.every().monday.at(localTime).do(self.runschedule, batchrun_list, evirment, projectname, reporter)
             elif everyRounder == "每月":
-                schedule.every(28).to(31).at(localTime).do(self.runcase, batchrun_list, evirment, projectname,
+                schedule.every(28).to(31).at(localTime).do(self.runschedule, batchrun_list, evirment, projectname,
                                                              reporter)
 if __name__ == '__main__':
     runcase = runProSchdeule()
-    runcase.runschedule()
+    runcase.run_task()
     while True:
         flag = configerData.configerData().getItemData("scheduleChanged", "projectflag")
-        print flag
+        #print flag
         if flag == "true":
             for j in schedule.jobs:
                 schedule.cancel_job(j)
-            runcase.runschedule()
+            runcase.run_task()
             configerData.configerData().setData("scheduleChanged", "projectflag", "false")
-            print schedule.jobs
+            #print schedule.jobs
         else:
-            print schedule.jobs
+            #print schedule.jobs
+            pass
         schedule.run_pending()
 
 

@@ -1,3 +1,4 @@
+'''
 import os,time
 from untils import configerData
 import schedule
@@ -22,4 +23,7 @@ schedule.every(10).seconds.do(runScedele)
 while True:
     schedule.run_pending()
     time.sleep(1)
+'''
+import weinannanananna
+weinannanananna.grtflag(1)
 
