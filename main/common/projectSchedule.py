@@ -27,7 +27,10 @@ class runProSchdeule():
                    reporter=[]
                else:
                     reporter  =i["reporter"].split(",")
-               cookies = i["cookies"].encode('unicode-escape').decode('string_escape')
+               if i["cookies"] == "" or i["cookies"] == None:
+                   cookies = "{}"
+               else:
+                   cookies = i["cookies"].encode('unicode-escape').decode('string_escape')
                timeDay = i["timeDay"]
                timeTime = i["timeTime"]
                for j in runcaselist:
