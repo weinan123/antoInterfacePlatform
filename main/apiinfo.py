@@ -568,8 +568,8 @@ def saveOrUpdateData(request):
             return JsonResponse(result)
         dependcase_apiID = data["dependcase_apiID"]
         dependData = data["dependData"]
-        header = data["header"]
-        body_str = data["bodys"]
+        header = str(data["header"]).replace(" ", "")
+        body_str = str(data["bodys"]).replace(" ", "")
         # cbody = body_str
         # cheader = header
         # if cbody != "" and cbody is not None:
