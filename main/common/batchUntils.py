@@ -121,15 +121,21 @@ def getResp(id,environment, dtime, cookices = None):
     if methods == "" or send_url == "":
         result = {"code": -1, "info": "参数不能为空"}
         return result
-    headers = query.headers
+    # headers = query.headers
+    # headers_dict = {}
+    # if headers != "" and headers is not None and str(headers) != "{}":
+    #     headers_dict = replaceParam(dependData, json.loads(headers))
+    # bodyinfor = query.body
+    # # print("bodyinfor: ", bodyinfor)
+    # if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
+    #     bodyinfor = json.loads(bodyinfor)
+    headers = replaceStrParam(dependData, str(query.headers))
+    bodyinfor = replaceStrParam(dependData, str(query.body))
     headers_dict = {}
     if headers != "" and headers is not None and str(headers) != "{}":
-        headers_dict = replaceParam(dependData, json.loads(headers))
-    bodyinfor = query.body
-    # print("bodyinfor: ", bodyinfor)
+        headers_dict = json.loads(headers)
     if bodyinfor != "" and str(bodyinfor) != "{}" and bodyinfor is not None:
         bodyinfor = json.loads(bodyinfor)
-
     listid = query.owningListID
     try:
         querylist = moduleList.objects.get(id=int(listid))
@@ -147,7 +153,7 @@ def getResp(id,environment, dtime, cookices = None):
     send_body, files, showflag = mul_bodyData(bodyinfor)
     send_body_dict = {}
     if len(send_body) != 0:
-        send_body_dict = replaceParam(dependData, send_body)
+        send_body_dict = send_body
     # print json.dumps(dependData)
     print(u"请求头： %s" % str(headers_dict))
     print u"请求体：%s " % (str(send_body_dict).decode('raw_unicode_escape'))
@@ -228,21 +234,36 @@ def replaceStrParam(dependdata_dict, stringValue):
         return strValue
     return strValue
 
-
-def replaceParam(dependdata_dict, value_dict):
-    old_dict = value_dict
-    for item_key, item_value in old_dict.items():
-        paramkey_list = re.findall(r"\${(.*?)}", str(item_value))
-        if len(paramkey_list) != 0:
-            paramkey_value = paramkey_list[0]
-            try:
-                value_dict[item_key] = dependdata_dict[paramkey_value]
-                print(u"使用值：%s替换参数${%s}" % (dependdata_dict[paramkey_value], paramkey_value))
-            except Exception as e:
-                value_dict[item_key] = ""
-                print("error: %s" % str(e))
-                print(u"使用值空值替换参数${%s}" % paramkey_value)
-    return value_dict
+# def replaceParam(dependdata_dict, stringValue):
+#     strValue = stringValue
+#     if str(strValue).find("${") != -1:
+#         strValue = str(strValue)
+#         param_key = re.findall(r'\${(.*?)}', strValue)[0]
+#         if param_key != "" and (param_key in dependdata_dict.keys()):
+#             # print("___dependdata_dict___",strValue,type(strValue),dependdata_dict,dependdata_dict[param_key])
+#             strValue = strValue.replace('"${'+param_key+'}"', str(dependdata_dict[param_key]))
+#             print(u"使用值：%s替换参数${%s}" % (dependdata_dict[param_key], param_key))
+#         else:
+#             strValue = strValue.replace('"${'+param_key+'}"', "")
+#             print(u"使用值：''替换参数${%s}" % param_key)
+#         strValue = replaceParam(dependdata_dict, strValue)
+#     else:
+#         return strValue
+#     return strValue
+# def replaceParam(dependdata_dict, value_dict):
+#     old_dict = value_dict
+#     for item_key, item_value in old_dict.items():
+#         paramkey_list = re.findall(r"\${(.*?)}", str(item_value))
+#         if len(paramkey_list) != 0:
+#             paramkey_value = paramkey_list[0]
+#             try:
+#                 value_dict[item_key] = dependdata_dict[paramkey_value]
+#                 print(u"使用值：%s替换参数${%s}" % (dependdata_dict[paramkey_value], paramkey_value))
+#             except Exception as e:
+#                 value_dict[item_key] = ""
+#                 print("error: %s" % str(e))
+#                 print(u"使用值空值替换参数${%s}" % paramkey_value)
+#     return value_dict
 
 
 def checkDepend(apiID, dependID):
